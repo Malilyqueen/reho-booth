@@ -696,8 +696,174 @@ function initializeBudgetCalculation() {
 }
 
 // Fonction pour mettre à jour les catégories de dépenses en fonction du modèle sélectionné
+// Données de budgets par défaut pour chaque modèle
+const defaultBudgets = {
+    "Anniversaire": {
+        "categories": [
+            {
+                "name": "Restauration",
+                "subcategories": [
+                    {
+                        "name": "Traiteur",
+                        "lines": [
+                            { "name": "Menu principal", "amount": "€ 150" },
+                            { "name": "Desserts", "amount": "€ 50" }
+                        ]
+                    },
+                    {
+                        "name": "Boissons",
+                        "lines": [
+                            { "name": "Soft drinks", "amount": "€ 50" },
+                            { "name": "Alcool", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Animation",
+                "subcategories": [
+                    {
+                        "name": "DJ",
+                        "lines": [
+                            { "name": "DJ forfait soirée", "amount": "€ 150" }
+                        ]
+                    },
+                    {
+                        "name": "Jeux",
+                        "lines": [
+                            { "name": "Matériel de jeux enfants", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Décoration",
+                "subcategories": [
+                    {
+                        "name": "Salle",
+                        "lines": [
+                            { "name": "Ballons", "amount": "€ 30" },
+                            { "name": "Banderoles", "amount": "€ 20" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Mariage": {
+        "categories": [
+            {
+                "name": "Lieu",
+                "subcategories": [
+                    {
+                        "name": "Location",
+                        "lines": [
+                            { "name": "Location salle", "amount": "€ 800" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Restauration",
+                "subcategories": [
+                    {
+                        "name": "Repas",
+                        "lines": [
+                            { "name": "Cocktail", "amount": "€ 600" },
+                            { "name": "Dîner", "amount": "€ 1200" }
+                        ]
+                    },
+                    {
+                        "name": "Dessert",
+                        "lines": [
+                            { "name": "Gâteau", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Animation",
+                "subcategories": [
+                    {
+                        "name": "Musique",
+                        "lines": [
+                            { "name": "DJ", "amount": "€ 500" },
+                            { "name": "Groupe", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Tenues",
+                "subcategories": [
+                    {
+                        "name": "Vêtements",
+                        "lines": [
+                            { "name": "Robe", "amount": "€ 1000" },
+                            { "name": "Costume", "amount": "€ 600" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Lancement de produit": {
+        "categories": [
+            {
+                "name": "Communication",
+                "subcategories": [
+                    {
+                        "name": "Marketing",
+                        "lines": [
+                            { "name": "Visuels", "amount": "€ 150" },
+                            { "name": "Réseaux sociaux", "amount": "€ 100" },
+                            { "name": "Flyers", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Développement produit",
+                "subcategories": [
+                    {
+                        "name": "Production",
+                        "lines": [
+                            { "name": "Prototype", "amount": "€ 800" },
+                            { "name": "Packaging", "amount": "€ 400" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Événement lancement",
+                "subcategories": [
+                    {
+                        "name": "Organisation",
+                        "lines": [
+                            { "name": "Lieu", "amount": "€ 500" },
+                            { "name": "Traiteur", "amount": "€ 300" },
+                            { "name": "Communication", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+};
+
 function updateTemplateCategories(templateType) {
     console.log('Updating template categories for:', templateType);
+    
+    // Vérifier si nous avons un modèle prédéfini pour ce type
+    if (defaultBudgets[templateType]) {
+        console.log('Found template data for:', templateType);
+        const categoriesData = defaultBudgets[templateType].categories;
+        // Mettre à jour l'interface avec les nouvelles catégories
+        updateCategoriesUI(categoriesData);
+        return;
+    }
+    
+    // Si aucun modèle prédéfini n'existe, utiliser le comportement par défaut
     let categoriesData = [];
     
     // Définir les catégories et sous-catégories en fonction du modèle choisi
