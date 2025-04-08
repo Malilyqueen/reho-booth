@@ -152,6 +152,7 @@ function initializeTemplateOptions() {
             }
             
             // Mise à jour des catégories et sous-catégories
+            console.log('Template selected:', templateType);
             updateTemplateCategories(templateType);
             
             // Mise à jour du conseil IA
@@ -696,6 +697,7 @@ function initializeBudgetCalculation() {
 
 // Fonction pour mettre à jour les catégories de dépenses en fonction du modèle sélectionné
 function updateTemplateCategories(templateType) {
+    console.log('Updating template categories for:', templateType);
     let categoriesData = [];
     
     // Définir les catégories et sous-catégories en fonction du modèle choisi
@@ -923,9 +925,12 @@ function updateTemplateCategories(templateType) {
 
 // Fonction pour mettre à jour l'UI avec les nouvelles catégories
 function updateCategoriesUI(categoriesData) {
+    console.log('Updating categories UI with data:', categoriesData);
     // Trouver le conteneur des catégories
     const expenseCategories = document.querySelector('.expense-categories');
+    console.log('Found expense categories container:', expenseCategories);
     const addCategoryContainer = document.querySelector('.add-category-container');
+    console.log('Found add category container:', addCategoryContainer);
     const totalBudgetElement = document.querySelector('.total-budget');
     
     // Supprimer les catégories existantes (sauf le bouton d'ajout et le total)
