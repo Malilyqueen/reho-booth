@@ -95,70 +95,111 @@ function initAdminAccess() {
  * Ajoute un bouton pour activer/désactiver le mode admin (pour la démo uniquement)
  */
 function addAdminToggle() {
-    // Vérifier si le bouton existe déjà
-    if (document.getElementById('adminToggle')) {
-        return;
-    }
-    
-    // Créer le bouton
-    const adminToggle = document.createElement('div');
-    adminToggle.id = 'adminToggle';
-    adminToggle.style.position = 'fixed';
-    adminToggle.style.bottom = '10px';
-    adminToggle.style.right = '10px';
-    adminToggle.style.padding = '10px';
-    adminToggle.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    adminToggle.style.color = 'white';
-    adminToggle.style.borderRadius = '5px';
-    adminToggle.style.fontSize = '12px';
-    adminToggle.style.cursor = 'pointer';
-    adminToggle.style.zIndex = '1000';
-    adminToggle.style.display = 'flex';
-    adminToggle.style.alignItems = 'center';
-    adminToggle.style.gap = '10px';
-    
-    // Contenu du bouton
-    adminToggle.innerHTML = `
-        <i class="fas fa-shield-alt"></i>
-        <span>Mode admin: <strong>${isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}</strong></span>
-    `;
-    
-    // Ajouter l'événement de clic
-    adminToggle.addEventListener('click', function() {
-        // Inverser le statut admin
-        isAdmin = !isAdmin;
+    try {
+        console.log('Ajout du bouton admin toggle');
         
-        // Mettre à jour le localStorage
-        localStorage.setItem('isAdmin', isAdmin);
+        // Supprimer le bouton s'il existe déjà pour éviter les doublons
+        const existingButton = document.getElementById('adminToggle');
+        if (existingButton) {
+            existingButton.remove();
+        }
         
-        // Mettre à jour l'interface
-        document.body.classList.toggle('is-admin', isAdmin);
+        // Créer le bouton avec un style plus visible
+        const adminToggle = document.createElement('div');
+        adminToggle.id = 'adminToggle';
+        adminToggle.style.position = 'fixed';
+        adminToggle.style.bottom = '20px';
+        adminToggle.style.right = '20px';
+        adminToggle.style.padding = '12px 15px';
+        adminToggle.style.backgroundColor = '#1d3557';
+        adminToggle.style.color = 'white';
+        adminToggle.style.borderRadius = '5px';
+        adminToggle.style.fontSize = '14px';
+        adminToggle.style.fontWeight = 'bold';
+        adminToggle.style.cursor = 'pointer';
+        adminToggle.style.zIndex = '9999';
+        adminToggle.style.display = 'flex';
+        adminToggle.style.alignItems = 'center';
+        adminToggle.style.gap = '10px';
+        adminToggle.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
         
-        // Mettre à jour le texte du bouton
-        this.querySelector('strong').textContent = isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ';
+        // Contenu du bouton
+        adminToggle.innerHTML = `
+            <i class="fas fa-shield-alt"></i>
+            <span>Mode admin: <strong>${isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}</strong></span>
+        `;
         
-        // Rafraîchir l'affichage des éléments admin
-        initAdminAccess();
-        
-        // Notifier l'utilisateur
-        showNotification(`Mode administrateur ${isAdmin ? 'activé' : 'désactivé'}`);
-        
-        // Si on vient d'activer le mode admin, proposer d'aller à la page d'administration
-        if (isAdmin && !window.location.pathname.includes('admin.html')) {
-            if (confirm('Voulez-vous accéder à la page d\'administration ?')) {
-                window.location.href = 'admin.html';
+        // Ajouter l'événement de clic
+        adminToggle.addEventListener('click', function() {
+            console.log('Bouton admin toggle cliqué');
+            
+            // Inverser le statut admin
+            isAdmin = !isAdmin;
+            
+            // Mettre à jour le localStorage
+            localStorage.setItem('isAdmin', isAdmin);
+            
+            // Mettre à jour l'interface
+            document.body.classList.toggle('is-admin', isAdmin);
+            
+            // Mettre à jour le texte du bouton
+            this.querySelector('strong').textContent = isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ';
+            
+            // Rafraîchir l'affichage des éléments admin
+            initAdminAccess();
+            
+            try {
+                // Notifier l'utilisateur
+                showNotification(`Mode administrateur ${isAdmin ? 'activé' : 'désactivé'}`);
+            } catch (notifyError) {
+                console.error('Erreur lors de l\'affichage de la notification:', notifyError);
+                alert(`Mode administrateur ${isAdmin ? 'activé' : 'désactivé'}`);
             }
-        }
+            
+            // Si on vient d'activer le mode admin, proposer d'aller à la page d'administration
+            if (isAdmin && !window.location.pathname.includes('admin.html')) {
+                if (confirm('Voulez-vous accéder à la page d\'administration ?')) {
+                    window.location.href = 'admin.html';
+                }
+            }
+            
+            // Si on vient de désactiver le mode admin et qu'on est sur la page d'admin, rediriger
+            if (!isAdmin && window.location.pathname.includes('admin.html')) {
+                alert('Mode administrateur désactivé. Vous allez être redirigé vers la page d\'accueil.');
+                window.location.href = 'index.html';
+            }
+        });
         
-        // Si on vient de désactiver le mode admin et qu'on est sur la page d'admin, rediriger
-        if (!isAdmin && window.location.pathname.includes('admin.html')) {
-            alert('Mode administrateur désactivé. Vous allez être redirigé vers la page d\'accueil.');
-            window.location.href = 'index.html';
+        // Ajouter le bouton au body
+        document.body.appendChild(adminToggle);
+        console.log('Bouton admin toggle ajouté avec succès');
+        
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout du bouton admin toggle:', error);
+        // Fallback mode - créer un bouton plus simple
+        try {
+            const simpleToggle = document.createElement('button');
+            simpleToggle.id = 'adminToggle';
+            simpleToggle.innerText = 'Admin Mode';
+            simpleToggle.style.position = 'fixed';
+            simpleToggle.style.bottom = '20px';
+            simpleToggle.style.right = '20px';
+            simpleToggle.style.zIndex = '9999';
+            simpleToggle.style.padding = '10px';
+            
+            simpleToggle.addEventListener('click', function() {
+                isAdmin = !isAdmin;
+                localStorage.setItem('isAdmin', isAdmin);
+                alert(`Mode admin ${isAdmin ? 'activé' : 'désactivé'}`);
+                location.reload();
+            });
+            
+            document.body.appendChild(simpleToggle);
+            console.log('Bouton admin simple ajouté avec succès');
+        } catch (fallbackError) {
+            console.error('Erreur lors de l\'ajout du bouton admin simple:', fallbackError);
         }
-    });
-    
-    // Ajouter le bouton au body
-    document.body.appendChild(adminToggle);
+    }
 }
 
 function initializeUI() {
