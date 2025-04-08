@@ -75,7 +75,7 @@
                     </div>
                     <div class="stat-info">
                         <h3>Projets en cours</h3>
-                        <p class="stat-value">3</p>
+                        <p class="stat-value" id="activeProjectsCount">0</p>
                     </div>
                 </div>
 
@@ -84,8 +84,8 @@
                         <i class="fas fa-euro-sign"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Budget global</h3>
-                        <p class="stat-value">€</p>
+                        <h3>Budget total</h3>
+                        <p class="stat-value" id="totalBudget">€ 0</p>
                     </div>
                 </div>
 
@@ -94,28 +94,32 @@
                         <i class="fas fa-wallet"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>730 €</h3>
+                        <h3>Solde portefeuille</h3>
+                        <p class="stat-value" id="walletBalance">€ 0</p>
                     </div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-briefcase"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Alertes</h3>
-                        <p class="stat-value">2</p>
+                        <h3>Activité pro</h3>
+                        <p class="stat-value" id="proActivitySummary">0 devis / 0 factures</p>
                     </div>
                 </div>
             </div>
 
             <div class="action-buttons">
                 <a href="nouveau-projet.html" class="btn btn-primary">
-                    Créer un nouveau projet
+                    <i class="fas fa-folder-plus"></i> Créer un projet
                 </a>
-                <button class="btn btn-secondary">
-                    Ajouter une dépense
-                </button>
+                <a href="portefeuille.html" class="btn btn-secondary">
+                    <i class="fas fa-wallet"></i> Mon Portefeuille
+                </a>
+                <a href="mapocket-pro.html" class="btn btn-secondary">
+                    <i class="fas fa-briefcase"></i> Outils Pro
+                </a>
             </div>
 
             <div class="dashboard-widgets">
@@ -155,14 +159,15 @@
                 </div>
 
                 <div class="widget">
-                    <h3>Projets actifs</h3>
+                    <div class="widget-header">
+                        <h3>Répartition des budgets</h3>
+                    </div>
                     <div class="active-projects">
                         <div class="chart-container">
-                            <!-- Graphique des projets actifs -->
                             <div class="pie-chart-container">
                                 <div class="chart-placeholder">
                                     <i class="fas fa-chart-pie"></i>
-                                    <p>Répartition de vos budgets actuels</p>
+                                    <p>Répartition de vos budgets par projet</p>
                                 </div>
                             </div>
                         </div>
@@ -180,21 +185,44 @@
                 </div>
             </div>
 
-            <div class="expense-chart">
-                <h3>Dépenses mensuelles par catégorie</h3>
-                <div class="charts-container">
-                    <div class="bar-chart">
-                        <!-- Bar chart placeholder -->
-                        <div class="chart-bars">
-                            <div class="chart-bar" style="height: 30%"></div>
-                            <div class="chart-bar" style="height: 45%"></div>
-                            <div class="chart-bar" style="height: 65%"></div>
-                            <div class="chart-bar" style="height: 85%"></div>
+            <div class="dashboard-stats">
+                <h3>Statistiques générales</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Projets actifs</h4>
+                            <div class="stat-value" id="activeProjectsCount">0</div>
                         </div>
                     </div>
-                    <div class="pie-chart">
-                        <!-- Pie chart placeholder -->
-                        <div class="chart-pie"></div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Budget total</h4>
+                            <div class="stat-value" id="totalBudget">€ 0.00</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Solde portefeuille</h4>
+                            <div class="stat-value" id="walletBalance">€ 0.00</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Activité Pro</h4>
+                            <div class="stat-value" id="proActivitySummary">0 devis / 0 factures</div>
+                        </div>
                     </div>
                 </div>
             </div>

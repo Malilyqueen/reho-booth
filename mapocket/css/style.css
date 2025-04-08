@@ -131,44 +131,60 @@ body {
 
 /* Dashboard stats */
 .dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 20px;
     margin-bottom: 30px;
 }
 
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
 .stat-card {
-    background-color: var(--white);
+    background-color: #f8f9fa;
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 15px;
     box-shadow: var(--shadow);
     display: flex;
     align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
-    background-color: rgba(69, 123, 157, 0.1);
-    color: var(--secondary-color);
+    background-color: #e8f4fd;
+    color: var(--primary-color);
     width: 50px;
     height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-right: 15px;
 }
 
-.stat-info h3 {
-    font-size: 0.9rem;
-    font-weight: 500;
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-content h4 {
+    font-size: 14px;
+    margin: 0 0 5px 0;
     color: var(--light-text);
-    margin-bottom: 5px;
 }
 
 .stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
     color: var(--primary-color);
 }
 
@@ -681,10 +697,30 @@ body {
     box-shadow: var(--shadow);
 }
 
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.widget-actions {
+    display: flex;
+    gap: 10px;
+}
+
 .widget h3 {
     margin-bottom: 15px;
     font-weight: 600;
     font-size: 1.1rem;
+    color: var(--primary-color);
 }
 
 .upcoming-payments {

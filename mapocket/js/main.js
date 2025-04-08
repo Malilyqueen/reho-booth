@@ -361,10 +361,10 @@ function updateDashboardStats() {
     
     console.log('Statistiques des projets à mettre à jour:', projects.length, 'projets trouvés');
     
-    // Mettre à jour le nombre de projets
-    const projectsCountElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
-    if (projectsCountElement) {
-        projectsCountElement.textContent = projects.length;
+    // Mise à jour du nombre de projets actifs
+    const activeProjectsCount = document.getElementById('activeProjectsCount');
+    if (activeProjectsCount) {
+        activeProjectsCount.textContent = projects.length;
     }
     
     // Calculer le budget global
@@ -374,10 +374,53 @@ function updateDashboardStats() {
         totalBudget += budget;
     });
     
-    // Mettre à jour le budget global
-    const globalBudgetElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
-    if (globalBudgetElement) {
-        globalBudgetElement.textContent = `€ ${totalBudget}`;
+    // Mettre à jour le budget total
+    const totalBudgetElement = document.getElementById('totalBudget');
+    if (totalBudgetElement) {
+        totalBudgetElement.textContent = `€ ${totalBudget.toFixed(2)}`;
+    }
+    
+    // Récupération et mise à jour du solde du portefeuille
+    const walletBalanceElement = document.getElementById('walletBalance');
+    if (walletBalanceElement) {
+        // Dans une implémentation complète, récupérer le solde du portefeuille
+        // Pour l'instant, on utilise une valeur par défaut
+        let walletBalance = 0;
+        
+        try {
+            const walletData = JSON.parse(localStorage.getItem('walletData') || '{"balance": 0}');
+            walletBalance = parseFloat(walletData.balance || 0);
+        } catch (error) {
+            console.error('Erreur lors de la récupération du solde du portefeuille:', error);
+        }
+        
+        walletBalanceElement.textContent = `€ ${walletBalance.toFixed(2)}`;
+    }
+    
+    // Récupération et mise à jour des statistiques d'activité professionnelle
+    const proActivitySummaryElement = document.getElementById('proActivitySummary');
+    if (proActivitySummaryElement) {
+        // Dans une implémentation complète, récupérer les devis et factures
+        // Pour l'instant, on utilise 0 / 0
+        let pendingQuotes = 0;
+        let pendingInvoices = 0;
+        
+        try {
+            const quotes = JSON.parse(localStorage.getItem('mapocket_quotes') || '[]');
+            const invoices = JSON.parse(localStorage.getItem('mapocket_invoices') || '[]');
+            
+            if (Array.isArray(quotes)) {
+                pendingQuotes = quotes.filter(q => q.status === 'sent').length;
+            }
+            
+            if (Array.isArray(invoices)) {
+                pendingInvoices = invoices.filter(i => i.status === 'sent' || i.status === 'overdue').length;
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des devis et factures:', error);
+        }
+        
+        proActivitySummaryElement.textContent = `${pendingQuotes} devis / ${pendingInvoices} factures`;
     }
 }
 
