@@ -63,9 +63,12 @@ function initializeProjectForm() {
             // Collect categories and amounts
             const categoryRows = document.querySelectorAll('.expense-table tbody tr:not(.total-row)');
             categoryRows.forEach(row => {
-                const categoryName = row.cells[0].textContent;
+                const categoryNameInput = row.querySelector('.category-name-input');
+                const categoryName = categoryNameInput ? categoryNameInput.value : 'Catégorie';
+                
                 const description = row.querySelector('input[placeholder="Enter description"]') ? 
                     row.querySelector('input[placeholder="Enter description"]').value : '';
+                
                 const amountInput = row.querySelector('.amount-input');
                 const amount = amountInput ? '€ ' + amountInput.value : '€ 0';
                 
@@ -128,9 +131,9 @@ function updateExpenseCategories(templateType) {
             break;
         case 'Other':
             categories = [
-                { name: 'Category 1', amount: '€ 100' },
-                { name: 'Category 2', amount: '€ 100' },
-                { name: 'Category 3', amount: '€ 100' }
+                { name: 'Catégorie 1', amount: '€ 100' },
+                { name: 'Catégorie 2', amount: '€ 100' },
+                { name: 'Catégorie 3', amount: '€ 100' }
             ];
             break;
     }
@@ -151,7 +154,7 @@ function updateExpenseCategories(templateType) {
         
         tableContent += `
             <tr>
-                <td>${category.name}</td>
+                <td><input type="text" class="form-control category-name-input" value="${category.name}" placeholder="Nom de la catégorie"></td>
                 <td><input type="text" class="form-control" placeholder="Enter description"></td>
                 <td><input type="text" class="form-control amount-input" value="${amountValue}" data-category="${category.name.toLowerCase()}"></td>
                 <td class="action-cell">
@@ -167,7 +170,7 @@ function updateExpenseCategories(templateType) {
     tableContent += `
         <tr class="total-row">
             <td colspan="3" class="text-right">Total:</td>
-            <td>€ ${total}</td>
+            <td class="total-cell">€ ${total}</td>
         </tr>
     `;
     
@@ -259,7 +262,7 @@ function addNewCategory() {
         // Contenu de la nouvelle ligne
         newRow.innerHTML = `
             <td>
-                <input type="text" class="form-control" placeholder="Nom de la catégorie" value="Nouvelle catégorie">
+                <input type="text" class="form-control category-name-input" placeholder="Nom de la catégorie" value="Nouvelle catégorie">
             </td>
             <td>
                 <input type="text" class="form-control" placeholder="Enter description">
@@ -312,6 +315,7 @@ function updateTotalBudget() {
     const totalElement = document.querySelector('.total-row td:last-child');
     if (totalElement) {
         totalElement.textContent = `€ ${total}`;
+        totalElement.className = 'total-cell';
     }
     
     // Mettre à jour le champ de budget total

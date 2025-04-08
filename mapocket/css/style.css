@@ -1166,6 +1166,11 @@ label {
     text-align: right;
 }
 
+.total-cell {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
 .action-cell {
     width: 40px;
     text-align: center;
