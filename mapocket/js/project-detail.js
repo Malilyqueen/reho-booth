@@ -5,10 +5,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser la page
     initProjectDetailPage();
     
+    // Ajouter les écouteurs d'événements seulement s'ils existent
+    
     // Retour au tableau de bord
-    document.getElementById('btn-back-to-dashboard').addEventListener('click', function() {
-        window.location.href = 'index.html';
-    });
+    const btnBackToDashboard = document.getElementById('btn-back-to-dashboard');
+    if (btnBackToDashboard) {
+        btnBackToDashboard.addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+    }
     
     // Gestionnaires d'événements pour les onglets
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -20,17 +25,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Gestionnaires d'événements pour les actions
-    document.querySelector('.btn-edit-project').addEventListener('click', editProject);
-    document.querySelector('.btn-delete-project').addEventListener('click', deleteProject);
-    document.querySelector('.btn-export-project').addEventListener('click', exportProject);
-    document.querySelector('.btn-link-wallet').addEventListener('click', linkWallet);
-    document.querySelector('.btn-add-category').addEventListener('click', addCategory);
-    document.querySelector('.btn-add-expense').addEventListener('click', function() {
-        openRealExpenseModal();
-    });
-    document.querySelector('.btn-add-attachment').addEventListener('click', function() {
-        openAttachmentModal();
-    });
+    const btnEditProject = document.querySelector('.btn-edit-project');
+    if (btnEditProject) {
+        btnEditProject.addEventListener('click', editProject);
+    }
+    
+    const btnDeleteProject = document.querySelector('.btn-delete-project');
+    if (btnDeleteProject) {
+        btnDeleteProject.addEventListener('click', deleteProject);
+    }
+    
+    const btnExportProject = document.querySelector('.btn-export-project');
+    if (btnExportProject) {
+        btnExportProject.addEventListener('click', exportProject);
+    }
+    
+    const btnLinkWallet = document.querySelector('.btn-link-wallet');
+    if (btnLinkWallet) {
+        btnLinkWallet.addEventListener('click', linkWallet);
+    }
+    
+    const btnAddCategory = document.querySelector('.btn-add-category');
+    if (btnAddCategory) {
+        btnAddCategory.addEventListener('click', addCategory);
+    }
+    
+    const btnAddExpense = document.querySelector('.btn-add-expense');
+    if (btnAddExpense) {
+        btnAddExpense.addEventListener('click', function() {
+            openRealExpenseModal();
+        });
+    }
+    
+    const btnAddAttachment = document.querySelector('.btn-add-attachment');
+    if (btnAddAttachment) {
+        btnAddAttachment.addEventListener('click', function() {
+            openAttachmentModal();
+        });
+    }
     
     // Gestionnaires d'événements pour les modales
     document.querySelectorAll('.close-modal, .cancel-modal').forEach(element => {
@@ -40,17 +72,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Gestionnaires d'événements pour les formulaires
-    document.getElementById('realExpenseForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        saveRealExpense();
-    });
+    const realExpenseForm = document.getElementById('realExpenseForm');
+    if (realExpenseForm) {
+        realExpenseForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveRealExpense();
+        });
+    }
     
-    document.getElementById('attachmentForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        saveAttachment();
-    });
+    const attachmentForm = document.getElementById('attachmentForm');
+    if (attachmentForm) {
+        attachmentForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveAttachment();
+        });
+    }
     
-    document.getElementById('saveComment').addEventListener('click', saveComment);
+    const saveCommentBtn = document.getElementById('saveComment');
+    if (saveCommentBtn) {
+        saveCommentBtn.addEventListener('click', saveComment);
+    }
     
     // Gestionnaires d'événements pour l'exportation
     document.querySelectorAll('.btn-export').forEach(button => {
