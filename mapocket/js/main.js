@@ -383,18 +383,29 @@ function updateDashboardStats() {
     // Récupération et mise à jour du solde du portefeuille
     const walletBalanceElement = document.getElementById('walletBalance');
     if (walletBalanceElement) {
-        // Dans une implémentation complète, récupérer le solde du portefeuille
-        // Pour l'instant, on utilise une valeur par défaut
-        let walletBalance = 0;
+        let totalBalance = 0;
         
         try {
-            const walletData = JSON.parse(localStorage.getItem('walletData') || '{"balance": 0}');
-            walletBalance = parseFloat(walletData.balance || 0);
+            // Récupérer tous les portefeuilles depuis mapocket_wallets
+            const wallets = JSON.parse(localStorage.getItem('mapocket_wallets') || '[]');
+            console.log('Portefeuilles récupérés:', wallets);
+            
+            if (Array.isArray(wallets)) {
+                // Calculer le solde total
+                wallets.forEach(wallet => {
+                    if (wallet.balance) {
+                        totalBalance += parseFloat(wallet.balance);
+                    }
+                });
+                console.log('Solde total des portefeuilles:', totalBalance);
+            } else {
+                console.error('Format incorrect pour mapocket_wallets:', wallets);
+            }
         } catch (error) {
-            console.error('Erreur lors de la récupération du solde du portefeuille:', error);
+            console.error('Erreur lors de la récupération des portefeuilles:', error);
         }
         
-        walletBalanceElement.textContent = `€ ${walletBalance.toFixed(2)}`;
+        walletBalanceElement.textContent = `€ ${totalBalance.toFixed(2)}`;
     }
     
     // Récupération et mise à jour des statistiques d'activité professionnelle
