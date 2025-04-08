@@ -97,39 +97,215 @@ function updateExpenseCategories(templateType) {
     
     // Define categories based on template type
     switch (templateType) {
-        case 'Anniversary':
+        // 🎉 Événementiels
+        case 'Anniversaire':
             categories = [
-                { name: 'Restaurant', amount: '€ 200' },
-                { name: 'Gifts', amount: '€ 150' },
-                { name: 'Activities', amount: '€ 100' },
-                { name: 'Transportation', amount: '€ 50' }
+                { name: 'Traiteur', amount: '€ 200' },
+                { name: 'Décorations', amount: '€ 100' },
+                { name: 'Animation', amount: '€ 100' },
+                { name: 'Cadeaux', amount: '€ 100' },
+                { name: 'Location salle', amount: '€ 150' }
             ];
             break;
-        case 'Birthday':
+        case 'Mariage':
             categories = [
-                { name: 'Catering', amount: '€ 200' },
-                { name: 'Decorations', amount: '€ 100' },
-                { name: 'Entertainment', amount: '€ 100' },
-                { name: 'Gifts', amount: '€ 100' }
+                { name: 'Traiteur', amount: '€ 3000' },
+                { name: 'Location salle', amount: '€ 1500' },
+                { name: 'Tenues', amount: '€ 2000' },
+                { name: 'Photographe', amount: '€ 1000' },
+                { name: 'Décoration', amount: '€ 800' },
+                { name: 'Animation/DJ', amount: '€ 800' },
+                { name: 'Alliances', amount: '€ 600' }
             ];
             break;
-        case 'Household':
+        case 'Baby shower':
             categories = [
-                { name: 'Rent/Mortgage', amount: '€ 800' },
-                { name: 'Utilities', amount: '€ 200' },
-                { name: 'Groceries', amount: '€ 300' },
-                { name: 'Maintenance', amount: '€ 100' }
+                { name: 'Décorations', amount: '€ 150' },
+                { name: 'Nourriture', amount: '€ 200' },
+                { name: 'Boissons', amount: '€ 100' },
+                { name: 'Cadeaux', amount: '€ 150' },
+                { name: 'Jeux & animations', amount: '€ 50' }
             ];
             break;
-        case 'Business':
+        case 'Fête d\'entreprise':
             categories = [
-                { name: 'Equipment', amount: '€ 500' },
-                { name: 'Marketing', amount: '€ 300' },
-                { name: 'Services', amount: '€ 400' },
-                { name: 'Administration', amount: '€ 200' }
+                { name: 'Location espace', amount: '€ 1000' },
+                { name: 'Traiteur', amount: '€ 1500' },
+                { name: 'Boissons', amount: '€ 500' },
+                { name: 'Animation', amount: '€ 800' },
+                { name: 'Décoration', amount: '€ 300' },
+                { name: 'Transport', amount: '€ 400' }
             ];
             break;
-        case 'Other':
+        case 'Célébration religieuse':
+            categories = [
+                { name: 'Lieu de culte', amount: '€ 200' },
+                { name: 'Tenue', amount: '€ 150' },
+                { name: 'Réception', amount: '€ 500' },
+                { name: 'Souvenirs', amount: '€ 150' },
+                { name: 'Décoration', amount: '€ 100' }
+            ];
+            break;
+            
+        // 🏠 Vie personnelle
+        case 'Budget mensuel':
+            categories = [
+                { name: 'Loyer/Crédit', amount: '€ 800' },
+                { name: 'Charges', amount: '€ 150' },
+                { name: 'Courses alimentaires', amount: '€ 400' },
+                { name: 'Transport', amount: '€ 100' },
+                { name: 'Loisirs', amount: '€ 150' },
+                { name: 'Épargne', amount: '€ 200' }
+            ];
+            break;
+        case 'Déménagement':
+            categories = [
+                { name: 'Location camion', amount: '€ 150' },
+                { name: 'Cartons et matériel', amount: '€ 100' },
+                { name: 'Société de déménagement', amount: '€ 800' },
+                { name: 'Frais administratifs', amount: '€ 50' },
+                { name: 'Ménage', amount: '€ 100' },
+                { name: 'Petits travaux', amount: '€ 200' }
+            ];
+            break;
+        case 'Rentrée scolaire':
+            categories = [
+                { name: 'Fournitures', amount: '€ 100' },
+                { name: 'Vêtements', amount: '€ 150' },
+                { name: 'Équipement sportif', amount: '€ 80' },
+                { name: 'Manuels', amount: '€ 50' },
+                { name: 'Inscription activités', amount: '€ 200' }
+            ];
+            break;
+        case 'Fêtes de fin d\'année':
+            categories = [
+                { name: 'Cadeaux', amount: '€ 300' },
+                { name: 'Repas', amount: '€ 200' },
+                { name: 'Décorations', amount: '€ 100' },
+                { name: 'Déplacements', amount: '€ 150' },
+                { name: 'Tenue', amount: '€ 100' }
+            ];
+            break;
+        case 'Vacances':
+            categories = [
+                { name: 'Transport', amount: '€ 400' },
+                { name: 'Hébergement', amount: '€ 600' },
+                { name: 'Restauration', amount: '€ 400' },
+                { name: 'Activités', amount: '€ 300' },
+                { name: 'Souvenirs', amount: '€ 100' }
+            ];
+            break;
+            
+        // 💼 Projets professionnels
+        case 'Lancement de produit':
+            categories = [
+                { name: 'Développement', amount: '€ 2000' },
+                { name: 'Marketing', amount: '€ 1500' },
+                { name: 'Design', amount: '€ 1000' },
+                { name: 'Communication', amount: '€ 1000' },
+                { name: 'Événement de lancement', amount: '€ 1500' }
+            ];
+            break;
+        case 'Création de site web':
+            categories = [
+                { name: 'Design', amount: '€ 500' },
+                { name: 'Développement', amount: '€ 1000' },
+                { name: 'Contenu', amount: '€ 300' },
+                { name: 'Hébergement', amount: '€ 100' },
+                { name: 'SEO', amount: '€ 400' }
+            ];
+            break;
+        case 'Campagne marketing':
+            categories = [
+                { name: 'Publicité en ligne', amount: '€ 1000' },
+                { name: 'Réseaux sociaux', amount: '€ 500' },
+                { name: 'Contenus', amount: '€ 700' },
+                { name: 'Graphisme', amount: '€ 400' },
+                { name: 'Analyse & mesure', amount: '€ 300' }
+            ];
+            break;
+        case 'Formation professionnelle':
+            categories = [
+                { name: 'Frais de formation', amount: '€ 1500' },
+                { name: 'Matériel pédagogique', amount: '€ 200' },
+                { name: 'Transport', amount: '€ 200' },
+                { name: 'Hébergement', amount: '€ 300' },
+                { name: 'Certification', amount: '€ 250' }
+            ];
+            break;
+        case 'Lancement d\'entreprise':
+            categories = [
+                { name: 'Frais juridiques', amount: '€ 800' },
+                { name: 'Équipement', amount: '€ 2000' },
+                { name: 'Marketing initial', amount: '€ 1500' },
+                { name: 'Local', amount: '€ 1000' },
+                { name: 'Site web', amount: '€ 800' },
+                { name: 'Stocks initiaux', amount: '€ 2000' }
+            ];
+            break;
+            
+        // 💰 Objectifs financiers
+        case 'Épargne mensuelle':
+            categories = [
+                { name: 'Épargne sécurité', amount: '€ 200' },
+                { name: 'Épargne projets', amount: '€ 300' },
+                { name: 'Épargne retraite', amount: '€ 150' },
+                { name: 'Investissements', amount: '€ 250' }
+            ];
+            break;
+        case 'Remboursement de dettes':
+            categories = [
+                { name: 'Crédit immobilier', amount: '€ 700' },
+                { name: 'Crédit auto', amount: '€ 300' },
+                { name: 'Crédit conso', amount: '€ 200' },
+                { name: 'Découvert', amount: '€ 100' }
+            ];
+            break;
+        case 'Projet "Gros achat"':
+            categories = [
+                { name: 'Achat principal', amount: '€ 2000' },
+                { name: 'Accessoires', amount: '€ 300' },
+                { name: 'Livraison/Installation', amount: '€ 150' },
+                { name: 'Garantie/Assurance', amount: '€ 100' }
+            ];
+            break;
+            
+        // 🤝 Collectifs & communautaires
+        case 'Cagnotte / tontine':
+            categories = [
+                { name: 'Contributions mensuelles', amount: '€ 1000' },
+                { name: 'Intérêts', amount: '€ 50' },
+                { name: 'Frais de gestion', amount: '€ 20' }
+            ];
+            break;
+        case 'Association caritative':
+            categories = [
+                { name: 'Collecte de fonds', amount: '€ 1000' },
+                { name: 'Dépenses opérationnelles', amount: '€ 500' },
+                { name: 'Communication', amount: '€ 200' },
+                { name: 'Matériel', amount: '€ 300' }
+            ];
+            break;
+        case 'Budget réunion / AG':
+            categories = [
+                { name: 'Location salle', amount: '€ 300' },
+                { name: 'Restauration', amount: '€ 200' },
+                { name: 'Matériel audiovisuel', amount: '€ 150' },
+                { name: 'Documents', amount: '€ 50' }
+            ];
+            break;
+        case 'Fonds commun':
+            categories = [
+                { name: 'Loyer & charges', amount: '€ 800' },
+                { name: 'Courses', amount: '€ 400' },
+                { name: 'Internet & TV', amount: '€ 50' },
+                { name: 'Électricité/Eau', amount: '€ 150' },
+                { name: 'Réparations', amount: '€ 100' }
+            ];
+            break;
+            
+        // Personnalisé
+        case 'Personnalisé':
             categories = [
                 { name: 'Catégorie 1', amount: '€ 100' },
                 { name: 'Catégorie 2', amount: '€ 100' },
@@ -189,20 +365,85 @@ function updateAIAdvice(templateType) {
     
     // Define advice based on template type
     switch (templateType) {
-        case 'Anniversary':
-            advice = 'Consider booking your restaurant reservation at least two weeks in advance.';
+        // 🎉 Événementiels
+        case 'Anniversaire':
+            advice = 'Pensez à réserver l\'animation au moins deux semaines à l\'avance.';
             break;
-        case 'Birthday':
-            advice = 'Consider booking your entertainment at least two weeks in advance.';
+        case 'Mariage':
+            advice = 'Prévoyez 5-10% de budget supplémentaire pour les imprévus de dernière minute.';
             break;
-        case 'Household':
-            advice = 'Set aside 10% of your total budget for unexpected expenses.';
+        case 'Baby shower':
+            advice = 'Pensez à des animations adaptées pour tous les invités, pas uniquement centrées sur bébé.';
             break;
-        case 'Business':
-            advice = 'Remember to keep all receipts for tax deduction purposes.';
+        case 'Fête d\'entreprise':
+            advice = 'Vérifiez les restrictions alimentaires de vos invités avant de finaliser le menu.';
             break;
-        case 'Other':
-            advice = 'Create a detailed timeline to help manage your expenses effectively.';
+        case 'Célébration religieuse':
+            advice = 'Confirmez les exigences spécifiques du lieu de culte bien à l\'avance.';
+            break;
+            
+        // 🏠 Vie personnelle
+        case 'Budget mensuel':
+            advice = 'Réservez 10% de votre budget pour les dépenses imprévues.';
+            break;
+        case 'Déménagement':
+            advice = 'Demandez plusieurs devis pour la société de déménagement pour comparer les prix.';
+            break;
+        case 'Rentrée scolaire':
+            advice = 'Établissez une liste précise avant les achats pour éviter les dépenses superflues.';
+            break;
+        case 'Fêtes de fin d\'année':
+            advice = 'Commencez vos achats de cadeaux tôt pour éviter le stress et les ruptures de stock.';
+            break;
+        case 'Vacances':
+            advice = 'Réservez transport et hébergement en avance pour bénéficier des meilleurs tarifs.';
+            break;
+            
+        // 💼 Projets professionnels
+        case 'Lancement de produit':
+            advice = 'Prévoyez un budget de contingence d\'au moins 15% pour les imprévus.';
+            break;
+        case 'Création de site web':
+            advice = 'N\'oubliez pas d\'inclure les coûts de maintenance annuels dans votre budget.';
+            break;
+        case 'Campagne marketing':
+            advice = 'Testez votre campagne sur un petit segment avant le déploiement complet.';
+            break;
+        case 'Formation professionnelle':
+            advice = 'Vérifiez les possibilités de prise en charge par votre entreprise ou un organisme.';
+            break;
+        case 'Lancement d\'entreprise':
+            advice = 'Prévoyez suffisamment de trésorerie pour couvrir 6 mois de fonctionnement sans revenus.';
+            break;
+            
+        // 💰 Objectifs financiers
+        case 'Épargne mensuelle':
+            advice = 'Automatisez vos virements d\'épargne dès réception de votre salaire.';
+            break;
+        case 'Remboursement de dettes':
+            advice = 'Commencez par rembourser les dettes aux taux d\'intérêt les plus élevés.';
+            break;
+        case 'Projet "Gros achat"':
+            advice = 'Comparez plusieurs modèles et vendeurs pour obtenir le meilleur rapport qualité-prix.';
+            break;
+            
+        // 🤝 Collectifs & communautaires
+        case 'Cagnotte / tontine':
+            advice = 'Établissez des règles claires dès le départ pour éviter les malentendus.';
+            break;
+        case 'Association caritative':
+            advice = 'Recherchez des partenariats pour réduire vos coûts opérationnels.';
+            break;
+        case 'Budget réunion / AG':
+            advice = 'Pensez à des alternatives numériques pour réduire les coûts de documentation.';
+            break;
+        case 'Fonds commun':
+            advice = 'Utilisez une application de partage de dépenses pour faciliter la gestion.';
+            break;
+            
+        // Personnalisé
+        case 'Personnalisé':
+            advice = 'Établissez un calendrier détaillé pour gérer efficacement vos dépenses.';
             break;
     }
     

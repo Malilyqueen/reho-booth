@@ -1220,6 +1220,52 @@ label {
     padding: 12px 30px;
 }
 
+/* Styles pour la nouvelle sélection de templates */
+.template-selection {
+    margin-bottom: 20px;
+}
+
+.template-selection h3 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.template-category {
+    margin-bottom: 20px;
+}
+
+.template-category h4 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.template-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.template-btn {
+    background-color: var(--background-white);
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+}
+
+.template-btn.active {
+    background-color: var(--secondary-color);
+    color: var(--text-white);
+    border-color: var(--secondary-color);
+}
+
 /* Responsive styles */
 @media (max-width: 992px) {
     .sidebar {

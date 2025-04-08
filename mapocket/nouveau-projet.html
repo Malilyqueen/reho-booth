@@ -54,36 +54,94 @@
         <main class="content">
             <div class="new-project">
                 <h2 class="page-title">NEW PROJECT</h2>
-                <h1 class="project-type">Birthday</h1>
+                <h1 class="project-type">Anniversaire</h1>
 
                 <form id="newProjectForm" class="project-form">
                     <div class="form-group">
-                        <label for="projectName">Project Name</label>
-                        <input type="text" id="projectName" name="projectName" value="Manon's Birthday" class="form-control">
+                        <label for="projectName">Nom du projet</label>
+                        <input type="text" id="projectName" name="projectName" value="Anniversaire de Manon" class="form-control">
                     </div>
 
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="projectDate">Date</label>
                             <div class="date-input">
-                                <input type="text" id="projectDate" name="projectDate" value="06/16/2025" class="form-control">
+                                <input type="text" id="projectDate" name="projectDate" value="16/06/2025" class="form-control">
                                 <i class="fas fa-calendar"></i>
                             </div>
                         </div>
                         <div class="form-group half">
-                            <label for="totalBudget">Total Budget</label>
+                            <label for="totalBudget">Budget total</label>
                             <input type="text" id="totalBudget" name="totalBudget" value="€ 500" class="form-control">
                         </div>
                     </div>
 
                     <div class="template-selection">
-                        <h3>Choose a Template</h3>
-                        <div class="template-buttons">
-                            <button type="button" class="template-btn">Anniversary</button>
-                            <button type="button" class="template-btn active">Birthday</button>
-                            <button type="button" class="template-btn">Household</button>
-                            <button type="button" class="template-btn">Business</button>
-                            <button type="button" class="template-btn">Other</button>
+                        <h3>Sélectionnez un modèle</h3>
+                        
+                        <!-- Templates événementiels -->
+                        <div class="template-category">
+                            <h4>🎉 Événementiels</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn active">Anniversaire</button>
+                                <button type="button" class="template-btn">Mariage</button>
+                                <button type="button" class="template-btn">Baby shower</button>
+                                <button type="button" class="template-btn">Fête d'entreprise</button>
+                                <button type="button" class="template-btn">Célébration religieuse</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Templates vie personnelle -->
+                        <div class="template-category">
+                            <h4>🏠 Vie personnelle</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn">Budget mensuel</button>
+                                <button type="button" class="template-btn">Déménagement</button>
+                                <button type="button" class="template-btn">Rentrée scolaire</button>
+                                <button type="button" class="template-btn">Fêtes de fin d'année</button>
+                                <button type="button" class="template-btn">Vacances</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Templates projets professionnels -->
+                        <div class="template-category">
+                            <h4>💼 Projets professionnels</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn">Lancement de produit</button>
+                                <button type="button" class="template-btn">Création de site web</button>
+                                <button type="button" class="template-btn">Campagne marketing</button>
+                                <button type="button" class="template-btn">Formation professionnelle</button>
+                                <button type="button" class="template-btn">Lancement d'entreprise</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Templates objectifs financiers -->
+                        <div class="template-category">
+                            <h4>💰 Objectifs financiers</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn">Épargne mensuelle</button>
+                                <button type="button" class="template-btn">Remboursement de dettes</button>
+                                <button type="button" class="template-btn">Projet "Gros achat"</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Templates collectifs -->
+                        <div class="template-category">
+                            <h4>🤝 Collectifs & communautaires</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn">Cagnotte / tontine</button>
+                                <button type="button" class="template-btn">Association caritative</button>
+                                <button type="button" class="template-btn">Budget réunion / AG</button>
+                                <button type="button" class="template-btn">Fonds commun</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template personnalisé -->
+                        <div class="template-category">
+                            <h4>✨ Personnalisé</h4>
+                            <div class="template-buttons">
+                                <button type="button" class="template-btn">Personnalisé</button>
+                            </div>
                         </div>
                     </div>
 
@@ -91,15 +149,15 @@
                         <table class="expense-table">
                             <thead>
                                 <tr>
-                                    <th>Category</th>
+                                    <th>Catégorie</th>
                                     <th>Description</th>
-                                    <th>Amount</th>
+                                    <th>Montant</th>
                                     <th></th> <!-- Colonne pour actions -->
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Catering</td>
+                                    <td><input type="text" class="form-control category-name-input" value="Traiteur" placeholder="Nom de la catégorie"></td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="200" data-category="catering"></td>
                                     <td class="action-cell">
@@ -109,7 +167,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Decorations</td>
+                                    <td><input type="text" class="form-control category-name-input" value="Décorations" placeholder="Nom de la catégorie"></td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="decorations"></td>
                                     <td class="action-cell">
@@ -119,7 +177,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Entertainment</td>
+                                    <td><input type="text" class="form-control category-name-input" value="Animation" placeholder="Nom de la catégorie"></td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="entertainment"></td>
                                     <td class="action-cell">
@@ -129,7 +187,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Gifts</td>
+                                    <td><input type="text" class="form-control category-name-input" value="Cadeaux" placeholder="Nom de la catégorie"></td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="gifts"></td>
                                     <td class="action-cell">
@@ -160,7 +218,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Create Project</button>
+                        <button type="submit" class="btn btn-primary">Créer le projet</button>
                     </div>
                 </form>
             </div>
