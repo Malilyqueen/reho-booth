@@ -645,6 +645,12 @@ function openRealExpenseModal(expenseIndex = null) {
         });
     }
     
+    // Ajouter l'option "Autre"
+    const otherOption = document.createElement('option');
+    otherOption.value = "Autre";
+    otherOption.textContent = "Autre";
+    categorySelect.appendChild(otherOption);
+    
     if (expenseIndex !== null) {
         // Mode édition
         modalTitle.textContent = 'Modifier une dépense réelle';
@@ -692,6 +698,12 @@ function openAttachmentModal() {
             categorySelect.appendChild(option);
         });
     }
+    
+    // Ajouter l'option "Autre"
+    const otherOption = document.createElement('option');
+    otherOption.value = "Autre";
+    otherOption.textContent = "Autre";
+    categorySelect.appendChild(otherOption);
     
     modal.style.display = 'block';
 }
