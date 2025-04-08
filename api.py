@@ -93,6 +93,116 @@ def chat():
             "error": str(e)
         }), 500
 
+@app.route('/api/create-project', methods=['POST'])
+def create_project():
+    """
+    API pour générer automatiquement un projet structuré à partir d'un prompt utilisateur
+    
+    Exemple de requête:
+    {
+        "prompt": "Je dois organiser un mariage indien avec un budget de 32 000 €"
+    }
+    
+    Exemple de réponse:
+    {
+        "project": {
+            "name": "Mariage indien",
+            "type": "Mariage",
+            "budget_total": 32000,
+            "categories": [
+                {"nom": "Lieu", "montant": 9000, "icon": "🏰", "description": "Réservation d'un lieu traditionnel"},
+                {"nom": "Traiteur", "montant": 7500, "icon": "🍽️", "description": "Cuisine indienne + boissons"},
+                {"nom": "Musique", "montant": 2000, "icon": "🎵", "description": "DJ + cérémonie sangeet"},
+                {"nom": "Fleurs & déco", "montant": 2500, "icon": "💐", "description": "Décorations florales traditionnelles"},
+                {"nom": "Tenues", "montant": 3000, "icon": "👗", "description": "Tenues mariés + famille"},
+                {"nom": "Photographe", "montant": 2000, "icon": "📸", "description": "Photo & vidéo du mariage"},
+                {"nom": "Transport", "montant": 1500, "icon": "🚗", "description": "Location de voiture, navette invités"},
+                {"nom": "Divers", "montant": 4500, "icon": "🔔", "description": "Cartes, cadeaux invités, imprévus"}
+            ]
+        },
+        "status": "success"
+    }
+    """
+    try:
+        data = request.json
+        prompt = data.get('prompt', '')
+        
+        if not prompt:
+            return jsonify({
+                "error": "Le prompt ne peut pas être vide",
+                "status": "error"
+            }), 400
+        
+        # Construire le prompt système pour Claude
+        system_prompt = """
+        Tu es un assistant financier spécialisé dans la création de projets budgétaires structurés.
+        Ta tâche est d'analyser une demande en langage naturel et de générer un projet budgétaire détaillé.
+        
+        Voici comment procéder:
+        1. Identifie le type de projet (Mariage, Anniversaire, Voyage, Rénovation, etc.)
+        2. Détermine le budget total mentionné (ou estime-le si non spécifié)
+        3. Génère des catégories de dépenses pertinentes pour ce type de projet
+        4. Alloue intelligemment le budget entre ces catégories
+        5. Fournis une description concise pour chaque catégorie
+        6. Associe une icône emoji appropriée à chaque catégorie
+        
+        Les catégories doivent être cohérentes avec le type de projet et les spécificités mentionnées.
+        La somme des montants alloués doit être égale au budget total.
+        
+        Réponds UNIQUEMENT avec un objet JSON structuré comme suit:
+        {
+          "name": "Nom du projet",
+          "type": "Type de projet",
+          "budget_total": budget_total_en_nombre,
+          "categories": [
+            {
+              "nom": "Nom de la catégorie",
+              "montant": montant_en_nombre,
+              "icon": "emoji",
+              "description": "Description concise"
+            },
+            ...
+          ]
+        }
+        """
+        
+        # Appel à l'API Claude
+        response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1500,
+            temperature=0.2,
+            system=system_prompt,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        # Extraire et parser la réponse JSON de Claude
+        assistant_response = response.content[0].text
+        project_data = json.loads(assistant_response)
+        
+        return jsonify({
+            "project": project_data,
+            "status": "success"
+        })
+        
+    except json.JSONDecodeError as e:
+        print(f"Erreur de décodage JSON dans la réponse de Claude: {str(e)}", file=sys.stderr)
+        print(f"Réponse reçue: {assistant_response}", file=sys.stderr)
+        return jsonify({
+            "error": "Erreur lors de l'analyse de la réponse",
+            "status": "error",
+            "details": str(e)
+        }), 500
+        
+    except Exception as e:
+        print(f"Erreur lors de la génération du projet: {str(e)}", file=sys.stderr)
+        return jsonify({
+            "error": "Une erreur est survenue lors de la génération du projet",
+            "status": "error",
+            "details": str(e)
+        }), 500
+
 @app.route('/api/suggestions', methods=['POST'])
 def suggestions():
     """

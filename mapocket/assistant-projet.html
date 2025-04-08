@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant de Projet - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/assistant-projet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            Objectifs & Défis
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            Outils Pro
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="assistant-projet.html">
+                            <i class="fas fa-magic"></i>
+                            Assistant Projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Assistant de Création de Projet</h2>
+                    <p>Laissez l'IA vous aider à structurer votre projet budgétaire</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="assistant-container">
+                <div class="prompt-section">
+                    <div class="prompt-input-container">
+                        <i class="fas fa-magic input-icon"></i>
+                        <input type="text" id="promptInput" class="prompt-input" placeholder="Décrivez votre projet... (ex: Je dois organiser un mariage indien avec un budget de 32 000 €)" autofocus>
+                        <button id="generateBtn" class="generate-btn">
+                            <i class="fas fa-bolt"></i> Générer
+                        </button>
+                    </div>
+                    <div class="examples">
+                        <p>Exemples :</p>
+                        <div class="example-chips">
+                            <span class="example-chip" data-prompt="Je dois organiser un mariage indien avec un budget de 32 000 €">Mariage indien (32 000 €)</span>
+                            <span class="example-chip" data-prompt="J'organise une fête d'anniversaire pour 15 enfants avec 300 €">Anniversaire enfants (300 €)</span>
+                            <span class="example-chip" data-prompt="Je veux rénover ma salle de bain pour 8000 €">Rénovation salle de bain (8 000 €)</span>
+                            <span class="example-chip" data-prompt="J'ai besoin de planifier un voyage au Japon pour 2 personnes pendant 2 semaines avec 5000 €">Voyage Japon (5 000 €)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section de chargement -->
+                <div id="loadingSection" class="loading-section" style="display: none;">
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <p class="loading-text">Génération du projet en cours...</p>
+                </div>
+
+                <!-- Section de résultat (visible seulement après génération) -->
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-header">
+                        <h3 id="projectTitle"></h3>
+                        <p id="projectType"></p>
+                        <p id="projectBudget"></p>
+                    </div>
+                    
+                    <div class="categories-container">
+                        <table class="categories-table">
+                            <thead>
+                                <tr>
+                                    <th>Catégorie</th>
+                                    <th>Description</th>
+                                    <th>Montant</th>
+                                    <th class="adjustment-column">Ajustement</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <!-- Les catégories seront générées dynamiquement ici -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2"><strong>Total</strong></td>
+                                    <td id="totalAmount" class="amount-cell"><strong>€ 0</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="modifyBtn" class="secondary-btn">
+                            <i class="fas fa-pen"></i> Modifier
+                        </button>
+                        <button id="createProjectBtn" class="primary-btn">
+                            <i class="fas fa-check"></i> Créer ce projet
+                        </button>
+                    </div>
+
+                    <div class="ai-notice">
+                        <i class="fas fa-robot"></i>
+                        <p>Ce projet a été généré automatiquement par l'intelligence artificielle de MaPocket. Vous pouvez ajuster les montants avant de créer votre projet.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/assistant-projet.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>
