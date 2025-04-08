@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Trésorerie - MaPocket Pro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tresorerie.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            Objectifs & Défis
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            Outils Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Plan de Trésorerie</h2>
+                    <p>Visualisez et planifiez vos entrées et sorties de trésorerie</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="pro-tools-navbar">
+                <a href="mapocket-pro.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i> Tableau de bord Pro
+                </a>
+                <a href="devis.html" class="nav-item">
+                    <i class="fas fa-file-contract"></i> Devis
+                </a>
+                <a href="facture.html" class="nav-item">
+                    <i class="fas fa-file-invoice"></i> Factures
+                </a>
+                <a href="tresorerie.html" class="nav-item active">
+                    <i class="fas fa-chart-line"></i> Trésorerie
+                </a>
+            </div>
+
+            <div class="cashflow-controls">
+                <div class="period-selector">
+                    <label for="period">Période :</label>
+                    <select id="period" class="form-control">
+                        <option value="3">3 mois</option>
+                        <option value="6" selected>6 mois</option>
+                        <option value="12">12 mois</option>
+                    </select>
+                </div>
+                <div class="start-month">
+                    <label for="startMonth">Début :</label>
+                    <input type="month" id="startMonth" class="form-control">
+                </div>
+                <div class="wallet-selector">
+                    <label for="wallet">Portefeuille :</label>
+                    <select id="wallet" class="form-control">
+                        <option value="all">Tous les portefeuilles</option>
+                        <!-- Les portefeuilles seront ajoutés dynamiquement -->
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button id="toggleChartBtn" class="btn btn-secondary">
+                        <i class="fas fa-chart-line"></i> Afficher graphique
+                    </button>
+                    <button id="manualEntryBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Entrée manuelle
+                    </button>
+                    <button id="loadInvoicesBtn" class="btn btn-secondary">
+                        <i class="fas fa-file-invoice-dollar"></i> Factures
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" id="exportPdfBtn">PDF</a>
+                            <a href="#" id="exportExcelBtn">Excel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="display: none;">
+                <canvas id="cashflowChart"></canvas>
+            </div>
+
+            <div class="cashflow-table-container">
+                <table class="cashflow-table">
+                    <thead>
+                        <tr>
+                            <th>Catégorie</th>
+                            <!-- Les en-têtes de mois seront ajoutés dynamiquement -->
+                            <th class="total-column">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- En-tête des recettes -->
+                        <tr class="section-header income-header">
+                            <td colspan="20">Recettes</td>
+                        </tr>
+                        <!-- Les catégories de recettes seront ajoutées dynamiquement -->
+                        <tr class="income-item">
+                            <td>Factures clients</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <tr class="income-item">
+                            <td>Prestations de services</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <tr class="income-item">
+                            <td>Subventions</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <!-- Total des recettes -->
+                        <tr class="income-total">
+                            <td>Total Recettes</td>
+                            <!-- Les totaux mensuels seront ajoutés dynamiquement -->
+                        </tr>
+
+                        <!-- En-tête des dépenses -->
+                        <tr class="section-header expense-header">
+                            <td colspan="20">Dépenses</td>
+                        </tr>
+                        <!-- Les catégories de dépenses seront ajoutées dynamiquement -->
+                        <tr class="expense-item">
+                            <td>Achats</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <tr class="expense-item">
+                            <td>Charges fixes</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <tr class="expense-item">
+                            <td>Salaires</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <tr class="expense-item">
+                            <td>Impôts et taxes</td>
+                            <!-- Les valeurs mensuelles seront ajoutées dynamiquement -->
+                        </tr>
+                        <!-- Total des dépenses -->
+                        <tr class="expense-total">
+                            <td>Total Dépenses</td>
+                            <!-- Les totaux mensuels seront ajoutés dynamiquement -->
+                        </tr>
+
+                        <!-- Solde mensuel -->
+                        <tr class="monthly-balance">
+                            <td>Solde mensuel</td>
+                            <!-- Les soldes mensuels seront ajoutés dynamiquement -->
+                        </tr>
+
+                        <!-- Solde cumulé -->
+                        <tr class="cumulative-balance">
+                            <td>Solde cumulé</td>
+                            <!-- Les soldes cumulés seront ajoutés dynamiquement -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal pour ajouter une entrée manuelle -->
+            <div id="manualEntryModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Ajouter une entrée manuelle</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="manualEntryForm">
+                            <div class="form-group">
+                                <label for="entryType">Type :</label>
+                                <select id="entryType" class="form-control" required>
+                                    <option value="income">Recette</option>
+                                    <option value="expense">Dépense</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="entryCategory">Catégorie :</label>
+                                <select id="entryCategory" class="form-control" required>
+                                    <!-- Les catégories seront ajoutées dynamiquement en fonction du type -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="entryMonth">Mois :</label>
+                                <select id="entryMonth" class="form-control" required>
+                                    <!-- Les mois seront ajoutés dynamiquement -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="entryAmount">Montant (€) :</label>
+                                <input type="number" id="entryAmount" class="form-control" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="entryDescription">Description (optionnelle) :</label>
+                                <input type="text" id="entryDescription" class="form-control">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary cancel-entry">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal pour la sélection des factures -->
+            <div id="invoiceSelectionModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Sélectionner les factures à inclure</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="invoice-list-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sélection</th>
+                                        <th>№ Facture</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Échéance</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceSelectionTableBody">
+                                    <!-- Les factures seront générées dynamiquement ici -->
+                                </tbody>
+                            </table>
+                            <div class="empty-invoices-message" style="display: none;">
+                                <p>Vous n'avez pas encore de factures. Créez votre première facture pour commencer!</p>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary cancel-invoice-selection">Annuler</button>
+                            <button type="button" class="btn btn-primary confirm-invoice-selection">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/tresorerie.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>

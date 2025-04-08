@@ -1,0 +1,348 @@
+/* Styles pour le plan de trésorerie */
+
+.cashflow-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.period-selector,
+.start-month,
+.wallet-selector {
+    flex: 1;
+    min-width: 150px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cashflow-table-container {
+    overflow-x: auto;
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cashflow-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.cashflow-table th,
+.cashflow-table td {
+    padding: 12px 15px;
+    text-align: right;
+    border-bottom: 1px solid #eee;
+}
+
+.cashflow-table th:first-child,
+.cashflow-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 10;
+    border-right: 1px solid #eee;
+    min-width: 180px;
+}
+
+.cashflow-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #1d3557;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.cashflow-table thead th:first-child {
+    z-index: 30; /* Pour que le coin supérieur gauche reste au-dessus de tout */
+}
+
+.section-header td {
+    background-color: #1d3557;
+    color: white;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 15px;
+}
+
+.income-total td,
+.expense-total td {
+    font-weight: 600;
+    background-color: #f0f4f8;
+    border-top: 1px solid #ddd;
+    border-bottom: 2px solid #ddd;
+}
+
+.monthly-balance td,
+.cumulative-balance td {
+    font-weight: 600;
+}
+
+.monthly-balance td:first-child,
+.cumulative-balance td:first-child {
+    color: #1d3557;
+}
+
+.negative-balance {
+    color: #e63946 !important;
+    font-weight: 700;
+}
+
+.editable-cell {
+    cursor: pointer;
+    position: relative;
+}
+
+.editable-cell:hover {
+    background-color: #f0f8ff;
+}
+
+.editable-cell:hover::after {
+    content: "✏️";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.total-column {
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
+    font-weight: 600;
+}
+
+/* Styles pour le graphique */
+.chart-container {
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    height: 300px;
+}
+
+/* Styles pour les modales */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.modal-header {
+    padding: 15px 20px;
+    background-color: #1d3557;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.close-modal {
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: #ddd;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #444;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Styles pour les boutons dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    min-width: 120px;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dropdown-menu a {
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-toggle::after {
+    content: " ▼";
+    font-size: 10px;
+    margin-left: 5px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Styles pour la barre de navigation des outils pro */
+.pro-tools-navbar {
+    display: flex;
+    margin-bottom: 20px;
+    background-color: #f0f4f8;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pro-tools-navbar .nav-item {
+    padding: 12px 15px;
+    color: #1d3557;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.pro-tools-navbar .nav-item i {
+    margin-right: 8px;
+}
+
+.pro-tools-navbar .nav-item:hover {
+    background-color: #e3e8ed;
+}
+
+.pro-tools-navbar .nav-item.active {
+    background-color: #1d3557;
+    color: white;
+}
+
+/* Styles responsifs */
+@media (max-width: 768px) {
+    .cashflow-controls {
+        flex-direction: column;
+    }
+    
+    .action-buttons {
+        margin-left: 0;
+        margin-top: 10px;
+        justify-content: space-between;
+    }
+    
+    .cashflow-table th, 
+    .cashflow-table td {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+    
+    .pro-tools-navbar {
+        flex-wrap: wrap;
+    }
+    
+    .pro-tools-navbar .nav-item {
+        flex: 1 0 50%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Médaillon d'alerte pour les soldes négatifs */
+.alert-badge {
+    display: inline-block;
+    background-color: #e63946;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Style pour les notes de bas de table */
+.cashflow-notes {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #1d3557;
+    font-size: 13px;
+    color: #555;
+    border-radius: 0 4px 4px 0;
+}

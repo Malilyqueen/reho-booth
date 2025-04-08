@@ -18,6 +18,9 @@ const voiceCommands = {
     'objectifs': () => navigateTo('objectifs.html'),
     'défis': () => navigateTo('objectifs.html'),
     'objectifs et défis': () => navigateTo('objectifs.html'),
+    'trésorerie': () => navigateTo('tresorerie.html'),
+    'plan de trésorerie': () => navigateTo('tresorerie.html'),
+    'outils pro': () => navigateTo('mapocket-pro.html'),
     'suggestions': () => navigateTo('suggestions-ia.html'),
     'chat': () => navigateTo('chat-ia.html'),
     
@@ -499,6 +502,9 @@ function showVoiceHelp() {
                 'objectifs': 'Aller à la page objectifs et défis',
                 'défis': 'Aller à la page objectifs et défis',
                 'objectifs et défis': 'Aller à la page objectifs et défis',
+                'trésorerie': 'Voir le plan de trésorerie',
+                'plan de trésorerie': 'Voir le plan de trésorerie',
+                'outils pro': 'Aller au tableau de bord Pro',
                 'suggestions': 'Voir les suggestions IA',
                 'chat': 'Ouvrir le chat IA'
             },
