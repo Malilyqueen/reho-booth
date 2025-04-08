@@ -55,8 +55,10 @@ function initializeProjectForm() {
             const categoryRows = document.querySelectorAll('.expense-table tbody tr:not(.total-row)');
             categoryRows.forEach(row => {
                 const categoryName = row.cells[0].textContent;
-                const description = row.querySelector('input') ? row.querySelector('input').value : '';
-                const amount = row.cells[2].textContent;
+                const description = row.querySelector('input[placeholder="Enter description"]') ? 
+                    row.querySelector('input[placeholder="Enter description"]').value : '';
+                const amountInput = row.querySelector('.amount-input');
+                const amount = amountInput ? '€ ' + amountInput.value : '€ 0';
                 
                 formData.categories.push({
                     category: categoryName,
@@ -135,11 +137,14 @@ function updateExpenseCategories(templateType) {
         const amount = parseInt(category.amount.replace('€', '').trim());
         total += amount;
         
+        // Extraire la valeur numérique sans le symbole €
+        const amountValue = category.amount.replace('€', '').trim();
+        
         tableContent += `
             <tr>
                 <td>${category.name}</td>
                 <td><input type="text" class="form-control" placeholder="Enter description"></td>
-                <td>${category.amount}</td>
+                <td><input type="text" class="form-control amount-input" value="${amountValue}" data-category="${category.name.toLowerCase()}"></td>
             </tr>
         `;
     });
@@ -192,7 +197,40 @@ function updateAIAdvice(templateType) {
 }
 
 function initializeBudgetCalculation() {
-    // In a full implementation, this would handle real-time budget calculation
-    // as users change amounts in the expense table
     console.log('Budget calculation initialized');
+    
+    // Ajouter des gestionnaires d'événements pour les champs de montant
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.classList.contains('amount-input')) {
+            updateTotalBudget();
+        }
+    });
+    
+    // Mise à jour initiale
+    updateTotalBudget();
+}
+
+function updateTotalBudget() {
+    let total = 0;
+    const amountInputs = document.querySelectorAll('.amount-input');
+    
+    // Calculer le total à partir de tous les champs de montant
+    amountInputs.forEach(input => {
+        const value = input.value.trim();
+        // Extraire seulement les chiffres
+        const amount = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+        total += amount;
+    });
+    
+    // Mettre à jour l'affichage du total
+    const totalElement = document.querySelector('.total-row td:last-child');
+    if (totalElement) {
+        totalElement.textContent = `€ ${total}`;
+    }
+    
+    // Mettre à jour le champ de budget total
+    const totalBudget = document.getElementById('totalBudget');
+    if (totalBudget) {
+        totalBudget.value = `€ ${total}`;
+    }
 }
