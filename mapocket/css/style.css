@@ -2336,9 +2336,35 @@ label {
     .dashboard-stats {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-overview {
+        flex-direction: column;
+    }
+    
+    .project-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .wallet-link-section {
+        width: 100%;
+    }
+    
+    .project-title-area {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .project-title-area h1 {
+        margin-bottom: 10px;
+    }
 }
 
 @media (max-width: 768px) {
+    /* Menu latéral compact */
     .sidebar {
         width: 70px;
         padding: 20px 0;
@@ -2368,22 +2394,187 @@ label {
     
     .content {
         margin-left: 70px;
-        padding: 20px;
+        padding: 20px 15px;
     }
     
+    /* Éléments du tableau de bord */
     .dashboard-widgets,
     .form-row {
         grid-template-columns: 1fr;
     }
+    
+    .user-greeting h2 {
+        font-size: 1.5rem;
+    }
+    
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    /* Réduction taille des tableaux */
+    .expenses-table, 
+    .expenses-table thead, 
+    .expenses-table tbody, 
+    .expenses-table th, 
+    .expenses-table td, 
+    .expenses-table tr {
+        display: block;
+    }
+    
+    .expenses-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .expenses-table tr {
+        border: 1px solid #e9ecef;
+        margin-bottom: 10px;
+        border-radius: var(--border-radius);
+    }
+    
+    .expenses-table td {
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align: left;
+    }
+    
+    .expenses-table td:before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    /* Étiquettes pour les données des tableaux */
+    .expenses-table td:nth-of-type(1):before { content: "Date"; }
+    .expenses-table td:nth-of-type(2):before { content: "Catégorie"; }
+    .expenses-table td:nth-of-type(3):before { content: "Description"; }
+    .expenses-table td:nth-of-type(4):before { content: "Montant"; }
+    .expenses-table td:nth-of-type(5):before { content: "Actions"; }
+    
+    /* Onglets responsifs */
+    .tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .tab-btn {
+        flex-grow: 1;
+        padding: 10px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+}
+
+/* Styles pour les boutons d'action responsifs */
+.responsive-actions .btn-text {
+    display: inline;
 }
 
 @media (max-width: 576px) {
-    .dashboard-stats {
-        grid-template-columns: 1fr;
+    /* Layout global pour très petits écrans */
+    body {
+        font-size: 14px;
     }
     
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 10px;
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .logo {
+        padding: 0 10px;
+        margin-bottom: 0;
+        border-bottom: none;
+        white-space: nowrap;
+    }
+    
+    .main-nav {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 5px;
+    }
+    
+    .main-nav ul {
+        display: flex;
+    }
+    
+    .main-nav ul li {
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+    
+    .main-nav ul li a {
+        padding: 8px;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .content {
+        margin-left: 0;
+        padding: 15px 10px;
+    }
+    
+    /* Éléments du tableau de bord */
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    /* Boutons d'action responsifs - version icônes sur mobile */
     .action-buttons {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .responsive-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .responsive-actions .btn {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 5px;
+        height: auto;
+    }
+    
+    .responsive-actions .btn i {
+        font-size: 1.5rem;
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+    
+    .responsive-actions .btn-text {
+        display: block;
+        font-size: 0.7rem;
+        line-height: 1.1;
     }
     
     .charts-container {
@@ -2394,6 +2585,129 @@ label {
     .bar-chart,
     .pie-chart {
         height: 200px;
+    }
+    
+    /* Ajustements pour les formulaires */
+    .form-group label {
+        margin-bottom: 5px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 10px 20px;
+    }
+    
+    /* Tableau des projets */
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Transformation des tableaux en cards sur mobile */
+    .projects-table, 
+    .projects-table thead, 
+    .projects-table tbody, 
+    .projects-table th, 
+    .projects-table td, 
+    .projects-table tr {
+        display: block;
+    }
+    
+    .projects-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .projects-table tr {
+        border: 1px solid #e9ecef;
+        margin-bottom: 15px;
+        border-radius: var(--border-radius);
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .projects-table td {
+        border: none;
+        border-bottom: 1px solid #f8f9fa;
+        position: relative;
+        padding-left: 45%;
+        min-height: 30px;
+    }
+    
+    .projects-table td:before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 40%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    /* Labels pour version mobile */
+    .projects-table td:nth-of-type(1):before { content: "Nom du projet:"; }
+    .projects-table td:nth-of-type(2):before { content: "Date:"; }
+    .projects-table td:nth-of-type(3):before { content: "Budget:"; }
+    .projects-table td:nth-of-type(4):before { content: "Dépenses:"; }
+    .projects-table td:nth-of-type(5):before { content: "Utilisation:"; }
+    .projects-table td:nth-of-type(6):before { content: "Statut:"; }
+    .projects-table td:nth-of-type(7):before { content: "Actions:"; }
+    
+    /* Actions dans le tableau */
+    .project-actions {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+    }
+    
+    /* Widget header en responsive */
+    .widget-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .widget-actions {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    /* Bouton admin plus petit et fixe */
+    #adminToggle {
+        padding: 8px 10px;
+        font-size: 12px;
+        bottom: 10px;
+        right: 10px;
+        z-index: 9999;
+    }
+    
+    /* Timeline en responsive */
+    .timeline-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .timeline-actions {
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .timeline-filters {
+        width: 100%;
+    }
+    
+    .timeline-filter {
+        width: 100%;
     }
 }
 
