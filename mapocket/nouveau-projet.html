@@ -94,6 +94,7 @@
                                     <th>Category</th>
                                     <th>Description</th>
                                     <th>Amount</th>
+                                    <th></th> <!-- Colonne pour actions -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -101,28 +102,54 @@
                                     <td>Catering</td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="200" data-category="catering"></td>
+                                    <td class="action-cell">
+                                        <button type="button" class="delete-category-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Decorations</td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="decorations"></td>
+                                    <td class="action-cell">
+                                        <button type="button" class="delete-category-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Entertainment</td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="entertainment"></td>
+                                    <td class="action-cell">
+                                        <button type="button" class="delete-category-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Gifts</td>
                                     <td><input type="text" class="form-control" placeholder="Enter description"></td>
                                     <td><input type="text" class="form-control amount-input" value="100" data-category="gifts"></td>
+                                    <td class="action-cell">
+                                        <button type="button" class="delete-category-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr class="total-row">
-                                    <td colspan="2" class="text-right">Total:</td>
+                                    <td colspan="3" class="text-right">Total:</td>
                                     <td>€ 500</td>
                                 </tr>
                             </tbody>
                         </table>
+                        
+                        <div class="add-category-container">
+                            <button type="button" id="addCategoryBtn" class="btn btn-outline">
+                                <i class="fas fa-plus"></i> Ajouter une catégorie
+                            </button>
+                        </div>
                     </div>
 
                     <div class="ai-advice">

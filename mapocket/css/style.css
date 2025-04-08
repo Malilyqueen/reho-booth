@@ -1166,6 +1166,46 @@ label {
     text-align: right;
 }
 
+.action-cell {
+    width: 40px;
+    text-align: center;
+}
+
+.delete-category-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: var(--transition);
+    padding: 5px;
+}
+
+.delete-category-btn:hover {
+    opacity: 1;
+}
+
+.add-category-container {
+    margin-top: 15px;
+    text-align: left;
+}
+
+.btn-outline {
+    background: none;
+    border: 1px dashed #ced4da;
+    color: var(--primary-color);
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-outline:hover {
+    background-color: rgba(29, 53, 87, 0.05);
+    border-color: var(--secondary-color);
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-start;

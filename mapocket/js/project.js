@@ -36,6 +36,15 @@ function initializeProjectForm() {
         });
     });
     
+    // Initialiser le bouton d'ajout de catégorie
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    if (addCategoryBtn) {
+        addCategoryBtn.addEventListener('click', addNewCategory);
+    }
+    
+    // Initialiser les boutons de suppression de catégorie
+    initializeDeleteButtons();
+    
     // Handle form submission
     const projectForm = document.getElementById('newProjectForm');
     if (projectForm) {
@@ -145,6 +154,11 @@ function updateExpenseCategories(templateType) {
                 <td>${category.name}</td>
                 <td><input type="text" class="form-control" placeholder="Enter description"></td>
                 <td><input type="text" class="form-control amount-input" value="${amountValue}" data-category="${category.name.toLowerCase()}"></td>
+                <td class="action-cell">
+                    <button type="button" class="delete-category-btn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             </tr>
         `;
     });
@@ -152,7 +166,7 @@ function updateExpenseCategories(templateType) {
     // Add total row
     tableContent += `
         <tr class="total-row">
-            <td colspan="2" class="text-right">Total:</td>
+            <td colspan="3" class="text-right">Total:</td>
             <td>€ ${total}</td>
         </tr>
     `;
@@ -208,6 +222,78 @@ function initializeBudgetCalculation() {
     
     // Mise à jour initiale
     updateTotalBudget();
+}
+
+// Fonction pour initialiser les boutons de suppression de catégorie
+function initializeDeleteButtons() {
+    const deleteButtons = document.querySelectorAll('.delete-category-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Trouver la ligne parente (tr) et la supprimer
+            const row = this.closest('tr');
+            if (row) {
+                row.remove();
+                
+                // Mettre à jour le total après la suppression
+                updateTotalBudget();
+            }
+        });
+    });
+}
+
+// Fonction pour ajouter une nouvelle catégorie
+function addNewCategory() {
+    // Trouver le tableau
+    const tableBody = document.querySelector('.expense-table tbody');
+    
+    // Trouver la ligne du total
+    const totalRow = document.querySelector('.total-row');
+    
+    if (tableBody && totalRow) {
+        // Créer une nouvelle ligne avant la ligne du total
+        const newRow = document.createElement('tr');
+        
+        // ID unique pour cette nouvelle catégorie
+        const uniqueId = 'category-' + Date.now();
+        
+        // Contenu de la nouvelle ligne
+        newRow.innerHTML = `
+            <td>
+                <input type="text" class="form-control" placeholder="Nom de la catégorie" value="Nouvelle catégorie">
+            </td>
+            <td>
+                <input type="text" class="form-control" placeholder="Enter description">
+            </td>
+            <td>
+                <input type="text" class="form-control amount-input" value="0" data-category="${uniqueId}">
+            </td>
+            <td class="action-cell">
+                <button type="button" class="delete-category-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        // Insérer avant la ligne du total
+        tableBody.insertBefore(newRow, totalRow);
+        
+        // Initialiser le bouton de suppression pour cette nouvelle catégorie
+        const deleteButton = newRow.querySelector('.delete-category-btn');
+        deleteButton.addEventListener('click', function() {
+            newRow.remove();
+            updateTotalBudget();
+        });
+        
+        // Mettre à jour le total
+        updateTotalBudget();
+        
+        // Focus sur le champ du nom de la catégorie pour une modification immédiate
+        const nameInput = newRow.querySelector('input[placeholder="Nom de la catégorie"]');
+        if (nameInput) {
+            nameInput.focus();
+            nameInput.select();
+        }
+    }
 }
 
 function updateTotalBudget() {
