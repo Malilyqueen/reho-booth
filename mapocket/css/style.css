@@ -1581,3 +1581,199 @@ label {
         height: 200px;
     }
 }
+
+/* Styles pour la sauvegarde automatique */
+.save-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.save-status {
+    font-size: 0.85rem;
+    color: #666;
+    margin-right: 15px;
+}
+
+.save-status.saved {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.manual-save-btn {
+    background-color: #ffc300;
+    color: #333;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.manual-save-btn:hover {
+    background-color: #e6b000;
+}
+
+.temporary-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1010;
+    animation: slideIn 0.3s ease;
+}
+
+.temporary-notification.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Styles pour la liste des projets */
+.projects-list-widget {
+    overflow: hidden;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.widget-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+}
+
+.btn-add {
+    background-color: #ffc300;
+    color: #333;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #e6b000;
+}
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.project-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-left: 4px solid #1d3557;
+}
+
+.project-card:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.project-title {
+    font-weight: 600;
+    color: #1d3557;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.project-details {
+    display: flex;
+    gap: 15px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.project-type {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.project-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #e9ecef;
+    color: #1d3557;
+}
+
+.btn-duplicate {
+    color: #1d3557;
+}
+
+.btn-edit {
+    color: #ffc300;
+}
+
+.btn-delete {
+    color: #e63946;
+}
+
+.empty-projects-message {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+}

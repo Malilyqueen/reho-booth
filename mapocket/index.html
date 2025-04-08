@@ -113,12 +113,19 @@
             </div>
 
             <div class="dashboard-widgets">
-                <div class="widget">
-                    <h3>Paiements à venir</h3>
-                    <div class="upcoming-payments">
-                        <div class="payment-timeline">
-                            <div class="timeline-line"></div>
-                            <div class="timeline-dot active"></div>
+                <div class="widget projects-list-widget">
+                    <div class="widget-header">
+                        <h3>Mes projets</h3>
+                        <div class="widget-actions">
+                            <a href="nouveau-projet.html" class="btn-sm btn-add">
+                                <i class="fas fa-plus"></i> Nouveau
+                            </a>
+                        </div>
+                    </div>
+                    <div class="projects-list">
+                        <!-- Liste des projets (générée dynamiquement via JavaScript) -->
+                        <div class="empty-projects-message" style="display: none;">
+                            <p>Vous n'avez pas encore de projets. Créez votre premier projet pour commencer!</p>
                         </div>
                     </div>
                 </div>
@@ -126,10 +133,13 @@
                 <div class="widget">
                     <h3>Projets actifs</h3>
                     <div class="active-projects">
-                        <div class="map-container">
-                            <!-- Map placeholder -->
-                            <div class="map-placeholder">
-                                <i class="fas fa-map-marker-alt marker"></i>
+                        <div class="chart-container">
+                            <!-- Graphique des projets actifs -->
+                            <div class="pie-chart-container">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Répartition de vos budgets actuels</p>
+                                </div>
                             </div>
                         </div>
                     </div>

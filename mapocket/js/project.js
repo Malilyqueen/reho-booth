@@ -1,5 +1,9 @@
 // JavaScript for the New Project page
 
+// Variables globales pour la sauvegarde automatique
+let autoSaveInterval;
+let lastSavedData = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('New Project page initialized');
     
@@ -15,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les interactions avec les catégories et sous-catégories de dépenses
     initializeExpenseCategories();
     
+    // Initialiser la sauvegarde automatique
+    initializeAutoSave();
+    
     // Initialiser le bouton d'ajout de catégorie principale
     const addMainCategoryBtn = document.getElementById('addMainCategoryBtn');
     if (addMainCategoryBtn) {
@@ -28,6 +35,145 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeBudgetCalculation();
 });
 
+// Fonction pour initialiser la sauvegarde automatique
+function initializeAutoSave() {
+    console.log('Initializing auto-save functionality');
+    
+    // Démarrer l'intervalle de sauvegarde automatique (toutes les 30 secondes)
+    autoSaveInterval = setInterval(saveProjectData, 30000);
+    
+    // Ajouter la notification de sauvegarde
+    const projectContainer = document.querySelector('.project-container');
+    if (projectContainer) {
+        const saveNotification = document.createElement('div');
+        saveNotification.className = 'save-notification';
+        saveNotification.innerHTML = `
+            <span class="save-status">Toutes les modifications sont enregistrées</span>
+            <button type="button" class="manual-save-btn">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        `;
+        projectContainer.appendChild(saveNotification);
+        
+        // Initialiser le bouton de sauvegarde manuelle
+        const manualSaveBtn = saveNotification.querySelector('.manual-save-btn');
+        if (manualSaveBtn) {
+            manualSaveBtn.addEventListener('click', function() {
+                saveProjectData(true);
+            });
+        }
+    }
+    
+    // Si on quitte la page, vérifier s'il y a des modifications non sauvegardées
+    window.addEventListener('beforeunload', function(e) {
+        const currentData = getProjectData();
+        if (JSON.stringify(currentData) !== JSON.stringify(lastSavedData)) {
+            saveProjectData();
+            // Message standard pour confirmation de quitter la page
+            e.returnValue = 'Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter cette page?';
+            return e.returnValue;
+        }
+    });
+}
+
+// Fonction pour sauvegarder les données du projet
+function saveProjectData(showNotification = false) {
+    const data = getProjectData();
+    
+    // Sauvegarder dans le localStorage
+    localStorage.setItem('currentProject', JSON.stringify(data));
+    lastSavedData = data;
+    
+    // Mettre à jour la notification de sauvegarde
+    const saveStatus = document.querySelector('.save-status');
+    if (saveStatus) {
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+        
+        saveStatus.textContent = `Dernière sauvegarde à ${timeStr}`;
+        saveStatus.classList.add('saved');
+        
+        // Si demandé, afficher une notification temporaire
+        if (showNotification) {
+            const notification = document.createElement('div');
+            notification.className = 'temporary-notification';
+            notification.textContent = 'Projet sauvegardé!';
+            document.body.appendChild(notification);
+            
+            // Supprimer la notification après 3 secondes
+            setTimeout(function() {
+                notification.classList.add('fade-out');
+                setTimeout(function() {
+                    notification.remove();
+                }, 500);
+            }, 2500);
+        }
+        
+        // Réinitialiser le style après 3 secondes
+        setTimeout(function() {
+            saveStatus.classList.remove('saved');
+            saveStatus.textContent = 'Toutes les modifications sont enregistrées';
+        }, 3000);
+    }
+    
+    console.log('Project data saved', data);
+}
+
+// Fonction pour récupérer les données actuelles du projet
+function getProjectData() {
+    const data = {
+        projectName: document.getElementById('projectName')?.value || '',
+        projectDate: document.getElementById('projectDate')?.value || '',
+        totalBudget: document.getElementById('totalBudget')?.value || '',
+        template: document.querySelector('.template-option.selected') ? 
+            document.querySelector('.template-option.selected').getAttribute('data-template') : 'Personnalisé',
+        categories: []
+    };
+    
+    // Collecter les catégories et leurs sous-catégories
+    const expenseCategories = document.querySelectorAll('.expense-category');
+    expenseCategories.forEach(category => {
+        const categoryName = category.querySelector('.category-name')?.textContent || '';
+        const categoryAmount = category.querySelector('.category-amount')?.textContent || '';
+        
+        const subcategories = [];
+        const subcategoryElements = category.querySelectorAll('.subcategory');
+        subcategoryElements.forEach(subcategory => {
+            const subcategoryName = subcategory.querySelector('.subcategory-name')?.textContent || '';
+            const subcategoryAmount = subcategory.querySelector('.subcategory-amount')?.textContent || '';
+            
+            const lines = [];
+            const expenseLines = subcategory.querySelectorAll('.expense-line');
+            expenseLines.forEach(line => {
+                const lineName = line.querySelector('.expense-line-name')?.value || '';
+                const lineAmount = line.querySelector('.expense-line-amount')?.value || '';
+                
+                if (lineName && lineAmount) {
+                    lines.push({
+                        name: lineName,
+                        amount: lineAmount
+                    });
+                }
+            });
+            
+            subcategories.push({
+                name: subcategoryName,
+                amount: subcategoryAmount,
+                lines: lines
+            });
+        });
+        
+        data.categories.push({
+            name: categoryName,
+            amount: categoryAmount,
+            subcategories: subcategories
+        });
+    });
+    
+    return data;
+}
+
 function initializeProjectForm() {
     // Date picker initialization (in a full implementation, this would use a date picker library)
     const dateInput = document.getElementById('projectDate');
@@ -37,6 +183,18 @@ function initializeProjectForm() {
             // In a full implementation, this would open a date picker
         });
     }
+    
+    // Restaurer les données sauvegardées s'il y en a
+    const savedProject = localStorage.getItem('currentProject');
+    if (savedProject) {
+        try {
+            const projectData = JSON.parse(savedProject);
+            restoreProjectData(projectData);
+            console.log('Restored project data:', projectData);
+        } catch (error) {
+            console.error('Error restoring project data:', error);
+        }
+    }
 
     // Handle form submission
     const projectForm = document.getElementById('newProjectForm');
@@ -45,56 +203,18 @@ function initializeProjectForm() {
             e.preventDefault();
             
             // Collect form data
-            const formData = {
-                projectName: document.getElementById('projectName').value,
-                projectDate: document.getElementById('projectDate').value,
-                totalBudget: document.getElementById('totalBudget').value,
-                template: document.querySelector('.template-option.selected') ? 
-                    document.querySelector('.template-option.selected').getAttribute('data-template') : 'Personnalisé',
-                categories: []
-            };
-            
-            // Collect categories and their subcategories
-            const expenseCategories = document.querySelectorAll('.expense-category');
-            expenseCategories.forEach(category => {
-                const categoryName = category.querySelector('.category-name').textContent;
-                const categoryAmount = category.querySelector('.category-amount').textContent;
-                
-                const subcategories = [];
-                const subcategoryElements = category.querySelectorAll('.subcategory');
-                subcategoryElements.forEach(subcategory => {
-                    const subcategoryName = subcategory.querySelector('.subcategory-name').textContent;
-                    const subcategoryAmount = subcategory.querySelector('.subcategory-amount').textContent;
-                    
-                    const lines = [];
-                    const expenseLines = subcategory.querySelectorAll('.expense-line');
-                    expenseLines.forEach(line => {
-                        const lineName = line.querySelector('.expense-line-name').value;
-                        const lineAmount = line.querySelector('.expense-line-amount').value;
-                        
-                        if (lineName && lineAmount) {
-                            lines.push({
-                                name: lineName,
-                                amount: lineAmount
-                            });
-                        }
-                    });
-                    
-                    subcategories.push({
-                        name: subcategoryName,
-                        amount: subcategoryAmount,
-                        lines: lines
-                    });
-                });
-                
-                formData.categories.push({
-                    name: categoryName,
-                    amount: categoryAmount,
-                    subcategories: subcategories
-                });
-            });
-            
+            const formData = getProjectData();
             console.log('Form submitted:', formData);
+            
+            // Sauvegarder dans localStorage pour accès futur (liste des projets)
+            const savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            formData.id = Date.now().toString(); // Identifiant unique pour le projet
+            formData.createdAt = new Date().toISOString();
+            savedProjects.push(formData);
+            localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
+            
+            // Effacer le projet en cours
+            localStorage.removeItem('currentProject');
             
             // In a real application, this would save the data and redirect to the dashboard
             alert('Projet créé avec succès!');
@@ -102,6 +222,38 @@ function initializeProjectForm() {
             window.location.href = 'index.html';
         });
     }
+}
+
+// Fonction pour restaurer un projet sauvegardé
+function restoreProjectData(data) {
+    // Restaurer les informations de base du projet
+    if (data.projectName) document.getElementById('projectName').value = data.projectName;
+    if (data.projectDate) document.getElementById('projectDate').value = data.projectDate;
+    if (data.totalBudget) document.getElementById('totalBudget').value = data.totalBudget;
+    
+    // Sélectionner le bon modèle
+    if (data.template) {
+        const templateOption = document.querySelector(`.template-option[data-template="${data.template}"]`);
+        if (templateOption) {
+            document.querySelectorAll('.template-option').forEach(opt => opt.classList.remove('selected'));
+            templateOption.classList.add('selected');
+            
+            // Mettre à jour le titre du type de projet
+            const projectTypeTitle = document.querySelector('.project-type');
+            if (projectTypeTitle) {
+                projectTypeTitle.textContent = data.template;
+            }
+            
+            // Mettre à jour le conseil IA
+            updateAIAdvice(data.template);
+        }
+    }
+    
+    // Les catégories et sous-catégories seront automatiquement chargées via updateTemplateCategories
+    // qui est appelé lors de la sélection du modèle
+    
+    // Définir lastSavedData pour la sauvegarde automatique
+    lastSavedData = data;
 }
 
 function initializeTemplateAccordion() {
