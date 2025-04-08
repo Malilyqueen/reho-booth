@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objectifs & Défis - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/objectifs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="nouveau-projet.html"><i class="fas fa-plus-circle"></i> Nouveau Projet</a></li>
+                    <li><a href="portefeuille.html"><i class="fas fa-wallet"></i> Mon Portefeuille</a></li>
+                    <li class="active"><a href="objectifs.html"><i class="fas fa-bullseye"></i> Objectifs & Défis</a></li>
+                    <li><a href="mapocket-pro.html"><i class="fas fa-briefcase"></i> Outils Pro</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="content">
+            <div class="content-header">
+                <div class="user-greeting">
+                    <h2>Mes Objectifs & Défis</h2>
+                    <p>Fixez-vous des challenges budgétaires et atteignez vos objectifs!</p>
+                </div>
+                <div class="header-actions">
+                    <a href="#" id="createNewGoalBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouvel Objectif
+                    </a>
+                    <a href="#" id="createNewChallengeBtn" class="btn btn-secondary">
+                        <i class="fas fa-trophy"></i> Nouveau Défi
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="savings-goals">
+                        <i class="fas fa-piggy-bank"></i> Objectifs d'épargne
+                    </button>
+                    <button class="tab-btn" data-tab="spending-challenges">
+                        <i class="fas fa-hand-holding-usd"></i> Défis de dépenses
+                    </button>
+                    <button class="tab-btn" data-tab="progress-tracking">
+                        <i class="fas fa-chart-line"></i> Suivi & progression
+                    </button>
+                </div>
+
+                <!-- Objectifs d'épargne tab -->
+                <div id="savings-goals" class="tab-content active">
+                    <div class="tab-header">
+                        <h3>Mes objectifs d'épargne</h3>
+                        <p>Suivez vos progrès vers vos objectifs financiers.</p>
+                    </div>
+                    
+                    <div id="savings-goals-list" class="goals-list">
+                        <!-- Les objectifs d'épargne seront générés ici dynamiquement -->
+                        <div class="empty-goals-message">
+                            <div class="empty-icon"><i class="fas fa-piggy-bank"></i></div>
+                            <h4>Vous n'avez pas encore d'objectif d'épargne</h4>
+                            <p>Créez votre premier objectif pour commencer à épargner!</p>
+                            <button id="createFirstGoalBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Créer un objectif
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Défis de dépenses tab -->
+                <div id="spending-challenges" class="tab-content">
+                    <div class="tab-header">
+                        <h3>Mes défis de maîtrise budgétaire</h3>
+                        <p>Relevez des défis pour mieux maîtriser vos dépenses.</p>
+                    </div>
+                    
+                    <div class="challenges-section">
+                        <h4>Défis suggérés</h4>
+                        <div class="suggested-challenges">
+                            <div class="challenge-card suggested" data-template="weekend">
+                                <div class="challenge-icon"><i class="fas fa-calendar-weekend"></i></div>
+                                <div class="challenge-details">
+                                    <h5>Zéro Dépense ce week-end</h5>
+                                    <p>N'effectuez aucune dépense pendant 2 jours</p>
+                                </div>
+                                <button class="btn-start-challenge">Commencer</button>
+                            </div>
+                            <div class="challenge-card suggested" data-template="grocery">
+                                <div class="challenge-icon"><i class="fas fa-shopping-basket"></i></div>
+                                <div class="challenge-details">
+                                    <h5>Budget Courses = 50€ cette semaine</h5>
+                                    <p>Limitez vos dépenses en courses à 50€ sur 7 jours</p>
+                                </div>
+                                <button class="btn-start-challenge">Commencer</button>
+                            </div>
+                            <div class="challenge-card suggested" data-template="delivery">
+                                <div class="challenge-icon"><i class="fas fa-hamburger"></i></div>
+                                <div class="challenge-details">
+                                    <h5>Pas de livraison ce mois-ci</h5>
+                                    <p>Évitez toute dépense de livraison de repas pendant 30 jours</p>
+                                </div>
+                                <button class="btn-start-challenge">Commencer</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenges-section">
+                        <h4>Mes défis actifs</h4>
+                        <div id="active-challenges-list" class="active-challenges">
+                            <!-- Les défis actifs seront générés ici dynamiquement -->
+                            <div class="empty-challenges-message">
+                                <div class="empty-icon"><i class="fas fa-trophy"></i></div>
+                                <h4>Vous n'avez pas encore de défi actif</h4>
+                                <p>Commencez un défi suggéré ou créez le vôtre!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suivi & progression tab -->
+                <div id="progress-tracking" class="tab-content">
+                    <div class="tab-header">
+                        <h3>Mon suivi & progression</h3>
+                        <p>Visualisez vos accomplissements et performances.</p>
+                    </div>
+                    
+                    <div class="stats-cards">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h4>Objectifs atteints</h4>
+                                <div class="stats-value" id="completed-goals-count">0</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h4>Défis réussis</h4>
+                                <div class="stats-value" id="completed-challenges-count">0</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h4>Épargne totale</h4>
+                                <div class="stats-value" id="total-savings">€ 0.00</div>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stats-content">
+                                <h4>Meilleure série</h4>
+                                <div class="stats-value" id="best-streak">0 jours</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-section">
+                        <h4>Historique</h4>
+                        <div class="history-filters">
+                            <select id="history-filter" class="history-filter">
+                                <option value="all">Tous</option>
+                                <option value="goals">Objectifs uniquement</option>
+                                <option value="challenges">Défis uniquement</option>
+                            </select>
+                        </div>
+                        <div id="history-list" class="history-list">
+                            <!-- L'historique sera généré ici dynamiquement -->
+                            <div class="empty-history-message">
+                                <div class="empty-icon"><i class="fas fa-history"></i></div>
+                                <h4>Pas encore d'historique</h4>
+                                <p>Vos objectifs et défis terminés apparaîtront ici.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour créer un nouvel objectif -->
+    <div id="goalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Créer un nouvel objectif d'épargne</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newGoalForm">
+                    <div class="form-group">
+                        <label for="goalName">Nom de l'objectif</label>
+                        <input type="text" id="goalName" placeholder="Ex: Économiser pour un week-end" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalAmount">Montant à atteindre (€)</label>
+                        <input type="number" id="goalAmount" placeholder="Ex: 200" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalDeadline">Date butoir</label>
+                        <input type="date" id="goalDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalWallet">Portefeuille lié (optionnel)</label>
+                        <select id="goalWallet">
+                            <option value="">Aucun</option>
+                            <!-- Les portefeuilles seront ajoutés dynamiquement -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalDescription">Description (optionnel)</label>
+                        <textarea id="goalDescription" rows="3" placeholder="Détails supplémentaires sur votre objectif..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancel cancel-modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Créer l'objectif</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour créer un nouveau défi -->
+    <div id="challengeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Créer un nouveau défi budgétaire</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newChallengeForm">
+                    <div class="form-group">
+                        <label for="challengeName">Nom du défi</label>
+                        <input type="text" id="challengeName" placeholder="Ex: Pas de restaurant cette semaine" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeType">Type de défi</label>
+                        <select id="challengeType" required>
+                            <option value="no-spend">Zéro dépense</option>
+                            <option value="limit-spend">Limiter les dépenses</option>
+                            <option value="avoid-category">Éviter une catégorie</option>
+                        </select>
+                    </div>
+                    <div class="form-group challenge-amount-field" style="display: none;">
+                        <label for="challengeAmount">Montant limite (€)</label>
+                        <input type="number" id="challengeAmount" placeholder="Ex: 50" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeCategory">Catégorie concernée (optionnel)</label>
+                        <select id="challengeCategory">
+                            <option value="">Toutes les catégories</option>
+                            <option value="groceries">Courses</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="delivery">Livraison</option>
+                            <option value="entertainment">Divertissement</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="transport">Transport</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeDuration">Durée</label>
+                        <select id="challengeDuration" required>
+                            <option value="weekend">Week-end (2 jours)</option>
+                            <option value="week">Semaine (7 jours)</option>
+                            <option value="2weeks">2 semaines (14 jours)</option>
+                            <option value="month">Mois (30 jours)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="challengeDescription">Description (optionnel)</label>
+                        <textarea id="challengeDescription" rows="3" placeholder="Détails supplémentaires sur votre défi..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancel cancel-modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Lancer le défi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/objectifs.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>

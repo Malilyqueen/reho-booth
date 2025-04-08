@@ -1,0 +1,75 @@
+ntégrer une fonctionnalité "Objectifs & Défis" dans MaPocket, permettant aux utilisateurs de se fixer des challenges budgétaires personnalisés ou prédéfinis. Cette fonctionnalité est pensée comme un levier de motivation, d’éducation financière et de gamification.
+
+📍 1. Nouvelle section : Mes Objectifs ou Défis MaPocket
+Accessible depuis le menu latéral
+
+Interface en 3 onglets :
+
+🎯 Objectifs d’épargne
+
+💸 Défis de dépenses
+
+📈 Suivi & progression
+
+🔹 2. Types de challenges à intégrer
+🎯 Objectifs d’épargne
+Créer un objectif avec :
+
+Nom (ex : “Économiser pour un week-end”)
+
+Montant (ex : 200 €)
+
+Date butoir (ex : 30 jours)
+
+Portefeuille lié (perso ou pro)
+
+Barre de progression automatique liée aux revenus / montants transférés
+
+✅ Notifications : “Tu as atteint 70 % de ton objectif !”
+
+💸 Défis de maîtrise budgétaire (gamification)
+Exemples pré-remplis :
+
+“Zéro Dépense ce week-end” (aucune dépense 2 jours)
+
+“Budget Courses = 50 € cette semaine” (suivi automatique)
+
+“Pas de livraison ce mois-ci” 😅
+
+✅ Badge visuel à gagner si réussi
+
+✅ Affichage sur le dashboard : “Challenge en cours” / “Défi réussi ✅”
+
+🔧 3. Fonctionnalités techniques à prévoir
+Formulaire de création d’objectif ou défi
+
+Liaison optionnelle à un portefeuille ou catégorie de dépense
+
+Suivi automatique via les dépenses réelles / épargne ajoutée
+
+Export CSV ou récap en PDF (facultatif)
+
+Historique des défis réussis / abandonnés
+
+🧠 Bonus UX
+Icônes par type de défi (💰, 🥗, 🛒, 📵, etc.)
+
+Affichage de statistiques personnelles :
+
+Objectifs atteints ce mois-ci
+
+Meilleure série de “Zéro dépense”
+
+Possibilité de relier un défi à un projet (“Défi Mariage = dépenser moins de 3000€”)
+
+✨ Ce que l’utilisateur ressentira :
+🎯	“Je me sens challengé et fier(e) de tenir mes finances”
+🏆	“Je vois mes progrès, mes économies réelles”
+🔁	“Je reviens sur l'app pour vérifier si je tiens le défi”
+Exemple d’événement :
+✅ “Tu es à 85 % de ton défi ‘Courses à 50 €’. Il te reste 8,50 € pour le terminer !”
+🔔 “Alerte ! Tu viens de dépenser 20 € en livraison — ton défi ‘Zéro Uber Eats’ est compromis 😅”
+
+✨ Résultat attendu :
+Une gamification intelligente, liée aux données réelles de l'utilisateur, pour transformer la gestion budgétaire en expérience ludique et personnalisée.
+

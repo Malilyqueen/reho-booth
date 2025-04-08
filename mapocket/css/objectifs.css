@@ -1,0 +1,780 @@
+/* Styles pour la fonctionnalité Objectifs & Défis */
+
+/* Styles généraux */
+.header-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Styles pour les onglets */
+.tabs-container {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+    padding: 15px 25px;
+    background: none;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: var(--light-text);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+.tab-btn i {
+    margin-right: 8px;
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+    background-color: rgba(29, 53, 87, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    box-shadow: inset 0 -3px 0 var(--accent-color);
+}
+
+.tab-content {
+    display: none;
+    padding: 25px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-header {
+    margin-bottom: 20px;
+}
+
+.tab-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.tab-header p {
+    color: var(--light-text);
+    font-size: 0.95rem;
+}
+
+/* Objectifs d'épargne */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.goal-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.goal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.goal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.goal-title h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.goal-icon {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.goal-info {
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+.goal-date {
+    background-color: rgba(69, 123, 157, 0.1);
+    color: var(--secondary-color);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.goal-progress {
+    margin-bottom: 15px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.progress-bar-container {
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--success-color);
+    border-radius: 5px 0 0 5px;
+    transition: width 0.5s ease;
+}
+
+.goal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.goal-btn {
+    background: none;
+    border: 1px solid #e9ecef;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.goal-btn:hover {
+    background-color: rgba(29, 53, 87, 0.05);
+    border-color: var(--secondary-color);
+}
+
+.empty-goals-message,
+.empty-challenges-message,
+.empty-history-message {
+    background-color: rgba(29, 53, 87, 0.02);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    color: #e9ecef;
+    margin-bottom: 15px;
+}
+
+.empty-goals-message h4,
+.empty-challenges-message h4,
+.empty-history-message h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.empty-goals-message p,
+.empty-challenges-message p,
+.empty-history-message p {
+    color: var(--light-text);
+    margin-bottom: 20px;
+}
+
+/* Défis de dépenses */
+.challenges-section {
+    margin-bottom: 30px;
+}
+
+.challenges-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.suggested-challenges {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.challenge-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-icon {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.challenge-details {
+    flex-grow: 1;
+}
+
+.challenge-details h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 5px;
+    color: var(--primary-color);
+}
+
+.challenge-details p {
+    color: var(--light-text);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.btn-start-challenge {
+    background-color: var(--white);
+    border: 1px solid var(--accent-color);
+    color: var(--primary-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.btn-start-challenge:hover {
+    background-color: var(--accent-color);
+}
+
+.active-challenges {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.challenge-card.active {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+}
+
+.challenge-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background-color: rgba(29, 53, 87, 0.02);
+}
+
+.challenge-status {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.challenge-status.in-progress {
+    background-color: rgba(69, 123, 157, 0.1);
+    color: var(--secondary-color);
+}
+
+.challenge-status.completed {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+}
+
+.challenge-status.failed {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--danger-color);
+}
+
+.challenge-body {
+    padding: 20px;
+}
+
+.challenge-progress {
+    margin-bottom: 15px;
+}
+
+.challenge-dates {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-bottom: 10px;
+}
+
+.challenge-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 20px 20px;
+}
+
+/* Suivi & progression */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stats-card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-icon {
+    background-color: rgba(69, 123, 157, 0.1);
+    color: var(--secondary-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-right: 15px;
+}
+
+.stats-content {
+    flex-grow: 1;
+}
+
+.stats-content h4 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--light-text);
+    margin-bottom: 5px;
+}
+
+.stats-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.history-section {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+}
+
+.history-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.history-filters {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.history-filter {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid #e9ecef;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    background-color: var(--white);
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.history-filter:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    background-color: rgba(29, 53, 87, 0.02);
+    transition: background-color 0.3s ease;
+}
+
+.history-item:hover {
+    background-color: rgba(29, 53, 87, 0.05);
+}
+
+.history-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.history-icon.goal {
+    background-color: rgba(69, 123, 157, 0.1);
+    color: var(--secondary-color);
+}
+
+.history-icon.challenge {
+    background-color: rgba(255, 195, 0, 0.1);
+    color: var(--accent-color);
+}
+
+.history-details {
+    flex-grow: 1;
+}
+
+.history-details h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 5px;
+    color: var(--primary-color);
+}
+
+.history-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--light-text);
+}
+
+.history-date {
+    display: flex;
+    align-items: center;
+}
+
+.history-date i {
+    margin-right: 5px;
+}
+
+.history-result {
+    display: flex;
+    align-items: center;
+}
+
+.history-result i {
+    margin-right: 5px;
+}
+
+.history-result.success {
+    color: var(--success-color);
+}
+
+.history-result.failure {
+    color: var(--danger-color);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    width: 95%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--light-text);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-cancel {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid #ced4da;
+}
+
+/* Badge styles */
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 80px;
+}
+
+.badge-icon {
+    background-color: rgba(29, 53, 87, 0.05);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: var(--light-text);
+    position: relative;
+}
+
+.badge.earned .badge-icon {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.badge-check {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--success-color);
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+.badge-name {
+    font-size: 0.8rem;
+    color: var(--light-text);
+}
+
+.badge.earned .badge-name {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Styles responsifs */
+@media (max-width: 768px) {
+    .suggested-challenges {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .tab-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .tab-btn i {
+        margin-right: 5px;
+    }
+    
+    .goal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .challenge-header {
+        flex-wrap: wrap;
+    }
+    
+    .challenge-status {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-actions {
+        flex-direction: column;
+    }
+    
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        justify-content: center;
+    }
+    
+    .tab-btn.active {
+        box-shadow: inset 3px 0 0 var(--accent-color);
+    }
+    
+    .modal-content {
+        width: 95%;
+    }
+}

@@ -15,6 +15,9 @@ const voiceCommands = {
     'tableau de bord': () => navigateTo('index.html'),
     'nouveau projet': () => navigateTo('nouveau-projet.html'),
     'portefeuille': () => navigateTo('portefeuille.html'),
+    'objectifs': () => navigateTo('objectifs.html'),
+    'défis': () => navigateTo('objectifs.html'),
+    'objectifs et défis': () => navigateTo('objectifs.html'),
     'suggestions': () => navigateTo('suggestions-ia.html'),
     'chat': () => navigateTo('chat-ia.html'),
     
@@ -24,6 +27,13 @@ const voiceCommands = {
     'éditer le projet': (args) => editProjectVoice(args),
     'modifier le projet': (args) => editProjectVoice(args),
     'supprimer le projet': (args) => deleteProjectVoice(args),
+    
+    // Actions sur les objectifs et défis
+    'nouvel objectif': () => navigateTo('objectifs.html#nouvel-objectif'),
+    'nouveau défi': () => navigateTo('objectifs.html#nouveau-defi'),
+    'mes objectifs': () => navigateTo('objectifs.html#savings-goals'),
+    'mes défis': () => navigateTo('objectifs.html#spending-challenges'),
+    'suivi de progression': () => navigateTo('objectifs.html#progress-tracking'),
     
     // Aide et contrôle vocal
     'aide vocale': () => showVoiceHelp(),
@@ -486,6 +496,9 @@ function showVoiceHelp() {
                 'tableau de bord': 'Aller à la page d\'accueil',
                 'nouveau projet': 'Créer un nouveau projet',
                 'portefeuille': 'Aller à la page portefeuille',
+                'objectifs': 'Aller à la page objectifs et défis',
+                'défis': 'Aller à la page objectifs et défis',
+                'objectifs et défis': 'Aller à la page objectifs et défis',
                 'suggestions': 'Voir les suggestions IA',
                 'chat': 'Ouvrir le chat IA'
             },
@@ -495,6 +508,13 @@ function showVoiceHelp() {
                 'éditer le projet [nom]': 'Modifier le projet spécifié',
                 'modifier le projet [nom]': 'Modifier le projet spécifié',
                 'supprimer le projet [nom]': 'Supprimer le projet spécifié'
+            },
+            'Objectifs et défis': {
+                'nouvel objectif': 'Créer un nouvel objectif d\'épargne',
+                'nouveau défi': 'Créer un nouveau défi budgétaire',
+                'mes objectifs': 'Voir mes objectifs d\'épargne',
+                'mes défis': 'Voir mes défis budgétaires',
+                'suivi de progression': 'Voir le suivi et la progression'
             },
             'Aide et contrôle vocal': {
                 'aide vocale': 'Afficher cette aide',
