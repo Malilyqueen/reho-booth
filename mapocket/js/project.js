@@ -1988,6 +1988,27 @@ const defaultBudgets = {
 function updateTemplateCategories(templateType) {
     console.log('Updating template categories for:', templateType);
     
+    // Gestion spéciale pour le type "Personnalisé"
+    if (templateType === 'Personnalisé') {
+        console.log('Creating empty template for personalized budget');
+        // Créer une structure vide pour un budget personnalisé
+        const categoriesData = [
+            {
+                name: 'Catégorie à personnaliser',
+                subcategories: [
+                    {
+                        name: 'Sous-catégorie à personnaliser',
+                        lines: [
+                            { name: 'Ligne à personnaliser', amount: '€ 0' }
+                        ]
+                    }
+                ]
+            }
+        ];
+        updateCategoriesUI(categoriesData);
+        return;
+    }
+    
     // Vérifier si nous avons un modèle prédéfini pour ce type
     if (defaultBudgets[templateType]) {
         console.log('Found template data for:', templateType);
@@ -2423,7 +2444,7 @@ function updateAIAdvice(templateType) {
             
         // Personnalisé
         case 'Personnalisé':
-            advice = 'Établissez un calendrier détaillé pour gérer efficacement vos dépenses.';
+            advice = 'Personnalisez complètement votre budget en fonction de vos besoins spécifiques. N\'hésitez pas à ajouter ou supprimer des catégories.';
             break;
         default:
             advice = 'Établissez clairement vos priorités et allouez votre budget en conséquence.';
