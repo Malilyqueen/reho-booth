@@ -1984,7 +1984,6 @@ const defaultBudgets = {
         ]
     }
 }
-};
 
 function updateTemplateCategories(templateType) {
     console.log('Updating template categories for:', templateType);
