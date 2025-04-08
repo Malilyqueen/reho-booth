@@ -418,10 +418,9 @@ function viewProject(projectId) {
     if (projectToView) {
         // Sauvegarder le projet à visualiser dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToView));
-        localStorage.setItem('viewMode', 'true'); // Indicateur pour le mode visualisation
         
-        // Rediriger vers la page de visualisation (on peut réutiliser la page de création avec un mode lecture seule)
-        window.location.href = 'nouveau-projet.html?view=true';
+        // Rediriger vers la nouvelle page de détail de projet
+        window.location.href = 'projet.html?id=' + projectId;
     } else {
         showNotification('Projet non trouvé');
     }

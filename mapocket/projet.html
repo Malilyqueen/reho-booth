@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail du Projet - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="nouveau-projet.html">
+                            <i class="fas fa-plus-circle"></i>
+                            Créer un projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="project-header-actions">
+                    <button class="btn-back" id="btn-back-to-dashboard">
+                        <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                    </button>
+                </div>
+                <div class="project-title-area">
+                    <h1 id="projectTitle">Chargement du projet...</h1>
+                    <div class="project-type-badge" id="projectType">Type</div>
+                </div>
+                <div class="project-actions">
+                    <button class="btn-sm btn-edit-project">
+                        <i class="fas fa-edit"></i> Modifier
+                    </button>
+                    <button class="btn-sm btn-delete-project">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                    <button class="btn-sm btn-export-project">
+                        <i class="fas fa-file-export"></i> Exporter
+                    </button>
+                </div>
+            </header>
+
+            <div class="project-overview">
+                <div class="project-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Date</h3>
+                            <p class="stat-value" id="projectDate">-</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Budget initial</h3>
+                            <p class="stat-value" id="initialBudget">€ 0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-cash-register"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Budget utilisé</h3>
+                            <p class="stat-value" id="usedBudget">€ 0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" id="budgetGapCard">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Écart budgétaire</h3>
+                            <p class="stat-value" id="budgetGap">€ 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallet-link-section">
+                    <div class="wallet-link-info">
+                        <h3>Portefeuille lié</h3>
+                        <div id="walletLinkStatus">
+                            <span class="wallet-status">Aucun portefeuille lié</span>
+                            <button class="btn-sm btn-link-wallet">
+                                <i class="fas fa-link"></i> Lier un portefeuille
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-budget-tracking">
+                <div class="budget-progress">
+                    <h3>Suivi budgétaire</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="budgetProgressBar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span>0%</span>
+                            <span id="budgetPercentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="categories">Catégories</button>
+                    <button class="tab-btn" data-tab="real-tracking">Suivi réel</button>
+                    <button class="tab-btn" data-tab="attachments">Justificatifs</button>
+                </div>
+
+                <div class="tab-content active" id="categories-tab">
+                    <div class="expense-categories">
+                        <div class="categories-header">
+                            <h3>Postes de dépenses</h3>
+                            <button class="btn-sm btn-add-category">
+                                <i class="fas fa-plus"></i> Ajouter une catégorie
+                            </button>
+                        </div>
+                        
+                        <div id="categoriesContainer" class="categories-container">
+                            <!-- Les catégories seront générées dynamiquement ici -->
+                            <div class="loading-placeholder">Chargement des catégories...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="real-tracking-tab">
+                    <div class="real-expenses">
+                        <div class="real-expenses-header">
+                            <h3>Dépenses réelles</h3>
+                            <button class="btn-sm btn-add-expense">
+                                <i class="fas fa-plus"></i> Ajouter une dépense
+                            </button>
+                        </div>
+                        
+                        <div class="real-expenses-table-container">
+                            <table class="expenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Catégorie</th>
+                                        <th>Description</th>
+                                        <th>Montant</th>
+                                        <th>Écart</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="realExpensesTableBody">
+                                    <!-- Les dépenses réelles seront générées dynamiquement ici -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right"><strong>Total :</strong></td>
+                                        <td id="totalRealExpenses"><strong>€ 0</strong></td>
+                                        <td id="totalBudgetGap"><strong>€ 0</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <div class="empty-expenses-message" style="display: none;">
+                                <p>Aucune dépense réelle n'a encore été enregistrée. Ajoutez-en une pour commencer le suivi!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="attachments-tab">
+                    <div class="attachments-section">
+                        <div class="attachments-header">
+                            <h3>Justificatifs et documents</h3>
+                            <button class="btn-sm btn-add-attachment">
+                                <i class="fas fa-paperclip"></i> Ajouter un justificatif
+                            </button>
+                        </div>
+                        
+                        <div class="attachments-list-container">
+                            <ul id="attachmentsList" class="attachments-list">
+                                <!-- Les justificatifs seront générés dynamiquement ici -->
+                            </ul>
+                            <div class="empty-attachments-message">
+                                <p>Aucun justificatif n'a encore été ajouté. Ajoutez des documents pour justifier vos dépenses!</p>
+                            </div>
+                        </div>
+
+                        <div class="comments-section">
+                            <h3>Commentaires</h3>
+                            <div class="comment-form">
+                                <textarea id="commentText" placeholder="Ajoutez un commentaire concernant ce projet ou expliquez les écarts budgétaires..."></textarea>
+                                <button id="saveComment" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                            <div id="commentsContainer" class="comments-container">
+                                <!-- Les commentaires seront générés dynamiquement ici -->
+                            </div>
+                        </div>
+
+                        <div class="export-section">
+                            <h3>Exporter le rapport</h3>
+                            <div class="export-actions">
+                                <button class="btn btn-export" data-format="pdf">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </button>
+                                <button class="btn btn-export" data-format="excel">
+                                    <i class="fas fa-file-excel"></i> Excel
+                                </button>
+                                <button class="btn btn-export" data-format="csv">
+                                    <i class="fas fa-file-csv"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour ajouter/modifier une dépense réelle -->
+    <div class="modal" id="realExpenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="expenseModalTitle">Ajouter une dépense réelle</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="realExpenseForm">
+                    <input type="hidden" id="expenseId">
+                    
+                    <div class="form-group">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate" name="expenseDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseCategory">Catégorie</label>
+                        <select id="expenseCategory" name="expenseCategory" class="form-control" required>
+                            <!-- Les catégories seront générées dynamiquement ici -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseDescription">Description</label>
+                        <input type="text" id="expenseDescription" name="expenseDescription" class="form-control" placeholder="Description de la dépense" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseAmount">Montant (€)</label>
+                        <input type="number" id="expenseAmount" name="expenseAmount" class="form-control" min="0" step="0.01" placeholder="0.00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseAttachment">Justificatif (optionnel)</label>
+                        <input type="file" id="expenseAttachment" name="expenseAttachment" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseNotes">Notes</label>
+                        <textarea id="expenseNotes" name="expenseNotes" class="form-control" placeholder="Notes supplémentaires"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary cancel-modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter un justificatif -->
+    <div class="modal" id="attachmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter un justificatif</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="attachmentForm">
+                    <div class="form-group">
+                        <label for="attachmentTitle">Titre</label>
+                        <input type="text" id="attachmentTitle" name="attachmentTitle" class="form-control" placeholder="Titre du document" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachmentFile">Fichier</label>
+                        <input type="file" id="attachmentFile" name="attachmentFile" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachmentCategory">Catégorie</label>
+                        <select id="attachmentCategory" name="attachmentCategory" class="form-control" required>
+                            <!-- Les catégories seront générées dynamiquement ici -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachmentDescription">Description</label>
+                        <textarea id="attachmentDescription" name="attachmentDescription" class="form-control" placeholder="Description du document"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Télécharger</button>
+                        <button type="button" class="btn btn-secondary cancel-modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/project-detail.js"></script>
+</body>
+</html>

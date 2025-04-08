@@ -11,6 +11,10 @@
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     --border-radius: 10px;
     --transition: all 0.3s ease;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
 }
 
 * {
@@ -173,6 +177,462 @@ body {
     display: flex;
     gap: 20px;
     margin-bottom: 30px;
+}
+
+/* Project Detail Page Styles */
+.project-header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-back:hover {
+    color: var(--secondary-color);
+}
+
+.btn-back i {
+    margin-right: 8px;
+}
+
+.project-title-area {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.project-title-area h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-right: 15px;
+}
+
+.project-type-badge {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.project-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.project-overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.project-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    flex-grow: 1;
+}
+
+.wallet-link-section {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    width: 300px;
+}
+
+.wallet-link-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.wallet-status {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--light-text);
+}
+
+.wallet-status.linked {
+    color: var(--success-color);
+    font-weight: 500;
+}
+
+.project-budget-tracking {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+
+.budget-progress h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.progress-bar-container {
+    width: 100%;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--success-color);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.progress-fill.over-budget {
+    background-color: var(--danger-color);
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--light-text);
+}
+
+.tabs-container {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+    padding: 15px 25px;
+    background: none;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: var(--light-text);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+    background-color: rgba(29, 53, 87, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    box-shadow: inset 0 -3px 0 var(--accent-color);
+}
+
+.tab-content {
+    display: none;
+    padding: 25px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Categories Tab */
+.categories-header, .real-expenses-header, .attachments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.categories-header h3, .real-expenses-header h3, .attachments-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.categories-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.empty-categories-message, .empty-expenses-message, .empty-attachments-message, .empty-comments-message {
+    text-align: center;
+    padding: 30px;
+    color: var(--light-text);
+    background-color: rgba(29, 53, 87, 0.02);
+    border-radius: var(--border-radius);
+}
+
+/* Real Expenses Tab */
+.expenses-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.expenses-table th, .expenses-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.expenses-table th {
+    background-color: rgba(29, 53, 87, 0.02);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.expenses-table tr:last-child td {
+    border-bottom: none;
+}
+
+.expenses-table tfoot td {
+    font-weight: 600;
+    background-color: rgba(29, 53, 87, 0.02);
+}
+
+.text-right {
+    text-align: right;
+}
+
+.budget-gap-cell.negative {
+    color: var(--danger-color);
+}
+
+.budget-gap-cell.positive {
+    color: var(--success-color);
+}
+
+#budgetGapCard.negative .stat-value, #totalBudgetGap.negative-gap {
+    color: var(--danger-color);
+}
+
+#budgetGapCard.positive .stat-value {
+    color: var(--success-color);
+}
+
+/* Attachments Tab */
+.attachments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(29, 53, 87, 0.02);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.attachment-icon {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.attachment-details {
+    flex-grow: 1;
+}
+
+.attachment-details h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 5px;
+    color: var(--primary-color);
+}
+
+.attachment-category {
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    margin: 0 0 5px;
+}
+
+.attachment-description {
+    color: var(--light-text);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.attachment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.comments-section {
+    margin-bottom: 30px;
+}
+
+.comments-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.comment-form {
+    margin-bottom: 20px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    height: 100px;
+    padding: 15px;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.comments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.comment {
+    background-color: rgba(29, 53, 87, 0.02);
+    border-radius: var(--border-radius);
+    padding: 15px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.comment-date {
+    color: var(--light-text);
+    font-size: 0.85rem;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.comment-text {
+    line-height: 1.6;
+}
+
+.export-section {
+    margin-top: 30px;
+}
+
+.export-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.export-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-export {
+    background-color: var(--white);
+    border: 1px solid #ced4da;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-export:hover {
+    background-color: rgba(29, 53, 87, 0.05);
+    border-color: var(--secondary-color);
+}
+
+.loading-placeholder {
+    padding: 30px;
+    text-align: center;
+    color: var(--light-text);
+}
+
+/* Button styles for project detail page */
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    border-radius: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-sm i {
+    margin-right: 4px;
+}
+
+.btn-edit-project, .btn-edit-category, .btn-edit-subcategory, .btn-edit-line, .btn-edit, .btn-edit-comment {
+    color: var(--secondary-color);
+}
+
+.btn-delete-project, .btn-delete-category, .btn-delete-subcategory, .btn-delete-line, .btn-delete, .btn-delete-attachment, .btn-delete-comment {
+    color: var(--danger-color);
+}
+
+.btn-add, .btn-add-category, .btn-add-expense, .btn-add-attachment {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.btn-view, .btn-view-attachment {
+    color: var(--info-color);
+}
+
+.btn-link-wallet, .btn-unlink-wallet {
+    color: var(--primary-color);
+}
+
+.btn-export-project {
+    color: var(--info-color);
 }
 
 .btn {
