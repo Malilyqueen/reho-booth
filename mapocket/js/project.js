@@ -207,11 +207,29 @@ function initializeProjectForm() {
             console.log('Form submitted:', formData);
             
             // Sauvegarder dans localStorage pour accès futur (liste des projets)
-            const savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            let savedProjects = [];
+            try {
+                savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+                if (!Array.isArray(savedProjects)) {
+                    console.error('savedProjects n\'est pas un tableau:', savedProjects);
+                    savedProjects = [];
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des projets sauvegardés:', error);
+                savedProjects = [];
+            }
+            
             formData.id = Date.now().toString(); // Identifiant unique pour le projet
             formData.createdAt = new Date().toISOString();
             savedProjects.push(formData);
-            localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
+            
+            try {
+                localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
+                console.log('Projet sauvegardé avec succès. Total projets:', savedProjects.length);
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde des projets:', error);
+                alert('Erreur lors de la sauvegarde du projet. Veuillez réessayer.');
+            }
             
             // Effacer le projet en cours
             localStorage.removeItem('currentProject');

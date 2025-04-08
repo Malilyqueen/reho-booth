@@ -8,6 +8,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Charger la liste des projets
     loadProjectsList();
+    
+    // Initialiser le bouton de réinitialisation
+    const resetButton = document.getElementById('resetStorage');
+    if (resetButton) {
+        resetButton.addEventListener('click', function() {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser l\'application ? Tous les projets seront supprimés.')) {
+                localStorage.removeItem('savedProjects');
+                localStorage.removeItem('currentProject');
+                showNotification('Application réinitialisée');
+                loadProjectsList();
+                updateDashboardStats();
+            }
+        });
+    }
 });
 
 function initializeUI() {
@@ -46,9 +60,30 @@ function initializeUI() {
 
 function loadProjectsList() {
     // Récupérer les projets depuis le localStorage
-    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    let projects = [];
+    try {
+        const savedProjectsData = localStorage.getItem('savedProjects');
+        console.log('Données brutes des projets:', savedProjectsData);
+        projects = JSON.parse(savedProjectsData || '[]');
+        
+        if (!Array.isArray(projects)) {
+            console.error('Format de données incorrect pour savedProjects:', projects);
+            projects = [];
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des projets:', error);
+        projects = [];
+    }
+    
+    console.log('Projets chargés:', projects);
+    
     const projectsList = document.querySelector('.projects-list');
     const emptyMessage = document.querySelector('.empty-projects-message');
+    
+    if (!projectsList) {
+        console.error('Élément .projects-list non trouvé dans le DOM');
+        return;
+    }
     
     // Vider la liste actuelle
     projectsList.innerHTML = '';
@@ -154,7 +189,17 @@ function initializeProjectActions(projectCard) {
 
 function duplicateProject(projectId) {
     // Récupérer tous les projets
-    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    let projects = [];
+    try {
+        projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        if (!Array.isArray(projects)) {
+            console.error('Format de données incorrect pour savedProjects dans duplicateProject:', projects);
+            projects = [];
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des projets dans duplicateProject:', error);
+        projects = [];
+    }
     
     // Trouver le projet à dupliquer
     const projectToDuplicate = projects.find(p => p.id === projectId);
@@ -224,7 +269,19 @@ function deleteProject(projectId) {
 
 function updateDashboardStats() {
     // Récupérer tous les projets
-    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    let projects = [];
+    try {
+        projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        if (!Array.isArray(projects)) {
+            console.error('Format de données incorrect pour savedProjects dans updateDashboardStats:', projects);
+            projects = [];
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des projets dans updateDashboardStats:', error);
+        projects = [];
+    }
+    
+    console.log('Statistiques des projets à mettre à jour:', projects.length, 'projets trouvés');
     
     // Mettre à jour le nombre de projets
     const projectsCountElement = document.querySelector('.stat-card:nth-child(1) .stat-value');

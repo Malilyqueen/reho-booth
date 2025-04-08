@@ -1684,6 +1684,22 @@ label {
     background-color: #e6b000;
 }
 
+.btn-reset {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-reset:hover {
+    background-color: #5a6268;
+}
+
 .projects-list {
     display: flex;
     flex-direction: column;
