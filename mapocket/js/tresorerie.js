@@ -339,8 +339,15 @@ function calculateMonthlyBalances() {
     
     // Calculer le solde pour chaque mois
     for (let i = 0; i < cashflowData.months.length; i++) {
-        const incomeTotal = parseFloat(incomeTotalRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
-        const expenseTotal = parseFloat(expenseTotalRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        // Extraction correcte du montant en tenant compte du format monétaire français
+        const incomeText = incomeTotalRow.children[i + 1].textContent;
+        const expenseText = expenseTotalRow.children[i + 1].textContent;
+        
+        // Convertir correctement les valeurs monétaires en nombres
+        const incomeTotal = parseMonetaryValue(incomeText);
+        const expenseTotal = parseMonetaryValue(expenseText);
+        
+        // Calculer le solde
         const balance = incomeTotal - expenseTotal;
         
         totalBalance += balance;
@@ -374,7 +381,13 @@ function calculateCumulativeBalances() {
     
     // Calculer le solde cumulé pour chaque mois
     for (let i = 0; i < cashflowData.months.length; i++) {
-        const monthlyBalance = parseFloat(monthlyBalanceRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        // Extraire le texte du solde mensuel
+        const monthlyBalanceText = monthlyBalanceRow.children[i + 1].textContent;
+        
+        // Convertir correctement la valeur monétaire en nombre
+        const monthlyBalance = parseMonetaryValue(monthlyBalanceText);
+        
+        // Ajouter au solde cumulé
         cumulativeBalance += monthlyBalance;
         
         // Ajouter la cellule de solde cumulé
@@ -396,7 +409,7 @@ function calculateCumulativeBalances() {
 function highlightNegativeBalances() {
     // Mettre en évidence les soldes mensuels négatifs
     document.querySelectorAll('.monthly-balance td:not(:first-child)').forEach(cell => {
-        const value = parseFloat(cell.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        const value = parseMonetaryValue(cell.textContent);
         if (value < 0) {
             cell.classList.add('negative-balance');
         } else {
@@ -406,7 +419,7 @@ function highlightNegativeBalances() {
     
     // Mettre en évidence les soldes cumulés négatifs
     document.querySelectorAll('.cumulative-balance td:not(:first-child)').forEach(cell => {
-        const value = parseFloat(cell.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        const value = parseMonetaryValue(cell.textContent);
         if (value < 0) {
             cell.classList.add('negative-balance');
             
@@ -431,7 +444,7 @@ function highlightNegativeBalances() {
  * Édite la valeur d'une cellule
  */
 function editCellValue(cell) {
-    const currentValue = parseFloat(cell.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+    const currentValue = parseMonetaryValue(cell.textContent);
     const newValue = prompt('Entrez la nouvelle valeur:', currentValue);
     
     if (newValue !== null && !isNaN(newValue)) {
@@ -632,10 +645,10 @@ function updateChart() {
         labels.push(monthCell.textContent);
         
         // Recettes, dépenses et soldes
-        const income = parseFloat(incomeTotalRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
-        const expense = parseFloat(expenseTotalRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
-        const balance = parseFloat(monthlyBalanceRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
-        const cumulative = parseFloat(cumulativeBalanceRow.children[i + 1].textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        const income = parseMonetaryValue(incomeTotalRow.children[i + 1].textContent);
+        const expense = parseMonetaryValue(expenseTotalRow.children[i + 1].textContent);
+        const balance = parseMonetaryValue(monthlyBalanceRow.children[i + 1].textContent);
+        const cumulative = parseMonetaryValue(cumulativeBalanceRow.children[i + 1].textContent);
         
         incomeData.push(income);
         expenseData.push(expense);
@@ -778,10 +791,10 @@ function loadInvoicesData() {
                         // Extraire le montant
                         let amount = 0;
                         if (invoice.totalAmount) {
-                            amount = parseFloat(invoice.totalAmount.replace(/[^0-9.-]+/g, '')) || 0;
+                            amount = parseMonetaryValue(invoice.totalAmount);
                         } else if (invoice.items) {
                             amount = invoice.items.reduce((sum, item) => {
-                                return sum + (parseFloat(item.amount) || 0) * (parseInt(item.quantity) || 1);
+                                return sum + (parseMonetaryValue(item.amount) || 0) * (parseInt(item.quantity) || 1);
                             }, 0);
                         }
                         
@@ -864,7 +877,7 @@ function loadProjectsData() {
                             }
                             
                             // Extraire le montant
-                            let amount = parseFloat(expense.amount.replace(/[^0-9.-]+/g, '')) || 0;
+                            let amount = parseMonetaryValue(expense.amount);
                             
                             // Ajouter ou mettre à jour le montant pour ce mois
                             if (!cashflowData.expenses[category][monthKey]) {
@@ -1044,10 +1057,10 @@ function confirmInvoiceSelection() {
                     // Extraire le montant
                     let amount = 0;
                     if (invoice.totalAmount) {
-                        amount = parseFloat(invoice.totalAmount.replace(/[^0-9.-]+/g, '')) || 0;
+                        amount = parseMonetaryValue(invoice.totalAmount);
                     } else if (invoice.items) {
                         amount = invoice.items.reduce((sum, item) => {
-                            return sum + (parseFloat(item.amount) || 0) * (parseInt(item.quantity) || 1);
+                            return sum + (parseMonetaryValue(item.amount) || 0) * (parseInt(item.quantity) || 1);
                         }, 0);
                     }
                     
@@ -1359,4 +1372,40 @@ function showNotification(message, type = 'info') {
         console.log(`Notification (${type}): ${message}`);
         alert(message);
     }
+}
+
+/**
+ * Parse une chaîne de caractères contenant une valeur monétaire
+ * et retourne un nombre
+ * Gère les formats français (1 234,56 €) et internationaux ($1,234.56)
+ */
+function parseMonetaryValue(text) {
+    if (!text) return 0;
+    
+    // Supprimer tous les symboles monétaires et espaces
+    let cleanText = text.replace(/[€$£¥]/g, '').trim();
+    
+    // Gérer le format français (1 234,56) vs format international (1,234.56)
+    if (cleanText.includes(',')) {
+        // Vérifier si c'est un format français (avec virgule comme séparateur décimal)
+        const hasSpaces = cleanText.includes(' ');
+        const hasMultipleCommas = (cleanText.match(/,/g) || []).length > 1;
+        
+        if (hasSpaces || !hasMultipleCommas) {
+            // Format français: supprimer les espaces et remplacer la virgule par un point
+            cleanText = cleanText.replace(/\s/g, '').replace(',', '.');
+        } else {
+            // Format international: supprimer les virgules séparant les milliers
+            cleanText = cleanText.replace(/,/g, '');
+        }
+    } else {
+        // Pas de virgule, supprimer les espaces qui pourraient séparer les milliers
+        cleanText = cleanText.replace(/\s/g, '');
+    }
+    
+    // Nettoyer les autres caractères non numériques sauf le point décimal
+    cleanText = cleanText.replace(/[^\d.-]/g, '');
+    
+    // Parser en nombre
+    return parseFloat(cleanText) || 0;
 }
