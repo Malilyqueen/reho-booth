@@ -151,9 +151,8 @@ function initializeTemplateOptions() {
                 projectTypeTitle.textContent = templateType;
             }
             
-            // Cette fonction sera activée lorsque l'on mettra en place la génération dynamique
-            // des catégories et sous-catégories basées sur le template sélectionné
-            // updateTemplateCategories(templateType);
+            // Mise à jour des catégories et sous-catégories
+            updateTemplateCategories(templateType);
             
             // Mise à jour du conseil IA
             updateAIAdvice(templateType);
@@ -695,6 +694,338 @@ function initializeBudgetCalculation() {
     });
 }
 
+// Fonction pour mettre à jour les catégories de dépenses en fonction du modèle sélectionné
+function updateTemplateCategories(templateType) {
+    let categoriesData = [];
+    
+    // Définir les catégories et sous-catégories en fonction du modèle choisi
+    switch(templateType) {
+        case 'Ménage familial':
+            categoriesData = [
+                {
+                    name: 'Ménage',
+                    subcategories: [
+                        {
+                            name: 'Courses alimentaires',
+                            lines: [
+                                { name: 'Courses semaine 1', amount: '€ 52' },
+                                { name: 'Courses semaine 2', amount: '€ 47' }
+                            ]
+                        },
+                        {
+                            name: 'Factures',
+                            lines: [
+                                { name: 'EDF', amount: '€ 78' },
+                                { name: 'Internet', amount: '€ 30' }
+                            ]
+                        },
+                        {
+                            name: 'Entretien',
+                            lines: [
+                                { name: 'Produits ménagers', amount: '€ 25' },
+                                { name: 'Réparations', amount: '€ 40' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Enfants',
+                    subcategories: [
+                        {
+                            name: 'École',
+                            lines: [
+                                { name: 'Fournitures', amount: '€ 30' },
+                                { name: 'Cantine', amount: '€ 85' }
+                            ]
+                        },
+                        {
+                            name: 'Loisirs',
+                            lines: [
+                                { name: 'Activités sportives', amount: '€ 45' },
+                                { name: 'Sorties', amount: '€ 35' }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+        
+        case 'Maison':
+            categoriesData = [
+                {
+                    name: 'Loyer & Charges',
+                    subcategories: [
+                        {
+                            name: 'Mensualités',
+                            lines: [
+                                { name: 'Loyer/Crédit', amount: '€ 850' },
+                                { name: 'Charges', amount: '€ 120' }
+                            ]
+                        },
+                        {
+                            name: 'Factures',
+                            lines: [
+                                { name: 'Électricité', amount: '€ 75' },
+                                { name: 'Eau', amount: '€ 45' },
+                                { name: 'Internet/TV', amount: '€ 40' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Entretien',
+                    subcategories: [
+                        {
+                            name: 'Réparations',
+                            lines: [
+                                { name: 'Petits travaux', amount: '€ 100' },
+                                { name: 'Matériel', amount: '€ 75' }
+                            ]
+                        },
+                        {
+                            name: 'Jardinage',
+                            lines: [
+                                { name: 'Plantes', amount: '€ 40' },
+                                { name: 'Outils', amount: '€ 50' }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+        
+        case 'Famille':
+            categoriesData = [
+                {
+                    name: 'Alimentation',
+                    subcategories: [
+                        {
+                            name: 'Courses hebdomadaires',
+                            lines: [
+                                { name: 'Supermarché', amount: '€ 150' },
+                                { name: 'Marché', amount: '€ 50' }
+                            ]
+                        },
+                        {
+                            name: 'Extras',
+                            lines: [
+                                { name: 'Repas restaurant', amount: '€ 80' },
+                                { name: 'Livraisons', amount: '€ 40' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Éducation',
+                    subcategories: [
+                        {
+                            name: 'Scolarité',
+                            lines: [
+                                { name: 'Frais scolaires', amount: '€ 100' },
+                                { name: 'Fournitures', amount: '€ 70' }
+                            ]
+                        },
+                        {
+                            name: 'Activités extrascolaires',
+                            lines: [
+                                { name: 'Sport', amount: '€ 120' },
+                                { name: 'Musique', amount: '€ 90' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Santé',
+                    subcategories: [
+                        {
+                            name: 'Consultations',
+                            lines: [
+                                { name: 'Médecin', amount: '€ 50' },
+                                { name: 'Spécialistes', amount: '€ 100' }
+                            ]
+                        },
+                        {
+                            name: 'Pharmacie',
+                            lines: [
+                                { name: 'Médicaments', amount: '€ 60' },
+                                { name: 'Produits santé', amount: '€ 40' }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+        
+        // Pour le template Anniversaire existant    
+        case 'Anniversaire':
+            categoriesData = [
+                {
+                    name: 'Restauration',
+                    subcategories: [
+                        {
+                            name: 'Traiteur',
+                            lines: [
+                                { name: 'Menu principal', amount: '€ 150' },
+                                { name: 'Desserts', amount: '€ 50' }
+                            ]
+                        },
+                        {
+                            name: 'Boissons',
+                            lines: [
+                                { name: 'Soft drinks', amount: '€ 50' },
+                                { name: 'Alcool', amount: '€ 50' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Animation',
+                    subcategories: [
+                        {
+                            name: 'DJ',
+                            lines: [
+                                { name: 'DJ forfait soirée', amount: '€ 150' }
+                            ]
+                        },
+                        {
+                            name: 'Jeux',
+                            lines: [
+                                { name: 'Matériel de jeux', amount: '€ 50' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Décoration',
+                    subcategories: [
+                        {
+                            name: 'Salle',
+                            lines: [
+                                { name: 'Ballons/Guirlandes', amount: '€ 60' },
+                                { name: 'Centre de table', amount: '€ 40' }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+        
+        // Par défaut, conserver les catégories actuelles (ne rien faire)
+        default:
+            return;
+    }
+    
+    // Mettre à jour l'interface avec les nouvelles catégories
+    if (categoriesData.length > 0) {
+        updateCategoriesUI(categoriesData);
+    }
+}
+
+// Fonction pour mettre à jour l'UI avec les nouvelles catégories
+function updateCategoriesUI(categoriesData) {
+    // Trouver le conteneur des catégories
+    const expenseCategories = document.querySelector('.expense-categories');
+    const addCategoryContainer = document.querySelector('.add-category-container');
+    const totalBudgetElement = document.querySelector('.total-budget');
+    
+    // Supprimer les catégories existantes (sauf le bouton d'ajout et le total)
+    const existingCategories = document.querySelectorAll('.expense-category');
+    existingCategories.forEach(category => {
+        category.remove();
+    });
+    
+    // Créer les nouvelles catégories et sous-catégories
+    categoriesData.forEach(categoryData => {
+        // Créer la catégorie principale
+        const category = document.createElement('div');
+        category.className = 'expense-category';
+        
+        // Préparer le HTML de l'en-tête de catégorie
+        let categoryHTML = `
+            <div class="category-header">
+                <h4 class="category-name">${categoryData.name}</h4>
+                <span class="category-amount">€ 0</span>
+                <div class="category-controls">
+                    <button type="button" class="category-toggle open">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="subcategories-container open">
+        `;
+        
+        // Ajouter les sous-catégories
+        if (categoryData.subcategories && categoryData.subcategories.length > 0) {
+            categoryData.subcategories.forEach(subcategoryData => {
+                // Ajouter l'HTML de la sous-catégorie
+                categoryHTML += `
+                    <div class="subcategory">
+                        <div class="subcategory-header">
+                            <h5 class="subcategory-name">${subcategoryData.name}</h5>
+                            <span class="subcategory-amount">€ 0</span>
+                            <button type="button" class="subcategory-toggle open">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                        <div class="expense-lines open">
+                `;
+                
+                // Ajouter les lignes de dépenses
+                if (subcategoryData.lines && subcategoryData.lines.length > 0) {
+                    subcategoryData.lines.forEach(line => {
+                        categoryHTML += `
+                            <div class="expense-line">
+                                <input type="text" class="form-control expense-line-name" value="${line.name}">
+                                <input type="text" class="form-control expense-line-amount" value="${line.amount}">
+                                <div class="expense-line-actions">
+                                    <button type="button" class="btn-sm btn-delete-line">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // Ajouter le bouton pour ajouter une ligne
+                categoryHTML += `
+                            <button type="button" class="add-line-btn">
+                                <i class="fas fa-plus"></i> Ajouter une ligne
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        // Ajouter le footer avec le bouton pour ajouter une sous-catégorie
+        categoryHTML += `
+                <div class="subcategory-footer">
+                    <button type="button" class="add-subcategory-btn">
+                        <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Définir le HTML complet de la catégorie
+        category.innerHTML = categoryHTML;
+        
+        // Insérer la catégorie avant le bouton d'ajout
+        expenseCategories.insertBefore(category, addCategoryContainer);
+    });
+    
+    // Réinitialiser les interactions
+    initializeExpenseCategories();
+    initializeSubcategories();
+    
+    // Mettre à jour tous les totaux
+    const subcategories = document.querySelectorAll('.subcategory');
+    subcategories.forEach(subcategory => {
+        updateSubcategoryTotal(subcategory);
+    });
+}
+
 function updateAIAdvice(templateType) {
     let advice = '';
     
@@ -720,6 +1051,15 @@ function updateAIAdvice(templateType) {
         // 🏠 Vie personnelle
         case 'Budget mensuel':
             advice = 'Réservez 10% de votre budget pour les dépenses imprévues.';
+            break;
+        case 'Ménage familial':
+            advice = 'Créez un calendrier pour répartir les dépenses importantes sur plusieurs mois.';
+            break;
+        case 'Maison':
+            advice = 'Prévoyez un budget d\'entretien annuel d\'environ 1% de la valeur de votre logement.';
+            break;
+        case 'Famille':
+            advice = 'Pensez à mettre en place un système d\'épargne pour les projets futurs des enfants.';
             break;
         case 'Déménagement':
             advice = 'Demandez plusieurs devis pour la société de déménagement pour comparer les prix.';
