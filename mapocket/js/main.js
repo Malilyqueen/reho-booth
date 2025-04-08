@@ -691,3 +691,29 @@ function viewProject(projectId) {
         showNotification('Projet non trouvé');
     }
 }
+
+// Fonction utilitaire pour créer un portefeuille de test
+function createTestWallet(name = "Portefeuille Principal", balance = 2000) {
+    // Récupérer les portefeuilles existants ou créer un tableau vide
+    let wallets = JSON.parse(localStorage.getItem('mapocket_wallets') || '[]');
+    
+    // Ajouter le nouveau portefeuille
+    const newWallet = {
+        id: Date.now().toString(),
+        name: name,
+        balance: balance,
+        createdAt: new Date().toISOString(),
+        currency: "€"
+    };
+    
+    wallets.push(newWallet);
+    
+    // Sauvegarder les portefeuilles
+    localStorage.setItem('mapocket_wallets', JSON.stringify(wallets));
+    
+    // Recharger les données du tableau de bord
+    updateDashboardStats();
+    
+    console.log('Portefeuille de test créé avec succès:', newWallet);
+    return newWallet;
+}
