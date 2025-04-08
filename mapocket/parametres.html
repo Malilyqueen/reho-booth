@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - MaPocket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/parametres.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="assets/logo.png" alt="MaPocket Logo">
+                    <h1>MaPocket</h1>
+                </div>
+                <button class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="nouveau-projet.html">
+                            <i class="fas fa-folder-plus"></i>
+                            Nouveau projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            Objectifs & Défis
+                        </a>
+                    </li>
+                    <li>
+                        <a href="tresorerie.html">
+                            <i class="fas fa-chart-line"></i>
+                            Plan de trésorerie
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            MaPocket Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="assistant-projet.html">
+                            <i class="fas fa-magic"></i>
+                            Assistant Projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="parametres.html">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="page-info">
+                    <h2>Paramètres</h2>
+                    <p>Personnalisez l'application selon vos préférences</p>
+                </div>
+                <div class="actions">
+                    <button id="helpBtn" class="btn-icon" title="Aide">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="settings-container">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="appearance">
+                        <i class="fas fa-palette"></i>
+                        Apparence
+                    </button>
+                    <button class="tab-btn" data-tab="profile">
+                        <i class="fas fa-user"></i>
+                        Profil
+                    </button>
+                    <button class="tab-btn" data-tab="subscription">
+                        <i class="fas fa-crown"></i>
+                        Abonnement
+                    </button>
+                    <button class="tab-btn" data-tab="users" id="usersTab">
+                        <i class="fas fa-users"></i>
+                        Utilisateurs
+                    </button>
+                    <button class="tab-btn" data-tab="notifications">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </button>
+                    <button class="tab-btn" data-tab="security">
+                        <i class="fas fa-shield-alt"></i>
+                        Sécurité
+                    </button>
+                </div>
+
+                <!-- Onglet Apparence -->
+                <div id="appearance-content" class="tab-content active">
+                    <div class="settings-card">
+                        <h3>Thème</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Mode d'affichage</h4>
+                                <p>Choisissez un thème clair ou sombre</p>
+                            </div>
+                            <div class="theme-selector">
+                                <div class="theme-option">
+                                    <div class="theme-preview light-theme" id="light-theme-preview">
+                                        <div class="preview-header"></div>
+                                        <div class="preview-content"></div>
+                                    </div>
+                                    <label class="theme-label">
+                                        <input type="radio" name="theme" value="light" id="light-theme" checked>
+                                        Clair
+                                    </label>
+                                </div>
+                                <div class="theme-option">
+                                    <div class="theme-preview dark-theme" id="dark-theme-preview">
+                                        <div class="preview-header"></div>
+                                        <div class="preview-content"></div>
+                                    </div>
+                                    <label class="theme-label">
+                                        <input type="radio" name="theme" value="dark" id="dark-theme">
+                                        Sombre
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Taille du texte</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Taille de police</h4>
+                                <p>Ajustez la taille du texte dans l'application</p>
+                            </div>
+                            <div class="font-size-selector">
+                                <button class="font-size-btn" data-size="small">A</button>
+                                <button class="font-size-btn active" data-size="medium">A</button>
+                                <button class="font-size-btn" data-size="large">A</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Langue et région</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Langue</h4>
+                                <p>Sélectionnez votre langue préférée</p>
+                            </div>
+                            <div class="language-selector">
+                                <div class="language-option">
+                                    <input type="radio" id="lang-fr" name="language" value="fr" checked hidden>
+                                    <label for="lang-fr" class="language-btn">
+                                        <span class="language-flag">🇫🇷</span> Français
+                                    </label>
+                                </div>
+                                <div class="language-option">
+                                    <input type="radio" id="lang-en" name="language" value="en" hidden>
+                                    <label for="lang-en" class="language-btn">
+                                        <span class="language-flag">🇬🇧</span> English
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Format de date</h4>
+                                <p>Choisissez comment les dates sont affichées</p>
+                            </div>
+                            <select id="dateFormat" class="select-input">
+                                <option value="DD/MM/YYYY">JJ/MM/AAAA</option>
+                                <option value="MM/DD/YYYY">MM/JJ/AAAA</option>
+                                <option value="YYYY-MM-DD">AAAA-MM-JJ</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Profil -->
+                <div id="profile-content" class="tab-content">
+                    <div class="settings-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <img id="profileAvatar" src="assets/avatar-default.svg" alt="Avatar de profil">
+                                <label for="avatarUpload" class="avatar-upload" title="Changer d'avatar">
+                                    <i class="fas fa-camera"></i>
+                                </label>
+                                <input type="file" id="avatarUpload" accept="image/*" hidden>
+                            </div>
+                            <div class="profile-info">
+                                <h4 id="profileName">Malala Rabejaona</h4>
+                                <p id="profileEmail">malala@example.com</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-form">
+                            <div class="form-group">
+                                <label for="profileNameInput">Nom complet</label>
+                                <input type="text" id="profileNameInput" class="form-input" value="Malala Rabejaona">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileEmailInput">Adresse e-mail</label>
+                                <input type="email" id="profileEmailInput" class="form-input" value="malala@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="profilePhoneInput">Téléphone (optionnel)</label>
+                                <input type="tel" id="profilePhoneInput" class="form-input" placeholder="+33 6 XX XX XX XX">
+                            </div>
+                            <div class="form-actions">
+                                <button id="saveProfileBtn" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Abonnement -->
+                <div id="subscription-content" class="tab-content">
+                    <div class="settings-card subscription-card">
+                        <div class="current-plan">
+                            <div class="plan-badge freemium">
+                                <i class="fas fa-gem"></i> <span id="currentPlanName">Freemium</span>
+                            </div>
+                            <p class="plan-description">Vous utilisez actuellement le plan Freemium avec des fonctionnalités limitées.</p>
+                        </div>
+
+                        <div class="plan-features">
+                            <h4>Fonctionnalités incluses :</h4>
+                            <ul class="features-list">
+                                <li><i class="fas fa-check"></i> 1 projet maximum</li>
+                                <li><i class="fas fa-check"></i> Fonctionnalités de base de gestion de budget</li>
+                                <li><i class="fas fa-check"></i> Accès à la version mobile</li>
+                                <li><i class="fas fa-times"></i> Outils MaPocket Pro</li>
+                                <li><i class="fas fa-times"></i> Assistance IA avancée</li>
+                                <li><i class="fas fa-times"></i> Partage et collaboration</li>
+                            </ul>
+                            <button id="manageSubscriptionBtn" class="btn btn-secondary">
+                                <i class="fas fa-cog"></i> Gérer mon abonnement
+                            </button>
+                        </div>
+
+                        <div class="upgrade-options">
+                            <h4>Passez à un forfait supérieur</h4>
+                            <div class="plan-cards">
+                                <div class="plan-option">
+                                    <h5>Basic</h5>
+                                    <div class="plan-price">€4.99 <span>/mois</span></div>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Projets illimités</li>
+                                        <li><i class="fas fa-check"></i> Toutes les fonctionnalités de base</li>
+                                        <li><i class="fas fa-check"></i> Accès mobile avancé</li>
+                                        <li><i class="fas fa-times"></i> Outils Pro limités</li>
+                                        <li><i class="fas fa-times"></i> Pas d'IA avancée</li>
+                                    </ul>
+                                    <button class="btn btn-secondary">Passer au plan Basic</button>
+                                </div>
+                                <div class="plan-option highlighted">
+                                    <div class="plan-badge">Populaire</div>
+                                    <h5>Pro</h5>
+                                    <div class="plan-price">€9.99 <span>/mois</span></div>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Projets illimités</li>
+                                        <li><i class="fas fa-check"></i> Toutes les fonctionnalités</li>
+                                        <li><i class="fas fa-check"></i> Outils MaPocket Pro complets</li>
+                                        <li><i class="fas fa-check"></i> IA avancée & conseils personnalisés</li>
+                                        <li><i class="fas fa-check"></i> Partage et collaboration</li>
+                                    </ul>
+                                    <button class="btn btn-primary">Passer au plan Pro</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Utilisateurs -->
+                <div id="users-content" class="tab-content">
+                    <div id="usersEligible">
+                        <div class="settings-card">
+                            <div class="collaborators-section">
+                                <div class="section-header">
+                                    <h4>Projets partagés</h4>
+                                    <p>Gérez les utilisateurs avec lesquels vous avez partagé vos projets</p>
+                                </div>
+
+                                <div class="shared-projects">
+                                    <div class="shared-project">
+                                        <div class="project-info">
+                                            <h5>Rénovation Maison</h5>
+                                            <span class="project-date">Partagé le 15/03/2025</span>
+                                        </div>
+
+                                        <div class="project-collaborators">
+                                            <h6>Collaborateurs (2)</h6>
+                                            <ul class="collaborator-list">
+                                                <li class="collaborator-item">
+                                                    <div class="collaborator-info">
+                                                        <div class="collaborator-avatar">SR</div>
+                                                        <div>
+                                                            <div class="collaborator-name">Sarah Richard</div>
+                                                            <div class="collaborator-email">sarah.richard@example.com</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collaborator-actions">
+                                                        <span class="collaborator-permission">Lecture</span>
+                                                        <button class="btn-icon btn-edit"><i class="fas fa-pen"></i></button>
+                                                        <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </li>
+
+                                                <li class="collaborator-item">
+                                                    <div class="collaborator-info">
+                                                        <div class="collaborator-avatar">TM</div>
+                                                        <div>
+                                                            <div class="collaborator-name">Thomas Martin</div>
+                                                            <div class="collaborator-email">thomas.martin@example.com</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collaborator-actions">
+                                                        <span class="collaborator-permission">Modification</span>
+                                                        <button class="btn-icon btn-edit"><i class="fas fa-pen"></i></button>
+                                                        <button class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+
+                                            <div class="add-collaborator">
+                                                <button class="btn btn-secondary" data-project-id="1">
+                                                    <i class="fas fa-user-plus"></i> Ajouter un collaborateur
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="usersNotEligible" style="display: none;">
+                        <div class="upgrade-notice">
+                            <div class="notice-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="notice-content">
+                                <h4>Partagez vos projets</h4>
+                                <p>Passez au plan Pro pour inviter des collaborateurs et partager vos projets avec d'autres personnes.</p>
+                                <button class="btn btn-primary">Passer au plan Pro</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Notifications -->
+                <div id="notifications-content" class="tab-content">
+                    <div class="settings-card">
+                        <h3>Préférences de notification</h3>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Notifications par e-mail</h4>
+                                <p>Recevez des e-mails pour les mises à jour importantes</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Rappels budgétaires</h4>
+                                <p>Recevez des alertes lorsque vous approchez de limites de budget</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Suggestions IA</h4>
+                                <p>Recevez des suggestions personnalisées pour optimiser vos budgets</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Mises à jour et nouvelles fonctionnalités</h4>
+                                <p>Soyez informé des nouvelles fonctionnalités et améliorations</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Sécurité -->
+                <div id="security-content" class="tab-content">
+                    <div class="settings-card">
+                        <h3>Paramètres de mot de passe</h3>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Changer le mot de passe</h4>
+                                <p>Mettez à jour votre mot de passe régulièrement pour plus de sécurité</p>
+                            </div>
+                            <button class="btn btn-secondary">Modifier</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Authentification à deux facteurs</h4>
+                                <p>Ajoutez une couche de sécurité supplémentaire à votre compte</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Connexions actives</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Sessions actuelles</h4>
+                                <p>Gérez les appareils connectés à votre compte</p>
+                            </div>
+                            <button class="btn btn-secondary">Voir les sessions</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Déconnexion de tous les appareils</h4>
+                                <p>Déconnectez-vous de tous les appareils sauf celui-ci</p>
+                            </div>
+                            <button class="btn btn-danger">Déconnecter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal d'invitation de collaborateurs -->
+    <div id="inviteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Inviter un collaborateur</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="inviteForm">
+                    <input type="hidden" id="inviteProjectId" value="">
+                    <div class="form-group">
+                        <label for="inviteEmail">Adresse e-mail</label>
+                        <input type="email" id="inviteEmail" required placeholder="exemple@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="invitePermission">Niveau d'accès</label>
+                        <select id="invitePermission" required>
+                            <option value="read">Lecture seule</option>
+                            <option value="write">Modification</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteMessage">Message personnalisé (optionnel)</label>
+                        <textarea id="inviteMessage" placeholder="Écrivez un message pour accompagner l'invitation..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary close-modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Envoyer l'invitation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/parametres.js"></script>
+</body>
+</html>
