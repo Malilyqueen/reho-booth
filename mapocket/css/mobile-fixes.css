@@ -38,11 +38,11 @@
     }
     
     /* Menu vertical avec icônes uniquement */
-    .main-nav {
+    .main-nav, .sidebar-nav {
         width: 100%;
     }
     
-    .main-nav ul {
+    .main-nav ul, .sidebar-nav ul {
         display: flex;
         flex-direction: column;
         padding: 0;
@@ -50,14 +50,14 @@
         width: 100%;
     }
     
-    .main-nav ul li {
+    .main-nav ul li, .sidebar-nav ul li {
         margin: 5px 0;
         width: 100%;
         display: flex;
         justify-content: center;
     }
     
-    .main-nav ul li a {
+    .main-nav ul li a, .sidebar-nav ul li a {
         width: 40px;
         height: 40px;
         border-radius: 8px;
@@ -68,18 +68,18 @@
         transition: all 0.2s;
     }
     
-    .main-nav ul li.active a {
+    .main-nav ul li.active a, .sidebar-nav ul li.active a {
         background-color: rgba(100, 155, 255, 0.2);
         color: #fff;
     }
     
-    .main-nav ul li a:hover {
+    .main-nav ul li a:hover, .sidebar-nav ul li a:hover {
         background-color: rgba(255,255,255,0.1);
         color: #fff;
     }
     
     /* Cacher le texte du menu en mobile */
-    .main-nav ul li a .menu-text {
+    .main-nav ul li a .menu-text, .sidebar-nav ul li a span {
         display: none;
     }
     
