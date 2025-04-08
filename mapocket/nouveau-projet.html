@@ -79,134 +79,276 @@
                     <div class="template-selection">
                         <h3>Sélectionnez un modèle</h3>
                         
-                        <!-- Templates événementiels -->
-                        <div class="template-category">
-                            <h4>🎉 Événementiels</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn active">Anniversaire</button>
-                                <button type="button" class="template-btn">Mariage</button>
-                                <button type="button" class="template-btn">Baby shower</button>
-                                <button type="button" class="template-btn">Fête d'entreprise</button>
-                                <button type="button" class="template-btn">Célébration religieuse</button>
+                        <div class="template-accordion">
+                            <!-- Catégorie: Vie personnelle -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-category="vie-personnelle">
+                                    <span><span class="category-icon">🏠</span> Vie personnelle</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content" id="vie-personnelle-content">
+                                    <div class="template-options">
+                                        <div class="template-option" data-template="Budget mensuel">Budget mensuel</div>
+                                        <div class="template-option" data-template="Déménagement">Déménagement</div>
+                                        <div class="template-option" data-template="Rentrée scolaire">Rentrée scolaire</div>
+                                        <div class="template-option" data-template="Fêtes de fin d'année">Fêtes de fin d'année</div>
+                                        <div class="template-option" data-template="Vacances">Vacances</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Templates vie personnelle -->
-                        <div class="template-category">
-                            <h4>🏠 Vie personnelle</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn">Budget mensuel</button>
-                                <button type="button" class="template-btn">Déménagement</button>
-                                <button type="button" class="template-btn">Rentrée scolaire</button>
-                                <button type="button" class="template-btn">Fêtes de fin d'année</button>
-                                <button type="button" class="template-btn">Vacances</button>
+                            
+                            <!-- Catégorie: Événementiels -->
+                            <div class="accordion-item">
+                                <div class="accordion-header active" data-category="evenementiels">
+                                    <span><span class="category-icon">🎉</span> Événementiels</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content active" id="evenementiels-content">
+                                    <div class="template-options">
+                                        <div class="template-option selected" data-template="Anniversaire">Anniversaire</div>
+                                        <div class="template-option" data-template="Mariage">Mariage</div>
+                                        <div class="template-option" data-template="Baby shower">Baby shower</div>
+                                        <div class="template-option" data-template="Fête d'entreprise">Fête d'entreprise</div>
+                                        <div class="template-option" data-template="Célébration religieuse">Célébration religieuse</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Templates projets professionnels -->
-                        <div class="template-category">
-                            <h4>💼 Projets professionnels</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn">Lancement de produit</button>
-                                <button type="button" class="template-btn">Création de site web</button>
-                                <button type="button" class="template-btn">Campagne marketing</button>
-                                <button type="button" class="template-btn">Formation professionnelle</button>
-                                <button type="button" class="template-btn">Lancement d'entreprise</button>
+                            
+                            <!-- Catégorie: Projets professionnels -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-category="projets-professionnels">
+                                    <span><span class="category-icon">💼</span> Projets professionnels</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content" id="projets-professionnels-content">
+                                    <div class="template-options">
+                                        <div class="template-option" data-template="Lancement de produit">Lancement de produit</div>
+                                        <div class="template-option" data-template="Création de site web">Création de site web</div>
+                                        <div class="template-option" data-template="Campagne marketing">Campagne marketing</div>
+                                        <div class="template-option" data-template="Formation professionnelle">Formation professionnelle</div>
+                                        <div class="template-option" data-template="Lancement d'entreprise">Lancement d'entreprise</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Templates objectifs financiers -->
-                        <div class="template-category">
-                            <h4>💰 Objectifs financiers</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn">Épargne mensuelle</button>
-                                <button type="button" class="template-btn">Remboursement de dettes</button>
-                                <button type="button" class="template-btn">Projet "Gros achat"</button>
+                            
+                            <!-- Catégorie: Objectifs financiers -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-category="objectifs-financiers">
+                                    <span><span class="category-icon">💰</span> Objectifs financiers</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content" id="objectifs-financiers-content">
+                                    <div class="template-options">
+                                        <div class="template-option" data-template="Épargne mensuelle">Épargne mensuelle</div>
+                                        <div class="template-option" data-template="Remboursement de dettes">Remboursement de dettes</div>
+                                        <div class="template-option" data-template="Projet \"Gros achat\"">Projet "Gros achat"</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Templates collectifs -->
-                        <div class="template-category">
-                            <h4>🤝 Collectifs & communautaires</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn">Cagnotte / tontine</button>
-                                <button type="button" class="template-btn">Association caritative</button>
-                                <button type="button" class="template-btn">Budget réunion / AG</button>
-                                <button type="button" class="template-btn">Fonds commun</button>
+                            
+                            <!-- Catégorie: Collectifs & communautaires -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-category="collectifs">
+                                    <span><span class="category-icon">🤝</span> Collectifs & communautaires</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content" id="collectifs-content">
+                                    <div class="template-options">
+                                        <div class="template-option" data-template="Cagnotte / tontine">Cagnotte / tontine</div>
+                                        <div class="template-option" data-template="Association caritative">Association caritative</div>
+                                        <div class="template-option" data-template="Budget réunion / AG">Budget réunion / AG</div>
+                                        <div class="template-option" data-template="Fonds commun">Fonds commun</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Template personnalisé -->
-                        <div class="template-category">
-                            <h4>✨ Personnalisé</h4>
-                            <div class="template-buttons">
-                                <button type="button" class="template-btn">Personnalisé</button>
+                            
+                            <!-- Catégorie: Personnalisé -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" data-category="personnalise">
+                                    <span><span class="category-icon">✨</span> Personnalisé</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="accordion-content" id="personnalise-content">
+                                    <div class="template-options">
+                                        <div class="template-option" data-template="Personnalisé">Personnalisé</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="expense-categories">
-                        <table class="expense-table">
-                            <thead>
-                                <tr>
-                                    <th>Catégorie</th>
-                                    <th>Description</th>
-                                    <th>Montant</th>
-                                    <th></th> <!-- Colonne pour actions -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" class="form-control category-name-input" value="Traiteur" placeholder="Nom de la catégorie"></td>
-                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
-                                    <td><input type="text" class="form-control amount-input" value="200" data-category="catering"></td>
-                                    <td class="action-cell">
-                                        <button type="button" class="delete-category-btn">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" class="form-control category-name-input" value="Décorations" placeholder="Nom de la catégorie"></td>
-                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
-                                    <td><input type="text" class="form-control amount-input" value="100" data-category="decorations"></td>
-                                    <td class="action-cell">
-                                        <button type="button" class="delete-category-btn">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" class="form-control category-name-input" value="Animation" placeholder="Nom de la catégorie"></td>
-                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
-                                    <td><input type="text" class="form-control amount-input" value="100" data-category="entertainment"></td>
-                                    <td class="action-cell">
-                                        <button type="button" class="delete-category-btn">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><input type="text" class="form-control category-name-input" value="Cadeaux" placeholder="Nom de la catégorie"></td>
-                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
-                                    <td><input type="text" class="form-control amount-input" value="100" data-category="gifts"></td>
-                                    <td class="action-cell">
-                                        <button type="button" class="delete-category-btn">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="total-row">
-                                    <td colspan="3" class="text-right">Total:</td>
-                                    <td class="total-cell">€ 500</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h3>Postes de dépenses</h3>
                         
+                        <!-- Catégorie 1 avec sous-catégories -->
+                        <div class="expense-category">
+                            <div class="category-header">
+                                <h4 class="category-name">Restauration</h4>
+                                <span class="category-amount">€ 300</span>
+                                <div class="category-controls">
+                                    <button type="button" class="category-toggle open">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="subcategories-container open">
+                                <!-- Sous-catégorie 1.1 -->
+                                <div class="subcategory">
+                                    <div class="subcategory-header">
+                                        <h5 class="subcategory-name">Traiteur</h5>
+                                        <span class="subcategory-amount">€ 200</span>
+                                        <button type="button" class="subcategory-toggle open">
+                                            <i class="fas fa-chevron-up"></i>
+                                        </button>
+                                    </div>
+                                    <div class="expense-lines open">
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="Menu principal">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 150">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="Desserts">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 50">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="add-line-btn">
+                                            <i class="fas fa-plus"></i> Ajouter une ligne
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sous-catégorie 1.2 -->
+                                <div class="subcategory">
+                                    <div class="subcategory-header">
+                                        <h5 class="subcategory-name">Boissons</h5>
+                                        <span class="subcategory-amount">€ 100</span>
+                                        <button type="button" class="subcategory-toggle">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    <div class="expense-lines">
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="Soft drinks">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 50">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="Alcool">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 50">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="add-line-btn">
+                                            <i class="fas fa-plus"></i> Ajouter une ligne
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="subcategory-footer">
+                                    <button type="button" class="add-subcategory-btn">
+                                        <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Catégorie 2 avec sous-catégories -->
+                        <div class="expense-category">
+                            <div class="category-header">
+                                <h4 class="category-name">Animation</h4>
+                                <span class="category-amount">€ 200</span>
+                                <div class="category-controls">
+                                    <button type="button" class="category-toggle">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="subcategories-container">
+                                <!-- Sous-catégorie 2.1 -->
+                                <div class="subcategory">
+                                    <div class="subcategory-header">
+                                        <h5 class="subcategory-name">DJ</h5>
+                                        <span class="subcategory-amount">€ 150</span>
+                                        <button type="button" class="subcategory-toggle">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    <div class="expense-lines">
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="DJ forfait soirée">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 150">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="add-line-btn">
+                                            <i class="fas fa-plus"></i> Ajouter une ligne
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sous-catégorie 2.2 -->
+                                <div class="subcategory">
+                                    <div class="subcategory-header">
+                                        <h5 class="subcategory-name">Jeux</h5>
+                                        <span class="subcategory-amount">€ 50</span>
+                                        <button type="button" class="subcategory-toggle">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    <div class="expense-lines">
+                                        <div class="expense-line">
+                                            <input type="text" class="form-control expense-line-name" value="Matériel de jeux">
+                                            <input type="text" class="form-control expense-line-amount" value="€ 50">
+                                            <div class="expense-line-actions">
+                                                <button type="button" class="btn-sm btn-delete-line">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="add-line-btn">
+                                            <i class="fas fa-plus"></i> Ajouter une ligne
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="subcategory-footer">
+                                    <button type="button" class="add-subcategory-btn">
+                                        <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bouton pour ajouter une nouvelle catégorie principale -->
                         <div class="add-category-container">
-                            <button type="button" id="addCategoryBtn" class="btn btn-outline">
-                                <i class="fas fa-plus"></i> Ajouter une catégorie
+                            <button type="button" id="addMainCategoryBtn" class="btn btn-outline">
+                                <i class="fas fa-plus"></i> Ajouter une catégorie principale
                             </button>
+                        </div>
+                        
+                        <!-- Total général -->
+                        <div class="total-budget">
+                            <div class="total-budget-label">Total du budget:</div>
+                            <div class="total-budget-amount">€ 500</div>
                         </div>
                     </div>
 
