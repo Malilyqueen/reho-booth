@@ -1,7 +1,16 @@
 // Main JavaScript file for MaPocket application
 
+// Variables globales
+let isAdmin = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('MaPocket application initialized');
+    
+    // Vérifier si l'utilisateur est administrateur (version simplifiée)
+    checkAdminStatus();
+    
+    // Initialiser l'accès à la page d'administration
+    initAdminAccess();
     
     // Initialize the UI elements
     initializeUI();
@@ -33,6 +42,124 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+/**
+ * Vérifie si l'utilisateur a le statut d'administrateur
+ * Dans une application réelle, cette vérification se ferait côté serveur
+ */
+function checkAdminStatus() {
+    // Version simplifiée pour la démo : utiliser localStorage pour activer/désactiver le mode admin
+    const adminStatus = localStorage.getItem('isAdmin');
+    
+    // Pour la démo, définir à true pour avoir accès aux fonctionnalités d'administration
+    // Dans une vraie application, l'authentification serait plus sécurisée
+    isAdmin = adminStatus === 'true';
+    
+    console.log('Statut admin :', isAdmin ? 'Administrateur' : 'Utilisateur standard');
+    
+    // Appliquer le statut admin à l'interface
+    document.body.classList.toggle('is-admin', isAdmin);
+}
+
+/**
+ * Initialise l'accès à la page d'administration
+ * Gère l'affichage ou le masquage du lien admin, et redirige si nécessaire
+ */
+function initAdminAccess() {
+    // Récupérer tous les éléments de menu admin
+    const adminMenuItems = document.querySelectorAll('.admin-only');
+    
+    // Afficher ou masquer les éléments en fonction du statut admin
+    if (adminMenuItems.length > 0) {
+        adminMenuItems.forEach(item => {
+            if (isAdmin) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+    
+    // Si on est sur la page d'administration mais qu'on n'est pas admin, rediriger vers l'accueil
+    if (window.location.pathname.includes('admin.html') && !isAdmin) {
+        console.log('Accès non autorisé à la page d\'administration, redirection...');
+        window.location.href = 'index.html';
+    }
+    
+    // Ajouter un bouton de test pour activer/désactiver le mode admin (pour la démo uniquement)
+    // Dans une vraie application, cette fonctionnalité ne serait pas disponible
+    addAdminToggle();
+}
+
+/**
+ * Ajoute un bouton pour activer/désactiver le mode admin (pour la démo uniquement)
+ */
+function addAdminToggle() {
+    // Vérifier si le bouton existe déjà
+    if (document.getElementById('adminToggle')) {
+        return;
+    }
+    
+    // Créer le bouton
+    const adminToggle = document.createElement('div');
+    adminToggle.id = 'adminToggle';
+    adminToggle.style.position = 'fixed';
+    adminToggle.style.bottom = '10px';
+    adminToggle.style.right = '10px';
+    adminToggle.style.padding = '10px';
+    adminToggle.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    adminToggle.style.color = 'white';
+    adminToggle.style.borderRadius = '5px';
+    adminToggle.style.fontSize = '12px';
+    adminToggle.style.cursor = 'pointer';
+    adminToggle.style.zIndex = '1000';
+    adminToggle.style.display = 'flex';
+    adminToggle.style.alignItems = 'center';
+    adminToggle.style.gap = '10px';
+    
+    // Contenu du bouton
+    adminToggle.innerHTML = `
+        <i class="fas fa-shield-alt"></i>
+        <span>Mode admin: <strong>${isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}</strong></span>
+    `;
+    
+    // Ajouter l'événement de clic
+    adminToggle.addEventListener('click', function() {
+        // Inverser le statut admin
+        isAdmin = !isAdmin;
+        
+        // Mettre à jour le localStorage
+        localStorage.setItem('isAdmin', isAdmin);
+        
+        // Mettre à jour l'interface
+        document.body.classList.toggle('is-admin', isAdmin);
+        
+        // Mettre à jour le texte du bouton
+        this.querySelector('strong').textContent = isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ';
+        
+        // Rafraîchir l'affichage des éléments admin
+        initAdminAccess();
+        
+        // Notifier l'utilisateur
+        showNotification(`Mode administrateur ${isAdmin ? 'activé' : 'désactivé'}`);
+        
+        // Si on vient d'activer le mode admin, proposer d'aller à la page d'administration
+        if (isAdmin && !window.location.pathname.includes('admin.html')) {
+            if (confirm('Voulez-vous accéder à la page d\'administration ?')) {
+                window.location.href = 'admin.html';
+            }
+        }
+        
+        // Si on vient de désactiver le mode admin et qu'on est sur la page d'admin, rediriger
+        if (!isAdmin && window.location.pathname.includes('admin.html')) {
+            alert('Mode administrateur désactivé. Vous allez être redirigé vers la page d\'accueil.');
+            window.location.href = 'index.html';
+        }
+    });
+    
+    // Ajouter le bouton au body
+    document.body.appendChild(adminToggle);
+}
 
 function initializeUI() {
     // Mobile menu toggle (for responsive design)

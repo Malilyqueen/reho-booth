@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - MaPocket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="assets/logo.png" alt="MaPocket Logo">
+                    <h1>MaPocket</h1>
+                </div>
+                <button class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="nouveau-projet.html">
+                            <i class="fas fa-folder-plus"></i>
+                            Nouveau projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            Objectifs & Défis
+                        </a>
+                    </li>
+                    <li>
+                        <a href="tresorerie.html">
+                            <i class="fas fa-chart-line"></i>
+                            Plan de trésorerie
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            MaPocket Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="assistant-projet.html">
+                            <i class="fas fa-magic"></i>
+                            Assistant Projet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="parametres.html">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                    <li class="admin-only active">
+                        <a href="admin.html">
+                            <i class="fas fa-shield-alt"></i>
+                            Administration
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="page-info">
+                    <h2>Administration</h2>
+                    <p>Gérez les utilisateurs et suivez l'activité de la plateforme</p>
+                </div>
+                <div class="actions">
+                    <button id="refreshStats" class="btn-icon" title="Rafraîchir les statistiques">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button id="exportData" class="btn-icon" title="Exporter les données">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-container">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Tableau de bord
+                    </button>
+                    <button class="tab-btn" data-tab="users">
+                        <i class="fas fa-users"></i>
+                        Utilisateurs
+                    </button>
+                    <button class="tab-btn" data-tab="projects">
+                        <i class="fas fa-folder"></i>
+                        Projets
+                    </button>
+                    <button class="tab-btn" data-tab="feedbacks">
+                        <i class="fas fa-comments"></i>
+                        Feedbacks
+                    </button>
+                    <button class="tab-btn" data-tab="settings">
+                        <i class="fas fa-cogs"></i>
+                        Paramètres
+                    </button>
+                </div>
+
+                <!-- Onglet Tableau de bord -->
+                <div id="dashboard-content" class="tab-content active">
+                    <div class="stats-overview">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Utilisateurs totaux</h3>
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <p class="stat-value" id="totalUsersCount">0</p>
+                            <p class="stat-description">Nombre total d'utilisateurs inscrits</p>
+                            <div class="stat-footer">
+                                <span class="stat-trend trend-positive">
+                                    <i class="fas fa-arrow-up"></i> +12%
+                                </span>
+                                <span>ce mois-ci</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Utilisateurs actifs</h3>
+                                <div class="stat-icon">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                            </div>
+                            <p class="stat-value" id="activeUsersCount">0</p>
+                            <p class="stat-description">Utilisateurs actifs dans les 30 derniers jours</p>
+                            <div class="stat-footer">
+                                <span class="stat-trend trend-positive">
+                                    <i class="fas fa-arrow-up"></i> +5%
+                                </span>
+                                <span>ce mois-ci</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Projets créés</h3>
+                                <div class="stat-icon">
+                                    <i class="fas fa-folder-open"></i>
+                                </div>
+                            </div>
+                            <p class="stat-value" id="totalProjectsCount">0</p>
+                            <p class="stat-description">Nombre total de projets</p>
+                            <div class="stat-footer">
+                                <span class="stat-trend trend-positive">
+                                    <i class="fas fa-arrow-up"></i> +24%
+                                </span>
+                                <span>ce mois-ci</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Budget total</h3>
+                                <div class="stat-icon">
+                                    <i class="fas fa-euro-sign"></i>
+                                </div>
+                            </div>
+                            <p class="stat-value" id="totalBudgetAmount">€0</p>
+                            <p class="stat-description">Somme des budgets de tous les projets</p>
+                            <div class="stat-footer">
+                                <span class="stat-trend trend-positive">
+                                    <i class="fas fa-arrow-up"></i> +18%
+                                </span>
+                                <span>ce mois-ci</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Répartition des utilisateurs
+                            </h3>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-download"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-overview" style="margin-bottom: 0; padding: 20px;">
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <h3 class="stat-title">Freemium</h3>
+                                        <div class="stat-icon" style="background-color: #f1f5f9; color: #64748b;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    </div>
+                                    <p class="stat-value" id="freemiumCount">0</p>
+                                    <div class="stat-footer">
+                                        <span id="freemiumPercentage">0%</span>
+                                        <span>des utilisateurs</span>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <h3 class="stat-title">Basic</h3>
+                                        <div class="stat-icon" style="background-color: #e0f2fe; color: #0284c7;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    </div>
+                                    <p class="stat-value" id="basicCount">0</p>
+                                    <div class="stat-footer">
+                                        <span id="basicPercentage">0%</span>
+                                        <span>des utilisateurs</span>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <h3 class="stat-title">Pro</h3>
+                                        <div class="stat-icon" style="background-color: #fef3c7; color: #d97706;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    </div>
+                                    <p class="stat-value" id="proCount">0</p>
+                                    <div class="stat-footer">
+                                        <span id="proPercentage">0%</span>
+                                        <span>des utilisateurs</span>
+                                    </div>
+                                </div>
+
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <h3 class="stat-title">Taux d'activité</h3>
+                                        <div class="stat-icon" style="background-color: #d1fae5; color: #065f46;">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                    </div>
+                                    <p class="stat-value" id="activeUsersPercentage">0%</p>
+                                    <div class="stat-footer">
+                                        <span>des utilisateurs sont actifs</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <div id="planDistributionChart" class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Répartition des utilisateurs par plan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-history"></i>
+                                Activité récente
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="recent-activity">
+                                <ul id="activityList" class="activity-list">
+                                    <!-- Liste d'activités générée dynamiquement -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Activité hebdomadaire
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <div id="weeklyActivityChart" class="chart-placeholder">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>Activité des utilisateurs par jour</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Utilisateurs -->
+                <div id="users-content" class="tab-content">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-users"></i>
+                                Liste des utilisateurs
+                            </h3>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-plus"></i> Ajouter un utilisateur
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-download"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+                        <div class="filters-section">
+                            <div class="search-box">
+                                <input type="text" id="userSearchInput" class="search-input" placeholder="Rechercher un utilisateur...">
+                            </div>
+                            <div class="filter-dropdown">
+                                <button class="filter-btn">
+                                    Plan <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-dropdown-content" data-filter="plan">
+                                    <div class="filter-option selected" data-value="all">Tous les plans</div>
+                                    <div class="filter-option" data-value="freemium">Freemium</div>
+                                    <div class="filter-option" data-value="basic">Basic</div>
+                                    <div class="filter-option" data-value="pro">Pro</div>
+                                </div>
+                            </div>
+                            <div class="filter-dropdown">
+                                <button class="filter-btn">
+                                    Statut <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-dropdown-content" data-filter="status">
+                                    <div class="filter-option selected" data-value="all">Tous les statuts</div>
+                                    <div class="filter-option" data-value="active">Actif</div>
+                                    <div class="filter-option" data-value="inactive">Inactif</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Utilisateur</th>
+                                            <th>Plan</th>
+                                            <th>Date d'inscription</th>
+                                            <th>Dernière connexion</th>
+                                            <th>Statut</th>
+                                            <th>Projets</th>
+                                            <th>Budget total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Contenu généré dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="pagination">
+                                <div class="pagination-info">
+                                    Affichage de 1 à 8 sur 8 utilisateurs
+                                </div>
+                                <div class="pagination-controls">
+                                    <button class="pagination-btn disabled" disabled>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="pagination-btn active">1</button>
+                                    <button class="pagination-btn disabled" disabled>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Projets -->
+                <div id="projects-content" class="tab-content">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-folder"></i>
+                                Aperçu des projets
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Répartition des projets par catégorie</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-folder-open"></i>
+                                Liste des projets
+                            </h3>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-download"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+                        <div class="filters-section">
+                            <div class="search-box">
+                                <input type="text" class="search-input" placeholder="Rechercher un projet...">
+                            </div>
+                            <div class="filter-dropdown">
+                                <button class="filter-btn">
+                                    Catégorie <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-dropdown-content" data-filter="category">
+                                    <div class="filter-option selected" data-value="all">Toutes les catégories</div>
+                                    <div class="filter-option" data-value="event">Événement</div>
+                                    <div class="filter-option" data-value="personal">Personnel</div>
+                                    <div class="filter-option" data-value="work">Professionnel</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom du projet</th>
+                                            <th>Créateur</th>
+                                            <th>Date de création</th>
+                                            <th>Catégorie</th>
+                                            <th>Budget</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Mariage d'Émilie</td>
+                                            <td>Sophie Martin</td>
+                                            <td>15/03/2025</td>
+                                            <td>
+                                                <span class="badge badge-primary">Événement</span>
+                                            </td>
+                                            <td>€ 8 500</td>
+                                            <td>
+                                                <span class="badge badge-success">En cours</span>
+                                            </td>
+                                            <td>
+                                                <div class="row-actions">
+                                                    <button class="row-action-btn view-btn" title="Voir détails">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="row-action-btn edit-btn" title="Modifier">
+                                                        <i class="fas fa-pen"></i>
+                                                    </button>
+                                                    <button class="row-action-btn delete-btn" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rénovation cuisine</td>
+                                            <td>Sophie Martin</td>
+                                            <td>06/04/2025</td>
+                                            <td>
+                                                <span class="badge badge-secondary">Personnel</span>
+                                            </td>
+                                            <td>€ 8 200</td>
+                                            <td>
+                                                <span class="badge badge-success">En cours</span>
+                                            </td>
+                                            <td>
+                                                <div class="row-actions">
+                                                    <button class="row-action-btn view-btn" title="Voir détails">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="row-action-btn edit-btn" title="Modifier">
+                                                        <i class="fas fa-pen"></i>
+                                                    </button>
+                                                    <button class="row-action-btn delete-btn" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Événement d'entreprise</td>
+                                            <td>Pierre Moreau</td>
+                                            <td>02/04/2025</td>
+                                            <td>
+                                                <span class="badge badge-info">Professionnel</span>
+                                            </td>
+                                            <td>€ 5 400</td>
+                                            <td>
+                                                <span class="badge badge-warning">En préparation</span>
+                                            </td>
+                                            <td>
+                                                <div class="row-actions">
+                                                    <button class="row-action-btn view-btn" title="Voir détails">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="row-action-btn edit-btn" title="Modifier">
+                                                        <i class="fas fa-pen"></i>
+                                                    </button>
+                                                    <button class="row-action-btn delete-btn" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Feedbacks -->
+                <div id="feedbacks-content" class="tab-content">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-comments"></i>
+                                Commentaires des utilisateurs
+                            </h3>
+                            <div class="card-actions">
+                                <div class="filter-dropdown">
+                                    <button class="filter-btn">
+                                        Statut <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div class="filter-dropdown-content" data-filter="feedback-status">
+                                        <div class="filter-option selected" data-value="all">Tous les statuts</div>
+                                        <div class="filter-option" data-value="pending">En attente</div>
+                                        <div class="filter-option" data-value="in-progress">En cours</div>
+                                        <div class="filter-option" data-value="resolved">Résolu</div>
+                                    </div>
+                                </div>
+                                <button class="action-btn">
+                                    <i class="fas fa-download"></i> Exporter
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div id="feedbacksList">
+                                <!-- Contenu généré dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Paramètres -->
+                <div id="settings-content" class="tab-content">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-cogs"></i>
+                                Paramètres de l'administration
+                            </h3>
+                        </div>
+                        <div class="card-content" style="padding: 20px;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="adminEmail">Email de contact administrateur</label>
+                                    <input type="email" id="adminEmail" class="form-control" value="admin@mapocket.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="notificationEmails">Emails pour les notifications</label>
+                                    <input type="text" id="notificationEmails" class="form-control" value="admin@mapocket.com,support@mapocket.com">
+                                    <small style="display: block; margin-top: 5px; color: #666;">Séparez les adresses email par des virgules</small>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="backupFrequency">Fréquence de sauvegarde</label>
+                                    <select id="backupFrequency" class="form-control">
+                                        <option value="daily">Quotidienne</option>
+                                        <option value="weekly" selected>Hebdomadaire</option>
+                                        <option value="monthly">Mensuelle</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dataRetention">Conservation des données</label>
+                                    <select id="dataRetention" class="form-control">
+                                        <option value="30">30 jours</option>
+                                        <option value="90">90 jours</option>
+                                        <option value="180" selected>180 jours</option>
+                                        <option value="365">365 jours</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Notifications d'administration</label>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="notifyNewUsers" checked>
+                                        <label for="notifyNewUsers">Nouveaux utilisateurs</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="notifyPlanUpgrades" checked>
+                                        <label for="notifyPlanUpgrades">Mises à niveau d'abonnement</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="notifyFeedbacks" checked>
+                                        <label for="notifyFeedbacks">Nouveaux commentaires</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="notifyErrors">
+                                        <label for="notifyErrors">Erreurs système</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Options de sécurité</label>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="enableTwoFactor" checked>
+                                        <label for="enableTwoFactor">Authentification à deux facteurs pour les administrateurs</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="logAdminActions" checked>
+                                        <label for="logAdminActions">Enregistrer toutes les actions d'administration</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" id="autoLogout">
+                                        <label for="autoLogout">Déconnexion automatique après 30 minutes d'inactivité</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn btn-secondary">Annuler</button>
+                                <button class="btn btn-primary">Enregistrer les modifications</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal détails utilisateur -->
+    <div id="userDetailsModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-user"></i>
+                    Détails utilisateur: <span id="userNameTitle"></span>
+                </h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="user-profile">
+                    <div class="user-avatar" id="userDetailsAvatar"></div>
+                    <div class="user-info">
+                        <h3 id="userDetailsName"></h3>
+                        <p id="userDetailsEmail"></p>
+                        <div class="user-status">
+                            <div class="status-indicator status-active"></div>
+                            <span>Compte actif</span>
+                        </div>
+
+                        <div class="user-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Plan</div>
+                                <div class="meta-value" id="userDetailsPlan"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Date d'inscription</div>
+                                <div class="meta-value" id="userDetailsSignup"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Dernière connexion</div>
+                                <div class="meta-value" id="userDetailsLastLogin"></div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Statut</div>
+                                <div class="meta-value" id="userDetailsStatus"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-stats">
+                    <div class="user-stat">
+                        <h4>Projets créés</h4>
+                        <p id="userStatsProjects">0</p>
+                    </div>
+                    <div class="user-stat">
+                        <h4>Budget total</h4>
+                        <p id="userStatsBudget">€ 0</p>
+                    </div>
+                    <div class="user-stat">
+                        <h4>Dernière activité</h4>
+                        <p>Il y a 2 jours</p>
+                    </div>
+                </div>
+
+                <div class="content-card" style="margin-top: 30px;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-folder"></i>
+                            Projets de l'utilisateur
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom du projet</th>
+                                        <th>Date</th>
+                                        <th>Catégorie</th>
+                                        <th>Budget</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Mariage d'Émilie</td>
+                                        <td>15/03/2025</td>
+                                        <td>
+                                            <span class="badge badge-primary">Événement</span>
+                                        </td>
+                                        <td>€ 8 500</td>
+                                        <td>
+                                            <span class="badge badge-success">En cours</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Fermer</button>
+                <button class="btn btn-primary">Modifier l'utilisateur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal édition utilisateur -->
+    <div id="userEditModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-user-edit"></i>
+                    Modifier l'utilisateur
+                </h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editUserName">Nom complet</label>
+                            <input type="text" id="editUserName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserEmail">Email</label>
+                            <input type="email" id="editUserEmail" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editUserPlan">Plan</label>
+                            <select id="editUserPlan" class="form-control">
+                                <option value="freemium">Freemium</option>
+                                <option value="basic">Basic</option>
+                                <option value="pro">Pro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Statut du compte</label>
+                            <div class="form-check">
+                                <input type="checkbox" id="editUserStatus">
+                                <label for="editUserStatus">Compte actif</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editUserNotes">Notes administratives</label>
+                            <textarea id="editUserNotes" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Annuler</button>
+                <button class="btn btn-primary">Enregistrer les modifications</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal réponse feedback -->
+    <div id="feedbackResponseModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-reply"></i>
+                    Répondre au commentaire
+                </h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackResponseForm">
+                    <input type="hidden" id="responseFeedbackId" value="">
+                    <div class="form-group">
+                        <label>Utilisateur</label>
+                        <p id="responseFeedbackUser" style="font-weight: 500;"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Message original</label>
+                        <div class="feedback-content" id="responseFeedbackMessage" style="background-color: #f9f9f9; margin-top: 10px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="responseMessage">Votre réponse</label>
+                        <textarea id="responseMessage" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="form-check" style="margin-top: 15px;">
+                        <input type="checkbox" id="markAsResolved" checked>
+                        <label for="markAsResolved">Marquer comme résolu</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close-modal">Annuler</button>
+                <button type="submit" form="feedbackResponseForm" class="btn btn-primary">Envoyer la réponse</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
