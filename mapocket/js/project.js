@@ -698,6 +698,7 @@ function initializeBudgetCalculation() {
 // Fonction pour mettre à jour les catégories de dépenses en fonction du modèle sélectionné
 // Données de budgets par défaut pour chaque modèle
 const defaultBudgets = {
+    // 🎉 Événementiels
     "Anniversaire": {
         "categories": [
             {
@@ -807,6 +808,614 @@ const defaultBudgets = {
             }
         ]
     },
+    "Baby shower": {
+        "categories": [
+            {
+                "name": "Restauration",
+                "subcategories": [
+                    {
+                        "name": "Buffet",
+                        "lines": [
+                            { "name": "Amuse-bouches", "amount": "€ 80" },
+                            { "name": "Desserts thématiques", "amount": "€ 60" }
+                        ]
+                    },
+                    {
+                        "name": "Boissons",
+                        "lines": [
+                            { "name": "Jus et sodas", "amount": "€ 40" },
+                            { "name": "Champagne sans alcool", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Décoration",
+                "subcategories": [
+                    {
+                        "name": "Salle",
+                        "lines": [
+                            { "name": "Ballons", "amount": "€ 25" },
+                            { "name": "Banderoles", "amount": "€ 15" },
+                            { "name": "Accessoires thématiques", "amount": "€ 35" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Animation",
+                "subcategories": [
+                    {
+                        "name": "Jeux",
+                        "lines": [
+                            { "name": "Matériel pour jeux", "amount": "€ 40" },
+                            { "name": "Petits cadeaux", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Fête d'entreprise": {
+        "categories": [
+            {
+                "name": "Lieu",
+                "subcategories": [
+                    {
+                        "name": "Location",
+                        "lines": [
+                            { "name": "Salle réception", "amount": "€ 1200" },
+                            { "name": "Équipement audiovisuel", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Restauration",
+                "subcategories": [
+                    {
+                        "name": "Service traiteur",
+                        "lines": [
+                            { "name": "Cocktail dînatoire", "amount": "€ 2000" },
+                            { "name": "Boissons", "amount": "€ 800" },
+                            { "name": "Personnel de service", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Animation",
+                "subcategories": [
+                    {
+                        "name": "Divertissement",
+                        "lines": [
+                            { "name": "DJ/Musique", "amount": "€ 600" },
+                            { "name": "Animations thématiques", "amount": "€ 800" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Communication",
+                "subcategories": [
+                    {
+                        "name": "Promotion",
+                        "lines": [
+                            { "name": "Invitations", "amount": "€ 150" },
+                            { "name": "Signalétique", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Célébration religieuse": {
+        "categories": [
+            {
+                "name": "Lieu de culte",
+                "subcategories": [
+                    {
+                        "name": "Cérémonie",
+                        "lines": [
+                            { "name": "Don/Location", "amount": "€ 300" },
+                            { "name": "Décoration", "amount": "€ 150" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Réception",
+                "subcategories": [
+                    {
+                        "name": "Salle",
+                        "lines": [
+                            { "name": "Location espace", "amount": "€ 600" }
+                        ]
+                    },
+                    {
+                        "name": "Traiteur",
+                        "lines": [
+                            { "name": "Repas", "amount": "€ 1000" },
+                            { "name": "Boissons", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Tenues",
+                "subcategories": [
+                    {
+                        "name": "Vêtements cérémonie",
+                        "lines": [
+                            { "name": "Tenue principale", "amount": "€ 350" },
+                            { "name": "Accessoires", "amount": "€ 100" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Souvenirs",
+                "subcategories": [
+                    {
+                        "name": "Cadeaux",
+                        "lines": [
+                            { "name": "Livrets/Images", "amount": "€ 200" },
+                            { "name": "Petits présents", "amount": "€ 250" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    
+    // 🏠 Vie personnelle
+    "Budget mensuel": {
+        "categories": [
+            {
+                "name": "Logement",
+                "subcategories": [
+                    {
+                        "name": "Charges fixes",
+                        "lines": [
+                            { "name": "Loyer/Crédit", "amount": "€ 850" },
+                            { "name": "Charges", "amount": "€ 120" }
+                        ]
+                    },
+                    {
+                        "name": "Factures",
+                        "lines": [
+                            { "name": "Électricité", "amount": "€ 75" },
+                            { "name": "Internet", "amount": "€ 35" },
+                            { "name": "Eau", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Alimentation",
+                "subcategories": [
+                    {
+                        "name": "Courses",
+                        "lines": [
+                            { "name": "Supermarché", "amount": "€ 300" },
+                            { "name": "Marché", "amount": "€ 100" }
+                        ]
+                    },
+                    {
+                        "name": "Restaurants",
+                        "lines": [
+                            { "name": "Sorties", "amount": "€ 120" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Transport",
+                "subcategories": [
+                    {
+                        "name": "Véhicule",
+                        "lines": [
+                            { "name": "Carburant", "amount": "€ 120" },
+                            { "name": "Assurance", "amount": "€ 50" }
+                        ]
+                    },
+                    {
+                        "name": "Transports publics",
+                        "lines": [
+                            { "name": "Abonnement", "amount": "€ 60" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Loisirs",
+                "subcategories": [
+                    {
+                        "name": "Divertissement",
+                        "lines": [
+                            { "name": "Sorties", "amount": "€ 80" },
+                            { "name": "Abonnements", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Ménage familial": {
+        "categories": [
+            {
+                "name": "Ménage",
+                "subcategories": [
+                    {
+                        "name": "Courses alimentaires",
+                        "lines": [
+                            { "name": "Courses semaine 1", "amount": "€ 120" },
+                            { "name": "Courses semaine 2", "amount": "€ 100" }
+                        ]
+                    },
+                    {
+                        "name": "Factures",
+                        "lines": [
+                            { "name": "Électricité", "amount": "€ 85" },
+                            { "name": "Internet", "amount": "€ 45" }
+                        ]
+                    },
+                    {
+                        "name": "Entretien",
+                        "lines": [
+                            { "name": "Produits ménagers", "amount": "€ 30" },
+                            { "name": "Réparations", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Enfants",
+                "subcategories": [
+                    {
+                        "name": "École",
+                        "lines": [
+                            { "name": "Fournitures", "amount": "€ 40" },
+                            { "name": "Cantine", "amount": "€ 85" }
+                        ]
+                    },
+                    {
+                        "name": "Loisirs",
+                        "lines": [
+                            { "name": "Activités sportives", "amount": "€ 60" },
+                            { "name": "Sorties", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Maison": {
+        "categories": [
+            {
+                "name": "Loyer & Charges",
+                "subcategories": [
+                    {
+                        "name": "Mensualités",
+                        "lines": [
+                            { "name": "Loyer/Crédit", "amount": "€ 850" },
+                            { "name": "Charges", "amount": "€ 120" }
+                        ]
+                    },
+                    {
+                        "name": "Factures",
+                        "lines": [
+                            { "name": "Électricité", "amount": "€ 75" },
+                            { "name": "Eau", "amount": "€ 45" },
+                            { "name": "Internet/TV", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Entretien",
+                "subcategories": [
+                    {
+                        "name": "Réparations",
+                        "lines": [
+                            { "name": "Petits travaux", "amount": "€ 100" },
+                            { "name": "Matériel", "amount": "€ 75" }
+                        ]
+                    },
+                    {
+                        "name": "Jardinage",
+                        "lines": [
+                            { "name": "Plantes", "amount": "€ 40" },
+                            { "name": "Outils", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Famille": {
+        "categories": [
+            {
+                "name": "Alimentation",
+                "subcategories": [
+                    {
+                        "name": "Courses hebdomadaires",
+                        "lines": [
+                            { "name": "Supermarché", "amount": "€ 150" },
+                            { "name": "Marché", "amount": "€ 50" }
+                        ]
+                    },
+                    {
+                        "name": "Extras",
+                        "lines": [
+                            { "name": "Repas restaurant", "amount": "€ 80" },
+                            { "name": "Livraisons", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Éducation",
+                "subcategories": [
+                    {
+                        "name": "Scolarité",
+                        "lines": [
+                            { "name": "Frais scolaires", "amount": "€ 100" },
+                            { "name": "Fournitures", "amount": "€ 70" }
+                        ]
+                    },
+                    {
+                        "name": "Activités extrascolaires",
+                        "lines": [
+                            { "name": "Sport", "amount": "€ 120" },
+                            { "name": "Musique", "amount": "€ 90" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Santé",
+                "subcategories": [
+                    {
+                        "name": "Consultations",
+                        "lines": [
+                            { "name": "Médecin", "amount": "€ 50" },
+                            { "name": "Spécialistes", "amount": "€ 100" }
+                        ]
+                    },
+                    {
+                        "name": "Pharmacie",
+                        "lines": [
+                            { "name": "Médicaments", "amount": "€ 60" },
+                            { "name": "Produits santé", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Déménagement": {
+        "categories": [
+            {
+                "name": "Transport",
+                "subcategories": [
+                    {
+                        "name": "Déménageurs",
+                        "lines": [
+                            { "name": "Entreprise", "amount": "€ 800" },
+                            { "name": "Pourboires", "amount": "€ 50" }
+                        ]
+                    },
+                    {
+                        "name": "Location",
+                        "lines": [
+                            { "name": "Camion", "amount": "€ 150" },
+                            { "name": "Carburant", "amount": "€ 60" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Emballage",
+                "subcategories": [
+                    {
+                        "name": "Matériel",
+                        "lines": [
+                            { "name": "Cartons", "amount": "€ 80" },
+                            { "name": "Protections", "amount": "€ 40" },
+                            { "name": "Scotch/étiquettes", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Logement",
+                "subcategories": [
+                    {
+                        "name": "Ancien logement",
+                        "lines": [
+                            { "name": "Nettoyage", "amount": "€ 150" },
+                            { "name": "Réparations", "amount": "€ 100" }
+                        ]
+                    },
+                    {
+                        "name": "Nouveau logement",
+                        "lines": [
+                            { "name": "Caution", "amount": "€ 1000" },
+                            { "name": "Frais d'agence", "amount": "€ 500" },
+                            { "name": "Premier loyer", "amount": "€ 800" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Rentrée scolaire": {
+        "categories": [
+            {
+                "name": "Fournitures",
+                "subcategories": [
+                    {
+                        "name": "Matériel scolaire",
+                        "lines": [
+                            { "name": "Cahiers/classeurs", "amount": "€ 40" },
+                            { "name": "Stylos/crayons", "amount": "€ 25" },
+                            { "name": "Autres fournitures", "amount": "€ 35" }
+                        ]
+                    },
+                    {
+                        "name": "Manuels",
+                        "lines": [
+                            { "name": "Livres", "amount": "€ 80" },
+                            { "name": "Cahiers d'exercices", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Vêtements",
+                "subcategories": [
+                    {
+                        "name": "Tenues",
+                        "lines": [
+                            { "name": "Vêtements quotidiens", "amount": "€ 150" },
+                            { "name": "Chaussures", "amount": "€ 70" }
+                        ]
+                    },
+                    {
+                        "name": "Sport",
+                        "lines": [
+                            { "name": "Tenue de sport", "amount": "€ 50" },
+                            { "name": "Chaussures de sport", "amount": "€ 60" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Équipement",
+                "subcategories": [
+                    {
+                        "name": "Informatique",
+                        "lines": [
+                            { "name": "Calculatrice", "amount": "€ 60" },
+                            { "name": "Accessoires", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Fêtes de fin d'année": {
+        "categories": [
+            {
+                "name": "Cadeaux",
+                "subcategories": [
+                    {
+                        "name": "Famille",
+                        "lines": [
+                            { "name": "Parents", "amount": "€ 150" },
+                            { "name": "Enfants", "amount": "€ 200" },
+                            { "name": "Autres membres", "amount": "€ 150" }
+                        ]
+                    },
+                    {
+                        "name": "Amis",
+                        "lines": [
+                            { "name": "Amis proches", "amount": "€ 120" },
+                            { "name": "Collègues", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Repas",
+                "subcategories": [
+                    {
+                        "name": "Dîner",
+                        "lines": [
+                            { "name": "Nourriture", "amount": "€ 150" },
+                            { "name": "Boissons", "amount": "€ 70" },
+                            { "name": "Desserts", "amount": "€ 40" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Décoration",
+                "subcategories": [
+                    {
+                        "name": "Maison",
+                        "lines": [
+                            { "name": "Sapin/Ornements", "amount": "€ 80" },
+                            { "name": "Lumières", "amount": "€ 40" },
+                            { "name": "Table", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Vacances": {
+        "categories": [
+            {
+                "name": "Transport",
+                "subcategories": [
+                    {
+                        "name": "Aller-retour",
+                        "lines": [
+                            { "name": "Avion/Train", "amount": "€ 400" },
+                            { "name": "Transferts locaux", "amount": "€ 60" }
+                        ]
+                    },
+                    {
+                        "name": "Sur place",
+                        "lines": [
+                            { "name": "Location véhicule", "amount": "€ 200" },
+                            { "name": "Transport public", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Hébergement",
+                "subcategories": [
+                    {
+                        "name": "Logement",
+                        "lines": [
+                            { "name": "Hôtel/Airbnb", "amount": "€ 600" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Restauration",
+                "subcategories": [
+                    {
+                        "name": "Repas",
+                        "lines": [
+                            { "name": "Restaurants", "amount": "€ 400" },
+                            { "name": "Courses", "amount": "€ 150" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Activités",
+                "subcategories": [
+                    {
+                        "name": "Loisirs",
+                        "lines": [
+                            { "name": "Visites", "amount": "€ 200" },
+                            { "name": "Excursions", "amount": "€ 150" },
+                            { "name": "Souvenirs", "amount": "€ 100" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    
+    // 💼 Projets professionnels
     "Lancement de produit": {
         "categories": [
             {
@@ -848,7 +1457,533 @@ const defaultBudgets = {
                 ]
             }
         ]
+    },
+    "Création de site web": {
+        "categories": [
+            {
+                "name": "Conception",
+                "subcategories": [
+                    {
+                        "name": "Design",
+                        "lines": [
+                            { "name": "Maquettes", "amount": "€ 500" },
+                            { "name": "UX/UI", "amount": "€ 700" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Développement",
+                "subcategories": [
+                    {
+                        "name": "Front-end",
+                        "lines": [
+                            { "name": "Intégration", "amount": "€ 800" },
+                            { "name": "Responsive", "amount": "€ 400" }
+                        ]
+                    },
+                    {
+                        "name": "Back-end",
+                        "lines": [
+                            { "name": "Base de données", "amount": "€ 600" },
+                            { "name": "Fonctionnalités", "amount": "€ 1000" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Contenu",
+                "subcategories": [
+                    {
+                        "name": "Médias",
+                        "lines": [
+                            { "name": "Photos", "amount": "€ 300" },
+                            { "name": "Vidéos", "amount": "€ 400" }
+                        ]
+                    },
+                    {
+                        "name": "Textes",
+                        "lines": [
+                            { "name": "Rédaction", "amount": "€ 500" },
+                            { "name": "Traduction", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Hébergement",
+                "subcategories": [
+                    {
+                        "name": "Services",
+                        "lines": [
+                            { "name": "Nom de domaine", "amount": "€ 15" },
+                            { "name": "Hébergement annuel", "amount": "€ 120" },
+                            { "name": "SSL", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Campagne marketing": {
+        "categories": [
+            {
+                "name": "Publicité",
+                "subcategories": [
+                    {
+                        "name": "Digitale",
+                        "lines": [
+                            { "name": "Google Ads", "amount": "€ 500" },
+                            { "name": "Facebook/Instagram", "amount": "€ 400" },
+                            { "name": "LinkedIn", "amount": "€ 300" }
+                        ]
+                    },
+                    {
+                        "name": "Traditionnelle",
+                        "lines": [
+                            { "name": "Presse", "amount": "€ 600" },
+                            { "name": "Affichage", "amount": "€ 1000" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Contenu",
+                "subcategories": [
+                    {
+                        "name": "Création",
+                        "lines": [
+                            { "name": "Design", "amount": "€ 700" },
+                            { "name": "Vidéo", "amount": "€ 900" },
+                            { "name": "Rédaction", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Événementiel",
+                "subcategories": [
+                    {
+                        "name": "Présence",
+                        "lines": [
+                            { "name": "Stand salon", "amount": "€ 1500" },
+                            { "name": "Matériel promotionnel", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Analyse",
+                "subcategories": [
+                    {
+                        "name": "Mesure",
+                        "lines": [
+                            { "name": "Outils analytics", "amount": "€ 200" },
+                            { "name": "Études d'impact", "amount": "€ 600" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Formation professionnelle": {
+        "categories": [
+            {
+                "name": "Frais pédagogiques",
+                "subcategories": [
+                    {
+                        "name": "Organisme",
+                        "lines": [
+                            { "name": "Inscription", "amount": "€ 1200" },
+                            { "name": "Certification", "amount": "€ 300" }
+                        ]
+                    },
+                    {
+                        "name": "Matériel",
+                        "lines": [
+                            { "name": "Supports", "amount": "€ 100" },
+                            { "name": "Logiciels", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Déplacement",
+                "subcategories": [
+                    {
+                        "name": "Transport",
+                        "lines": [
+                            { "name": "Train/Avion", "amount": "€ 250" },
+                            { "name": "Local", "amount": "€ 100" }
+                        ]
+                    },
+                    {
+                        "name": "Hébergement",
+                        "lines": [
+                            { "name": "Hôtel", "amount": "€ 400" },
+                            { "name": "Repas", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Lancement d'entreprise": {
+        "categories": [
+            {
+                "name": "Formalités",
+                "subcategories": [
+                    {
+                        "name": "Création",
+                        "lines": [
+                            { "name": "Frais juridiques", "amount": "€ 800" },
+                            { "name": "Immatriculation", "amount": "€ 200" }
+                        ]
+                    },
+                    {
+                        "name": "Assurances",
+                        "lines": [
+                            { "name": "RC Pro", "amount": "€ 500" },
+                            { "name": "Multirisque", "amount": "€ 400" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Équipement",
+                "subcategories": [
+                    {
+                        "name": "Matériel",
+                        "lines": [
+                            { "name": "Informatique", "amount": "€ 2000" },
+                            { "name": "Mobilier", "amount": "€ 1500" }
+                        ]
+                    },
+                    {
+                        "name": "Local",
+                        "lines": [
+                            { "name": "Dépôt garantie", "amount": "€ 2000" },
+                            { "name": "Loyer", "amount": "€ 1000" },
+                            { "name": "Aménagement", "amount": "€ 3000" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Marketing",
+                "subcategories": [
+                    {
+                        "name": "Communication",
+                        "lines": [
+                            { "name": "Site web", "amount": "€ 1500" },
+                            { "name": "Identité visuelle", "amount": "€ 800" },
+                            { "name": "PLV", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Trésorerie",
+                "subcategories": [
+                    {
+                        "name": "Fond de roulement",
+                        "lines": [
+                            { "name": "Stock initial", "amount": "€ 5000" },
+                            { "name": "Charges courantes", "amount": "€ 3000" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    
+    // 💰 Objectifs financiers
+    "Épargne mensuelle": {
+        "categories": [
+            {
+                "name": "Épargne courte",
+                "subcategories": [
+                    {
+                        "name": "Sécurité",
+                        "lines": [
+                            { "name": "Épargne de précaution", "amount": "€ 200" },
+                            { "name": "Projets < 2 ans", "amount": "€ 100" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Épargne moyenne",
+                "subcategories": [
+                    {
+                        "name": "Projets",
+                        "lines": [
+                            { "name": "Achat immobilier", "amount": "€ 300" },
+                            { "name": "Autres projets", "amount": "€ 100" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Épargne longue",
+                "subcategories": [
+                    {
+                        "name": "Retraite",
+                        "lines": [
+                            { "name": "PER", "amount": "€ 150" },
+                            { "name": "Assurance-vie", "amount": "€ 100" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Remboursement de dettes": {
+        "categories": [
+            {
+                "name": "Dettes prioritaires",
+                "subcategories": [
+                    {
+                        "name": "Crédits à taux élevé",
+                        "lines": [
+                            { "name": "Crédit à la consommation", "amount": "€ 300" },
+                            { "name": "Découvert", "amount": "€ 150" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Crédits immobiliers",
+                "subcategories": [
+                    {
+                        "name": "Hypothèques",
+                        "lines": [
+                            { "name": "Prêt principal", "amount": "€ 800" },
+                            { "name": "Prêt secondaire", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Autres dettes",
+                "subcategories": [
+                    {
+                        "name": "Prêts personnels",
+                        "lines": [
+                            { "name": "Famille/Amis", "amount": "€ 100" },
+                            { "name": "Autres", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Projet \"Gros achat\"": {
+        "categories": [
+            {
+                "name": "Budget d'achat",
+                "subcategories": [
+                    {
+                        "name": "Principal",
+                        "lines": [
+                            { "name": "Achat bien", "amount": "€ 5000" },
+                            { "name": "Accessoires", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Frais annexes",
+                "subcategories": [
+                    {
+                        "name": "Taxes & Assurances",
+                        "lines": [
+                            { "name": "TVA/Taxes", "amount": "€ 1000" },
+                            { "name": "Assurance", "amount": "€ 300" }
+                        ]
+                    },
+                    {
+                        "name": "Installation",
+                        "lines": [
+                            { "name": "Livraison", "amount": "€ 200" },
+                            { "name": "Mise en service", "amount": "€ 150" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    
+    // 🤝 Collectifs & communautaires
+    "Cagnotte / tontine": {
+        "categories": [
+            {
+                "name": "Contributions",
+                "subcategories": [
+                    {
+                        "name": "Membres",
+                        "lines": [
+                            { "name": "Apports mensuels", "amount": "€ 1000" },
+                            { "name": "Apports exceptionnels", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Gestion",
+                "subcategories": [
+                    {
+                        "name": "Frais",
+                        "lines": [
+                            { "name": "Frais bancaires", "amount": "€ 50" },
+                            { "name": "Administration", "amount": "€ 30" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Distribution",
+                "subcategories": [
+                    {
+                        "name": "Versements",
+                        "lines": [
+                            { "name": "Distributions prévues", "amount": "€ 1200" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Association caritative": {
+        "categories": [
+            {
+                "name": "Collecte",
+                "subcategories": [
+                    {
+                        "name": "Dons",
+                        "lines": [
+                            { "name": "Dons particuliers", "amount": "€ 3000" },
+                            { "name": "Dons entreprises", "amount": "€ 2000" }
+                        ]
+                    },
+                    {
+                        "name": "Événements",
+                        "lines": [
+                            { "name": "Gala annuel", "amount": "€ 5000" },
+                            { "name": "Ventes caritatives", "amount": "€ 1500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Fonctionnement",
+                "subcategories": [
+                    {
+                        "name": "Administration",
+                        "lines": [
+                            { "name": "Salaires", "amount": "€ 2000" },
+                            { "name": "Loyer/Charges", "amount": "€ 800" },
+                            { "name": "Matériel", "amount": "€ 300" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Actions",
+                "subcategories": [
+                    {
+                        "name": "Missions",
+                        "lines": [
+                            { "name": "Projet principal", "amount": "€ 6000" },
+                            { "name": "Actions secondaires", "amount": "€ 2000" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Budget réunion / AG": {
+        "categories": [
+            {
+                "name": "Logistique",
+                "subcategories": [
+                    {
+                        "name": "Lieu",
+                        "lines": [
+                            { "name": "Location salle", "amount": "€ 600" },
+                            { "name": "Équipement", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Participants",
+                "subcategories": [
+                    {
+                        "name": "Accueil",
+                        "lines": [
+                            { "name": "Restauration", "amount": "€ 500" },
+                            { "name": "Documentation", "amount": "€ 150" }
+                        ]
+                    },
+                    {
+                        "name": "Déplacements",
+                        "lines": [
+                            { "name": "Remboursements", "amount": "€ 400" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Communication",
+                "subcategories": [
+                    {
+                        "name": "Supports",
+                        "lines": [
+                            { "name": "Présentations", "amount": "€ 100" },
+                            { "name": "Compte-rendu", "amount": "€ 50" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Fonds commun": {
+        "categories": [
+            {
+                "name": "Apports",
+                "subcategories": [
+                    {
+                        "name": "Participations",
+                        "lines": [
+                            { "name": "Cotisations régulières", "amount": "€ 1200" },
+                            { "name": "Apports exceptionnels", "amount": "€ 500" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Dépenses",
+                "subcategories": [
+                    {
+                        "name": "Achats communs",
+                        "lines": [
+                            { "name": "Équipement", "amount": "€ 800" },
+                            { "name": "Consommables", "amount": "€ 400" }
+                        ]
+                    },
+                    {
+                        "name": "Services",
+                        "lines": [
+                            { "name": "Abonnements", "amount": "€ 150" },
+                            { "name": "Maintenance", "amount": "€ 200" }
+                        ]
+                    }
+                ]
+            }
+        ]
     }
+}
 };
 
 function updateTemplateCategories(templateType) {
