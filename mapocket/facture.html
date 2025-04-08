@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPocket Pro - Création de Facture</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mapocket-pro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            Outils Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Création de Facture</h2>
+                    <p>Créez rapidement une facture professionnelle</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="action-buttons">
+                <a href="mapocket-pro.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <form id="invoiceForm">
+                <input type="hidden" id="invoiceId" name="invoiceId" value="">
+                <input type="hidden" id="quoteId" name="quoteId" value="">
+                
+                <div class="form-section">
+                    <h3>Informations du client</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientName">Nom du client / Entreprise <span class="required">*</span></label>
+                            <input type="text" id="clientName" name="clientName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">Email du client</label>
+                            <input type="email" id="clientEmail" name="clientEmail" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientPhone">Téléphone du client</label>
+                            <input type="tel" id="clientPhone" name="clientPhone" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientAddress">Adresse du client</label>
+                            <textarea id="clientAddress" name="clientAddress" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Informations de la facture</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoiceNumber">Numéro de facture <span class="required">*</span></label>
+                            <input type="text" id="invoiceNumber" name="invoiceNumber" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoiceDate">Date d'émission <span class="required">*</span></label>
+                            <input type="date" id="invoiceDate" name="invoiceDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoiceDueDate">Date d'échéance <span class="required">*</span></label>
+                            <input type="date" id="invoiceDueDate" name="invoiceDueDate" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoiceSubject">Objet de la facture <span class="required">*</span></label>
+                            <input type="text" id="invoiceSubject" name="invoiceSubject" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoiceProject">Projet associé</label>
+                            <select id="invoiceProject" name="invoiceProject" class="form-control">
+                                <option value="">-- Aucun projet --</option>
+                                <!-- Les projets seront ajoutés dynamiquement ici -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoiceStatus">État de la facture</label>
+                            <select id="invoiceStatus" name="invoiceStatus" class="form-control">
+                                <option value="draft">Brouillon</option>
+                                <option value="sent">Émise</option>
+                                <option value="paid">Payée</option>
+                                <option value="overdue">En retard</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Éléments de la facture</h3>
+                    
+                    <div class="invoice-items">
+                        <div class="invoice-item invoice-item-header">
+                            <div>Désignation</div>
+                            <div>Quantité</div>
+                            <div>Prix unitaire</div>
+                            <div>Total HT</div>
+                            <div></div>
+                        </div>
+                        
+                        <div id="itemsContainer">
+                            <!-- Les éléments de la facture seront ajoutés ici -->
+                        </div>
+                        
+                        <div class="add-item-btn" id="addItemBtn">
+                            <i class="fas fa-plus"></i> Ajouter un élément
+                        </div>
+                        
+                        <div class="invoice-totals">
+                            <div class="total-row">
+                                <div>Total HT</div>
+                                <div id="totalHT">0,00 €</div>
+                            </div>
+                            <div class="total-row">
+                                <div>TVA (20%)</div>
+                                <div id="totalTVA">0,00 €</div>
+                            </div>
+                            <div class="total-row final">
+                                <div>Total TTC</div>
+                                <div id="totalTTC">0,00 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Options</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoiceNotes">Conditions et notes</label>
+                            <textarea id="invoiceNotes" name="invoiceNotes" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="linkToWallet" name="linkToWallet">
+                            <label for="linkToWallet">Lier au portefeuille professionnel</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Mentions légales</h3>
+                    <div class="legal-mentions">
+                        <h4>Informations professionnelles</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="legalName">Nom / Raison sociale <span class="required">*</span></label>
+                                <input type="text" id="legalName" name="legalName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="legalSiret">SIRET <span class="required">*</span></label>
+                                <input type="text" id="legalSiret" name="legalSiret" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="legalAddress">Adresse <span class="required">*</span></label>
+                                <input type="text" id="legalAddress" name="legalAddress" class="form-control" required>
+                            </div>
+                        </div>
+                        <div id="legalTextPreview" class="legal-text-preview">
+                            <p>En cas de retard de paiement, des pénalités seront exigibles sans qu'un rappel soit nécessaire (taux d'intérêt légal en vigueur). Une indemnité forfaitaire de 40€ pour frais de recouvrement sera due.</p>
+                            <p>TVA non applicable, art. 293 B du CGI.</p>
+                            <p>Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM).</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer la facture
+                    </button>
+                    <button type="button" id="saveAsDraftBtn" class="btn btn-secondary">
+                        <i class="fas fa-file"></i> Enregistrer comme brouillon
+                    </button>
+                    <button type="button" id="previewInvoiceBtn" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> Aperçu
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Template pour les lignes d'éléments de la facture -->
+            <template id="itemTemplate">
+                <div class="invoice-item">
+                    <div>
+                        <input type="text" class="form-control item-description" placeholder="Description de la prestation">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control item-quantity" value="1" min="1">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control item-price" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="item-total">0,00 €</div>
+                    <div>
+                        <button type="button" class="action-btn remove-item-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Modal d'aperçu de la facture -->
+            <div id="previewModal" class="modal">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h3>Aperçu de la facture</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="previewContent" class="preview-content">
+                            <!-- Le contenu de la facture sera généré ici -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="exportPDFBtn" class="btn btn-primary">
+                            <i class="fas fa-file-pdf"></i> Exporter en PDF
+                        </button>
+                        <button class="btn btn-secondary close-modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal pour marquer une facture comme payée -->
+            <div id="markAsPaidModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Marquer comme payée</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Vous êtes sur le point de marquer cette facture comme payée.</p>
+                        <div class="form-group">
+                            <label for="paymentDate">Date de paiement</label>
+                            <input type="date" id="paymentDate" class="form-control" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentMethod">Moyen de paiement</label>
+                            <select id="paymentMethod" class="form-control">
+                                <option value="bank_transfer">Virement bancaire</option>
+                                <option value="check">Chèque</option>
+                                <option value="cash">Espèces</option>
+                                <option value="card">Carte bancaire</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="addToWallet" checked>
+                            <label for="addToWallet">Ajouter le montant dans mon portefeuille</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="confirmMarkAsPaidBtn" class="btn btn-primary">Confirmer</button>
+                        <button class="btn btn-secondary close-modal">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/invoice.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>

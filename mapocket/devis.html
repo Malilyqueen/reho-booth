@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPocket Pro - Création de Devis</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mapocket-pro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            Outils Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Création de Devis</h2>
+                    <p>Créez rapidement un devis professionnel</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="action-buttons">
+                <a href="mapocket-pro.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <form id="quoteForm">
+                <input type="hidden" id="quoteId" name="quoteId" value="">
+                
+                <div class="form-section">
+                    <h3>Informations du client</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientName">Nom du client / Entreprise <span class="required">*</span></label>
+                            <input type="text" id="clientName" name="clientName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">Email du client</label>
+                            <input type="email" id="clientEmail" name="clientEmail" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientPhone">Téléphone du client</label>
+                            <input type="tel" id="clientPhone" name="clientPhone" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="clientAddress">Adresse du client</label>
+                            <textarea id="clientAddress" name="clientAddress" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Informations du devis</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quoteNumber">Numéro de devis <span class="required">*</span></label>
+                            <input type="text" id="quoteNumber" name="quoteNumber" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteDate">Date d'émission <span class="required">*</span></label>
+                            <input type="date" id="quoteDate" name="quoteDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteValidUntil">Date de validité <span class="required">*</span></label>
+                            <input type="date" id="quoteValidUntil" name="quoteValidUntil" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quoteSubject">Objet du devis <span class="required">*</span></label>
+                            <input type="text" id="quoteSubject" name="quoteSubject" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteProject">Projet associé</label>
+                            <select id="quoteProject" name="quoteProject" class="form-control">
+                                <option value="">-- Aucun projet --</option>
+                                <!-- Les projets seront ajoutés dynamiquement ici -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Éléments du devis</h3>
+                    
+                    <div class="invoice-items">
+                        <div class="invoice-item invoice-item-header">
+                            <div>Désignation</div>
+                            <div>Quantité</div>
+                            <div>Prix unitaire</div>
+                            <div>Total HT</div>
+                            <div></div>
+                        </div>
+                        
+                        <div id="itemsContainer">
+                            <!-- Les éléments du devis seront ajoutés ici -->
+                        </div>
+                        
+                        <div class="add-item-btn" id="addItemBtn">
+                            <i class="fas fa-plus"></i> Ajouter un élément
+                        </div>
+                        
+                        <div class="invoice-totals">
+                            <div class="total-row">
+                                <div>Total HT</div>
+                                <div id="totalHT">0,00 €</div>
+                            </div>
+                            <div class="total-row">
+                                <div>TVA (20%)</div>
+                                <div id="totalTVA">0,00 €</div>
+                            </div>
+                            <div class="total-row final">
+                                <div>Total TTC</div>
+                                <div id="totalTTC">0,00 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Options</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quoteNotes">Conditions et notes</label>
+                            <textarea id="quoteNotes" name="quoteNotes" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="linkToWallet" name="linkToWallet">
+                            <label for="linkToWallet">Lier au portefeuille professionnel</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer le devis
+                    </button>
+                    <button type="button" id="saveAsDraftBtn" class="btn btn-secondary">
+                        <i class="fas fa-file"></i> Enregistrer comme brouillon
+                    </button>
+                    <button type="button" id="previewQuoteBtn" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> Aperçu
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Template pour les lignes d'éléments du devis -->
+            <template id="itemTemplate">
+                <div class="invoice-item">
+                    <div>
+                        <input type="text" class="form-control item-description" placeholder="Description de la prestation">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control item-quantity" value="1" min="1">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control item-price" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="item-total">0,00 €</div>
+                    <div>
+                        <button type="button" class="action-btn remove-item-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Modal d'aperçu du devis -->
+            <div id="previewModal" class="modal">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h3>Aperçu du devis</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="previewContent" class="preview-content">
+                            <!-- Le contenu du devis sera généré ici -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="exportPDFBtn" class="btn btn-primary">
+                            <i class="fas fa-file-pdf"></i> Exporter en PDF
+                        </button>
+                        <button class="btn btn-secondary close-modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/quote.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>

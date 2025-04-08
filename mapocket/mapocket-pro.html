@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPocket Pro - Assistant Budgétaire Professionnel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mapocket-pro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            Outils Pro
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>MaPocket Pro</h2>
+                    <p>Outils professionnels pour votre activité</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="pro-dashboard">
+                <div class="pro-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Devis en cours</h3>
+                            <p class="stat-value" id="activeQuotesCount">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Factures à encaisser</h3>
+                            <p class="stat-value" id="pendingInvoicesCount">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>CA du mois</h3>
+                            <p class="stat-value" id="monthlyRevenue">€ 0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Cotisations estimées</h3>
+                            <p class="stat-value" id="estimatedTaxes">€ 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="devis.html" class="btn btn-primary">
+                        <i class="fas fa-file-invoice"></i> Créer un devis
+                    </a>
+                    <a href="facture.html" class="btn btn-secondary">
+                        <i class="fas fa-file-invoice-dollar"></i> Créer une facture
+                    </a>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="quotes">Devis</button>
+                        <button class="tab-btn" data-tab="invoices">Factures</button>
+                        <button class="tab-btn" data-tab="accounting">Comptabilité</button>
+                    </div>
+
+                    <div class="tab-content active" id="quotes-tab">
+                        <div class="widget quotes-list-widget">
+                            <div class="widget-header">
+                                <h3>Mes devis</h3>
+                                <div class="widget-actions">
+                                    <a href="devis.html" class="btn-sm btn-add">
+                                        <i class="fas fa-plus"></i> Nouveau
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="quotes-table-container">
+                                <table class="data-table quotes-table">
+                                    <thead>
+                                        <tr>
+                                            <th>№</th>
+                                            <th>Client</th>
+                                            <th>Objet</th>
+                                            <th>Date</th>
+                                            <th>Montant TTC</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="quotesTableBody">
+                                        <!-- Les devis seront générés dynamiquement ici -->
+                                    </tbody>
+                                </table>
+                                <div class="empty-quotes-message" style="display: none;">
+                                    <p>Vous n'avez pas encore de devis. Créez votre premier devis pour commencer!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="invoices-tab">
+                        <div class="widget invoices-list-widget">
+                            <div class="widget-header">
+                                <h3>Mes factures</h3>
+                                <div class="widget-actions">
+                                    <a href="facture.html" class="btn-sm btn-add">
+                                        <i class="fas fa-plus"></i> Nouvelle
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="invoices-table-container">
+                                <table class="data-table invoices-table">
+                                    <thead>
+                                        <tr>
+                                            <th>№</th>
+                                            <th>Client</th>
+                                            <th>Objet</th>
+                                            <th>Date</th>
+                                            <th>Montant TTC</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoicesTableBody">
+                                        <!-- Les factures seront générées dynamiquement ici -->
+                                    </tbody>
+                                </table>
+                                <div class="empty-invoices-message" style="display: none;">
+                                    <p>Vous n'avez pas encore de factures. Créez votre première facture pour commencer!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="accounting-tab">
+                        <div class="accounting-widget">
+                            <div class="widget-header">
+                                <h3>Comptabilité simplifiée</h3>
+                                <div class="widget-actions">
+                                    <button id="exportAccountingBtn" class="btn-sm btn-export">
+                                        <i class="fas fa-download"></i> Export CSV
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="accounting-period">
+                                <label for="accountingPeriod">Période :</label>
+                                <select id="accountingPeriod" class="form-control">
+                                    <option value="month">Mois en cours</option>
+                                    <option value="quarter">Trimestre en cours</option>
+                                    <option value="year">Année en cours</option>
+                                    <option value="custom">Personnalisée</option>
+                                </select>
+                                
+                                <div id="customPeriodContainer" style="display: none;">
+                                    <div class="date-range">
+                                        <div class="date-input">
+                                            <label for="periodStart">Du</label>
+                                            <input type="date" id="periodStart" class="form-control">
+                                        </div>
+                                        <div class="date-input">
+                                            <label for="periodEnd">Au</label>
+                                            <input type="date" id="periodEnd" class="form-control">
+                                        </div>
+                                        <button id="applyDateRange" class="btn-sm">Appliquer</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accounting-summary">
+                                <div class="summary-card">
+                                    <h4>Chiffre d'affaires</h4>
+                                    <p class="amount" id="totalRevenue">€ 0</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h4>Dépenses professionnelles</h4>
+                                    <p class="amount" id="totalExpenses">€ 0</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h4>Résultat net</h4>
+                                    <p class="amount" id="netResult">€ 0</p>
+                                </div>
+                                <div class="summary-card">
+                                    <h4>Cotisations estimées (22%)</h4>
+                                    <p class="amount" id="estimatedContributions">€ 0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="accounting-charts">
+                                <div class="chart-container">
+                                    <h4>Évolution mensuelle</h4>
+                                    <div class="chart-placeholder" id="revenueChartPlaceholder">
+                                        <div class="chart-bars">
+                                            <div class="chart-bar" style="height: 30%"></div>
+                                            <div class="chart-bar" style="height: 45%"></div>
+                                            <div class="chart-bar" style="height: 65%"></div>
+                                            <div class="chart-bar" style="height: 85%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <h4>Répartition des revenus</h4>
+                                    <div class="chart-placeholder" id="revenuePieChartPlaceholder">
+                                        <div class="chart-pie"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/mapocket-pro.js"></script>
+    <script src="js/voice-commands.js"></script>
+</body>
+</html>
