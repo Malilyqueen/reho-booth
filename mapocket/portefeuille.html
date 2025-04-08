@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Portefeuille - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projets">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            Mon Portefeuille
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Mon Portefeuille Personnel</h2>
+                    <p>Gérez vos finances et liez vos projets à votre budget</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="wallet-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Solde actuel</h3>
+                        <p class="stat-value" id="currentBalance">€ 0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Solde prévisionnel</h3>
+                        <p class="stat-value" id="forecastedBalance">€ 0</p>
+                        <p class="stat-date" id="forecastedDate">au 31/12/2025</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Projets liés</h3>
+                        <p class="stat-value" id="linkedProjectsCount">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Revenus réguliers</h3>
+                        <p class="stat-value" id="regularIncomeTotal">€ 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="addIncomeBtn">
+                    <i class="fas fa-plus"></i> Ajouter un revenu
+                </button>
+                <button class="btn btn-secondary" id="linkProjectBtn">
+                    <i class="fas fa-link"></i> Lier un projet
+                </button>
+            </div>
+
+            <div class="wallet-widgets">
+                <div class="widget income-list-widget">
+                    <div class="widget-header">
+                        <h3>Mes revenus</h3>
+                        <div class="widget-actions">
+                            <button id="addIncomeBtn2" class="btn-sm btn-add">
+                                <i class="fas fa-plus"></i> Nouveau
+                            </button>
+                        </div>
+                    </div>
+                    <div class="incomes-table-container">
+                        <table class="incomes-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Montant</th>
+                                    <th>Fréquence</th>
+                                    <th>Prochaine date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomesTableBody">
+                                <!-- Revenus générés dynamiquement ici -->
+                            </tbody>
+                        </table>
+                        <div class="empty-incomes-message" style="display: none;">
+                            <p>Vous n'avez pas encore ajouté de revenus. Ajoutez-en un pour commencer!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget linked-projects-widget">
+                    <div class="widget-header">
+                        <h3>Projets liés</h3>
+                    </div>
+                    <div class="linked-projects-table-container">
+                        <table class="linked-projects-table">
+                            <thead>
+                                <tr>
+                                    <th>Projet</th>
+                                    <th>Date</th>
+                                    <th>Budget</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linkedProjectsTableBody">
+                                <!-- Projets liés générés dynamiquement ici -->
+                            </tbody>
+                        </table>
+                        <div class="empty-linked-projects-message" style="display: none;">
+                            <p>Vous n'avez pas encore de projets liés à votre portefeuille. Liez-en un depuis la page projets!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="income-chart">
+                <h3>Revenus et dépenses prévus</h3>
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Visualisation de vos revenus et dépenses pour les 6 prochains mois</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-advice wallet-advice">
+                <h3>Conseil IA pour vos finances</h3>
+                <div class="advice-card">
+                    <div class="advice-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <p>Envisagez de créer un fonds d'urgence équivalent à 3-6 mois de dépenses pour faire face aux imprévus.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un revenu -->
+    <div class="modal" id="incomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="incomeModalTitle">Ajouter un revenu</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="incomeForm">
+                    <input type="hidden" id="incomeId">
+                    
+                    <div class="form-group">
+                        <label for="incomeDescription">Description</label>
+                        <input type="text" id="incomeDescription" name="incomeDescription" class="form-control" placeholder="Ex: Salaire, Allocation, etc." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="incomeAmount">Montant (€)</label>
+                        <input type="number" id="incomeAmount" name="incomeAmount" class="form-control" min="0" step="0.01" placeholder="0.00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="incomeFrequency">Fréquence</label>
+                        <select id="incomeFrequency" name="incomeFrequency" class="form-control" required>
+                            <option value="once">Ponctuel (une seule fois)</option>
+                            <option value="weekly">Hebdomadaire</option>
+                            <option value="monthly">Mensuel</option>
+                            <option value="quarterly">Trimestriel</option>
+                            <option value="yearly">Annuel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="incomeStartDateGroup">
+                        <label for="incomeStartDate">Date de début</label>
+                        <input type="date" id="incomeStartDate" name="incomeStartDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group" id="incomeEndDateGroup" style="display: none;">
+                        <label for="incomeEndDate">Date de fin (optionnel)</label>
+                        <input type="date" id="incomeEndDate" name="incomeEndDate" class="form-control">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary cancel-modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/wallet.js"></script>
+</body>
+</html>

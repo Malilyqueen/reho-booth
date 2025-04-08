@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirm('Êtes-vous sûr de vouloir réinitialiser l\'application ? Tous les projets seront supprimés.')) {
                 localStorage.removeItem('savedProjects');
                 localStorage.removeItem('currentProject');
+                localStorage.removeItem('walletData');
                 showNotification('Application réinitialisée');
                 loadProjectsList();
                 updateDashboardStats();
@@ -310,6 +311,14 @@ function deleteProject(projectId) {
         
         // Mettre à jour le localStorage
         localStorage.setItem('savedProjects', JSON.stringify(updatedProjects));
+        
+        // Si le projet est lié au portefeuille, le délier
+        let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
+        if (walletData.linkedProjects && walletData.linkedProjects.includes(projectId)) {
+            walletData.linkedProjects = walletData.linkedProjects.filter(id => id !== projectId);
+            localStorage.setItem('walletData', JSON.stringify(walletData));
+            console.log('Projet délié du portefeuille lors de la suppression:', projectId);
+        }
         
         // Notifier l'utilisateur
         showNotification('Projet supprimé');

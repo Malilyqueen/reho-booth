@@ -137,6 +137,7 @@ function getProjectData() {
         totalBudget: document.getElementById('totalBudget')?.value || '',
         template: document.querySelector('.template-option.selected') ? 
             document.querySelector('.template-option.selected').getAttribute('data-template') : 'Personnalisé',
+        linkToWallet: document.getElementById('linkToWallet')?.checked || false,
         categories: []
     };
     
@@ -243,6 +244,22 @@ function initializeProjectForm() {
             // Effacer le projet en cours
             localStorage.removeItem('currentProject');
             
+            // Si l'option de liaison au portefeuille est cochée, ajouter le projet aux projets liés
+            if (formData.linkToWallet) {
+                // Récupérer les données du portefeuille
+                let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
+                
+                // Ajouter l'ID du projet à la liste des projets liés
+                if (!Array.isArray(walletData.linkedProjects)) {
+                    walletData.linkedProjects = [];
+                }
+                walletData.linkedProjects.push(formData.id);
+                
+                // Enregistrer les données du portefeuille
+                localStorage.setItem('walletData', JSON.stringify(walletData));
+                console.log('Projet lié au portefeuille:', formData.id);
+            }
+            
             // In a real application, this would save the data and redirect to the dashboard
             alert('Projet créé avec succès!');
             // Then redirect to dashboard
@@ -257,6 +274,10 @@ function restoreProjectData(data) {
     if (data.projectName) document.getElementById('projectName').value = data.projectName;
     if (data.projectDate) document.getElementById('projectDate').value = data.projectDate;
     if (data.totalBudget) document.getElementById('totalBudget').value = data.totalBudget;
+    // Restaurer l'option de liaison au portefeuille
+    if (document.getElementById('linkToWallet')) {
+        document.getElementById('linkToWallet').checked = data.linkToWallet || false;
+    }
     
     // Sélectionner le bon modèle
     if (data.template) {
