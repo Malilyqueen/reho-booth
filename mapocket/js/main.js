@@ -109,9 +109,17 @@ function loadProjectsList() {
     }
     
     // Afficher chaque projet
-    projects.forEach(project => {
+    console.log('Début du rendu des projets dans le tableau');
+    projects.forEach((project, index) => {
+        console.log(`Rendu du projet ${index+1}/${projects.length}:`, project.projectName);
+        
         const row = document.createElement('tr');
-        row.setAttribute('data-id', project.id);
+        if (project.id) {
+            row.setAttribute('data-id', project.id);
+        } else {
+            console.error('Projet sans ID:', project);
+            row.setAttribute('data-id', 'sans-id-' + Date.now() + '-' + index);
+        }
         row.classList.add('project-row');
         
         // Calculer le budget total et les dépenses
@@ -141,12 +149,18 @@ function loadProjectsList() {
         let formattedDate = 'Non définie';
         if (project.projectDate) {
             try {
-                const projectDate = new Date(project.projectDate);
-                formattedDate = projectDate.toLocaleDateString('fr-FR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
+                // Essayer de convertir directement si c'est déjà au format JJ/MM/AAAA
+                if (project.projectDate.includes('/')) {
+                    formattedDate = project.projectDate;
+                } else {
+                    const projectDate = new Date(project.projectDate);
+                    formattedDate = projectDate.toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                }
+                console.log('Date formatée:', formattedDate);
             } catch (e) {
                 console.error('Erreur de formatage de date:', e);
                 formattedDate = project.projectDate;

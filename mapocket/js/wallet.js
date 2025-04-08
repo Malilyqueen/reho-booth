@@ -22,7 +22,7 @@ function initWalletPage() {
     
     document.getElementById('linkProjectBtn').addEventListener('click', function() {
         // Redirection vers la page index avec focus sur les projets
-        window.location.href = 'index.html#projets';
+        window.location.href = 'index.html#projects-list';
     });
     
     // Gestion des événements de la modale
@@ -127,8 +127,8 @@ function loadLinkedProjects() {
     // Récupérer les données du portefeuille
     let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
     
-    // Récupérer les projets
-    let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    // Récupérer les projets (utilisation de la clé 'savedProjects')
+    let projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
     
     // Filtrer les projets liés
     let linkedProjects = projects.filter(project => 
@@ -284,7 +284,7 @@ function updateBalances() {
     });
     
     // Soustraire les budgets des projets liés
-    let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    let projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
     let linkedProjectIds = walletData.linkedProjects || [];
     
     linkedProjectIds.forEach(projectId => {
@@ -472,9 +472,8 @@ function deleteIncome(incomeId) {
 
 // Fonction pour visualiser un projet
 function viewProject(projectId) {
-    // Redirection vers une page fictive de visualisation de projet
-    // Dans une implémentation réelle, cela redirigerait vers la page de détail du projet
-    alert('Visualisation du projet ' + projectId);
+    // Redirection vers la page d'accueil avec l'ID du projet en paramètre pour l'afficher
+    window.location.href = 'index.html?projectId=' + projectId;
 }
 
 // Fonction pour délier un projet
