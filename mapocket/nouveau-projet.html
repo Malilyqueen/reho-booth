@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau Projet - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="#projets">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <div class="new-project">
+                <h2 class="page-title">NEW PROJECT</h2>
+                <h1 class="project-type">Birthday</h1>
+
+                <form id="newProjectForm" class="project-form">
+                    <div class="form-group">
+                        <label for="projectName">Project Name</label>
+                        <input type="text" id="projectName" name="projectName" value="Manon's Birthday" class="form-control">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="projectDate">Date</label>
+                            <div class="date-input">
+                                <input type="text" id="projectDate" name="projectDate" value="06/16/2025" class="form-control">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
+                        <div class="form-group half">
+                            <label for="totalBudget">Total Budget</label>
+                            <input type="text" id="totalBudget" name="totalBudget" value="€ 500" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="template-selection">
+                        <h3>Choose a Template</h3>
+                        <div class="template-buttons">
+                            <button type="button" class="template-btn">Anniversary</button>
+                            <button type="button" class="template-btn active">Birthday</button>
+                            <button type="button" class="template-btn">Household</button>
+                            <button type="button" class="template-btn">Business</button>
+                            <button type="button" class="template-btn">Other</button>
+                        </div>
+                    </div>
+
+                    <div class="expense-categories">
+                        <table class="expense-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Catering</td>
+                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
+                                    <td>€ 200</td>
+                                </tr>
+                                <tr>
+                                    <td>Decorations</td>
+                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
+                                    <td>€ 100</td>
+                                </tr>
+                                <tr>
+                                    <td>Entertainment</td>
+                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
+                                    <td>€ 100</td>
+                                </tr>
+                                <tr>
+                                    <td>Gifts</td>
+                                    <td><input type="text" class="form-control" placeholder="Enter description"></td>
+                                    <td>€ 100</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="2" class="text-right">Total:</td>
+                                    <td>€ 500</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="ai-advice">
+                        <div class="advice-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <p>Consider booking your entertainment at least two weeks in advance.</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/project.js"></script>
+</body>
+</html>

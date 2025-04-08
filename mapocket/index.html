@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPocket - Assistant Budgétaire Intelligent</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active">
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projets">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#suggestions">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Bonjour Malala,</h2>
+                    <p>Voici un aperçu de votre budget actuel :</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Projets en cours</h3>
+                        <p class="stat-value">3</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Budget global</h3>
+                        <p class="stat-value">€</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>730 €</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Alertes</h3>
+                        <p class="stat-value">2</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="nouveau-projet.html" class="btn btn-primary">
+                    Créer un nouveau projet
+                </a>
+                <button class="btn btn-secondary">
+                    Ajouter une dépense
+                </button>
+            </div>
+
+            <div class="dashboard-widgets">
+                <div class="widget">
+                    <h3>Paiements à venir</h3>
+                    <div class="upcoming-payments">
+                        <div class="payment-timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-dot active"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3>Projets actifs</h3>
+                    <div class="active-projects">
+                        <div class="map-container">
+                            <!-- Map placeholder -->
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marker-alt marker"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-advice">
+                <h3>Conseil IA du jour</h3>
+                <div class="advice-card">
+                    <div class="advice-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <p>Optimisez votre budget alimentaire en planifiant vos repas</p>
+                </div>
+            </div>
+
+            <div class="expense-chart">
+                <h3>Dépenses mensuelles par catégorie</h3>
+                <div class="charts-container">
+                    <div class="bar-chart">
+                        <!-- Bar chart placeholder -->
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height: 30%"></div>
+                            <div class="chart-bar" style="height: 45%"></div>
+                            <div class="chart-bar" style="height: 65%"></div>
+                            <div class="chart-bar" style="height: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="pie-chart">
+                        <!-- Pie chart placeholder -->
+                        <div class="chart-pie"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

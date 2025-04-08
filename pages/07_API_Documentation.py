@@ -37,3 +37,7 @@ The API uses API keys for authentication. You can generate an API key in your ac
 
 Include your API key in the header of all requests:
 
+```
+Authorization: Bearer YOUR_API_KEY
+```
+""")
