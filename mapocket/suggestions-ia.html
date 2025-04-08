@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suggestions IA - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projets">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Suggestions IA</h2>
+                    <p>Optimisez vos budgets grâce à l'intelligence artificielle</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="ai-suggestions-container">
+                <div class="suggestions-intro">
+                    <div class="ai-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="intro-text">
+                        <h3>Votre assistant budgétaire personnel</h3>
+                        <p>Notre intelligence artificielle analyse vos projets et habitudes de dépenses pour vous proposer des suggestions personnalisées qui vous permettent d'optimiser votre budget.</p>
+                    </div>
+                </div>
+
+                <div class="suggestion-categories">
+                    <div class="category-tabs">
+                        <button class="category-tab active" data-category="projects">Projets</button>
+                        <button class="category-tab" data-category="savings">Économies</button>
+                        <button class="category-tab" data-category="planning">Planification</button>
+                        <button class="category-tab" data-category="habits">Habitudes</button>
+                    </div>
+
+                    <div class="category-content active" id="projects-content">
+                        <h3>Optimisation de vos projets</h3>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h4>Anniversaire de Manon</h4>
+                                <span class="project-date">16/06/2025</span>
+                            </div>
+                            
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Élément oublié: Photographe</h5>
+                                        <p>Vous n'avez pas prévu de budget pour la photographie. Pour un anniversaire important, envisagez d'allouer environ 100€ pour un photographe amateur ou utilisez un service de partage de photos entre invités.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-percentage"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Économie potentielle: Décoration</h5>
+                                        <p>La décoration représente 20% de votre budget. Vous pourriez économiser en achetant des décorations réutilisables ou en empruntant certains éléments. Économie estimée: 30-40€.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Planification: Réservations</h5>
+                                        <p>Pensez à réserver l'animation au moins 3 semaines à l'avance pour éviter des frais supplémentaires de dernière minute et garantir la disponibilité.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h4>Rénovation Cuisine</h4>
+                                <span class="project-date">En cours</span>
+                            </div>
+                            
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Alerte: Dépassement potentiel</h5>
+                                        <p>Basé sur des projets similaires, le budget pour les matériaux semble sous-estimé de 15-20%. Prévoyez une marge supplémentaire d'environ 300€.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Opportunité: Soldes saisonnières</h5>
+                                        <p>Les soldes d'électroménager commencent dans 2 semaines. Attendre pourrait vous faire économiser jusqu'à 25% sur vos achats prévus.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-content" id="savings-content">
+                        <h3>Opportunités d'économies</h3>
+                        
+                        <div class="savings-card">
+                            <div class="savings-header">
+                                <h4>Économies potentielles identifiées</h4>
+                            </div>
+                            
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-utensils"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Alimentation: Planification des repas</h5>
+                                        <p>En planifiant vos repas à l'avance et en préparant des listes de courses, vous pourriez réduire vos dépenses alimentaires de 15%. Économie mensuelle estimée: 80-120€.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Électricité: Consommation en veille</h5>
+                                        <p>Les appareils en veille représentent environ 10% de votre facture d'électricité. Utilisez des multiprises avec interrupteurs pour une économie annuelle estimée à 85€.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-shopping-bag"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Achats: Regroupez vos commandes</h5>
+                                        <p>Vous avez effectué 8 commandes séparées le mois dernier. Regrouper ces commandes aurait économisé environ 32€ en frais de livraison.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-content" id="planning-content">
+                        <h3>Planification avancée</h3>
+                        
+                        <div class="planning-card">
+                            <div class="planning-header">
+                                <h4>Échéances importantes à venir</h4>
+                            </div>
+                            
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Paiement trimestriel: Assurance</h5>
+                                        <p>Votre paiement d'assurance (210€) est prévu dans 18 jours. Envisagez de passer au paiement annuel pour bénéficier d'une réduction de 8%.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-gift"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Planification: Anniversaires familiaux</h5>
+                                        <p>3 anniversaires familiaux arrivent dans les 6 prochaines semaines. Prévoyez un budget d'environ 150€ pour les cadeaux.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-piggy-bank"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Objectif d'épargne: Vacances d'été</h5>
+                                        <p>Pour atteindre votre objectif d'épargne de 1200€ pour vos vacances d'été, il faudrait mettre de côté 200€ par mois pendant les 6 prochains mois.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-content" id="habits-content">
+                        <h3>Habitudes de dépenses</h3>
+                        
+                        <div class="habits-card">
+                            <div class="habits-header">
+                                <h4>Analyse de vos habitudes financières</h4>
+                            </div>
+                            
+                            <div class="suggestion-list">
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Tendance identifiée: Restauration</h5>
+                                        <p>Vos dépenses en restauration ont augmenté de 22% au cours des 3 derniers mois. Cela représente maintenant 18% de votre budget mensuel.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Point fort: Épargne régulière</h5>
+                                        <p>Félicitations! Vous avez maintenu une épargne constante de 10% de vos revenus pendant 6 mois consécutifs.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="suggestion-item">
+                                    <div class="suggestion-icon">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <div class="suggestion-text">
+                                        <h5>Opportunité: Arrondi à l'euro supérieur</h5>
+                                        <p>L'activation de l'option "arrondi à l'euro supérieur" pour chaque dépense vous permettrait d'épargner environ 15-20€ supplémentaires par mois sans effort.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-assistant">
+                    <h3>Assistant budgétaire intelligent</h3>
+                    <div class="assistant-container">
+                        <div class="assistant-header">
+                            <div class="assistant-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="assistant-info">
+                                <h4>MaPocket Assistant</h4>
+                                <p>Posez-moi vos questions budgétaires</p>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-container">
+                            <div class="chat-messages">
+                                <div class="message assistant">
+                                    <p>Bonjour Malala ! Je suis votre assistant budgétaire intelligent. Comment puis-je vous aider aujourd'hui ?</p>
+                                </div>
+                                
+                                <div class="message user">
+                                    <p>J'ai besoin d'économiser 1000€ pour les vacances d'été</p>
+                                </div>
+                                
+                                <div class="message assistant">
+                                    <p>D'après l'analyse de vos dépenses, voici 3 pistes pour économiser 1000€ d'ici l'été :</p>
+                                    <ul>
+                                        <li>Réduire vos abonnements non utilisés : 30€/mois (90€ sur 3 mois)</li>
+                                        <li>Optimiser votre budget alimentaire : 100€/mois (300€ sur 3 mois)</li>
+                                        <li>Reporter votre achat d'électroménager prévu : 620€</li>
+                                    </ul>
+                                    <p>Cela vous permettrait d'économiser 1010€. Souhaitez-vous un plan détaillé pour l'une de ces suggestions ?</p>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-input">
+                                <input type="text" placeholder="Posez votre question..." id="ai-question-input">
+                                <button class="send-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/suggestions.js"></script>
+</body>
+</html>

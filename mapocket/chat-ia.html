@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat IA - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projets">
+                            <i class="fas fa-folder"></i>
+                            Mes Projets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#depenses">
+                            <i class="fas fa-euro-sign"></i>
+                            Dépenses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suggestions-ia.html">
+                            <i class="fas fa-robot"></i>
+                            Suggestions IA
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="chat-ia.html">
+                            <i class="fas fa-comments"></i>
+                            Chat IA
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#parametres">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="content-header">
+                <div class="user-greeting">
+                    <h2>Assistant IA</h2>
+                    <p>Posez toutes vos questions à votre assistant financier personnel</p>
+                </div>
+                <div class="more-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </header>
+
+            <div class="ai-chat-container">
+                <div class="chat-sidebar">
+                    <div class="chat-history">
+                        <h3>Historique des conversations</h3>
+                        <ul class="history-list">
+                            <li class="active">
+                                <i class="fas fa-comment"></i>
+                                <div class="history-info">
+                                    <p class="history-title">Budget vacances</p>
+                                    <p class="history-date">Aujourd'hui, 14:25</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-comment"></i>
+                                <div class="history-info">
+                                    <p class="history-title">Épargne pour achat immobilier</p>
+                                    <p class="history-date">Hier, 09:10</p>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-comment"></i>
+                                <div class="history-info">
+                                    <p class="history-title">Questions sur investissements</p>
+                                    <p class="history-date">04/04/2025</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chat-topics">
+                        <h3>Suggestions de sujets</h3>
+                        <div class="topic-buttons">
+                            <button class="topic-btn">Comment économiser 500€ par mois ?</button>
+                            <button class="topic-btn">Aide pour budget d'anniversaire</button>
+                            <button class="topic-btn">Optimiser mes investissements</button>
+                            <button class="topic-btn">Gestion des dépenses imprévues</button>
+                            <button class="topic-btn">Planifier un achat immobilier</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <div class="chat-title">
+                            <h3>Budget vacances</h3>
+                            <span class="chat-status">Conversation en cours</span>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="action-btn" title="Nouvelle conversation">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="action-btn" title="Sauvegarder">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button class="action-btn" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages">
+                        <div class="chat-welcome">
+                            <div class="welcome-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>Comment puis-je vous aider aujourd'hui ?</h3>
+                            <p>Je suis votre assistant financier intelligent. Je peux vous aider à gérer vos budgets, analyser vos dépenses et vous donner des conseils personnalisés pour atteindre vos objectifs financiers.</p>
+                        </div>
+                        
+                        <div class="message-container">
+                            <div class="message user">
+                                <div class="message-content">
+                                    <p>Bonjour, j'aimerais préparer un budget pour nos vacances d'été en famille. Nous sommes 4 personnes et nous voulons partir 2 semaines au bord de la mer.</p>
+                                </div>
+                                <div class="message-info">
+                                    <span class="message-time">14:25</span>
+                                </div>
+                            </div>
+                            
+                            <div class="message assistant">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>Bonjour ! Je serais ravi de vous aider à préparer votre budget vacances. Pour une famille de 4 personnes pendant 2 semaines à la mer, voici les principales catégories de dépenses à considérer :</p>
+                                    <ul>
+                                        <li><strong>Hébergement</strong> : 700-1400€ (selon le type et l'emplacement)</li>
+                                        <li><strong>Transport</strong> : 200-600€ (selon distance et moyen de transport)</li>
+                                        <li><strong>Nourriture</strong> : 800-1200€ (restaurants + courses)</li>
+                                        <li><strong>Activités et loisirs</strong> : 400-800€</li>
+                                        <li><strong>Budget "extras"</strong> : 200-300€ (imprévus, souvenirs)</li>
+                                    </ul>
+                                    <p>Cela donne un budget total estimé entre 2300€ et 4300€.</p>
+                                    <p>Avez-vous une destination précise en tête ? Ou une enveloppe budgétaire maximale que vous souhaiteriez respecter ?</p>
+                                </div>
+                                <div class="message-info">
+                                    <span class="message-time">14:27</span>
+                                </div>
+                            </div>
+                            
+                            <div class="message user">
+                                <div class="message-content">
+                                    <p>Nous pensons aller dans le sud de la France, près de Marseille, et nous avons un budget maximum de 3000€. Est-ce réaliste ?</p>
+                                </div>
+                                <div class="message-info">
+                                    <span class="message-time">14:30</span>
+                                </div>
+                            </div>
+                            
+                            <div class="message assistant">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>3000€ pour 2 semaines à Marseille pour 4 personnes est un budget serré mais réalisable, surtout avec quelques astuces d'optimisation :</p>
+                                    <ol>
+                                        <li><strong>Hébergement</strong> : Optez pour une location Airbnb ou un appartement plutôt qu'un hôtel, visez 800-1000€ pour 2 semaines.</li>
+                                        <li><strong>Transport</strong> : Si vous y allez en voiture, comptez 150-200€ d'essence (aller-retour). Privilégiez les transports en commun sur place.</li>
+                                        <li><strong>Nourriture</strong> : Cuisinez la plupart de vos repas (~600€ de courses) et prévoyez quelques restaurants (~300€), soit environ 900€ au total.</li>
+                                        <li><strong>Activités</strong> : Recherchez les activités gratuites ou à prix réduit. Prévoyez ~500€ pour les entrées aux sites, plages privées, etc.</li>
+                                        <li><strong>Budget "extras"</strong> : ~200€</li>
+                                    </ol>
+                                    <p>Total estimé : ~2700€, ce qui vous laisse une marge de 300€.</p>
+                                    <p>Voulez-vous que je crée un projet détaillé "Vacances Marseille" avec ces catégories dans MaPocket pour vous permettre de suivre vos dépenses ?</p>
+                                </div>
+                                <div class="message-info">
+                                    <span class="message-time">14:33</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <button class="attachment-btn">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="text" class="chat-input" placeholder="Posez votre question...">
+                        <button class="chat-send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/chat-ia.js"></script>
+</body>
+</html>
