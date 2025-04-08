@@ -33,6 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Initialiser les boutons d'exportation et d'importation
+    if (typeof initializeBackupRestore === 'function') {
+        try {
+            initializeBackupRestore();
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des fonctions de sauvegarde/restauration:', error);
+        }
+    }
+    
     // Configuration pour actualiser la liste des projets lorsque l'utilisateur revient sur la page
     document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible') {

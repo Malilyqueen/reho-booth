@@ -151,6 +151,12 @@
                             <a href="nouveau-projet.html" class="btn-sm btn-add">
                                 <i class="fas fa-plus"></i> Nouveau
                             </a>
+                            <button id="exportDataBtn" class="btn-sm btn-export" title="Exporter les données">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button id="importDataBtn" class="btn-sm btn-import" title="Importer les données">
+                                <i class="fas fa-upload"></i>
+                            </button>
                             <button id="resetStorage" class="btn-sm btn-reset" title="Réinitialiser">
                                 <i class="fas fa-sync"></i>
                             </button>
@@ -315,8 +321,13 @@
         </div>
     </div>
 
+    <!-- Input file caché pour l'importation de sauvegarde -->
+    <input type="file" id="importDataFile" accept=".json" style="display: none;">
+
     <script src="js/timeline.js"></script>
     <script src="js/main.js"></script>
     <script src="js/voice-commands.js"></script>
+    <script src="js/backup-restore.js"></script>
+    <script src="js/backup-restore-functions.js"></script>
 </body>
 </html>

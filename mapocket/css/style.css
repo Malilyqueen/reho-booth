@@ -639,6 +639,27 @@ body {
     padding: 5px 12px;
 }
 
+.btn-export {
+    background-color: var(--info-color);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.btn-import {
+    background-color: var(--success-color);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
+.btn-reset {
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
+
 .btn-view, .btn-view-attachment {
     color: var(--info-color);
 }
