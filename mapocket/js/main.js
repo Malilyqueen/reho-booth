@@ -561,6 +561,7 @@ function updateDashboardStats() {
     const walletBalanceElement = document.getElementById('walletBalance');
     if (walletBalanceElement) {
         let totalBalance = 0;
+        let totalProjectExpenses = 0;
         
         try {
             // Récupérer tous les portefeuilles depuis mapocket_wallets
@@ -568,13 +569,46 @@ function updateDashboardStats() {
             console.log('Portefeuilles récupérés:', wallets);
             
             if (Array.isArray(wallets)) {
-                // Calculer le solde total
+                // Calculer le solde total des portefeuilles
                 wallets.forEach(wallet => {
                     if (wallet.balance) {
                         totalBalance += parseFloat(wallet.balance);
                     }
                 });
+                
+                // Récupérer tous les projets
+                const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+                
+                // Calculer les dépenses totales des projets liés à un portefeuille
+                if (Array.isArray(projects)) {
+                    projects.forEach(project => {
+                        // Vérifier si le projet est lié à un portefeuille
+                        if (project.linkToWallet && project.realExpenses && Array.isArray(project.realExpenses)) {
+                            // Calculer le total des dépenses réelles pour ce projet
+                            const projectExpenses = project.realExpenses.reduce((total, expense) => {
+                                return total + parseFloat(expense.amount || 0);
+                            }, 0);
+                            
+                            // Ajouter aux dépenses totales
+                            totalProjectExpenses += projectExpenses;
+                        }
+                    });
+                }
+                
+                // Calculer le solde net (solde des portefeuilles - dépenses des projets liés)
+                const netBalance = totalBalance - totalProjectExpenses;
+                
                 console.log('Solde total des portefeuilles:', totalBalance);
+                console.log('Total des dépenses des projets liés:', totalProjectExpenses);
+                console.log('Solde net des portefeuilles:', netBalance);
+                
+                // Mettre à jour l'affichage avec le solde net
+                walletBalanceElement.textContent = `€ ${netBalance.toFixed(2)}`;
+                
+                // Ajouter une info-bulle explicative
+                walletBalanceElement.setAttribute('title', `Solde total: €${totalBalance.toFixed(2)} - Dépenses des projets liés: €${totalProjectExpenses.toFixed(2)}`);
+                
+                return;
             } else {
                 console.error('Format incorrect pour mapocket_wallets:', wallets);
             }
@@ -582,6 +616,7 @@ function updateDashboardStats() {
             console.error('Erreur lors de la récupération des portefeuilles:', error);
         }
         
+        // Si on arrive ici, c'est qu'il y a eu une erreur dans le calcul
         walletBalanceElement.textContent = `€ ${totalBalance.toFixed(2)}`;
     }
     
