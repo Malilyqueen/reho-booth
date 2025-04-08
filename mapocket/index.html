@@ -226,9 +226,75 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <h3>À venir dans les 30 jours</h3>
+                    <div class="timeline-actions">
+                        <button id="addReminderBtn" class="btn-sm btn-add">
+                            <i class="fas fa-bell"></i> Ajouter un rappel
+                        </button>
+                        <div class="timeline-filters">
+                            <select id="timelineFilter" class="timeline-filter">
+                                <option value="all">Tous les événements</option>
+                                <option value="projects">Projets</option>
+                                <option value="invoices">Factures</option>
+                                <option value="quotes">Devis</option>
+                                <option value="income">Revenus</option>
+                                <option value="goals">Objectifs</option>
+                                <option value="alerts">Alertes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline">
+                    <div id="timelineContent" class="timeline-content">
+                        <!-- Les événements seront générés dynamiquement ici -->
+                        <div class="empty-timeline-message">
+                            <p><i class="far fa-calendar-alt"></i> Aucun événement à venir dans les 30 prochains jours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
+    <!-- Modal pour ajouter un rappel -->
+    <div id="reminderModal" class="reminder-modal">
+        <div class="reminder-form">
+            <h3>Ajouter un rappel</h3>
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label for="reminderTitle">Titre</label>
+                    <input type="text" id="reminderTitle" required placeholder="Ex: Payer l'assurance">
+                </div>
+                <div class="form-group">
+                    <label for="reminderDate">Date</label>
+                    <input type="date" id="reminderDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="reminderType">Type</label>
+                    <select id="reminderType" required>
+                        <option value="reminder">Rappel</option>
+                        <option value="invoice">Facture</option>
+                        <option value="quote">Devis</option>
+                        <option value="income">Revenu</option>
+                        <option value="goal">Objectif</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reminderDescription">Description (optionnel)</label>
+                    <textarea id="reminderDescription" rows="3" placeholder="Ajoutez des détails supplémentaires..."></textarea>
+                </div>
+                <div class="form-footer">
+                    <button type="button" id="cancelReminderBtn" class="btn btn-cancel">Annuler</button>
+                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/timeline.js"></script>
     <script src="js/main.js"></script>
     <script src="js/voice-commands.js"></script>
 </body>
