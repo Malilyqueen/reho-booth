@@ -125,8 +125,23 @@
                             </button>
                         </div>
                     </div>
-                    <div class="projects-list">
-                        <!-- Liste des projets (générée dynamiquement via JavaScript) -->
+                    <div class="projects-table-container">
+                        <table class="projects-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Date</th>
+                                    <th>Budget</th>
+                                    <th>Dépenses</th>
+                                    <th>Utilisation</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <!-- Projets générés dynamiquement ici -->
+                            </tbody>
+                        </table>
                         <div class="empty-projects-message" style="display: none;">
                             <p>Vous n'avez pas encore de projets. Créez votre premier projet pour commencer!</p>
                         </div>

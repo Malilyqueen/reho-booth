@@ -1437,6 +1437,32 @@ label {
     display: flex;
 }
 
+/* Styles pour le mode visualisation (lecture seule) */
+.view-mode input,
+.view-mode textarea,
+.view-mode select {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    color: #333;
+    cursor: default;
+}
+
+.view-mode .readonly:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.view-mode .form-container {
+    background-color: #f8f9fa;
+    border-left: 4px solid #1d3557;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.view-mode .category-header,
+.view-mode .subcategory-header {
+    background-color: #eaf4fb;
+}
+
 .add-line-btn, .add-subcategory-btn {
     background-color: transparent;
     border: none;
@@ -1698,6 +1724,79 @@ label {
 
 .btn-reset:hover {
     background-color: #5a6268;
+}
+
+.projects-table-container {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.projects-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.projects-table th,
+.projects-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.projects-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #1d3557;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.projects-table tbody tr:hover {
+    background-color: #f1f8ff;
+}
+
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-bar.warning {
+    background-color: #FFC107;
+}
+
+.progress-bar.danger {
+    background-color: #e63946;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+}
+
+.status-indicator.warning {
+    background-color: #FFC107;
+}
+
+.status-indicator.danger {
+    background-color: #e63946;
 }
 
 .projects-list {

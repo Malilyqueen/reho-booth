@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Configuration pour actualiser la liste des projets lorsque l'utilisateur revient sur la page
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            console.log('Utilisateur revenu sur la page, actualisation des projets');
+            loadProjectsList();
+            updateDashboardStats();
+        }
+    });
 });
 
 function initializeUI() {
@@ -75,18 +84,18 @@ function loadProjectsList() {
         projects = [];
     }
     
-    console.log('Projets chargés:', projects);
+    console.log('Projets chargés:', projects.length);
     
-    const projectsList = document.querySelector('.projects-list');
+    const projectsTableBody = document.getElementById('projectsTableBody');
     const emptyMessage = document.querySelector('.empty-projects-message');
     
-    if (!projectsList) {
-        console.error('Élément .projects-list non trouvé dans le DOM');
+    if (!projectsTableBody) {
+        console.error('Élément #projectsTableBody non trouvé dans le DOM');
         return;
     }
     
-    // Vider la liste actuelle
-    projectsList.innerHTML = '';
+    // Vider le tableau actuel
+    projectsTableBody.innerHTML = '';
     
     // Afficher un message si aucun projet n'existe
     if (projects.length === 0) {
@@ -100,62 +109,108 @@ function loadProjectsList() {
     
     // Afficher chaque projet
     projects.forEach(project => {
-        const projectCard = document.createElement('div');
-        projectCard.className = 'project-card';
-        projectCard.setAttribute('data-id', project.id);
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', project.id);
+        row.classList.add('project-row');
+        
+        // Calculer le budget total et les dépenses
+        const budgetTotal = parseFloat(project.totalBudget?.replace(/[^0-9.]/g, '') || 0);
+        
+        // Calculer les dépenses totales en additionnant toutes les catégories
+        let depensesTotal = 0;
+        if (project.categories && Array.isArray(project.categories)) {
+            project.categories.forEach(category => {
+                const categoryAmount = parseFloat(category.amount?.replace(/[^0-9.]/g, '') || 0);
+                depensesTotal += categoryAmount;
+            });
+        }
+        
+        // Calculer le pourcentage d'utilisation
+        const utilizationPercent = budgetTotal > 0 ? Math.round((depensesTotal / budgetTotal) * 100) : 0;
+        
+        // Déterminer le statut
+        let statusClass = 'success';
+        if (utilizationPercent >= 90 && utilizationPercent < 100) {
+            statusClass = 'warning';
+        } else if (utilizationPercent >= 100) {
+            statusClass = 'danger';
+        }
         
         // Date formatée
-        const projectDate = project.projectDate ? new Date(project.projectDate) : new Date();
-        const formattedDate = projectDate.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
+        let formattedDate = 'Non définie';
+        if (project.projectDate) {
+            try {
+                const projectDate = new Date(project.projectDate);
+                formattedDate = projectDate.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                console.error('Erreur de formatage de date:', e);
+                formattedDate = project.projectDate;
+            }
+        }
         
-        // Icône du type de projet
-        let typeIcon = 'fa-file';
-        if (project.template === 'Mariage') typeIcon = 'fa-ring';
-        else if (project.template === 'Anniversaire') typeIcon = 'fa-birthday-cake';
-        else if (project.template === 'Vacances') typeIcon = 'fa-umbrella-beach';
-        else if (project.template === 'Rénovation') typeIcon = 'fa-hammer';
-        else if (project.template === 'Événement') typeIcon = 'fa-calendar-day';
-        
-        projectCard.innerHTML = `
-            <div class="project-info">
-                <h4 class="project-title">${project.projectName || 'Sans titre'}</h4>
-                <div class="project-details">
-                    <div class="project-type">
-                        <i class="fas ${typeIcon}"></i>
-                        <span>${project.template || 'Personnalisé'}</span>
-                    </div>
-                    <div class="project-date">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>${formattedDate}</span>
-                    </div>
-                    <div class="project-budget">
-                        <i class="fas fa-euro-sign"></i>
-                        <span>${project.totalBudget || '0'} €</span>
-                    </div>
+        // Construire la ligne du tableau
+        row.innerHTML = `
+            <td class="project-name">
+                <a href="#" class="project-link" title="Voir les détails">
+                    ${project.projectName || 'Sans titre'}
+                </a>
+            </td>
+            <td>${formattedDate}</td>
+            <td>${budgetTotal} €</td>
+            <td>${depensesTotal} €</td>
+            <td>
+                <div class="progress-container">
+                    <div class="progress-bar ${statusClass}" style="width: ${Math.min(utilizationPercent, 100)}%"></div>
                 </div>
-            </div>
-            <div class="project-actions">
-                <button type="button" class="btn-action btn-duplicate" title="Dupliquer">
-                    <i class="fas fa-copy"></i>
-                </button>
-                <button type="button" class="btn-action btn-edit" title="Modifier">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button type="button" class="btn-action btn-delete" title="Supprimer">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
+                <span class="utilization-text">${utilizationPercent}%</span>
+            </td>
+            <td>
+                <span class="status-indicator ${statusClass}" title="${statusClass === 'danger' ? 'Dépassement' : statusClass === 'warning' ? 'Attention' : 'Normal'}"></span>
+            </td>
+            <td>
+                <div class="project-actions">
+                    <button type="button" class="btn-action btn-view" title="Voir">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn-action btn-duplicate" title="Dupliquer">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button type="button" class="btn-action btn-edit" title="Modifier">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn-action btn-delete" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
         `;
         
         // Ajouter à la liste
-        projectsList.appendChild(projectCard);
+        projectsTableBody.appendChild(row);
         
         // Initialiser les boutons d'action
-        initializeProjectActions(projectCard);
+        initializeProjectActions(row);
+        
+        // Initialiser le lien de visualisation du projet
+        const projectLink = row.querySelector('.project-link');
+        const viewButton = row.querySelector('.btn-view');
+        
+        if (projectLink) {
+            projectLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                viewProject(project.id);
+            });
+        }
+        
+        if (viewButton) {
+            viewButton.addEventListener('click', function() {
+                viewProject(project.id);
+            });
+        }
     });
 }
 
@@ -328,4 +383,23 @@ function simulateDataLoading() {
         // Update the charts (in a real implementation)
         // updateCharts(data);
     }, 500);
+}
+
+function viewProject(projectId) {
+    // Récupérer tous les projets
+    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    
+    // Trouver le projet à visualiser
+    const projectToView = projects.find(p => p.id === projectId);
+    
+    if (projectToView) {
+        // Sauvegarder le projet à visualiser dans le localStorage
+        localStorage.setItem('currentProject', JSON.stringify(projectToView));
+        localStorage.setItem('viewMode', 'true'); // Indicateur pour le mode visualisation
+        
+        // Rediriger vers la page de visualisation (on peut réutiliser la page de création avec un mode lecture seule)
+        window.location.href = 'nouveau-projet.html?view=true';
+    } else {
+        showNotification('Projet non trouvé');
+    }
 }

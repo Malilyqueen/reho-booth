@@ -7,6 +7,10 @@ let lastSavedData = null;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('New Project page initialized');
     
+    // Vérifier si on est en mode visualisation
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewMode = urlParams.get('view') === 'true' || localStorage.getItem('viewMode') === 'true';
+    
     // Initialiser le formulaire de nouveau projet
     initializeProjectForm();
     
@@ -19,8 +23,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les interactions avec les catégories et sous-catégories de dépenses
     initializeExpenseCategories();
     
-    // Initialiser la sauvegarde automatique
-    initializeAutoSave();
+    if (viewMode) {
+        console.log('Mode visualisation activé');
+        enableViewMode();
+    } else {
+        // Initialiser la sauvegarde automatique (seulement si pas en mode visualisation)
+        initializeAutoSave();
+    }
     
     // Initialiser le bouton d'ajout de catégorie principale
     const addMainCategoryBtn = document.getElementById('addMainCategoryBtn');
@@ -2520,6 +2529,72 @@ function updateCategoriesUI(categoriesData) {
     subcategories.forEach(subcategory => {
         updateSubcategoryTotal(subcategory);
     });
+}
+
+// Fonction pour activer le mode de visualisation (lecture seule)
+function enableViewMode() {
+    console.log('Activation du mode visualisation');
+    
+    // Modifier le titre de la page
+    const pageTitle = document.querySelector('.page-header h2');
+    if (pageTitle) {
+        pageTitle.textContent = 'Détails du projet';
+    }
+    
+    // Désactiver tous les champs d'entrée
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.setAttribute('disabled', 'disabled');
+        input.classList.add('readonly');
+    });
+    
+    // Masquer les boutons d'action (ajout, suppression, etc.)
+    const actionButtons = document.querySelectorAll('.btn-add, .btn-delete, .btn-delete-line, .add-line-btn, .add-subcategory-btn');
+    actionButtons.forEach(button => {
+        button.style.display = 'none';
+    });
+    
+    // Masquer la section des modèles si visible
+    const templatesSection = document.querySelector('.templates-section');
+    if (templatesSection) {
+        templatesSection.style.display = 'none';
+    }
+    
+    // Remplacer le bouton de soumission par un bouton de retour
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.textContent = 'Retour au tableau de bord';
+        submitButton.type = 'button';
+        submitButton.className = 'btn btn-secondary';
+        submitButton.addEventListener('click', function() {
+            // Nettoyer les indicateurs de mode vue
+            localStorage.removeItem('viewMode');
+            window.location.href = 'index.html';
+        });
+    }
+    
+    // Masque le footer s'il existe
+    const formFooter = document.querySelector('.form-footer');
+    if (formFooter) {
+        formFooter.style.display = 'none';
+    }
+    
+    // Déplier toutes les catégories
+    const categoryToggles = document.querySelectorAll('.category-toggle');
+    categoryToggles.forEach(toggle => {
+        if (!toggle.classList.contains('open')) {
+            toggle.click();
+        }
+    });
+    
+    // Masquer la notification de sauvegarde si présente
+    const saveNotification = document.querySelector('.save-notification');
+    if (saveNotification) {
+        saveNotification.style.display = 'none';
+    }
+    
+    // Ajouter une classe au corps pour des styles CSS spécifiques
+    document.body.classList.add('view-mode');
 }
 
 function updateAIAdvice(templateType) {
