@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialiser l'accès à la page d'administration
     initAdminAccess();
-});
     
     // Initialize the UI elements
     initializeUI();

@@ -389,16 +389,43 @@ function generateBudgetAlerts(events) {
         const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
         
         projects.forEach(project => {
-            if (project.categories && Array.isArray(project.categories)) {
+            if (project && project.categories && Array.isArray(project.categories)) {
                 project.categories.forEach(category => {
-                    const budgetAmount = parseFloat(category.amount?.replace(/[^0-9.]/g, '') || 0);
+                    if (!category || !category.name) return;
+                    
+                    // Utiliser une expression régulière pour extraire les nombres de la chaîne de montant
+                    // qui pourrait contenir différents symboles de devise
+                    const amountStr = category.amount || '0';
+                    let budgetAmount = 0;
+                    
+                    try {
+                        // Extraire uniquement les chiffres et le point décimal
+                        const matches = amountStr.match(/[\d.,]+/);
+                        if (matches && matches.length > 0) {
+                            // Remplacer les virgules par des points pour le parsing
+                            budgetAmount = parseFloat(matches[0].replace(/,/g, '.'));
+                        }
+                    } catch (parseErr) {
+                        console.error('Erreur lors du parsing du montant:', amountStr, parseErr);
+                        budgetAmount = 0;
+                    }
                     
                     // Calculer les dépenses réelles pour cette catégorie
                     let realExpenses = 0;
                     if (project.realExpenses && Array.isArray(project.realExpenses)) {
                         project.realExpenses.forEach(expense => {
-                            if (expense.category === category.name) {
-                                realExpenses += parseFloat(expense.amount?.replace(/[^0-9.]/g, '') || 0);
+                            if (expense && expense.category === category.name) {
+                                try {
+                                    // Extraire uniquement les chiffres et le point décimal
+                                    const expenseStr = expense.amount || '0';
+                                    const matches = expenseStr.match(/[\d.,]+/);
+                                    if (matches && matches.length > 0) {
+                                        // Remplacer les virgules par des points pour le parsing
+                                        realExpenses += parseFloat(matches[0].replace(/,/g, '.'));
+                                    }
+                                } catch (parseErr) {
+                                    console.error('Erreur lors du parsing de la dépense:', expense.amount, parseErr);
+                                }
                             }
                         });
                     }
