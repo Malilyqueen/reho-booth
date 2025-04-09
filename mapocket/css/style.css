@@ -2504,6 +2504,13 @@ label {
         flex-direction: column;
     }
     
+    /* Amélioration de la responsivité pour les tableaux de projets */
+    .projects-table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
     /* Sidebar verticale pour mobile */
     .sidebar {
         width: 60px;
@@ -2661,13 +2668,12 @@ label {
         -webkit-overflow-scrolling: touch;
     }
     
-    /* Transformation des tableaux en cards sur mobile */
-    .projects-table, 
-    .projects-table thead, 
-    .projects-table tbody, 
-    .projects-table th, 
-    .projects-table td, 
-    .projects-table tr,
+    /* Force l'affichage des cellules du tableau en mode déroulable sur petit écran */
+    .projects-table {
+        min-width: 800px;
+    }
+    
+    /* Transformation des tableaux en cards sur mobile, à l'exception de projects-table qui garde la structure de tableau */
     .wallet-table,
     .wallet-table thead,
     .wallet-table tbody,
@@ -2677,14 +2683,12 @@ label {
         display: block;
     }
     
-    .projects-table thead tr,
     .wallet-table thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
     
-    .projects-table tr,
     .wallet-table tr {
         border: 1px solid #e9ecef;
         margin-bottom: 15px;
@@ -2693,7 +2697,6 @@ label {
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
-    .projects-table td,
     .wallet-table td {
         border: none;
         border-bottom: 1px solid #f8f9fa;
@@ -2702,7 +2705,6 @@ label {
         min-height: 30px;
     }
     
-    .projects-table td:before,
     .wallet-table td:before {
         position: absolute;
         top: 10px;
@@ -2713,15 +2715,6 @@ label {
         font-weight: 600;
         color: var(--primary-color);
     }
-    
-    /* Labels pour version mobile - Projects table */
-    .projects-table td:nth-of-type(1):before { content: "Nom du projet:"; }
-    .projects-table td:nth-of-type(2):before { content: "Date:"; }
-    .projects-table td:nth-of-type(3):before { content: "Budget:"; }
-    .projects-table td:nth-of-type(4):before { content: "Dépenses:"; }
-    .projects-table td:nth-of-type(5):before { content: "Utilisation:"; }
-    .projects-table td:nth-of-type(6):before { content: "Statut:"; }
-    .projects-table td:nth-of-type(7):before { content: "Actions:"; }
     
     /* Labels pour version mobile - Wallet table */
     .wallet-table.incomes-table td:nth-of-type(1):before { content: "Description:"; }
@@ -2927,9 +2920,11 @@ label {
 .projects-table-container {
     max-height: 300px;
     overflow-y: auto;
+    overflow-x: auto;
     margin-top: 10px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
 .projects-table {
