@@ -1357,6 +1357,26 @@ function formatMonth(date) {
  * Formate un montant en devise
  */
 function formatCurrency(amount) {
+    // Utiliser la fonction globale si elle existe
+    if (typeof window.getCurrencySymbol === 'function') {
+        // Récupérer les préférences utilisateur pour obtenir la devise
+        let currencyCode = 'EUR'; // Devise par défaut
+        
+        try {
+            const savedPrefs = localStorage.getItem('userPreferences');
+            if (savedPrefs) {
+                const userPreferences = JSON.parse(savedPrefs);
+                currencyCode = userPreferences.currency || 'EUR';
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des préférences utilisateur:', error);
+        }
+        
+        const currencySymbol = window.getCurrencySymbol(currencyCode);
+        return `${currencySymbol} ${parseFloat(amount).toFixed(2)}`;
+    }
+    
+    // Fallback à l'ancienne méthode si la fonction globale n'existe pas
     return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
