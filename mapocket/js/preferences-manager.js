@@ -263,7 +263,14 @@ function getCurrencySymbol(currency) {
         'MYR': 'RM',
         'SGD': 'S$',
         'THB': '฿',
-        'AED': 'د.إ'
+        'AED': 'د.إ',
+        'MAD': 'DH',    // Dirham marocain
+        'DZD': 'DA',    // Dinar algérien
+        'TND': 'DT',    // Dinar tunisien
+        'XOF': 'FCFA',  // Franc CFA BCEAO (Afrique de l'Ouest)
+        'XAF': 'FCFA',  // Franc CFA BEAC (Afrique Centrale)
+        'MGA': 'Ar',    // Ariary malgache
+        'MUR': '₨'      // Roupie mauricienne
     };
     return symbols[currency] || currency;
 }

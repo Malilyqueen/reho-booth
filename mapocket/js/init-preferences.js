@@ -116,7 +116,14 @@ function initCurrencySelectors() {
         {code: 'MYR', name: 'Ringgit malaisien (RM)', symbol: 'RM'},
         {code: 'SGD', name: 'Dollar de Singapour (S$)', symbol: 'S$'},
         {code: 'THB', name: 'Baht thaïlandais (฿)', symbol: '฿'},
-        {code: 'AED', name: 'Dirham des Émirats arabes unis (د.إ)', symbol: 'د.إ'}
+        {code: 'AED', name: 'Dirham des Émirats arabes unis (د.إ)', symbol: 'د.إ'},
+        {code: 'MAD', name: 'Dirham marocain (DH)', symbol: 'DH'},
+        {code: 'DZD', name: 'Dinar algérien (DA)', symbol: 'DA'},
+        {code: 'TND', name: 'Dinar tunisien (DT)', symbol: 'DT'},
+        {code: 'XOF', name: 'Franc CFA - Afrique de l\'Ouest (FCFA)', symbol: 'FCFA'},
+        {code: 'XAF', name: 'Franc CFA - Afrique Centrale (FCFA)', symbol: 'FCFA'},
+        {code: 'MGA', name: 'Ariary malgache (Ar)', symbol: 'Ar'},
+        {code: 'MUR', name: 'Roupie mauricienne (₨)', symbol: '₨'}
     ];
     
     if (primaryCurrencyContainer) {
@@ -279,7 +286,14 @@ function getExchangeRate(fromCurrency, toCurrency) {
         'MYR': 5.02,
         'SGD': 1.46,
         'THB': 38.67,
-        'AED': 4.01
+        'AED': 4.01,
+        'MAD': 10.85,    // Dirham marocain
+        'DZD': 146.25,   // Dinar algérien
+        'TND': 3.45,     // Dinar tunisien
+        'XOF': 655.957,  // Franc CFA BCEAO (parité fixe avec l'EUR)
+        'XAF': 655.957,  // Franc CFA BEAC (parité fixe avec l'EUR)
+        'MGA': 4800.75,  // Ariary malgache
+        'MUR': 50.25     // Roupie mauricienne
     };
     
     // Calculer le taux de change entre les deux devises
