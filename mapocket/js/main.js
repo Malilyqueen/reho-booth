@@ -105,14 +105,40 @@ function updateCurrencyIcon() {
     const currencyIcons = document.querySelectorAll('.budget-currency-icon');
     if (currencyIcons.length === 0) return;
     
-    // Utiliser l'icône de sac d'argent pour toutes les devises
-    const iconClass = 'fas fa-money-bag';
+    // Trouver la devise sélectionnée
+    const currencyCode = userPreferences.currency || 'EUR';
+    
+    // Définir la classe d'icône en fonction de la devise
+    let iconClass = 'fas fa-euro-sign'; // Par défaut
+    
+    switch (currencyCode) {
+        case 'USD':
+            iconClass = 'fas fa-dollar-sign';
+            break;
+        case 'GBP':
+            iconClass = 'fas fa-pound-sign';
+            break;
+        case 'JPY':
+        case 'CNY':
+            iconClass = 'fas fa-yen-sign';
+            break;
+        case 'MGA':
+            // Ariary n'a pas d'icône FontAwesome, on utilise du texte
+            currencyIcons.forEach(icon => {
+                icon.className = 'budget-currency-icon';
+                icon.textContent = 'Ar';
+            });
+            return;
+        default:
+            // Pour les autres devises, on garde l'euro par défaut
+            iconClass = 'fas fa-euro-sign';
+    }
     
     // Mettre à jour la classe pour toutes les icônes
     currencyIcons.forEach(icon => {
-        // Remplacer l'icône par le sac d'argent
-        icon.className = 'currency-text';
-        icon.textContent = '💰';
+        // Conserver la classe 'budget-currency-icon' et ajouter les classes de FontAwesome
+        icon.className = 'budget-currency-icon ' + iconClass;
+        icon.textContent = '';
     });
     
     // Forcer la mise à jour des statistiques du tableau de bord
@@ -197,8 +223,17 @@ window.getCurrencySymbol = function(currencyCode) {
         }
     }
     
-    // Fallback - utiliser le sac d'argent pour toutes les devises
-    return '💰';
+    // Fallback - utiliser des symboles classiques en fonction du code de devise
+    switch (currencyCode) {
+        case 'USD': return '$';
+        case 'EUR': return '€';
+        case 'GBP': return '£';
+        case 'JPY': return '¥';
+        case 'CNY': return '¥';
+        case 'MGA': return 'Ar';
+        case 'THB': return '฿';
+        default: return currencyCode; // Utiliser le code de la devise si le symbole n'est pas connu
+    }
 }
 
 // Alias local pour la fonction globale
@@ -271,7 +306,7 @@ function updateMobileStatsDisplay() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '💰'; // Sac d'argent comme symbole par défaut
+    let currencySymbol = '€'; // Euro comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -524,7 +559,7 @@ function loadProjectsList() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '💰'; // Sac d'argent comme symbole par défaut
+    let currencySymbol = '€'; // Euro comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
