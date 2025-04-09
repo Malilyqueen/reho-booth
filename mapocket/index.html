@@ -213,9 +213,28 @@
                     <div class="active-projects">
                         <div class="chart-container">
                             <div class="pie-chart-container">
-                                <div class="chart-placeholder">
-                                    <i class="fas fa-chart-pie"></i>
-                                    <p>Répartition de vos budgets par projet</p>
+                                <canvas id="budgetChart"></canvas>
+                            </div>
+                            <div class="budget-kpi">
+                                <div class="kpi-item">
+                                    <div class="kpi-header">
+                                        <span class="kpi-label">Utilisation moyenne</span>
+                                        <i class="fas fa-info-circle" title="Pourcentage moyen d'utilisation du budget à travers tous les projets"></i>
+                                    </div>
+                                    <div class="kpi-value" id="avgBudgetUsage">0%</div>
+                                    <div class="kpi-progress">
+                                        <div class="progress-bar" id="avgUsageBar" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+                                <div class="kpi-item">
+                                    <div class="kpi-header">
+                                        <span class="kpi-label">Projet le plus avancé</span>
+                                        <i class="fas fa-info-circle" title="Projet ayant le taux d'utilisation du budget le plus élevé"></i>
+                                    </div>
+                                    <div class="kpi-value" id="topProject">-</div>
+                                    <div class="kpi-progress">
+                                        <div class="progress-bar" id="topProjectBar" style="width: 0%;"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -345,11 +364,13 @@
     <!-- Input file caché pour l'importation de sauvegarde -->
     <input type="file" id="importDataFile" accept=".json" style="display: none;">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/currencies.js"></script>
     <script src="js/reset-currency-symbols.js"></script>
     <script src="js/preferences-manager.js"></script>
     <script src="js/timeline.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/budget-chart.js"></script>
     <script src="js/voice-commands.js"></script>
     <script src="js/backup-restore.js"></script>
     <script src="js/backup-restore-functions.js"></script>

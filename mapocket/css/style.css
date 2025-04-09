@@ -779,6 +779,76 @@ body.dark-mode .logo h1 {
     color: var(--primary-color);
 }
 
+/* Chart and KPI styles */
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pie-chart-container {
+    height: 240px;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 300px;
+}
+
+.budget-kpi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.kpi-item {
+    flex: 1;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 15px;
+    min-width: 200px;
+}
+
+.kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.kpi-label {
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.kpi-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 5px 0;
+}
+
+.kpi-progress {
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.fa-info-circle {
+    color: var(--light-text);
+    font-size: 14px;
+    cursor: help;
+}
+
 .upcoming-payments {
     height: 150px;
     position: relative;
