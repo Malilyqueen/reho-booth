@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits Partenaires - MaPocket</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/partner-products.css">
+    <link rel="stylesheet" href="css/currency.css">
+</head>
+<body>
+    <div class="layout-grid">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <a href="index.html">
+                    <img src="images/mapocket-logo.png" alt="MaPocket Logo" class="logo">
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="nouveau-projet.html" class="nav-link">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nouveau projet</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="portefeuille.html" class="nav-link">
+                            <i class="fas fa-wallet"></i>
+                            <span>Mon portefeuille</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="objectifs.html" class="nav-link">
+                            <i class="fas fa-bullseye"></i>
+                            <span>Objectifs & Défis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="tresorerie.html" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Trésorerie</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="wishlist.html" class="nav-link">
+                            <i class="fas fa-gift"></i>
+                            <span>Liste de souhaits</span>
+                            <span id="wishlist-counter" class="badge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="produits-partenaires.html" class="nav-link">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>Produits partenaires</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mapocket-pro.html" class="nav-link">
+                            <i class="fas fa-briefcase"></i>
+                            <span>MaPocket Pro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link toggle-settings">
+                            <i class="fas fa-cog"></i>
+                            <span>Paramètres</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Mobile Navigation -->
+        <nav class="main-nav">
+            <div class="nav-left">
+                <button class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="mobile-logo">
+                    <a href="index.html">
+                        <img src="images/mapocket-logo.png" alt="MaPocket" class="logo-small">
+                    </a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <img src="images/user-avatar.png" alt="User" class="user-avatar">
+                    <span class="username">Tom</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="partner-products-section">
+                <div class="section-header">
+                    <h1>Produits Partenaires</h1>
+                    <p class="section-description">
+                        Découvrez notre sélection de produits partenaires pour enrichir vos projets ou compléter votre wishlist.
+                    </p>
+                </div>
+
+                <!-- Onglets -->
+                <div class="partner-tabs">
+                    <button class="partner-tab-btn active" data-tab="products-tab">
+                        <i class="fas fa-shopping-bag"></i> Catalogue
+                    </button>
+                    <button class="partner-tab-btn" data-tab="wishlist-tab">
+                        <i class="fas fa-heart"></i> Ma Wishlist
+                        <span id="wishlist-counter" class="badge">0</span>
+                    </button>
+                </div>
+
+                <!-- Onglet Catalogue -->
+                <div id="products-tab" class="partner-tab-content active">
+                    <!-- Recherche et Catégories -->
+                    <div class="product-search-panel">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="product-search" placeholder="Rechercher un produit...">
+                        </div>
+                        
+                        <div class="categories-container">
+                            <div id="product-categories">
+                                <!-- Catégories générées dynamiquement par JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grille de produits -->
+                    <div id="products-grid">
+                        <!-- Produits générés dynamiquement par JavaScript -->
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <p>Chargement des produits...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Wishlist -->
+                <div id="wishlist-tab" class="partner-tab-content">
+                    <div class="wishlist-header">
+                        <h2>Ma Wishlist de Produits</h2>
+                        <p>Retrouvez ici les produits que vous avez ajoutés à votre wishlist.</p>
+                    </div>
+
+                    <div id="wishlist-products">
+                        <!-- Produits de la wishlist générés dynamiquement par JavaScript -->
+                        <div class="empty-wishlist">
+                            <p>Votre wishlist est vide.</p>
+                            <button class="btn btn-primary" id="browse-products-btn">Parcourir les produits</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modèles pour les modales -->
+    <script type="text/template" id="add-to-budget-modal-template">
+        <div class="modal add-to-budget-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Ajouter à un projet</h2>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Vous avez acheté "%PRODUCT_NAME%" pour %PRODUCT_PRICE%.</p>
+                    <p>Souhaitez-vous ajouter cette dépense à l'un de vos projets ?</p>
+                    
+                    <div class="form-group">
+                        <label for="projectSelect">Choisir un projet :</label>
+                        <select id="projectSelect" class="form-control">
+                            <option value="">-- Sélectionner un projet --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categorySelect">Catégorie de dépense :</label>
+                        <select id="categorySelect" class="form-control" disabled>
+                            <option value="">-- Sélectionner une catégorie --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expenseName">Nom de la dépense :</label>
+                        <input type="text" id="expenseName" class="form-control" value="%PRODUCT_NAME%">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelAddToBudget">Ignorer</button>
+                    <button class="btn btn-primary" id="confirmAddToBudget" disabled>Ajouter au projet</button>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script src="js/currencies.js"></script>
+    <script src="js/partner-products.js"></script>
+    <script src="js/voice-commands.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour afficher/masquer le menu mobile
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
+            
+            // Fermer le menu quand on clique en dehors
+            document.addEventListener('click', function(event) {
+                if (sidebar.classList.contains('show') && 
+                    !sidebar.contains(event.target) && 
+                    !sidebarToggle.contains(event.target)) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Mettre à jour le compteur de produits dans la wishlist
+            updateWishlistCounter();
+        });
+        
+        // Mettre à jour le compteur de wishlist
+        function updateWishlistCounter() {
+            const counters = document.querySelectorAll('#wishlist-counter');
+            
+            // Récupérer le nombre de produits dans la wishlist
+            let wishlistProducts = [];
+            try {
+                const savedWishlistProducts = localStorage.getItem('partner_wishlist_products');
+                wishlistProducts = savedWishlistProducts ? JSON.parse(savedWishlistProducts) : [];
+            } catch (error) {
+                console.error('Erreur lors du chargement des produits de la wishlist:', error);
+                wishlistProducts = [];
+            }
+            
+            const count = wishlistProducts.filter(item => !item.purchased).length;
+            
+            counters.forEach(counter => {
+                if (count > 0) {
+                    counter.textContent = count;
+                    counter.style.display = 'inline-flex';
+                } else {
+                    counter.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
