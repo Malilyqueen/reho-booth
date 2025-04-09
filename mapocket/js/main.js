@@ -105,41 +105,14 @@ function updateCurrencyIcon() {
     const currencyIcons = document.querySelectorAll('.budget-currency-icon');
     if (currencyIcons.length === 0) return;
     
-    // Trouver la devise sélectionnée
-    const currencyCode = userPreferences.currency || 'EUR';
-    
-    // Définir la classe d'icône en fonction de la devise
-    let iconClass = 'fas fa-euro-sign'; // Par défaut
-    
-    switch (currencyCode) {
-        case 'USD':
-            iconClass = 'fas fa-dollar-sign';
-            break;
-        case 'GBP':
-            iconClass = 'fas fa-pound-sign';
-            break;
-        case 'JPY':
-        case 'CNY':
-            iconClass = 'fas fa-yen-sign';
-            break;
-        case 'MGA':
-            // Ariary n'a pas d'icône FontAwesome, on utilise du texte
-            currencyIcons.forEach(icon => {
-                icon.className = 'currency-text';
-                icon.textContent = 'Ar';
-            });
-            return;
-        default:
-            // Pour les autres devises, on garde l'euro par défaut
-            iconClass = 'fas fa-euro-sign';
-    }
+    // Utiliser l'icône de sac d'argent pour toutes les devises
+    const iconClass = 'fas fa-money-bag';
     
     // Mettre à jour la classe pour toutes les icônes
     currencyIcons.forEach(icon => {
-        // Conserver la classe 'budget-currency-icon' et ajouter les classes de FontAwesome
-        icon.className = 'budget-currency-icon ' + iconClass;
-        // S'assurer que le texte est vide (important pour le cas où on a utilisé 'Ar' avant)
-        icon.textContent = '';
+        // Remplacer l'icône par le sac d'argent
+        icon.className = 'currency-text';
+        icon.textContent = '💰';
     });
     
     // Forcer la mise à jour des statistiques du tableau de bord
