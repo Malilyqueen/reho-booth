@@ -697,7 +697,10 @@ function updateDashboardStats() {
     // Mettre à jour le budget total
     const totalBudgetElement = document.getElementById('totalBudget');
     if (totalBudgetElement) {
+        // Forcer la suppression des symboles de devise précédents
+        totalBudgetElement.innerHTML = '';
         totalBudgetElement.textContent = `${currencySymbol} ${totalBudget.toFixed(2)}`;
+        console.log(`Mise à jour du budget total avec le symbole ${currencySymbol}`);
     }
     
     // Récupération et mise à jour du solde du portefeuille
@@ -746,7 +749,9 @@ function updateDashboardStats() {
                 console.log('Solde net des portefeuilles:', netBalance);
                 
                 // Mettre à jour l'affichage avec le solde net
+                walletBalanceElement.innerHTML = '';
                 walletBalanceElement.textContent = `${currencySymbol} ${netBalance.toFixed(2)}`;
+                console.log(`Mise à jour du solde portefeuille avec le symbole ${currencySymbol}`);
                 
                 // Ajouter une info-bulle explicative
                 walletBalanceElement.setAttribute('title', `Solde total: ${currencySymbol}${totalBalance.toFixed(2)} - Dépenses des projets liés: ${currencySymbol}${totalProjectExpenses.toFixed(2)}`);
@@ -760,7 +765,9 @@ function updateDashboardStats() {
         }
         
         // Si on arrive ici, c'est qu'il y a eu une erreur dans le calcul
+        walletBalanceElement.innerHTML = '';
         walletBalanceElement.textContent = `${currencySymbol} ${totalBalance.toFixed(2)}`;
+        console.log(`Fallback: Mise à jour du solde portefeuille avec le symbole ${currencySymbol}`);
     }
     
     // Récupération et mise à jour des statistiques d'activité professionnelle
