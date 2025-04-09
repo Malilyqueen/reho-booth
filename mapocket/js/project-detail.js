@@ -30,6 +30,14 @@ document.addEventListener('DOMContentLoaded', function() {
         btnEditProject.addEventListener('click', editProject);
     }
     
+    // Gestionnaire pour le bouton de création de liste de souhaits
+    const btnCreateWishlist = document.querySelector('.btn-create-wishlist');
+    if (btnCreateWishlist) {
+        btnCreateWishlist.addEventListener('click', function() {
+            createWishlistForProject(window.currentProject.id);
+        });
+    }
+    
     const btnDeleteProject = document.querySelector('.btn-delete-project');
     if (btnDeleteProject) {
         btnDeleteProject.addEventListener('click', deleteProject);
@@ -1427,7 +1435,99 @@ function getCurrencySymbol() {
     return currencySymbol;
 }
 
+/**
+ * Crée une liste de souhaits liée au projet courant
+ */
+function createWishlistForProject(projectId) {
+    // Récupération du projet
+    let projects = [];
+    try {
+        projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets:", error);
+        showNotification("Erreur lors de la création de la liste de souhaits", "error");
+        return;
+    }
+    
+    const project = projects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showNotification("Projet introuvable", "error");
+        return;
+    }
+    
+    // Récupération des listes de souhaits existantes
+    let wishlists = [];
+    try {
+        const storedWishlists = localStorage.getItem('mapocket_wishlists');
+        wishlists = storedWishlists ? JSON.parse(storedWishlists) : [];
+    } catch (error) {
+        console.error("Erreur lors de la récupération des listes de souhaits:", error);
+        wishlists = [];
+    }
+    
+    // Création d'une nouvelle liste de souhaits
+    const newWishlist = {
+        id: Date.now().toString(),
+        name: `Liste pour ${project.projectName}`,
+        description: `Liste de souhaits pour le projet "${project.projectName}"`,
+        linkedProject: projectId,
+        theme: getThemeFromProjectType(project.template),
+        privacy: 'private',
+        createdAt: new Date().toISOString(),
+        items: []
+    };
+    
+    // Ajout de la liste aux listes existantes
+    wishlists.push(newWishlist);
+    
+    // Sauvegarde des listes
+    localStorage.setItem('mapocket_wishlists', JSON.stringify(wishlists));
+    
+    // Notification et redirection
+    showNotification("Liste de souhaits créée avec succès !", "success");
+    setTimeout(() => {
+        window.location.href = `wishlist.html?id=${newWishlist.id}`;
+    }, 1500);
+}
+
+/**
+ * Détermine le thème de la liste en fonction du type de projet
+ */
+function getThemeFromProjectType(projectType) {
+    if (!projectType) return 'default';
+    
+    // Convertir en minuscules pour la comparaison
+    const type = projectType ? projectType.toLowerCase() : '';
+    
+    if (type.includes('anniversaire') || type.includes('birthday')) {
+        return 'birthday';
+    } else if (type.includes('mariage') || type.includes('wedding')) {
+        return 'wedding';
+    } else if (type.includes('naissance') || type.includes('baby')) {
+        return 'baby';
+    } else if (type.includes('noël') || type.includes('christmas')) {
+        return 'christmas';
+    } else if (type.includes('voyage') || type.includes('travel')) {
+        return 'travel';
+    }
+    
+    return 'default';
+}
+
 // Fonction pour formater une date
 function formatDate(date) {
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    if (!date) {
+        return '-';
+    }
+    
+    // Si date est déjà au format Date, utiliser directement
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    if (isNaN(dateObj.getTime())) {
+        return date; // Retourner la chaîne originale si la date est invalide
+    }
+    
+    // Formater la date (ex: 15/07/2023)
+    return `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getFullYear()}`;
 }

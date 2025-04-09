@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaPocket - Liste de souhaits</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/currency.css">
+    <link rel="stylesheet" href="css/wishlist.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu de navigation -->
+        <nav class="main-nav">
+            <div class="brand">
+                <img src="img/logo-mapocket.png" alt="MaPocket Logo" class="logo">
+                <span class="brand-name">MaPocket</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="nouveau-projet.html"><i class="fas fa-plus-circle"></i> Nouveau Projet</a>
+                <a href="portefeuille.html"><i class="fas fa-wallet"></i> Portefeuille</a>
+                <a href="objectifs.html"><i class="fas fa-bullseye"></i> Objectifs</a>
+                <a href="tresorerie.html"><i class="fas fa-chart-line"></i> Trésorerie</a>
+                <a href="wishlist.html" class="active"><i class="fas fa-gift"></i> Liste de souhaits</a>
+                <a href="mapocket-pro.html"><i class="fas fa-briefcase"></i> MaPocket Pro</a>
+            </div>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <div class="content-container">
+            <div class="header">
+                <h1>Mes Listes de Souhaits</h1>
+                <div class="header-actions">
+                    <button id="addWishlistBtn" class="action-button"><i class="fas fa-plus"></i> Nouvelle Liste</button>
+                </div>
+            </div>
+
+            <!-- Tableau des listes de souhaits -->
+            <div class="wishlist-container">
+                <div class="empty-wishlist-message" style="display: none;">
+                    <i class="fas fa-gift fa-3x"></i>
+                    <h3>Vous n'avez pas encore de liste de souhaits</h3>
+                    <p>Créez votre première liste en cliquant sur "Nouvelle Liste"</p>
+                </div>
+
+                <div class="wishlists-grid">
+                    <!-- Les listes de souhaits seront ajoutées ici dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Détail d'une liste de souhaits (affiché lors de la sélection) -->
+            <div class="wishlist-detail-container" style="display: none;">
+                <div class="wishlist-header">
+                    <div class="wishlist-header-left">
+                        <button id="backToWishlistsBtn" class="back-button"><i class="fas fa-arrow-left"></i></button>
+                        <h2 id="wishlistTitle">Nom de la liste</h2>
+                    </div>
+                    <div class="wishlist-header-actions">
+                        <button id="shareWishlistBtn" class="action-button"><i class="fas fa-share-alt"></i> Partager</button>
+                        <button id="addItemBtn" class="action-button"><i class="fas fa-plus"></i> Ajouter un produit</button>
+                        <button id="editWishlistBtn" class="action-button"><i class="fas fa-edit"></i> Modifier</button>
+                    </div>
+                </div>
+
+                <div class="wishlist-stats">
+                    <div class="stat-card">
+                        <h3>Montant total</h3>
+                        <p id="totalAmount">0 €</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Montant offert</h3>
+                        <p id="giftedAmount">0 €</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Progression</h3>
+                        <div class="progress-bar-container">
+                            <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+                        </div>
+                        <p id="progressPercentage">0%</p>
+                    </div>
+                </div>
+
+                <div class="wishlist-filter">
+                    <select id="filterOptions">
+                        <option value="all">Tous les produits</option>
+                        <option value="priority">Prioritaires</option>
+                        <option value="gifted">Déjà offerts</option>
+                        <option value="pending">En attente</option>
+                        <option value="price-asc">Prix croissant</option>
+                        <option value="price-desc">Prix décroissant</option>
+                    </select>
+                </div>
+
+                <div class="wishlist-items">
+                    <!-- Les produits de la liste seront ajoutés ici dynamiquement -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale pour créer/modifier une liste de souhaits -->
+        <div id="wishlistModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="wishlistModalTitle">Nouvelle liste de souhaits</h2>
+                <form id="wishlistForm">
+                    <input type="hidden" id="wishlistId">
+                    <div class="form-group">
+                        <label for="wishlistName">Nom de la liste</label>
+                        <input type="text" id="wishlistName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="wishlistDescription">Description (optionnel)</label>
+                        <textarea id="wishlistDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedProject">Lier à un projet</label>
+                        <select id="linkedProject">
+                            <option value="">Aucun projet</option>
+                            <!-- Les projets seront ajoutés ici dynamiquement -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wishlistTheme">Thème</label>
+                        <select id="wishlistTheme">
+                            <option value="default">Par défaut</option>
+                            <option value="birthday">Anniversaire</option>
+                            <option value="wedding">Mariage</option>
+                            <option value="baby">Naissance</option>
+                            <option value="christmas">Noël</option>
+                            <option value="travel">Voyage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wishlistPrivacy">Confidentialité</label>
+                        <select id="wishlistPrivacy">
+                            <option value="private">Privée</option>
+                            <option value="public">Publique</option>
+                            <option value="shared">Partagée avec un lien</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-button">Enregistrer</button>
+                        <button type="button" class="cancel-button">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modale pour ajouter/modifier un produit -->
+        <div id="itemModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="itemModalTitle">Ajouter un produit</h2>
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    <div class="form-group">
+                        <label for="itemName">Nom du produit</label>
+                        <input type="text" id="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">Prix estimé</label>
+                        <input type="number" id="itemPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemImage">Image URL (optionnel)</label>
+                        <input type="url" id="itemImage" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemLink">Lien externe (optionnel)</label>
+                        <input type="url" id="itemLink" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPriority">Priorité</label>
+                        <select id="itemPriority">
+                            <option value="high">Prioritaire</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="low">Secondaire</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemAssignee">Attribuer à (optionnel)</label>
+                        <input type="text" id="itemAssignee" placeholder="Prénom de la personne">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemStatus">Statut</label>
+                        <select id="itemStatus">
+                            <option value="pending">En attente</option>
+                            <option value="reserved">Réservé</option>
+                            <option value="gifted">Offert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemNotes">Notes (optionnel)</label>
+                        <textarea id="itemNotes"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-button">Enregistrer</button>
+                        <button type="button" class="cancel-button">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modale pour partager une liste de souhaits -->
+        <div id="shareModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Partager ma liste de souhaits</h2>
+                <div class="share-container">
+                    <div class="share-link-container">
+                        <label for="shareLink">Lien de partage</label>
+                        <div class="share-link-input">
+                            <input type="text" id="shareLink" readonly>
+                            <button id="copyLinkBtn" class="action-button"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+                    <div class="qr-code-container">
+                        <h3>Code QR</h3>
+                        <div id="qrCode"></div>
+                        <button id="downloadQrBtn" class="action-button">Télécharger</button>
+                    </div>
+                    <div class="share-social">
+                        <h3>Partager sur</h3>
+                        <div class="social-buttons">
+                            <button class="social-btn" data-platform="whatsapp"><i class="fab fa-whatsapp"></i></button>
+                            <button class="social-btn" data-platform="facebook"><i class="fab fa-facebook"></i></button>
+                            <button class="social-btn" data-platform="email"><i class="fas fa-envelope"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale pour la suggestion de cadeaux -->
+        <div id="suggestModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Suggérer un cadeau</h2>
+                <form id="suggestForm">
+                    <div class="form-group">
+                        <label for="suggestName">Votre nom</label>
+                        <input type="text" id="suggestName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestItemName">Nom du produit</label>
+                        <input type="text" id="suggestItemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestItemPrice">Prix estimé</label>
+                        <input type="number" id="suggestItemPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestItemLink">Lien (optionnel)</label>
+                        <input type="url" id="suggestItemLink" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="suggestItemMessage">Message (optionnel)</label>
+                        <textarea id="suggestItemMessage"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-button">Envoyer la suggestion</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="notification" class="notification">
+            <span id="notificationMessage"></span>
+            <button id="closeNotification"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/currencies.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
+</body>
+</html>
