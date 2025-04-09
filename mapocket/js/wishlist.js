@@ -21,6 +21,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialisation des écouteurs d'événements
     initEventListeners();
+    
+    // Afficher/masquer le champ de destinataire en fonction de la sélection
+    document.getElementById('wishlistRecipient').addEventListener('change', function(e) {
+        const recipientDetails = document.querySelector('.recipient-details');
+        if (e.target.value === 'other') {
+            recipientDetails.style.display = 'block';
+        } else {
+            recipientDetails.style.display = 'none';
+        }
+    });
 });
 
 /**
@@ -476,6 +486,20 @@ function openEditWishlistModal(wishlistId) {
     document.getElementById('wishlistId').value = wishlist.id;
     document.getElementById('wishlistName').value = wishlist.name;
     document.getElementById('wishlistDescription').value = wishlist.description || '';
+    
+    // Configuration du destinataire
+    const recipientType = wishlist.recipientType || 'myself';
+    document.getElementById('wishlistRecipient').value = recipientType;
+    
+    // Afficher/masquer le champ des détails du destinataire
+    const recipientDetails = document.querySelector('.recipient-details');
+    if (recipientType === 'other') {
+        recipientDetails.style.display = 'block';
+        document.getElementById('recipientName').value = wishlist.recipientName || '';
+    } else {
+        recipientDetails.style.display = 'none';
+    }
+    
     document.getElementById('linkedProject').value = wishlist.linkedProject || '';
     document.getElementById('wishlistTheme').value = wishlist.theme || 'default';
     document.getElementById('wishlistPrivacy').value = wishlist.privacy || 'private';
@@ -645,9 +669,20 @@ function handleWishlistFormSubmit(event) {
     
     // Récupération des données du formulaire
     const wishlistId = document.getElementById('wishlistId').value;
+    
+    // Gestion du destinataire
+    const recipientType = document.getElementById('wishlistRecipient').value;
+    let recipientName = '';
+    
+    if (recipientType === 'other') {
+        recipientName = document.getElementById('recipientName').value;
+    }
+    
     const wishlistData = {
         name: document.getElementById('wishlistName').value,
         description: document.getElementById('wishlistDescription').value,
+        recipientType: recipientType,
+        recipientName: recipientName,
         linkedProject: document.getElementById('linkedProject').value,
         theme: document.getElementById('wishlistTheme').value,
         privacy: document.getElementById('wishlistPrivacy').value
@@ -968,6 +1003,61 @@ function openSuggestModal() {
     
     // Afficher la modale
     document.getElementById('suggestModal').style.display = 'block';
+}
+
+/**
+ * Crée une nouvelle liste de souhaits associée à un projet
+ * Cette fonction est appelée depuis la page de détail du projet
+ */
+function createWishlistForProject(projectId) {
+    // Vérifier si le projet existe
+    const project = projects.find(p => p.id === projectId);
+    if (!project) {
+        showNotification('Projet introuvable', 'error');
+        return;
+    }
+    
+    // Ouvrir la modale de création avec le projet déjà sélectionné
+    openNewWishlistModal();
+    
+    // Pré-remplir certains champs
+    document.getElementById('linkedProject').value = projectId;
+    
+    // Suggérer un nom basé sur le projet
+    document.getElementById('wishlistName').value = `Liste de souhaits - ${project.projectName}`;
+    
+    // Proposer un thème adapté selon le type de projet
+    if (project.template) {
+        const templateLower = project.template.toLowerCase();
+        if (templateLower.includes('anniversaire')) {
+            document.getElementById('wishlistTheme').value = 'birthday';
+        } else if (templateLower.includes('mariage')) {
+            document.getElementById('wishlistTheme').value = 'wedding';
+        } else if (templateLower.includes('naissance') || templateLower.includes('bébé')) {
+            document.getElementById('wishlistTheme').value = 'baby';
+        } else if (templateLower.includes('noël')) {
+            document.getElementById('wishlistTheme').value = 'christmas';
+        } else if (templateLower.includes('voyage')) {
+            document.getElementById('wishlistTheme').value = 'travel';
+        }
+    }
+    
+    // Si le projet contient des informations sur le destinataire de la liste, les pré-remplir
+    if (project.wishlistData) {
+        const recipientType = project.wishlistData.recipientType || 'myself';
+        document.getElementById('wishlistRecipient').value = recipientType;
+        
+        // Afficher le champ de destinataire si nécessaire
+        const recipientDetails = document.querySelector('.recipient-details');
+        if (recipientType === 'other') {
+            recipientDetails.style.display = 'block';
+            if (project.wishlistData.recipientName) {
+                document.getElementById('recipientName').value = project.wishlistData.recipientName;
+            }
+        } else {
+            recipientDetails.style.display = 'none';
+        }
+    }
 }
 
 /**

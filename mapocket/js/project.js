@@ -42,6 +42,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize budget calculation
     initializeBudgetCalculation();
+    
+    // Initialiser la section liste de souhaits
+    const createWishlistCheckbox = document.getElementById('createWishlist');
+    if (createWishlistCheckbox) {
+        createWishlistCheckbox.addEventListener('change', function() {
+            const wishlistOptions = document.getElementById('wishlistOptions');
+            if (this.checked) {
+                wishlistOptions.style.display = 'block';
+            } else {
+                wishlistOptions.style.display = 'none';
+            }
+        });
+        
+        // Gestion du destinataire
+        const wishlistRecipientType = document.getElementById('wishlistRecipientType');
+        if (wishlistRecipientType) {
+            wishlistRecipientType.addEventListener('change', function() {
+                const recipientNameContainer = document.getElementById('recipientNameContainer');
+                if (this.value === 'other') {
+                    recipientNameContainer.style.display = 'block';
+                } else {
+                    recipientNameContainer.style.display = 'none';
+                }
+            });
+        }
+    }
 });
 
 // Fonction pour initialiser la sauvegarde automatique
@@ -160,6 +186,19 @@ function getProjectData() {
     
     console.log('Devise du projet:', currencyCode, 'Symbole:', currencySymbol);
     
+    // Vérifier si la case à cocher de la liste de souhaits est cochée
+    const createWishlist = document.getElementById('createWishlist')?.checked || false;
+    let wishlistData = null;
+    
+    if (createWishlist) {
+        const recipientType = document.getElementById('wishlistRecipientType')?.value || 'myself';
+        const recipientName = recipientType === 'other' ? document.getElementById('wishlistRecipientName')?.value || '' : '';
+        wishlistData = {
+            recipientType: recipientType,
+            recipientName: recipientName
+        };
+    }
+    
     const data = {
         projectName: document.getElementById('projectName')?.value || '',
         projectDate: document.getElementById('projectDate')?.value || '',
@@ -169,6 +208,8 @@ function getProjectData() {
         linkToWallet: document.getElementById('linkToWallet')?.checked || false,
         currency: currencyCode,
         currencySymbol: currencySymbol,
+        createWishlist: createWishlist,
+        wishlistData: wishlistData,
         categories: []
     };
     
@@ -346,6 +387,46 @@ function initializeProjectForm() {
                 // Enregistrer les données du portefeuille
                 localStorage.setItem('walletData', JSON.stringify(walletData));
                 console.log('Projet lié au portefeuille:', formData.id);
+            }
+            
+            // Si l'option de création de liste de souhaits est cochée, créer la liste de souhaits associée
+            if (formData.createWishlist) {
+                console.log('Création d\'une liste de souhaits pour le projet:', formData.id);
+                
+                // Créer les données de la liste de souhaits
+                const wishlistData = {
+                    name: `Liste de souhaits - ${formData.projectName}`,
+                    description: `Liste de souhaits associée au projet "${formData.projectName}"`,
+                    recipientType: formData.wishlistData.recipientType,
+                    recipientName: formData.wishlistData.recipientName,
+                    linkedProject: formData.id,
+                    theme: formData.template.toLowerCase().includes('anniversaire') ? 'birthday' : 
+                           formData.template.toLowerCase().includes('mariage') ? 'wedding' :
+                           formData.template.toLowerCase().includes('naissance') ? 'baby' :
+                           formData.template.toLowerCase().includes('noël') ? 'christmas' :
+                           formData.template.toLowerCase().includes('voyage') ? 'travel' : 'default',
+                    privacy: 'private',
+                    id: Date.now().toString(),
+                    createdAt: new Date().toISOString(),
+                    items: []
+                };
+                
+                // Récupérer les listes de souhaits existantes
+                let wishlists = [];
+                try {
+                    const storedWishlists = localStorage.getItem('mapocket_wishlists');
+                    wishlists = storedWishlists ? JSON.parse(storedWishlists) : [];
+                } catch (error) {
+                    console.error('Erreur lors de la récupération des listes de souhaits:', error);
+                    wishlists = [];
+                }
+                
+                // Ajouter la nouvelle liste
+                wishlists.push(wishlistData);
+                
+                // Sauvegarder les listes
+                localStorage.setItem('mapocket_wishlists', JSON.stringify(wishlists));
+                console.log('Liste de souhaits créée avec succès pour le projet:', formData.id);
             }
             
             // In a real application, this would save the data and redirect to the dashboard

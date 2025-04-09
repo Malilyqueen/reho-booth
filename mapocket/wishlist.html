@@ -152,6 +152,17 @@
                         <textarea id="wishlistDescription"></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="wishlistRecipient">Destinataire de la liste</label>
+                        <select id="wishlistRecipient">
+                            <option value="myself">Moi-même</option>
+                            <option value="other">Pour offrir à quelqu'un</option>
+                        </select>
+                    </div>
+                    <div class="form-group recipient-details" style="display: none;">
+                        <label for="recipientName">Nom du destinataire</label>
+                        <input type="text" id="recipientName" placeholder="Prénom ou groupe (ex: les enfants, ma famille)">
+                    </div>
+                    <div class="form-group">
                         <label for="linkedProject">Lier à un projet</label>
                         <select id="linkedProject">
                             <option value="">Aucun projet</option>
