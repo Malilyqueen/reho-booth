@@ -8,158 +8,158 @@ const AVAILABLE_CURRENCIES = [
     {
         code: "EUR",
         name: "Euro",
-        symbol: "💰",
+        symbol: "€",
         countries: "Union Européenne",
         default: true
     },
     {
         code: "USD",
         name: "Dollar américain",
-        symbol: "💰",
+        symbol: "$",
         countries: "États-Unis"
     },
     {
         code: "DZD",
         name: "Dinar algérien",
-        symbol: "💰",
+        symbol: "DA",
         countries: "Algérie"
     },
     {
         code: "MAD",
         name: "Dirham marocain",
-        symbol: "💰",
+        symbol: "DH",
         countries: "Maroc"
     },
     {
         code: "XOF",
         name: "Franc CFA BCEAO",
-        symbol: "💰",
+        symbol: "CFA",
         countries: "Bénin, Burkina Faso, Côte d'Ivoire, Guinée-Bissau, Mali, Niger, Sénégal, Togo"
     },
     {
         code: "XAF",
         name: "Franc CFA BEAC",
-        symbol: "💰",
+        symbol: "FCFA",
         countries: "Cameroun, République centrafricaine, République du Congo, Gabon, Guinée équatoriale, Tchad"
     },
     {
         code: "AED",
         name: "Dirham émirati",
-        symbol: "💰",
+        symbol: "د.إ",
         countries: "Émirats arabes unis"
     },
     {
         code: "MYR",
         name: "Ringgit malaisien",
-        symbol: "💰",
+        symbol: "RM",
         countries: "Malaisie"
     },
     {
         code: "KES",
         name: "Shilling kényan",
-        symbol: "💰",
+        symbol: "KSh",
         countries: "Kenya"
     },
     {
         code: "GBP",
         name: "Livre sterling",
-        symbol: "💰",
+        symbol: "£",
         countries: "Royaume-Uni"
     },
     {
         code: "CNY",
         name: "Yuan chinois",
-        symbol: "💰",
+        symbol: "¥",
         countries: "Chine"
     },
     {
         code: "MGA",
         name: "Ariary malgache",
-        symbol: "💰",
+        symbol: "Ar",
         countries: "Madagascar"
     },
     {
         code: "JPY",
         name: "Yen japonais",
-        symbol: "💰",
+        symbol: "¥",
         countries: "Japon"
     },
     {
         code: "KRW",
         name: "Won sud-coréen",
-        symbol: "💰",
+        symbol: "₩",
         countries: "Corée du Sud"
     },
     {
         code: "AUD",
         name: "Dollar australien",
-        symbol: "💰",
+        symbol: "A$",
         countries: "Australie"
     },
     {
         code: "MUR",
         name: "Roupie mauricienne",
-        symbol: "💰",
+        symbol: "Rs",
         countries: "Maurice"
     },
     {
         code: "THB",
         name: "Baht thaïlandais",
-        symbol: "💰",
+        symbol: "฿",
         countries: "Thaïlande"
     },
     {
         code: "SGD",
         name: "Dollar de Singapour",
-        symbol: "💰",
+        symbol: "S$",
         countries: "Singapour"
     },
     {
         code: "CAD",
         name: "Dollar canadien",
-        symbol: "💰",
+        symbol: "C$",
         countries: "Canada"
     },
     {
         code: "CHF",
         name: "Franc suisse",
-        symbol: "💰",
+        symbol: "Fr.",
         countries: "Suisse"
     },
     {
         code: "INR",
         name: "Roupie indienne",
-        symbol: "💰",
+        symbol: "₹",
         countries: "Inde"
     },
     {
         code: "RUB",
         name: "Rouble russe",
-        symbol: "💰",
+        symbol: "₽",
         countries: "Russie"
     },
     {
         code: "BRL",
         name: "Real brésilien",
-        symbol: "💰",
+        symbol: "R$",
         countries: "Brésil"
     },
     {
         code: "PHP",
         name: "Peso philippin",
-        symbol: "💰",
+        symbol: "₱",
         countries: "Philippines"
     },
     {
         code: "ILS",
         name: "Shekel israélien",
-        symbol: "💰",
+        symbol: "₪",
         countries: "Israël"
     },
     {
         code: "TND",
         name: "Dinar tunisien",
-        symbol: "💰",
+        symbol: "DT",
         countries: "Tunisie"
     }
 ];
