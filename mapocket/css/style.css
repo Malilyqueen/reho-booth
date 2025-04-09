@@ -67,9 +67,9 @@ body {
     color: var(--primary-color);
 }
 
-/* Dark mode styles for logo */
+/* Dark mode styles for logo - disabled as requested (always use light mode) */
 body.dark-mode .logo h1 {
-    color: #f5f5f5;
+    color: var(--primary-color); /* Keep text dark even in dark mode */
 }
 
 .main-nav ul {
