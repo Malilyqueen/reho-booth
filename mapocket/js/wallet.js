@@ -1,5 +1,9 @@
 // Initialisation de la page portefeuille
 document.addEventListener('DOMContentLoaded', function() {
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
     initWalletPage();
 });
 

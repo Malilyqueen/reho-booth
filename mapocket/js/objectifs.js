@@ -3,6 +3,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Objectifs & Défis initialisés');
     
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
+    
     // Initialisation des onglets
     initTabs();
     
