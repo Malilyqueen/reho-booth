@@ -2,16 +2,8 @@
  * Script pour la gestion des paramètres de l'application - version simplifiée
  */
 
-// Préférences par défaut
-let userPreferences = {
-    theme: 'light',
-    fontSize: 'medium',
-    language: 'fr',
-    dateFormat: 'DD/MM/YYYY',
-    currency: 'EUR',
-    secondaryCurrency: 'USD',
-    plan: 'freemium'
-};
+// Nous utilisons les préférences de l'application définies dans user-preferences.js 
+// ou dans main.js, donc nous n'avons pas besoin de les redéclarer ici.
 
 // Initialization
 document.addEventListener('DOMContentLoaded', function() {
