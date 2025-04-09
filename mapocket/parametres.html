@@ -570,31 +570,9 @@
         </div>
     </div>
 
-    <script>
-        // Initialisation des préférences utilisateur par défaut
-        var userPreferences = {
-            theme: 'light',
-            fontSize: 'medium',
-            language: 'fr',
-            dateFormat: 'DD/MM/YYYY',
-            plan: 'freemium',
-            currency: 'EUR',
-            secondaryCurrency: 'USD'
-        };
-        
-        // Charger les préférences depuis localStorage
-        try {
-            const saved = localStorage.getItem('userPreferences');
-            if (saved) {
-                userPreferences = JSON.parse(saved);
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des préférences:', error);
-        }
-    </script>
     <script src="js/currencies.js"></script>
-    <script src="js/user-preferences.js"></script>
-    <script src="js/parametres-fix.js"></script>
+    <script src="js/user-preferences.js"></script> 
+    <script src="js/parametres-functions.js"></script>
     
     <!-- Notification system -->
     <div id="notification" class="notification" style="display: none;">

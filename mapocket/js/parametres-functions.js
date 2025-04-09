@@ -1,6 +1,6 @@
 /**
- * Script pour la gestion des paramètres de l'application - version corrigée
- * Ce fichier contient toutes les fonctionnalités nécessaires pour les paramètres
+ * Script pour la gestion des paramètres de l'application
+ * Version complètement refaite pour éviter les conflits
  */
 
 // Récupérer les devises disponibles (depuis currencies.js ou utiliser une liste par défaut)
@@ -8,7 +8,7 @@ var availableCurrencies = window.availableCurrencies || ['EUR', 'USD', 'GBP', 'J
 
 // Initialization
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Paramètres page initialized - version simplifiée');
+    console.log('Paramètres page initialized - nouvelle version');
     
     // Initialiser les onglets
     initTabs();
@@ -71,7 +71,7 @@ function initThemeSelectors() {
     
     if (lightThemeRadio && darkThemeRadio) {
         // Mettre le bon radio en fonction des préférences
-        if (userPreferences.theme === 'dark') {
+        if (window.userPreferences.theme === 'dark') {
             darkThemeRadio.checked = true;
             lightThemeRadio.checked = false;
         } else {
@@ -82,7 +82,7 @@ function initThemeSelectors() {
         // Ajouter des écouteurs d'événements
         lightThemeRadio.addEventListener('change', () => {
             if (lightThemeRadio.checked) {
-                userPreferences.theme = 'light';
+                window.userPreferences.theme = 'light';
                 applyTheme();
                 saveUserPreferences();
             }
@@ -90,7 +90,7 @@ function initThemeSelectors() {
         
         darkThemeRadio.addEventListener('change', () => {
             if (darkThemeRadio.checked) {
-                userPreferences.theme = 'dark';
+                window.userPreferences.theme = 'dark';
                 applyTheme();
                 saveUserPreferences();
             }
@@ -104,7 +104,7 @@ function initThemeSelectors() {
             lightThemePreview.addEventListener('click', () => {
                 lightThemeRadio.checked = true;
                 darkThemeRadio.checked = false;
-                userPreferences.theme = 'light';
+                window.userPreferences.theme = 'light';
                 applyTheme();
                 saveUserPreferences();
             });
@@ -114,7 +114,7 @@ function initThemeSelectors() {
             darkThemePreview.addEventListener('click', () => {
                 darkThemeRadio.checked = true;
                 lightThemeRadio.checked = false;
-                userPreferences.theme = 'dark';
+                window.userPreferences.theme = 'dark';
                 applyTheme();
                 saveUserPreferences();
             });
@@ -124,10 +124,10 @@ function initThemeSelectors() {
     // Conserver la compatibilité avec la version switch
     const themeSwitch = document.getElementById('themeSwitch');
     if (themeSwitch) {
-        themeSwitch.checked = userPreferences.theme === 'dark';
+        themeSwitch.checked = window.userPreferences.theme === 'dark';
         
         themeSwitch.addEventListener('change', () => {
-            userPreferences.theme = themeSwitch.checked ? 'dark' : 'light';
+            window.userPreferences.theme = themeSwitch.checked ? 'dark' : 'light';
             applyTheme();
             saveUserPreferences();
         });
@@ -186,7 +186,7 @@ function initLanguageSelectors() {
     const langRadios = document.querySelectorAll('input[name="language"]');
     
     // Sélectionner la langue actuelle
-    const current = document.querySelector(`input[name="language"][value="${userPreferences.language}"]`);
+    const current = document.querySelector(`input[name="language"][value="${window.userPreferences.language}"]`);
     if (current) {
         current.checked = true;
     }
@@ -194,7 +194,7 @@ function initLanguageSelectors() {
     // Ajouter les écouteurs d'événements
     langRadios.forEach(radio => {
         radio.addEventListener('change', () => {
-            userPreferences.language = radio.value;
+            window.userPreferences.language = radio.value;
             applyLanguage();
             saveUserPreferences();
         });
@@ -208,11 +208,11 @@ function initCurrencySelectors() {
     const secondaryContainer = document.getElementById('secondaryCurrencyContainer');
     
     if (primaryContainer) {
-        primaryContainer.innerHTML = generateCurrencyDropdown('primaryCurrency', userPreferences.currency);
+        primaryContainer.innerHTML = generateCurrencyDropdown('primaryCurrency', window.userPreferences.currency);
     }
     
     if (secondaryContainer) {
-        secondaryContainer.innerHTML = generateCurrencyDropdown('secondaryCurrency', userPreferences.secondaryCurrency);
+        secondaryContainer.innerHTML = generateCurrencyDropdown('secondaryCurrency', window.userPreferences.secondaryCurrency);
     }
     
     // Mise à jour de l'aperçu
@@ -228,14 +228,14 @@ function initCurrencySelectors() {
             const selected = primarySelect.value;
             
             // Si la devise principale est la même que la secondaire, permuter
-            if (selected === userPreferences.secondaryCurrency && secondarySelect) {
-                const old = userPreferences.currency;
-                userPreferences.secondaryCurrency = old;
+            if (selected === window.userPreferences.secondaryCurrency && secondarySelect) {
+                const old = window.userPreferences.currency;
+                window.userPreferences.secondaryCurrency = old;
                 secondarySelect.value = old;
             }
             
             // Mettre à jour les préférences
-            userPreferences.currency = selected;
+            window.userPreferences.currency = selected;
             
             // Mise à jour de l'aperçu
             updateCurrencyPreview();
@@ -272,14 +272,14 @@ function initCurrencySelectors() {
             const selected = secondarySelect.value;
             
             // Si la devise secondaire est la même que la principale, permuter
-            if (selected === userPreferences.currency && primarySelect) {
-                const old = userPreferences.secondaryCurrency;
-                userPreferences.currency = old;
+            if (selected === window.userPreferences.currency && primarySelect) {
+                const old = window.userPreferences.secondaryCurrency;
+                window.userPreferences.currency = old;
                 primarySelect.value = old;
             }
             
             // Mettre à jour les préférences
-            userPreferences.secondaryCurrency = selected;
+            window.userPreferences.secondaryCurrency = selected;
             
             // Mise à jour de l'aperçu
             updateCurrencyPreview();
@@ -296,7 +296,7 @@ function updateCurrencyPreview() {
     if (!preview) return;
     
     const amount = 100;
-    const formattedAmount = formatCurrencyWithEquivalent(amount, userPreferences.currency, userPreferences.secondaryCurrency);
+    const formattedAmount = formatCurrencyWithEquivalent(amount, window.userPreferences.currency, window.userPreferences.secondaryCurrency);
     
     const example = preview.querySelector('.example');
     if (example) {
@@ -323,7 +323,7 @@ function generateCurrencyDropdown(id, selectedCurrency) {
 // Initialise les fonctionnalités selon le plan
 function initPlanFeatures() {
     // Appliquer le plan actuel
-    updatePlanDisplay(userPreferences.plan);
+    updatePlanDisplay(window.userPreferences.plan);
     
     // Ajouter des boutons de test pour la démo
     addPlanTestButtons();
@@ -377,19 +377,19 @@ function addPlanTestButtons() {
     
     // Ajouter les gestionnaires d'événements
     document.getElementById('testFreemiumBtn').addEventListener('click', () => {
-        userPreferences.plan = 'freemium';
+        window.userPreferences.plan = 'freemium';
         updatePlanDisplay('freemium');
         saveUserPreferences();
     });
     
     document.getElementById('testBasicBtn').addEventListener('click', () => {
-        userPreferences.plan = 'basic';
+        window.userPreferences.plan = 'basic';
         updatePlanDisplay('basic');
         saveUserPreferences();
     });
     
     document.getElementById('testProBtn').addEventListener('click', () => {
-        userPreferences.plan = 'pro';
+        window.userPreferences.plan = 'pro';
         updatePlanDisplay('pro');
         saveUserPreferences();
     });
@@ -425,7 +425,7 @@ function addConversionButton() {
     
     // Gestionnaire d'événements pour le bouton de conversion
     newButton.addEventListener('click', () => {
-        const currency = userPreferences.currency;
+        const currency = window.userPreferences.currency;
         
         // Afficher une notification de début
         showNotification(`Conversion des montants en ${currency} en cours...`, 'info');
@@ -458,7 +458,7 @@ function addConversionButton() {
 function updateConversionButton() {
     const button = document.getElementById('convertProjectsButton');
     if (button) {
-        const currency = userPreferences.currency;
+        const currency = window.userPreferences.currency;
         button.textContent = `Convertir les montants en ${currency}`;
     }
 }
@@ -489,51 +489,60 @@ function formatCurrencyWithEquivalent(amount, primaryCurrency, secondaryCurrency
         AED: 4.0
     };
     
-    // Convertir en EUR comme monnaie intermédiaire
-    const amountInEUR = primaryCurrency === 'EUR' ? amount : amount / conversionRates[primaryCurrency];
+    // Convertir vers EUR comme base
+    let amountInEUR = amount;
+    if (primaryCurrency !== 'EUR') {
+        amountInEUR = amount / conversionRates[primaryCurrency];
+    }
+    
+    // Convertir de EUR vers la devise secondaire
     const amountInSecondary = amountInEUR * conversionRates[secondaryCurrency];
     
-    // Formater avec 2 décimales
-    const formattedPrimary = `${primaryCurrency} ${amount.toFixed(2)}`;
-    const formattedSecondary = `${secondaryCurrency} ${amountInSecondary.toFixed(2)}`;
+    // Formater le montant principal
+    const formattedPrimary = `${primaryCurrency} ${amount.toFixed(2).replace('.', ',00')}`;
     
-    return `${formattedPrimary} (≈ ${formattedSecondary})`;
+    // Formater le montant secondaire
+    const formattedSecondary = `${secondaryCurrency} ${amountInSecondary.toFixed(2).replace('.', ',00')}`;
+    
+    return `${formattedPrimary} (${formattedSecondary})`;
 }
 
-// Convertir les projets à la nouvelle devise
+// Fonction pour convertir les projets en une nouvelle devise
 function convertProjects(newCurrency) {
-    const storedProjects = localStorage.getItem('savedProjects');
-    if (!storedProjects) return;
-    
     try {
-        const projects = JSON.parse(storedProjects);
+        // Récupérer les projets du localStorage
+        const projectsStr = localStorage.getItem('userProjects');
+        if (!projectsStr) return;
         
-        // Convertir chaque projet
-        const convertedProjects = projects.map(project => {
-            // Remplacer uniquement les symboles de devise, pas les montants
-            if (project.totalBudget && typeof project.totalBudget === 'string') {
-                project.totalBudget = project.totalBudget.replace(/^[A-Z]+/, newCurrency);
-            }
+        const projects = JSON.parse(projectsStr);
+        
+        projects.forEach(project => {
+            // Supprimer le symbole de devise
+            project.totalBudget = project.totalBudget.toString().replace(/[^0-9,\.]/g, '').trim();
             
-            // Parcourir les catégories
-            if (project.categories && Array.isArray(project.categories)) {
-                project.categories.forEach(category => {
-                    if (category.amount && typeof category.amount === 'string') {
-                        category.amount = category.amount.replace(/^[A-Z]+/, newCurrency);
+            // Ajouter le nouveau symbole
+            project.totalBudget = `${newCurrency} ${project.totalBudget}`;
+            
+            // Convertir les catégories et sous-catégories
+            if (project.categories) {
+                project.categories.forEach(cat => {
+                    if (cat.amount) {
+                        cat.amount = cat.amount.toString().replace(/[^0-9,\.]/g, '').trim();
+                        cat.amount = `${newCurrency} ${cat.amount}`;
                     }
                     
-                    // Parcourir les sous-catégories
-                    if (category.subcategories && Array.isArray(category.subcategories)) {
-                        category.subcategories.forEach(subcategory => {
-                            if (subcategory.amount && typeof subcategory.amount === 'string') {
-                                subcategory.amount = subcategory.amount.replace(/^[A-Z]+/, newCurrency);
+                    if (cat.subcategories) {
+                        cat.subcategories.forEach(subcat => {
+                            if (subcat.amount) {
+                                subcat.amount = subcat.amount.toString().replace(/[^0-9,\.]/g, '').trim();
+                                subcat.amount = `${newCurrency} ${subcat.amount}`;
                             }
                             
-                            // Parcourir les lignes
-                            if (subcategory.lines && Array.isArray(subcategory.lines)) {
-                                subcategory.lines.forEach(line => {
-                                    if (line.amount && typeof line.amount === 'string') {
-                                        line.amount = line.amount.replace(/^[A-Z]+/, newCurrency);
+                            if (subcat.lines) {
+                                subcat.lines.forEach(line => {
+                                    if (line.amount) {
+                                        line.amount = line.amount.toString().replace(/[^0-9,\.]/g, '').trim();
+                                        line.amount = `${newCurrency} ${line.amount}`;
                                     }
                                 });
                             }
@@ -542,11 +551,19 @@ function convertProjects(newCurrency) {
                 });
             }
             
-            return project;
+            // Convertir les dépenses réelles
+            if (project.realExpenses) {
+                project.realExpenses.forEach(expense => {
+                    if (expense.amount) {
+                        expense.amount = expense.amount.toString().replace(/[^0-9,\.]/g, '').trim();
+                        expense.amount = `${newCurrency} ${expense.amount}`;
+                    }
+                });
+            }
         });
         
-        // Sauvegarder les projets convertis
-        localStorage.setItem('savedProjects', JSON.stringify(convertedProjects));
+        // Enregistrer les projets mis à jour
+        localStorage.setItem('userProjects', JSON.stringify(projects));
         
         return true;
     } catch (error) {
@@ -555,182 +572,39 @@ function convertProjects(newCurrency) {
     }
 }
 
-// Convertir les portefeuilles à la nouvelle devise
+// Fonction pour convertir les portefeuilles en une nouvelle devise
 function convertWallets(newCurrency) {
-    const storedWallets = localStorage.getItem('mapocket_wallets');
-    if (!storedWallets) return;
-    
     try {
-        const wallets = JSON.parse(storedWallets);
+        // Récupérer les portefeuilles du localStorage
+        const walletsStr = localStorage.getItem('userWallets');
+        if (!walletsStr) return;
         
-        // Convertir chaque portefeuille
-        const convertedWallets = wallets.map(wallet => {
-            // Remplacer uniquement les symboles de devise, pas les montants
-            if (wallet.balance && typeof wallet.balance === 'string') {
-                wallet.balance = wallet.balance.replace(/^[A-Z]+/, newCurrency);
+        const wallets = JSON.parse(walletsStr);
+        
+        wallets.forEach(wallet => {
+            // Convertir le solde
+            if (wallet.balance) {
+                wallet.balance = wallet.balance.toString().replace(/[^0-9,\.\-]/g, '').trim();
+                wallet.balance = `${newCurrency} ${wallet.balance}`;
             }
             
-            // Parcourir les transactions
-            if (wallet.transactions && Array.isArray(wallet.transactions)) {
+            // Convertir les transactions
+            if (wallet.transactions) {
                 wallet.transactions.forEach(transaction => {
-                    if (transaction.amount && typeof transaction.amount === 'string') {
-                        transaction.amount = transaction.amount.replace(/^[A-Z]+/, newCurrency);
+                    if (transaction.amount) {
+                        transaction.amount = transaction.amount.toString().replace(/[^0-9,\.\-]/g, '').trim();
+                        transaction.amount = `${newCurrency} ${transaction.amount}`;
                     }
                 });
             }
-            
-            return wallet;
         });
         
-        // Sauvegarder les portefeuilles convertis
-        localStorage.setItem('mapocket_wallets', JSON.stringify(convertedWallets));
+        // Enregistrer les portefeuilles mis à jour
+        localStorage.setItem('userWallets', JSON.stringify(wallets));
         
         return true;
     } catch (error) {
         console.error('Erreur lors de la conversion des portefeuilles:', error);
         return false;
-    }
-}
-
-// Fonction pour appliquer le thème (implémentée ici pour assurer la compatibilité)
-function applyTheme() {
-    const isDarkMode = userPreferences.theme === 'dark';
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    
-    // Mettre à jour le switch si présent
-    const themeSwitch = document.getElementById('themeSwitch');
-    if (themeSwitch) {
-        themeSwitch.checked = isDarkMode;
-    }
-    
-    // Mettre à jour les radio buttons si présents
-    const lightThemeRadio = document.getElementById('light-theme');
-    const darkThemeRadio = document.getElementById('dark-theme');
-    
-    if (lightThemeRadio && darkThemeRadio) {
-        lightThemeRadio.checked = !isDarkMode;
-        darkThemeRadio.checked = isDarkMode;
-    }
-    
-    // Mettre à jour les prévisualisations de thèmes si elles existent
-    const lightThemePreview = document.querySelector('.theme-preview.light-theme');
-    const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
-    
-    if (lightThemePreview && darkThemePreview) {
-        lightThemePreview.classList.toggle('active', !isDarkMode);
-        darkThemePreview.classList.toggle('active', isDarkMode);
-    }
-    
-    console.log('Theme applied:', isDarkMode ? 'dark' : 'light');
-}
-
-// Fonction pour appliquer la langue
-function applyLanguage() {
-    const currentLang = userPreferences.language;
-    document.documentElement.lang = currentLang;
-    
-    // Mettre à jour le sélecteur de langue
-    const langRadios = document.querySelectorAll('input[name="language"]');
-    langRadios.forEach(radio => {
-        radio.checked = radio.value === currentLang;
-    });
-    
-    // Appliquer la traduction en fonction de la langue
-    if (currentLang === 'en') {
-        translatePageToEnglish();
-    } else {
-        translatePageToFrench();
-    }
-    
-    console.log('Language applied:', currentLang);
-}
-
-// Fonction pour sauvegarder les préférences
-function saveUserPreferences() {
-    try {
-        localStorage.setItem(USER_PREFS_KEY, JSON.stringify(userPreferences));
-        console.log('Préférences utilisateur sauvegardées:', userPreferences);
-    } catch (error) {
-        console.error('Erreur lors de la sauvegarde des préférences utilisateur:', error);
-    }
-}
-
-// Fonction de traduction en anglais
-function translatePageToEnglish() {
-    try {
-        // Traduire les onglets
-        document.querySelectorAll('.tab-btn').forEach(tab => {
-            const tabContent = tab.textContent.trim();
-            if (tabContent.includes('Profil')) {
-                tab.innerHTML = tab.innerHTML.replace('Profil', 'Profile');
-            } else if (tabContent.includes('Apparence')) {
-                tab.innerHTML = tab.innerHTML.replace('Apparence', 'Appearance');
-            } else if (tabContent.includes('Sécurité')) {
-                tab.innerHTML = tab.innerHTML.replace('Sécurité', 'Security');
-            } else if (tabContent.includes('Utilisateurs')) {
-                tab.innerHTML = tab.innerHTML.replace('Utilisateurs', 'Users');
-            } else if (tabContent.includes('Abonnement')) {
-                tab.innerHTML = tab.innerHTML.replace('Abonnement', 'Subscription');
-            } else if (tabContent.includes('Notifications')) {
-                tab.innerHTML = tab.innerHTML.replace('Notifications', 'Notifications');
-            }
-        });
-        
-        // Traduire les titres de section et textes communs
-        document.querySelectorAll('h1, h2').forEach(h => {
-            if (h.textContent.includes('Paramètres')) {
-                h.textContent = h.textContent.replace('Paramètres', 'Settings');
-            }
-        });
-        
-        document.querySelectorAll('p').forEach(p => {
-            if (p.textContent.includes('Personnalisez')) {
-                p.textContent = 'Personalize your MaPocket experience';
-            }
-        });
-        
-        console.log('Page traduite en anglais');
-    } catch (error) {
-        console.error('Erreur lors de la traduction en anglais:', error);
-    }
-}
-
-// Fonction de traduction en français
-function translatePageToFrench() {
-    try {
-        // Traduire les onglets
-        document.querySelectorAll('.tab-btn').forEach(tab => {
-            const tabContent = tab.textContent.trim();
-            if (tabContent.includes('Profile')) {
-                tab.innerHTML = tab.innerHTML.replace('Profile', 'Profil');
-            } else if (tabContent.includes('Appearance')) {
-                tab.innerHTML = tab.innerHTML.replace('Appearance', 'Apparence');
-            } else if (tabContent.includes('Security')) {
-                tab.innerHTML = tab.innerHTML.replace('Security', 'Sécurité');
-            } else if (tabContent.includes('Users')) {
-                tab.innerHTML = tab.innerHTML.replace('Users', 'Utilisateurs');
-            } else if (tabContent.includes('Subscription')) {
-                tab.innerHTML = tab.innerHTML.replace('Subscription', 'Abonnement');
-            } else if (tabContent.includes('Notifications')) {
-                tab.innerHTML = tab.innerHTML.replace('Notifications', 'Notifications');
-            }
-        });
-        
-        // Traduire les titres de section et textes communs
-        document.querySelectorAll('h1, h2').forEach(h => {
-            if (h.textContent.includes('Settings')) {
-                h.textContent = h.textContent.replace('Settings', 'Paramètres');
-            }
-        });
-        
-        document.querySelectorAll('p').forEach(p => {
-            if (p.textContent.includes('Personalize your')) {
-                p.textContent = 'Personnalisez votre expérience MaPocket';
-            }
-        });
-        
-        console.log('Page traduite en français');
-    } catch (error) {
-        console.error('Erreur lors de la traduction en français:', error);
     }
 }
