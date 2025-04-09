@@ -15,14 +15,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les contrôles spécifiques à la page des paramètres
     initProfileForm();
     
-    // Appliquer les préférences utilisateur actuelles
-    applyAllPreferences();
+    // Initialiser les sélecteurs de devise
+    initCurrencySelectors();
+    
+    // Initialiser les fonctionnalités de plan
+    initPlanFeatures();
+    
+    // Ajouter le bouton de conversion
+    addConversionButton();
     
     // Ajouter l'écouteur pour les boutons de sélection de thème
     initThemeSelectors();
     
     // Ajouter l'écouteur pour les boutons de sélection de langue
     initLanguageSelectors();
+    
+    // Appliquer le thème actuel
+    if (typeof applyTheme === 'function') {
+        applyTheme();
+    }
+    
+    // Appliquer la langue actuelle
+    if (typeof applyLanguage === 'function') {
+        applyLanguage();
+    }
 });
 
 // Initialise les onglets
@@ -186,4 +202,395 @@ function initLanguageSelectors() {
             saveUserPreferences();
         });
     });
+}
+
+// Initialise les sélecteurs de devise
+function initCurrencySelectors() {
+    // Générer les options pour les sélecteurs
+    const primaryContainer = document.getElementById('primaryCurrencyContainer');
+    const secondaryContainer = document.getElementById('secondaryCurrencyContainer');
+    
+    if (primaryContainer) {
+        primaryContainer.innerHTML = generateCurrencyDropdown('primaryCurrency', userPreferences.currency);
+    }
+    
+    if (secondaryContainer) {
+        secondaryContainer.innerHTML = generateCurrencyDropdown('secondaryCurrency', userPreferences.secondaryCurrency);
+    }
+    
+    // Mise à jour de l'aperçu
+    updateCurrencyPreview();
+    
+    // Ajouter les gestionnaires d'événements
+    const primarySelect = document.getElementById('primaryCurrency');
+    const secondarySelect = document.getElementById('secondaryCurrency');
+    
+    if (primarySelect) {
+        primarySelect.addEventListener('change', () => {
+            // Récupérer la valeur sélectionnée
+            const selected = primarySelect.value;
+            
+            // Si la devise principale est la même que la secondaire, permuter
+            if (selected === userPreferences.secondaryCurrency && secondarySelect) {
+                const old = userPreferences.currency;
+                userPreferences.secondaryCurrency = old;
+                secondarySelect.value = old;
+            }
+            
+            // Mettre à jour les préférences
+            userPreferences.currency = selected;
+            
+            // Mise à jour de l'aperçu
+            updateCurrencyPreview();
+            
+            // Mise à jour du bouton de conversion
+            updateConversionButton();
+            
+            // Mettre à jour automatiquement tous les projets avec la nouvelle devise
+            try {
+                // Afficher une notification de début
+                showNotification(`Mise à jour des symboles de devise en ${selected} en cours...`, 'info');
+                
+                // Mise à jour des projets
+                convertProjects(selected);
+                
+                // Mise à jour des portefeuilles
+                convertWallets(selected);
+                
+                // Notification de succès
+                showNotification(`Tous les symboles ont été mis à jour en ${selected}`, 'success');
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des symboles:', error);
+                showNotification('Erreur lors de la mise à jour des symboles', 'error');
+            }
+            
+            // Sauvegarder les préférences
+            saveUserPreferences();
+        });
+    }
+    
+    if (secondarySelect) {
+        secondarySelect.addEventListener('change', () => {
+            // Récupérer la valeur sélectionnée
+            const selected = secondarySelect.value;
+            
+            // Si la devise secondaire est la même que la principale, permuter
+            if (selected === userPreferences.currency && primarySelect) {
+                const old = userPreferences.secondaryCurrency;
+                userPreferences.currency = old;
+                primarySelect.value = old;
+            }
+            
+            // Mettre à jour les préférences
+            userPreferences.secondaryCurrency = selected;
+            
+            // Mise à jour de l'aperçu
+            updateCurrencyPreview();
+            
+            // Sauvegarder les préférences
+            saveUserPreferences();
+        });
+    }
+}
+
+// Met à jour l'aperçu des devises
+function updateCurrencyPreview() {
+    const preview = document.getElementById('currencyPreview');
+    if (!preview) return;
+    
+    const amount = 100;
+    const formattedAmount = formatCurrencyWithEquivalent(amount, userPreferences.currency, userPreferences.secondaryCurrency);
+    
+    const example = preview.querySelector('.example');
+    if (example) {
+        example.textContent = formattedAmount;
+    }
+}
+
+// Génère une liste déroulante de devises
+function generateCurrencyDropdown(id, selectedCurrency) {
+    // Obtenir les devises depuis currencies.js
+    const currencies = window.availableCurrencies || [];
+    
+    let html = `<select id="${id}" class="form-control">`;
+    
+    currencies.forEach(curr => {
+        const selected = curr === selectedCurrency ? 'selected' : '';
+        html += `<option value="${curr}" ${selected}>${curr}</option>`;
+    });
+    
+    html += '</select>';
+    return html;
+}
+
+// Initialise les fonctionnalités selon le plan
+function initPlanFeatures() {
+    // Appliquer le plan actuel
+    updatePlanDisplay(userPreferences.plan);
+    
+    // Ajouter des boutons de test pour la démo
+    addPlanTestButtons();
+}
+
+// Mise à jour de l'affichage selon le plan
+function updatePlanDisplay(plan) {
+    const usersTab = document.getElementById('usersTab');
+    const currentPlanName = document.getElementById('currentPlanName');
+    const planBadge = document.querySelector('.current-plan .plan-badge');
+    
+    // Mettre à jour le nom du plan
+    if (currentPlanName) {
+        currentPlanName.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+    }
+    
+    // Mettre à jour la classe du badge
+    if (planBadge) {
+        planBadge.className = 'plan-badge ' + plan;
+    }
+    
+    // Masquer ou afficher l'onglet des utilisateurs
+    if (usersTab) {
+        usersTab.style.display = plan === 'freemium' ? 'none' : 'flex';
+    }
+}
+
+// Ajoute des boutons de test pour simuler différents plans
+function addPlanTestButtons() {
+    const subscription = document.getElementById('subscription-content');
+    if (!subscription) return;
+    
+    const container = document.createElement('div');
+    container.className = 'test-plan-buttons';
+    container.style.marginTop = '20px';
+    container.style.padding = '15px';
+    container.style.backgroundColor = '#f8fafc';
+    container.style.borderRadius = '8px';
+    
+    container.innerHTML = `
+        <h4 style="margin-top: 0;">Mode démo: Tester les différents plans</h4>
+        <p style="margin-bottom: 15px;">Ces boutons sont uniquement pour la démonstration.</p>
+        <div style="display: flex; gap: 10px;">
+            <button id="testFreemiumBtn" class="btn btn-secondary">Freemium</button>
+            <button id="testBasicBtn" class="btn btn-secondary">Basic</button>
+            <button id="testProBtn" class="btn btn-secondary">Pro</button>
+        </div>
+    `;
+    
+    subscription.appendChild(container);
+    
+    // Ajouter les gestionnaires d'événements
+    document.getElementById('testFreemiumBtn').addEventListener('click', () => {
+        userPreferences.plan = 'freemium';
+        updatePlanDisplay('freemium');
+        saveUserPreferences();
+    });
+    
+    document.getElementById('testBasicBtn').addEventListener('click', () => {
+        userPreferences.plan = 'basic';
+        updatePlanDisplay('basic');
+        saveUserPreferences();
+    });
+    
+    document.getElementById('testProBtn').addEventListener('click', () => {
+        userPreferences.plan = 'pro';
+        updatePlanDisplay('pro');
+        saveUserPreferences();
+    });
+}
+
+// Ajoute un bouton de conversion de devise
+function addConversionButton() {
+    const currencySettings = document.querySelector('.currency-settings');
+    if (!currencySettings) return;
+    
+    // Vérifier si le bouton existe déjà
+    let convertButton = document.getElementById('convertProjectsButton');
+    
+    // Si le bouton n'existe pas, le créer
+    if (!convertButton) {
+        convertButton = document.createElement('button');
+        convertButton.id = 'convertProjectsButton';
+        convertButton.className = 'btn btn-primary mt-20';
+        convertButton.style.width = '100%';
+        
+        // Insérer le bouton après les paramètres de devise
+        currencySettings.appendChild(convertButton);
+    }
+    
+    // Mise à jour du texte du bouton
+    updateConversionButton();
+    
+    // Supprimer les gestionnaires d'événements existants
+    const newButton = convertButton.cloneNode(true);
+    if (convertButton.parentNode) {
+        currencySettings.replaceChild(newButton, convertButton);
+    }
+    
+    // Gestionnaire d'événements pour le bouton de conversion
+    newButton.addEventListener('click', () => {
+        const currency = userPreferences.currency;
+        
+        // Afficher une notification de début
+        showNotification(`Conversion des montants en ${currency} en cours...`, 'info');
+        
+        // Essayer de convertir tous les projets et portefeuilles
+        setTimeout(() => {
+            try {
+                // Convertir les projets
+                convertProjects(currency);
+                
+                // Convertir les portefeuilles
+                convertWallets(currency);
+                
+                // Afficher une notification de succès
+                showNotification(`Tous les montants ont été convertis en ${currency}`, 'success');
+                
+                // Recharger la page après un délai
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } catch (error) {
+                console.error('Erreur lors de la conversion:', error);
+                showNotification('Erreur lors de la conversion', 'error');
+            }
+        }, 500);
+    });
+}
+
+// Met à jour le texte du bouton de conversion
+function updateConversionButton() {
+    const button = document.getElementById('convertProjectsButton');
+    if (button) {
+        const currency = userPreferences.currency;
+        button.textContent = `Convertir les montants en ${currency}`;
+    }
+}
+
+// Formate un montant avec la devise et son équivalent dans une autre devise
+function formatCurrencyWithEquivalent(amount, primaryCurrency, secondaryCurrency) {
+    // Ceci est un exemple simple, dans une application réelle, il faudrait utiliser des taux de change à jour
+    const conversionRates = {
+        EUR: 1,
+        USD: 1.1,
+        GBP: 0.85,
+        JPY: 130,
+        CAD: 1.45,
+        AUD: 1.6,
+        CHF: 1.02,
+        CNY: 7.5,
+        INR: 85,
+        BRL: 5.8,
+        RUB: 85,
+        KRW: 1300,
+        TRY: 15,
+        MXN: 22,
+        IDR: 15500,
+        PHP: 55,
+        MYR: 4.5,
+        SGD: 1.5,
+        THB: 35,
+        AED: 4.0
+    };
+    
+    // Convertir en EUR comme monnaie intermédiaire
+    const amountInEUR = primaryCurrency === 'EUR' ? amount : amount / conversionRates[primaryCurrency];
+    const amountInSecondary = amountInEUR * conversionRates[secondaryCurrency];
+    
+    // Formater avec 2 décimales
+    const formattedPrimary = `${primaryCurrency} ${amount.toFixed(2)}`;
+    const formattedSecondary = `${secondaryCurrency} ${amountInSecondary.toFixed(2)}`;
+    
+    return `${formattedPrimary} (≈ ${formattedSecondary})`;
+}
+
+// Convertir les projets à la nouvelle devise
+function convertProjects(newCurrency) {
+    const storedProjects = localStorage.getItem('savedProjects');
+    if (!storedProjects) return;
+    
+    try {
+        const projects = JSON.parse(storedProjects);
+        
+        // Convertir chaque projet
+        const convertedProjects = projects.map(project => {
+            // Remplacer uniquement les symboles de devise, pas les montants
+            if (project.totalBudget && typeof project.totalBudget === 'string') {
+                project.totalBudget = project.totalBudget.replace(/^[A-Z]+/, newCurrency);
+            }
+            
+            // Parcourir les catégories
+            if (project.categories && Array.isArray(project.categories)) {
+                project.categories.forEach(category => {
+                    if (category.amount && typeof category.amount === 'string') {
+                        category.amount = category.amount.replace(/^[A-Z]+/, newCurrency);
+                    }
+                    
+                    // Parcourir les sous-catégories
+                    if (category.subcategories && Array.isArray(category.subcategories)) {
+                        category.subcategories.forEach(subcategory => {
+                            if (subcategory.amount && typeof subcategory.amount === 'string') {
+                                subcategory.amount = subcategory.amount.replace(/^[A-Z]+/, newCurrency);
+                            }
+                            
+                            // Parcourir les lignes
+                            if (subcategory.lines && Array.isArray(subcategory.lines)) {
+                                subcategory.lines.forEach(line => {
+                                    if (line.amount && typeof line.amount === 'string') {
+                                        line.amount = line.amount.replace(/^[A-Z]+/, newCurrency);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            return project;
+        });
+        
+        // Sauvegarder les projets convertis
+        localStorage.setItem('savedProjects', JSON.stringify(convertedProjects));
+        
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de la conversion des projets:', error);
+        return false;
+    }
+}
+
+// Convertir les portefeuilles à la nouvelle devise
+function convertWallets(newCurrency) {
+    const storedWallets = localStorage.getItem('mapocket_wallets');
+    if (!storedWallets) return;
+    
+    try {
+        const wallets = JSON.parse(storedWallets);
+        
+        // Convertir chaque portefeuille
+        const convertedWallets = wallets.map(wallet => {
+            // Remplacer uniquement les symboles de devise, pas les montants
+            if (wallet.balance && typeof wallet.balance === 'string') {
+                wallet.balance = wallet.balance.replace(/^[A-Z]+/, newCurrency);
+            }
+            
+            // Parcourir les transactions
+            if (wallet.transactions && Array.isArray(wallet.transactions)) {
+                wallet.transactions.forEach(transaction => {
+                    if (transaction.amount && typeof transaction.amount === 'string') {
+                        transaction.amount = transaction.amount.replace(/^[A-Z]+/, newCurrency);
+                    }
+                });
+            }
+            
+            return wallet;
+        });
+        
+        // Sauvegarder les portefeuilles convertis
+        localStorage.setItem('mapocket_wallets', JSON.stringify(convertedWallets));
+        
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de la conversion des portefeuilles:', error);
+        return false;
+    }
 }
