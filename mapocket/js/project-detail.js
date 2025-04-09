@@ -1370,7 +1370,37 @@ function showNotification(message, type = 'success') {
 
 // Fonction pour formater un montant en devise
 function formatCurrency(amount) {
-    return `€ ${parseFloat(amount).toFixed(2)}`;
+    // Obtenir le symbole de la devise des préférences utilisateur
+    let currencySymbol = getCurrencySymbol();
+    
+    // Formater le montant avec le symbole de devise approprié
+    return `${currencySymbol} ${parseFloat(amount).toFixed(2)}`;
+}
+
+// Fonction pour récupérer le symbole de devise actuel
+function getCurrencySymbol() {
+    // Valeur par défaut
+    let currencySymbol = "€";
+    
+    try {
+        // Récupérer les préférences utilisateur
+        const savedPrefs = localStorage.getItem("userPreferences");
+        if (savedPrefs) {
+            const userPreferences = JSON.parse(savedPrefs);
+            
+            // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
+            if (typeof AVAILABLE_CURRENCIES !== "undefined") {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération du symbole de devise:", error);
+    }
+    
+    return currencySymbol;
 }
 
 // Fonction pour formater une date
