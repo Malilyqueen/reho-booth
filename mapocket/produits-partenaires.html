@@ -104,7 +104,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="partner-products-section">
+            <div id="partner-products-container" class="partner-products-section">
                 <div class="section-header">
                     <h1>Produits Partenaires</h1>
                     <p class="section-description">
@@ -212,6 +212,11 @@
     <script src="js/voice-commands.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // S'assurer que les préférences sont appliquées avant d'initialiser la page
+            if (window.preferencesManager) {
+                window.preferencesManager.applyAllPreferences();
+            }
+            
             // Fonction pour afficher/masquer le menu mobile
             const sidebarToggle = document.querySelector('.sidebar-toggle');
             const sidebar = document.querySelector('.sidebar');
@@ -231,35 +236,29 @@
                 }
             });
             
-            // Mettre à jour le compteur de produits dans la wishlist
-            updateWishlistCounter();
-        });
-        
-        // Mettre à jour le compteur de wishlist
-        function updateWishlistCounter() {
-            const counters = document.querySelectorAll('#wishlist-counter');
+            // Gérer les onglets de la page des produits partenaires
+            const tabButtons = document.querySelectorAll('.partner-tab-btn');
+            const tabContents = document.querySelectorAll('.partner-tab-content');
             
-            // Récupérer le nombre de produits dans la wishlist
-            let wishlistProducts = [];
-            try {
-                const savedWishlistProducts = localStorage.getItem('partner_wishlist_products');
-                wishlistProducts = savedWishlistProducts ? JSON.parse(savedWishlistProducts) : [];
-            } catch (error) {
-                console.error('Erreur lors du chargement des produits de la wishlist:', error);
-                wishlistProducts = [];
-            }
-            
-            const count = wishlistProducts.filter(item => !item.purchased).length;
-            
-            counters.forEach(counter => {
-                if (count > 0) {
-                    counter.textContent = count;
-                    counter.style.display = 'inline-flex';
-                } else {
-                    counter.style.display = 'none';
-                }
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Supprimer la classe active de tous les boutons et contenus d'onglet
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Ajouter la classe active au bouton et au contenu correspondant
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Si c'est l'onglet wishlist, rafraîchir l'affichage
+                    if (tabId === 'wishlist-tab') {
+                        renderWishlist();
+                    }
+                });
             });
-        }
+        });
     </script>
 </body>
 </html>

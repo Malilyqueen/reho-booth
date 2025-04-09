@@ -82,10 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
         window.preferencesManager.applyAllPreferences();
     }
     
-    // Vérifier si nous sommes sur la page des produits partenaires
-    const partnerProductsContainer = document.getElementById('partner-products-container');
-    if (!partnerProductsContainer) return;
-    
     console.log('Initialisation du module de produits partenaires');
     
     // Charger les produits
@@ -210,10 +206,13 @@ function renderProducts() {
         const buttonText = isInWishlist ? 'Dans ma wishlist' : 'Ajouter à ma wishlist';
         const buttonClass = isInWishlist ? 'btn-success' : 'btn-primary';
         
+        // Utiliser une image placeholder par défaut
+        const imageSrc = product.image || 'assets/product-placeholder.jpg';
+        
         productsHTML += `
             <div class="product-card" data-product-id="${product.id}">
                 <div class="product-image">
-                    <img src="${product.image}" alt="${product.name}" onerror="this.src='images/product-placeholder.jpg'">
+                    <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/product-placeholder.jpg'">
                 </div>
                 <div class="product-details">
                     <h3 class="product-name">${product.name}</h3>
@@ -345,10 +344,13 @@ function renderWishlist() {
     let wishlistHTML = '';
     
     wishlistProducts.forEach(item => {
+        // Utiliser une image placeholder par défaut
+        const imageSrc = item.image || 'assets/product-placeholder.jpg';
+        
         wishlistHTML += `
             <div class="wishlist-item" data-item-id="${item.id}">
                 <div class="wishlist-item-image">
-                    <img src="${item.image}" alt="${item.name}" onerror="this.src='images/product-placeholder.jpg'">
+                    <img src="${imageSrc}" alt="${item.name}" onerror="this.src='assets/product-placeholder.jpg'">
                 </div>
                 <div class="wishlist-item-details">
                     <h3 class="wishlist-item-name">${item.name}</h3>
