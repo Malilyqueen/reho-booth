@@ -131,6 +131,35 @@ function saveProjectData(showNotification = false) {
 
 // Fonction pour récupérer les données actuelles du projet
 function getProjectData() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
+    console.log('Devise du projet:', currencyCode, 'Symbole:', currencySymbol);
+    
     const data = {
         projectName: document.getElementById('projectName')?.value || '',
         projectDate: document.getElementById('projectDate')?.value || '',
@@ -138,6 +167,8 @@ function getProjectData() {
         template: document.querySelector('.template-option.selected') ? 
             document.querySelector('.template-option.selected').getAttribute('data-template') : 'Personnalisé',
         linkToWallet: document.getElementById('linkToWallet')?.checked || false,
+        currency: currencyCode,
+        currencySymbol: currencySymbol,
         categories: []
     };
     
@@ -397,7 +428,7 @@ function initializeExpenseCategories() {
             newLine.className = 'expense-line';
             newLine.innerHTML = `
                 <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                <input type="text" class="form-control expense-line-amount" value="€ 0">
+                <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                 <div class="expense-line-actions">
                     <button type="button" class="btn-sm btn-delete-line">
                         <i class="fas fa-times"></i>
@@ -476,7 +507,7 @@ function initializeSubcategories() {
             newSubcategory.innerHTML = `
                 <div class="subcategory-header">
                     <h5 class="subcategory-name">Nouvelle sous-catégorie</h5>
-                    <span class="subcategory-amount">€ 0</span>
+                    <span class="subcategory-amount">${currencySymbol} 0</span>
                     <button type="button" class="subcategory-toggle open">
                         <i class="fas fa-chevron-up"></i>
                     </button>
@@ -484,7 +515,7 @@ function initializeSubcategories() {
                 <div class="expense-lines open">
                     <div class="expense-line">
                         <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                        <input type="text" class="form-control expense-line-amount" value="€ 0">
+                        <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                         <div class="expense-line-actions">
                             <button type="button" class="btn-sm btn-delete-line">
                                 <i class="fas fa-times"></i>
@@ -531,7 +562,7 @@ function initializeSubcategories() {
                 newLine.className = 'expense-line';
                 newLine.innerHTML = `
                     <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                    <input type="text" class="form-control expense-line-amount" value="€ 0">
+                    <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                     <div class="expense-line-actions">
                         <button type="button" class="btn-sm btn-delete-line">
                             <i class="fas fa-times"></i>
@@ -574,6 +605,33 @@ function initializeSubcategories() {
 }
 
 function updateSubcategoryTotal(subcategory) {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
     let total = 0;
     
     // Calculer le total à partir de toutes les lignes de dépenses
@@ -588,7 +646,9 @@ function updateSubcategoryTotal(subcategory) {
     // Mettre à jour l'affichage du total de la sous-catégorie
     const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
     if (subcategoryAmount) {
-        subcategoryAmount.textContent = `€ ${total}`;
+        subcategoryAmount.textContent = `${currencySymbol} ${total}`;
+        // Ajouter un attribut data pour stocker le code de devise
+        subcategoryAmount.setAttribute('data-currency', currencyCode);
     }
     
     // Mettre à jour le total de la catégorie parente
@@ -599,6 +659,33 @@ function updateSubcategoryTotal(subcategory) {
 }
 
 function updateCategoryTotal(category) {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
     let total = 0;
     
     // Calculer le total à partir de toutes les sous-catégories
@@ -613,7 +700,9 @@ function updateCategoryTotal(category) {
     // Mettre à jour l'affichage du total de la catégorie
     const categoryAmount = category.querySelector('.category-amount');
     if (categoryAmount) {
-        categoryAmount.textContent = `€ ${total}`;
+        categoryAmount.textContent = `${currencySymbol} ${total}`;
+        // Ajouter un attribut data pour stocker le code de devise
+        categoryAmount.setAttribute('data-currency', currencyCode);
     }
     
     // Mettre à jour le total général du budget
@@ -621,6 +710,33 @@ function updateCategoryTotal(category) {
 }
 
 function addMainCategory() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
     // Trouver le conteneur des catégories de dépenses
     const expenseCategories = document.querySelector('.expense-categories');
     const addCategoryContainer = document.querySelector('.add-category-container');
@@ -631,7 +747,7 @@ function addMainCategory() {
     newCategory.innerHTML = `
         <div class="category-header">
             <h4 class="category-name">Nouvelle catégorie</h4>
-            <span class="category-amount">€ 0</span>
+            <span class="category-amount">${currencySymbol} 0</span>
             <div class="category-controls">
                 <button type="button" class="category-toggle open">
                     <i class="fas fa-chevron-up"></i>
@@ -643,7 +759,7 @@ function addMainCategory() {
             <div class="subcategory">
                 <div class="subcategory-header">
                     <h5 class="subcategory-name">Nouvelle sous-catégorie</h5>
-                    <span class="subcategory-amount">€ 0</span>
+                    <span class="subcategory-amount">${currencySymbol} 0</span>
                     <button type="button" class="subcategory-toggle open">
                         <i class="fas fa-chevron-up"></i>
                     </button>
@@ -651,7 +767,7 @@ function addMainCategory() {
                 <div class="expense-lines open">
                     <div class="expense-line">
                         <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                        <input type="text" class="form-control expense-line-amount" value="€ 0">
+                        <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                         <div class="expense-line-actions">
                             <button type="button" class="btn-sm btn-delete-line">
                                 <i class="fas fa-times"></i>
@@ -727,7 +843,7 @@ function addMainCategory() {
         newLine.className = 'expense-line';
         newLine.innerHTML = `
             <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-            <input type="text" class="form-control expense-line-amount" value="€ 0">
+            <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
             <div class="expense-line-actions">
                 <button type="button" class="btn-sm btn-delete-line">
                     <i class="fas fa-times"></i>
@@ -764,7 +880,7 @@ function addMainCategory() {
         newSubcategory.innerHTML = `
             <div class="subcategory-header">
                 <h5 class="subcategory-name">Nouvelle sous-catégorie</h5>
-                <span class="subcategory-amount">€ 0</span>
+                <span class="subcategory-amount">${currencySymbol} 0</span>
                 <button type="button" class="subcategory-toggle open">
                     <i class="fas fa-chevron-up"></i>
                 </button>
@@ -772,7 +888,7 @@ function addMainCategory() {
             <div class="expense-lines open">
                 <div class="expense-line">
                     <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                    <input type="text" class="form-control expense-line-amount" value="€ 0">
+                    <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                     <div class="expense-line-actions">
                         <button type="button" class="btn-sm btn-delete-line">
                             <i class="fas fa-times"></i>
@@ -819,7 +935,7 @@ function addMainCategory() {
             newLine.className = 'expense-line';
             newLine.innerHTML = `
                 <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                <input type="text" class="form-control expense-line-amount" value="€ 0">
+                <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
                 <div class="expense-line-actions">
                     <button type="button" class="btn-sm btn-delete-line">
                         <i class="fas fa-times"></i>
@@ -852,6 +968,35 @@ function addMainCategory() {
 }
 
 function updateTotalBudget() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
+    console.log('Mise à jour du budget total avec la devise:', currencyCode, currencySymbol);
+    
     let total = 0;
     
     // Calculer le total à partir de toutes les catégories principales
@@ -866,13 +1011,15 @@ function updateTotalBudget() {
     // Mettre à jour l'affichage du total du budget
     const totalBudgetAmount = document.querySelector('.total-budget-amount');
     if (totalBudgetAmount) {
-        totalBudgetAmount.textContent = `€ ${total}`;
+        totalBudgetAmount.textContent = `${currencySymbol} ${total}`;
+        totalBudgetAmount.setAttribute('data-currency', currencyCode);
     }
     
     // Mettre à jour le champ de budget total (pour le formulaire)
     const totalBudgetInput = document.getElementById('totalBudget');
     if (totalBudgetInput) {
-        totalBudgetInput.value = `€ ${total}`;
+        totalBudgetInput.value = `${currencySymbol} ${total}`;
+        totalBudgetInput.setAttribute('data-currency', currencyCode);
     }
 }
 
@@ -2188,6 +2335,35 @@ const defaultBudgets = {
 function updateTemplateCategories(templateType) {
     console.log('Updating template categories for:', templateType);
     
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
+    console.log('Mise à jour des catégories avec la devise:', currencyCode, currencySymbol);
+    
     // Gestion spéciale pour le type "Personnalisé"
     if (templateType === 'Personnalisé') {
         console.log('Creating empty template for personalized budget');
@@ -2470,7 +2646,7 @@ function updateCategoriesUI(categoriesData) {
         let categoryHTML = `
             <div class="category-header">
                 <h4 class="category-name">${categoryData.name}</h4>
-                <span class="category-amount">€ 0</span>
+                <span class="category-amount">${currencySymbol} 0</span>
                 <div class="category-controls">
                     <button type="button" class="category-toggle open">
                         <i class="fas fa-chevron-up"></i>
@@ -2488,7 +2664,7 @@ function updateCategoriesUI(categoriesData) {
                     <div class="subcategory">
                         <div class="subcategory-header">
                             <h5 class="subcategory-name">${subcategoryData.name}</h5>
-                            <span class="subcategory-amount">€ 0</span>
+                            <span class="subcategory-amount">${currencySymbol} 0</span>
                             <button type="button" class="subcategory-toggle open">
                                 <i class="fas fa-chevron-up"></i>
                             </button>
@@ -2502,7 +2678,7 @@ function updateCategoriesUI(categoriesData) {
                         categoryHTML += `
                             <div class="expense-line">
                                 <input type="text" class="form-control expense-line-name" value="${line.name}">
-                                <input type="text" class="form-control expense-line-amount" value="${line.amount}">
+                                <input type="text" class="form-control expense-line-amount" value="${line.amount.replace('€', currencySymbol)}">
                                 <div class="expense-line-actions">
                                     <button type="button" class="btn-sm btn-delete-line">
                                         <i class="fas fa-times"></i>

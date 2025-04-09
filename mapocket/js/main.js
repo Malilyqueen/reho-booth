@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Charger la liste des projets
     loadProjectsList();
     
+    // Initialiser le rendu des statistiques mobiles
+    initMobileStatsDisplay();
+    
     // Initialiser le bouton de réinitialisation
     const resetButton = document.getElementById('resetStorage');
     if (resetButton) {
@@ -138,6 +141,86 @@ function updateCurrencyDisplay() {
             element.innerText = `${currencySymbol} ${value.toFixed(2)}`;
         }
     });
+    
+    // Mettre à jour les statistiques mobiles
+    updateMobileStatsDisplay();
+}
+
+/**
+ * Initialise l'affichage des statistiques mobiles
+ * Cette fonction va créer un gestionnaire d'événements qui mettra à jour
+ * les statistiques mobiles (avec la devise correcte) quand la devise changera
+ */
+function initMobileStatsDisplay() {
+    // Observer les changements de devise
+    window.addEventListener('currencyChanged', function(e) {
+        console.log('Événement de changement de devise détecté pour les stats mobiles');
+        updateMobileStatsDisplay();
+    });
+    
+    // Mettre à jour les statistiques initialement
+    updateMobileStatsDisplay();
+}
+
+/**
+ * Met à jour l'affichage des statistiques mobiles
+ * avec la devise correcte
+ */
+function updateMobileStatsDisplay() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+        }
+    }
+    
+    // Récupérer les statistiques de mobileDashboardStats
+    try {
+        const mobileDashboardStats = JSON.parse(localStorage.getItem('mobileDashboardStats') || '{}');
+        const totalBudget = mobileDashboardStats.totalBudget || 0;
+        const walletBalance = mobileDashboardStats.walletBalance || 0;
+        
+        // Mettre à jour tous les éléments relevant des statistiques mobiles
+        // Ces éléments ont généralement des classes spécifiques dans la vue mobile
+        
+        // Budget total - vue mobile
+        const mobileTotalBudgetElements = document.querySelectorAll('.mobile-view .budget-total-value, .mobile-stats .budget-total-value');
+        mobileTotalBudgetElements.forEach(element => {
+            if (element) {
+                element.textContent = `${currencySymbol} ${totalBudget.toFixed(2)}`;
+            }
+        });
+        
+        // Solde portefeuille - vue mobile
+        const mobileWalletBalanceElements = document.querySelectorAll('.mobile-view .wallet-balance-value, .mobile-stats .wallet-balance-value');
+        mobileWalletBalanceElements.forEach(element => {
+            if (element) {
+                element.textContent = `${currencySymbol} ${walletBalance.toFixed(2)}`;
+            }
+        });
+        
+        console.log(`Statistiques mobiles mises à jour avec la devise ${currencySymbol}`);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des statistiques mobiles:', error);
+    }
 }
 
 /**
@@ -655,12 +738,14 @@ function updateDashboardStats() {
     
     // Obtenir le symbole de la devise
     let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
         const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
         if (currency) {
             currencySymbol = currency.symbol;
+            currencyCode = currency.code;
         }
     }
     
@@ -701,6 +786,18 @@ function updateDashboardStats() {
         totalBudgetElement.innerHTML = '';
         totalBudgetElement.textContent = `${currencySymbol} ${totalBudget.toFixed(2)}`;
         console.log(`Mise à jour du budget total avec le symbole ${currencySymbol}`);
+    }
+    
+    // Sauvegarder dans localStorage pour les vues mobiles éventuelles
+    try {
+        localStorage.setItem('mobileDashboardStats', JSON.stringify({
+            currency: currencyCode,
+            symbol: currencySymbol,
+            totalBudget: totalBudget,
+            lastUpdated: new Date().toISOString()
+        }));
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde des stats mobiles:', error);
     }
     
     // Récupération et mise à jour du solde du portefeuille
@@ -755,6 +852,15 @@ function updateDashboardStats() {
                 
                 // Ajouter une info-bulle explicative
                 walletBalanceElement.setAttribute('title', `Solde total: ${currencySymbol}${totalBalance.toFixed(2)} - Dépenses des projets liés: ${currencySymbol}${totalProjectExpenses.toFixed(2)}`);
+                
+                // Mettre à jour les statistiques mobiles
+                try {
+                    let mobileStats = JSON.parse(localStorage.getItem('mobileDashboardStats') || '{}');
+                    mobileStats.walletBalance = netBalance;
+                    localStorage.setItem('mobileDashboardStats', JSON.stringify(mobileStats));
+                } catch (error) {
+                    console.error('Erreur lors de la mise à jour des stats mobiles (solde):', error);
+                }
                 
                 return;
             } else {
