@@ -244,6 +244,14 @@ window.getCurrencySymbol = function(currencyCode) {
         case 'MUR': return '₨';
         case 'TND': return 'DT';
         case 'DZD': return 'DA';
+        case 'THB': return '฿';
+        case 'CAD': return 'C$';
+        case 'CHF': return 'CHF';
+        case 'INR': return '₹';
+        case 'RUB': return '₽';
+        case 'BRL': return 'R$';
+        case 'PHP': return '₱';
+        case 'ILS': return '₪';
         default: return currencyCode;
     }
 }
