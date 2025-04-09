@@ -225,6 +225,49 @@ function initializeProjectForm() {
         });
     }
     
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
+    console.log('Mise à jour du budget total avec la devise:', currencyCode, currencySymbol);
+    
+    // Mettre à jour les montants affichés avec le bon symbole dans le HTML initial
+    const amounts = document.querySelectorAll('.category-amount, .subcategory-amount, .expense-line-amount');
+    amounts.forEach(amount => {
+        if (amount.tagName.toLowerCase() === 'input') {
+            // Pour les inputs (expense-line-amount)
+            const value = amount.value.replace('€', '').trim();
+            amount.value = `${currencySymbol} ${value}`;
+        } else {
+            // Pour les spans (category-amount, subcategory-amount)
+            const value = amount.textContent.replace('€', '').trim();
+            amount.textContent = `${currencySymbol} ${value}`;
+        }
+    });
+    
     // Restaurer les données sauvegardées s'il y en a
     const savedProject = localStorage.getItem('currentProject');
     if (savedProject) {
