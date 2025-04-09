@@ -93,7 +93,7 @@ const AVAILABLE_CURRENCIES = [
     {
         code: "AUD",
         name: "Dollar australien",
-        symbol: "$",
+        symbol: "A$",
         countries: "Australie"
     },
     {
@@ -101,6 +101,66 @@ const AVAILABLE_CURRENCIES = [
         name: "Roupie mauricienne",
         symbol: "₨",
         countries: "Maurice"
+    },
+    {
+        code: "THB",
+        name: "Baht thaïlandais",
+        symbol: "฿",
+        countries: "Thaïlande"
+    },
+    {
+        code: "SGD",
+        name: "Dollar de Singapour",
+        symbol: "S$",
+        countries: "Singapour"
+    },
+    {
+        code: "CAD",
+        name: "Dollar canadien",
+        symbol: "C$",
+        countries: "Canada"
+    },
+    {
+        code: "CHF",
+        name: "Franc suisse",
+        symbol: "CHF",
+        countries: "Suisse"
+    },
+    {
+        code: "INR",
+        name: "Roupie indienne",
+        symbol: "₹",
+        countries: "Inde"
+    },
+    {
+        code: "RUB",
+        name: "Rouble russe",
+        symbol: "₽",
+        countries: "Russie"
+    },
+    {
+        code: "BRL",
+        name: "Real brésilien",
+        symbol: "R$",
+        countries: "Brésil"
+    },
+    {
+        code: "PHP",
+        name: "Peso philippin",
+        symbol: "₱",
+        countries: "Philippines"
+    },
+    {
+        code: "ILS",
+        name: "Shekel israélien",
+        symbol: "₪",
+        countries: "Israël"
+    },
+    {
+        code: "TND",
+        name: "Dinar tunisien",
+        symbol: "DT",
+        countries: "Tunisie"
     }
 ];
 
@@ -127,7 +187,17 @@ const EXCHANGE_RATES = {
     "JPY": 167.37,
     "KRW": 1479.76,
     "AUD": 1.66,
-    "MUR": 49.35
+    "MUR": 49.35,
+    "THB": 38.75,
+    "SGD": 1.46,
+    "CAD": 1.48,
+    "CHF": 0.97,
+    "INR": 91.15,
+    "RUB": 100.21,
+    "BRL": 5.48,
+    "PHP": 61.93,
+    "ILS": 4.01,
+    "TND": 3.39
 };
 
 /**
