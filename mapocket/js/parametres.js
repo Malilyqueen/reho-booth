@@ -257,21 +257,34 @@ function initCurrencySelector() {
         radio.addEventListener('change', () => {
             const selectedCurrency = radio.value;
             const oldCurrency = userPreferences.currency;
+            
+            // Mettre à jour la préférence de devise
             userPreferences.currency = selectedCurrency;
             
-            // Sauvegarder les préférences
-            saveUserPreferences();
-            
-            // Appliquer les changements de devise aux projets et portefeuilles
-            if (oldCurrency !== selectedCurrency) {
-                convertAllCurrencies(oldCurrency, selectedCurrency);
+            try {
+                // Sauvegarder les préférences sans appeler convertAllCurrencies
+                localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+                console.log('Préférences de devise sauvegardées:', userPreferences);
                 
-                // Afficher une notification de succès
-                const currencyNames = {
-                    'EUR': 'euros',
-                    'USD': 'dollars US'
-                };
-                showNotification(`Devise changée en ${currencyNames[selectedCurrency]}. Tous les montants ont été convertis.`, 'success');
+                // Appliquer les changements de devise aux projets et portefeuilles uniquement si nécessaire
+                if (oldCurrency !== selectedCurrency && oldCurrency) {
+                    // Convertir les projets et portefeuilles
+                    const result = convertAllCurrencies(oldCurrency, selectedCurrency);
+                    
+                    // Afficher une notification appropriée
+                    if (result) {
+                        const currencyNames = {
+                            'EUR': 'euros',
+                            'USD': 'dollars US'
+                        };
+                        showNotification(`Devise changée en ${currencyNames[selectedCurrency]}. Tous les montants ont été convertis.`, 'success');
+                    }
+                } else {
+                    showNotification('Préférences de devise mises à jour.', 'success');
+                }
+            } catch (error) {
+                console.error('Erreur lors du changement de devise:', error);
+                showNotification('Erreur lors du changement de devise', 'error');
             }
         });
     });
