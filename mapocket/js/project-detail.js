@@ -1387,12 +1387,36 @@ function getCurrencySymbol() {
         const savedPrefs = localStorage.getItem("userPreferences");
         if (savedPrefs) {
             const userPreferences = JSON.parse(savedPrefs);
+            const currencyCode = userPreferences.currency || 'EUR';
             
+            // Si la fonction globale getCurrencySymbol existe (depuis main.js), l'utiliser
+            if (typeof window.getCurrencySymbol === 'function') {
+                return window.getCurrencySymbol(currencyCode);
+            }
+            
+            // Sinon, utiliser notre propre implémentation
             // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
             if (typeof AVAILABLE_CURRENCIES !== "undefined") {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
                 if (currency) {
                     currencySymbol = currency.symbol;
+                }
+            }
+            
+            // Fallback pour les symboles courants si aucun symbole n'est trouvé
+            if (!currencySymbol || currencySymbol === "€") {
+                switch (currencyCode) {
+                    case 'EUR': currencySymbol = '€'; break;
+                    case 'USD': currencySymbol = '$'; break;
+                    case 'GBP': currencySymbol = '£'; break;
+                    case 'JPY': currencySymbol = '¥'; break;
+                    case 'CNY': currencySymbol = '¥'; break;
+                    case 'MGA': currencySymbol = 'Ar'; break;
+                    case 'MAD': currencySymbol = 'DH'; break;
+                    case 'XAF': currencySymbol = 'F CFA'; break;
+                    case 'XOF': currencySymbol = 'F CFA'; break;
+                    case 'AED': currencySymbol = 'AED'; break;
+                    default: currencySymbol = currencyCode;
                 }
             }
         }

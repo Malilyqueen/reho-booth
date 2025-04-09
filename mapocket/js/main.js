@@ -197,8 +197,8 @@ function updateCurrencyDisplay() {
     updateMobileStatsDisplay();
 }
 
-// Obtient le symbole d'une devise
-function getCurrencySymbol(currencyCode) {
+// Obtient le symbole d'une devise (fonction globale)
+window.getCurrencySymbol = function(currencyCode) {
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
         const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
@@ -218,8 +218,14 @@ function getCurrencySymbol(currencyCode) {
         case 'MAD': return 'DH';
         case 'XAF': return 'F CFA';
         case 'XOF': return 'F CFA';
+        case 'AED': return 'AED';
         default: return currencyCode;
     }
+}
+
+// Alias local pour la fonction globale
+function getCurrencySymbol(currencyCode) {
+    return window.getCurrencySymbol(currencyCode);
 }
 
 // Mise à jour de tous les montants avec la nouvelle devise
@@ -656,8 +662,8 @@ function loadProjectsList() {
                 </a>
             </td>
             <td>${formattedDate}</td>
-            <td>${budgetTotal} ${currencySymbol}</td>
-            <td>${depensesTotal} ${currencySymbol}</td>
+            <td>${currencySymbol} ${budgetTotal.toFixed(2)}</td>
+            <td>${currencySymbol} ${depensesTotal.toFixed(2)}</td>
             <td>
                 <div class="progress-container">
                     <div class="progress-bar ${statusClass}" style="width: ${Math.min(utilizationPercent, 100)}%"></div>
