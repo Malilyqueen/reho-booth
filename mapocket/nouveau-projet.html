@@ -82,6 +82,25 @@
                             <input type="text" id="totalBudget" name="totalBudget" value="€ 500" class="form-control">
                         </div>
                     </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="projectEndDate">Date de fin (facultative)</label>
+                            <div class="date-input">
+                                <input type="text" id="projectEndDate" name="projectEndDate" placeholder="JJ/MM/AAAA" class="form-control">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
+                        <div class="form-group half">
+                            <label for="projectStatus">Statut du projet</label>
+                            <select id="projectStatus" name="projectStatus" class="form-control">
+                                <option value="inProgress" selected>✅ En cours</option>
+                                <option value="almostComplete">⏳ Presque terminé</option>
+                                <option value="completed">🟢 Terminé</option>
+                                <option value="archived">🔒 Archivé</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="template-selection">
                         <h3>Sélectionnez un modèle</h3>

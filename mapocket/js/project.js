@@ -202,7 +202,9 @@ function getProjectData() {
     const data = {
         projectName: document.getElementById('projectName')?.value || '',
         projectDate: document.getElementById('projectDate')?.value || '',
+        projectEndDate: document.getElementById('projectEndDate')?.value || '',
         totalBudget: document.getElementById('totalBudget')?.value || '',
+        projectStatus: document.getElementById('projectStatus')?.value || 'inProgress',
         template: document.querySelector('.template-option.selected') ? 
             document.querySelector('.template-option.selected').getAttribute('data-template') : 'Personnalisé',
         linkToWallet: document.getElementById('linkToWallet')?.checked || false,
@@ -210,7 +212,13 @@ function getProjectData() {
         currencySymbol: currencySymbol,
         createWishlist: createWishlist,
         wishlistData: wishlistData,
-        categories: []
+        categories: [],
+        budgetTracking: {
+            totalBudget: document.getElementById('totalBudget')?.value || '0',
+            totalSpent: 0,
+            totalWishlistPurchased: 0,
+            percentageUsed: 0
+        }
     };
     
     // Collecter les catégories et leurs sous-catégories
@@ -469,6 +477,8 @@ function restoreProjectData(data) {
     // Restaurer les informations de base du projet
     if (data.projectName) document.getElementById('projectName').value = data.projectName;
     if (data.projectDate) document.getElementById('projectDate').value = data.projectDate;
+    if (data.projectEndDate) document.getElementById('projectEndDate').value = data.projectEndDate;
+    if (data.projectStatus) document.getElementById('projectStatus').value = data.projectStatus;
     
     // Mettre à jour le budget total avec le symbole de devise actuel
     if (data.totalBudget) {

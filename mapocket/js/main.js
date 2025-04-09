@@ -197,6 +197,23 @@ function updateCurrencyDisplay() {
     updateMobileStatsDisplay();
 }
 
+// Fonction pour extraire la valeur numérique d'un montant avec devise
+function parseMonetaryValue(monetaryString) {
+    if (!monetaryString) return 0;
+    
+    // Enlever tous les caractères non numériques sauf le point et la virgule
+    const cleanedString = monetaryString.toString().replace(/[^0-9.,]/g, '');
+    
+    // Remplacer la virgule par un point (format français -> format anglais)
+    const normalizedString = cleanedString.replace(',', '.');
+    
+    // Convertir en nombre
+    const value = parseFloat(normalizedString);
+    
+    // Retourner 0 si la conversion échoue
+    return isNaN(value) ? 0 : value;
+}
+
 // Obtient le symbole d'une devise (fonction globale)
 window.getCurrencySymbol = function(currencyCode) {
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -654,6 +671,40 @@ function loadProjectsList() {
             }
         }
         
+        // Déterminer le statut du projet
+        let projectStatus = project.projectStatus || 'inProgress';
+        let statusLabel = '';
+        let statusIcon = '';
+        
+        switch(projectStatus) {
+            case 'inProgress':
+                statusLabel = '✅ En cours';
+                statusIcon = 'fa-play-circle';
+                break;
+            case 'almostComplete':
+                statusLabel = '⏳ Presque terminé';
+                statusIcon = 'fa-hourglass-half';
+                break;
+            case 'completed':
+                statusLabel = '🟢 Terminé';
+                statusIcon = 'fa-check-circle';
+                break;
+            case 'archived':
+                statusLabel = '🔒 Archivé';
+                statusIcon = 'fa-archive';
+                break;
+            default:
+                statusLabel = '✅ En cours';
+                statusIcon = 'fa-play-circle';
+        }
+
+        // Vérifier si le projet est presque terminé basé sur l'utilisation du budget
+        if (projectStatus === 'inProgress' && utilizationPercent >= 80) {
+            projectStatus = 'almostComplete';
+            statusLabel = '⏳ Presque terminé';
+            statusIcon = 'fa-hourglass-half';
+        }
+
         // Construire la ligne du tableau
         row.innerHTML = `
             <td class="project-name">
@@ -671,7 +722,10 @@ function loadProjectsList() {
                 <span class="utilization-text">${utilizationPercent}%</span>
             </td>
             <td>
-                <span class="status-indicator ${statusClass}" title="${statusClass === 'danger' ? 'Dépassement' : statusClass === 'warning' ? 'Attention' : 'Normal'}"></span>
+                <span class="project-status ${projectStatus}">
+                    <i class="fas ${statusIcon}"></i>
+                    ${statusLabel}
+                </span>
             </td>
             <td>
                 <div class="project-actions">
