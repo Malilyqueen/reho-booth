@@ -81,7 +81,7 @@ body {
     color: var(--primary-color);
     text-decoration: none;
     transition: var(--transition);
-    border-radius: 0 20px 20px 0;
+    border-radius: 0 6px 6px 0;
 }
 
 .main-nav ul li a i {
@@ -2382,6 +2382,7 @@ label {
     .main-nav ul li a {
         padding: 10px;
         justify-content: center;
+        border-radius: 6px;
     }
     
     .main-nav ul li a i {
@@ -2563,7 +2564,7 @@ label {
     .main-nav ul li a {
         width: 40px;
         height: 40px;
-        border-radius: 8px;
+        border-radius: 6px;
         display: flex;
         justify-content: center;
         align-items: center;
