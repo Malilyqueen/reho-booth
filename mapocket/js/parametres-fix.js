@@ -106,7 +106,25 @@ function initThemeSelector() {
 
 // Applique le thème actuel
 function applyTheme() {
-    document.body.classList.toggle('dark-mode', userPreferences.theme === 'dark');
+    const isDarkMode = userPreferences.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    
+    // Mettre à jour l'élément HTML (le switch)
+    const themeSwitch = document.getElementById('themeSwitch');
+    if (themeSwitch) {
+        themeSwitch.checked = isDarkMode;
+    }
+    
+    // Mettre à jour les prévisualisations de thèmes si elles existent
+    const lightThemePreview = document.querySelector('.theme-preview.light-theme');
+    const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
+    
+    if (lightThemePreview && darkThemePreview) {
+        lightThemePreview.classList.toggle('active', !isDarkMode);
+        darkThemePreview.classList.toggle('active', isDarkMode);
+    }
+    
+    console.log('Theme applied:', isDarkMode ? 'dark' : 'light');
 }
 
 // Initialise le sélecteur de taille de police
@@ -160,7 +178,106 @@ function initLanguageSelector() {
 
 // Applique les paramètres de langue
 function applyLanguage() {
-    document.documentElement.lang = userPreferences.language;
+    const currentLang = userPreferences.language;
+    document.documentElement.lang = currentLang;
+    
+    // Mettre à jour le sélecteur de langue
+    const langRadios = document.querySelectorAll('input[name="language"]');
+    langRadios.forEach(radio => {
+        radio.checked = radio.value === currentLang;
+    });
+    
+    // Simuler un changement de langue pour la démo
+    if (currentLang === 'en') {
+        translatePageToEnglish();
+    } else {
+        // Restaurer le français (langue par défaut)
+        translatePageToFrench();
+    }
+    
+    console.log('Language applied:', currentLang);
+}
+
+// Fonction de traduction en anglais pour la démo
+function translatePageToEnglish() {
+    // Traduire les onglets
+    translateElement('#profileTab', 'Profile');
+    translateElement('#interfaceTab', 'Interface');
+    translateElement('#securityTab', 'Security');
+    translateElement('#usersTab', 'Users');
+    translateElement('#subscriptionTab', 'Subscription');
+    
+    // Traduire les titres et descriptions des sections
+    translateElement('.settings-header h2', 'Settings');
+    translateElement('.settings-header p', 'Personalize your MaPocket experience');
+    
+    // Traduire les éléments du profil
+    translateElement('label[for="profileNameInput"]', 'Full name');
+    translateElement('label[for="profileEmailInput"]', 'Email address');
+    translateElement('label[for="profilePhoneInput"]', 'Phone (optional)');
+    translateElement('#saveProfileBtn', 'Save');
+    
+    // Traduire les éléments de l'interface
+    translateElement('.theme-section h4', 'Theme');
+    translateElement('.theme-section p', 'Choose between light and dark mode');
+    translateElement('.font-size-section h4', 'Font size');
+    translateElement('.language-section h4', 'Language');
+    translateElement('.currency-section h4', 'Currency');
+    translateElement('.currency-section p', 'Set your preferred currency for all projects');
+    
+    // Traduire les textes des options de langue
+    document.querySelectorAll('.language-option label').forEach(label => {
+        if (label.textContent.includes('Français')) {
+            label.querySelector('.language-name').textContent = 'French';
+        } else if (label.textContent.includes('English')) {
+            label.querySelector('.language-name').textContent = 'English';
+        }
+    });
+}
+
+// Fonction de traduction en français pour la démo
+function translatePageToFrench() {
+    // Restaurer les onglets
+    translateElement('#profileTab', 'Profil');
+    translateElement('#interfaceTab', 'Interface');
+    translateElement('#securityTab', 'Sécurité');
+    translateElement('#usersTab', 'Utilisateurs');
+    translateElement('#subscriptionTab', 'Abonnement');
+    
+    // Restaurer les titres et descriptions des sections
+    translateElement('.settings-header h2', 'Paramètres');
+    translateElement('.settings-header p', 'Personnalisez votre expérience MaPocket');
+    
+    // Restaurer les éléments du profil
+    translateElement('label[for="profileNameInput"]', 'Nom complet');
+    translateElement('label[for="profileEmailInput"]', 'Adresse e-mail');
+    translateElement('label[for="profilePhoneInput"]', 'Téléphone (optionnel)');
+    translateElement('#saveProfileBtn', 'Enregistrer');
+    
+    // Restaurer les éléments de l'interface
+    translateElement('.theme-section h4', 'Thème');
+    translateElement('.theme-section p', 'Choisissez entre le mode clair et sombre');
+    translateElement('.font-size-section h4', 'Taille de police');
+    translateElement('.language-section h4', 'Langue');
+    translateElement('.currency-section h4', 'Devise');
+    translateElement('.currency-section p', 'Définissez votre devise préférée pour tous les projets');
+    
+    // Restaurer les textes des options de langue
+    document.querySelectorAll('.language-option label').forEach(label => {
+        if (label.textContent.includes('French')) {
+            label.querySelector('.language-name').textContent = 'Français';
+        } else if (label.textContent.includes('English')) {
+            label.querySelector('.language-name').textContent = 'English';
+        }
+    });
+}
+
+// Fonction utilitaire pour traduire un élément
+function translateElement(selector, text) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.textContent = text;
+    }
 }
 
 // Initialise les sélecteurs de devise

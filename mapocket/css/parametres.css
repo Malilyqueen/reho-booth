@@ -381,12 +381,15 @@ input[name="language"]:checked + .language-btn {
     align-items: center;
     gap: 20px;
     margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .profile-avatar {
     position: relative;
     width: 100px;
     height: 100px;
+    margin: 0 auto;
 }
 
 .profile-avatar img {
