@@ -224,36 +224,8 @@ window.getCurrencySymbol = function(currencyCode) {
         }
     }
     
-    // Fallback pour les symboles courants
-    switch (currencyCode) {
-        case 'EUR': return '€';
-        case 'USD': return '$';
-        case 'GBP': return '£';
-        case 'JPY': return '¥';
-        case 'CNY': return '¥';
-        case 'MGA': return 'Ar';
-        case 'MAD': return 'DH';
-        case 'XAF': return 'F CFA';
-        case 'XOF': return 'F CFA';
-        case 'AED': return 'AED';
-        case 'SGD': return 'S$';
-        case 'MYR': return 'RM';
-        case 'KRW': return '₩';
-        case 'AUD': return 'A$';
-        case 'KES': return 'KSh';
-        case 'MUR': return '₨';
-        case 'TND': return 'DT';
-        case 'DZD': return 'DA';
-        case 'THB': return '฿';
-        case 'CAD': return 'C$';
-        case 'CHF': return 'CHF';
-        case 'INR': return '₹';
-        case 'RUB': return '₽';
-        case 'BRL': return 'R$';
-        case 'PHP': return '₱';
-        case 'ILS': return '₪';
-        default: return currencyCode;
-    }
+    // Fallback - utiliser le sac d'argent pour toutes les devises
+    return '💰';
 }
 
 // Alias local pour la fonction globale
@@ -326,7 +298,7 @@ function updateMobileStatsDisplay() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = '💰'; // Sac d'argent comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -579,7 +551,7 @@ function loadProjectsList() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = '💰'; // Sac d'argent comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
