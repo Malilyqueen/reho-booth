@@ -236,6 +236,14 @@ window.getCurrencySymbol = function(currencyCode) {
         case 'XAF': return 'F CFA';
         case 'XOF': return 'F CFA';
         case 'AED': return 'AED';
+        case 'SGD': return 'S$';
+        case 'MYR': return 'RM';
+        case 'KRW': return '₩';
+        case 'AUD': return 'A$';
+        case 'KES': return 'KSh';
+        case 'MUR': return '₨';
+        case 'TND': return 'DT';
+        case 'DZD': return 'DA';
         default: return currencyCode;
     }
 }

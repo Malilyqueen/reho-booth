@@ -4,15 +4,25 @@
  */
 
 // Configuration du système de notifications
-const notificationConfig = {
-    duration: 3000,         // Durée d'affichage en millisecondes
-    position: 'top-right',  // Position de la notification
-    animations: true,       // Activer/désactiver les animations
-    maxNotifications: 3     // Nombre maximum de notifications simultanées
-};
+// Utiliser une variable globale pour éviter les conflits de redéclaration
+if (typeof window.notificationConfig === 'undefined') {
+    window.notificationConfig = {
+        duration: 3000,         // Durée d'affichage en millisecondes
+        position: 'top-right',  // Position de la notification
+        animations: true,       // Activer/désactiver les animations
+        maxNotifications: 3     // Nombre maximum de notifications simultanées
+    };
+}
+// Alias local pour faciliter l'utilisation
+const notificationConfig = window.notificationConfig;
 
 // Compteur pour générer des IDs uniques
-let notificationCounter = 0;
+// Utiliser une variable globale pour éviter les conflits de redéclaration
+if (typeof window.notificationCounter === 'undefined') {
+    window.notificationCounter = 0;
+}
+// Alias local pour faciliter l'utilisation
+let notificationCounter = window.notificationCounter;
 
 // Classe pour gérer les notifications
 const NotificationManager = {
@@ -71,7 +81,8 @@ const NotificationManager = {
         }
 
         // Créer la notification
-        const notificationId = `notification-${notificationCounter++}`;
+        window.notificationCounter++;
+        const notificationId = `notification-${window.notificationCounter}`;
         const notification = document.createElement('div');
         notification.id = notificationId;
         notification.className = `notification notification-${type}`;
