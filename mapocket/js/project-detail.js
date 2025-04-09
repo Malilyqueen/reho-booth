@@ -79,8 +79,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Charger les projets associés (implémentation future)
-    // loadRelatedProjects();
+    // Bouton de partage du projet
+    const btnShareProject = document.querySelector('.btn-share-project');
+    if (btnShareProject) {
+        btnShareProject.addEventListener('click', function() {
+            openShareProjectModal();
+        });
+    }
+    
+    // Bouton pour voir les collaborateurs
+    const btnViewCollaborators = document.querySelector('.btn-view-collaborators');
+    if (btnViewCollaborators) {
+        btnViewCollaborators.addEventListener('click', function() {
+            openCollaboratorsModal();
+        });
+    }
+    
+    // Charger les collaborateurs du projet
+    loadProjectCollaborators();
     
     // Gestionnaire de soumission du formulaire de dépense réelle
     const realExpenseForm = document.getElementById('real-expense-form');
@@ -156,8 +172,59 @@ function initProjectDetailPage() {
         return;
     }
     
+    // Initialiser les modales et les événements
+    initModals();
+    
+    // Initialiser les gestionnaires d'événements
+    initEventListeners(projectId);
+    
     // Charger les données du projet
     loadProjectDetails(projectId);
+}
+
+// Fonction pour initialiser les gestionnaires d'événements
+function initEventListeners(projectId) {
+    // Gestionnaire pour créer une wishlist
+    const createWishlistBtn = document.getElementById('createWishlistBtn');
+    if (createWishlistBtn) {
+        createWishlistBtn.addEventListener('click', () => {
+            createWishlistForProject(projectId);
+        });
+    }
+    
+    // Gestionnaire pour partager le projet
+    const shareProjectBtn = document.querySelector('.btn-share-project');
+    if (shareProjectBtn) {
+        shareProjectBtn.addEventListener('click', openShareProjectModal);
+    }
+    
+    // Gestionnaire pour voir les collaborateurs
+    const viewCollaboratorsBtn = document.querySelector('.btn-view-collaborators');
+    if (viewCollaboratorsBtn) {
+        viewCollaboratorsBtn.addEventListener('click', openCollaboratorsModal);
+    }
+    
+    // Gestionnaire pour le bouton d'invitation de collaborateur
+    const inviteCollaboratorBtn = document.getElementById('invite-collaborator');
+    if (inviteCollaboratorBtn) {
+        inviteCollaboratorBtn.addEventListener('click', inviteCollaborator);
+    }
+    
+    // Gestionnaires pour les autres actions du projet
+    const completeProjectBtn = document.querySelector('.btn-complete-project');
+    if (completeProjectBtn) {
+        completeProjectBtn.addEventListener('click', completeProject);
+    }
+    
+    const archiveProjectBtn = document.querySelector('.btn-archive-project');
+    if (archiveProjectBtn) {
+        archiveProjectBtn.addEventListener('click', archiveProject);
+    }
+    
+    const editProjectBtn = document.querySelector('.btn-edit-project');
+    if (editProjectBtn) {
+        editProjectBtn.addEventListener('click', editProject);
+    }
 }
 
 // Fonction pour charger les détails du projet
@@ -197,6 +264,9 @@ function loadProjectDetails(projectId) {
     
     // Charger les commentaires
     loadComments(projectId);
+    
+    // Charger les collaborateurs
+    loadProjectCollaborators();
     
     // Vérifier si le projet est lié à un portefeuille
     checkWalletLink(project);
@@ -998,4 +1068,235 @@ function createWishlistForProject(projectId) {
     
     // Rediriger vers la nouvelle wishlist
     window.location.href = `wishlist.html?id=${newWishlist.id}`;
+}
+
+// Fonction pour charger les collaborateurs d'un projet
+function loadProjectCollaborators() {
+    const project = window.currentProject;
+    
+    if (!project) {
+        return;
+    }
+    
+    // Vérifier l'existence des éléments DOM pour afficher les informations sur les collaborateurs
+    const collaboratorsContainer = document.querySelector('.collaborators-list');
+    const collaboratorsCount = document.querySelector('.collaborators-count');
+    const collaboratorsBadge = document.querySelector('.shared-project-badge');
+    
+    // Initialiser la liste des collaborateurs si elle n'existe pas
+    if (!project.collaborators) {
+        project.collaborators = [];
+    }
+    
+    // Mettre à jour le badge de projet partagé
+    if (collaboratorsBadge) {
+        if (project.collaborators.length > 0) {
+            collaboratorsBadge.style.display = 'inline-flex';
+        } else {
+            collaboratorsBadge.style.display = 'none';
+        }
+    }
+    
+    // Mettre à jour le compteur de collaborateurs
+    if (collaboratorsCount) {
+        collaboratorsCount.textContent = project.collaborators.length;
+    }
+    
+    // Mettre à jour la liste des collaborateurs
+    if (collaboratorsContainer) {
+        collaboratorsContainer.innerHTML = '';
+        
+        if (project.collaborators.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-collaborators-message';
+            emptyMessage.textContent = 'Ce projet n\'est pas partagé pour le moment.';
+            collaboratorsContainer.appendChild(emptyMessage);
+        } else {
+            project.collaborators.forEach((collaborator, index) => {
+                const collaboratorItem = document.createElement('div');
+                collaboratorItem.className = 'collaborator-item';
+                
+                collaboratorItem.innerHTML = `
+                    <div class="collaborator-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="collaborator-info">
+                        <div class="collaborator-name">${collaborator.name || 'Utilisateur invité'}</div>
+                        <div class="collaborator-email">${collaborator.email}</div>
+                        <div class="collaborator-status">${getCollaboratorStatusText(collaborator.status)}</div>
+                    </div>
+                    <div class="collaborator-actions">
+                        <button type="button" class="btn-sm btn-remove-collaborator" title="Retirer le collaborateur" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                collaboratorsContainer.appendChild(collaboratorItem);
+                
+                // Ajouter l'événement pour retirer un collaborateur
+                const removeButton = collaboratorItem.querySelector('.btn-remove-collaborator');
+                if (removeButton) {
+                    removeButton.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        removeCollaborator(index);
+                    });
+                }
+            });
+        }
+    }
+}
+
+// Fonction pour ouvrir la modale de partage de projet
+function openShareProjectModal() {
+    const project = window.currentProject;
+    
+    if (!project) {
+        showNotification('Projet non trouvé', 'error');
+        return;
+    }
+    
+    const modal = document.getElementById('share-project-modal');
+    const emailInput = document.getElementById('collaborator-email');
+    
+    if (!modal || !emailInput) {
+        showNotification('Erreur lors de l\'ouverture de la modale de partage', 'error');
+        return;
+    }
+    
+    // Réinitialiser le formulaire
+    emailInput.value = '';
+    
+    // Afficher la modale
+    modal.style.display = 'block';
+}
+
+// Fonction pour ouvrir la modale des collaborateurs
+function openCollaboratorsModal() {
+    const project = window.currentProject;
+    
+    if (!project) {
+        showNotification('Projet non trouvé', 'error');
+        return;
+    }
+    
+    const modal = document.getElementById('collaborators-modal');
+    
+    if (!modal) {
+        showNotification('Erreur lors de l\'ouverture de la modale des collaborateurs', 'error');
+        return;
+    }
+    
+    // Afficher la modale
+    modal.style.display = 'block';
+}
+
+// Fonction pour inviter un collaborateur
+function inviteCollaborator() {
+    const project = window.currentProject;
+    
+    if (!project) {
+        showNotification('Projet non trouvé', 'error');
+        return;
+    }
+    
+    const emailInput = document.getElementById('collaborator-email');
+    
+    if (!emailInput || !emailInput.value.trim()) {
+        showNotification('Veuillez entrer une adresse e-mail valide', 'error');
+        return;
+    }
+    
+    const email = emailInput.value.trim();
+    
+    // Valider l'adresse e-mail
+    if (!validateEmail(email)) {
+        showNotification('Adresse e-mail invalide', 'error');
+        return;
+    }
+    
+    // Vérifier si le collaborateur est déjà invité
+    if (!project.collaborators) {
+        project.collaborators = [];
+    }
+    
+    const existingCollaborator = project.collaborators.find(c => c.email === email);
+    
+    if (existingCollaborator) {
+        showNotification('Ce collaborateur est déjà invité', 'warning');
+        return;
+    }
+    
+    // Ajouter le collaborateur
+    const newCollaborator = {
+        email: email,
+        name: null, // Sera renseigné par le collaborateur
+        status: 'invited',
+        invitedAt: new Date().toISOString(),
+        acceptedAt: null
+    };
+    
+    project.collaborators.push(newCollaborator);
+    
+    // En situation réelle, envoyer un e-mail d'invitation
+    // Pour la démo, on simule juste l'invitation
+    
+    // Sauvegarder les modifications du projet
+    saveProjectChanges(project);
+    
+    // Mettre à jour l'affichage des collaborateurs
+    loadProjectCollaborators();
+    
+    // Réinitialiser le formulaire
+    emailInput.value = '';
+    
+    // Fermer la modale
+    document.getElementById('share-project-modal').style.display = 'none';
+    
+    showNotification('Invitation envoyée avec succès');
+}
+
+// Fonction pour retirer un collaborateur
+function removeCollaborator(index) {
+    const project = window.currentProject;
+    
+    if (!project || !project.collaborators || index >= project.collaborators.length) {
+        showNotification('Collaborateur non trouvé', 'error');
+        return;
+    }
+    
+    if (!confirm('Voulez-vous vraiment retirer ce collaborateur ?')) {
+        return;
+    }
+    
+    // Supprimer le collaborateur
+    project.collaborators.splice(index, 1);
+    
+    // Sauvegarder les modifications du projet
+    saveProjectChanges(project);
+    
+    // Mettre à jour l'affichage des collaborateurs
+    loadProjectCollaborators();
+    
+    showNotification('Collaborateur retiré avec succès');
+}
+
+// Fonction pour obtenir le texte du statut d'un collaborateur
+function getCollaboratorStatusText(status) {
+    switch (status) {
+        case 'invited':
+            return '<span class="status-invited">Invitation envoyée</span>';
+        case 'accepted':
+            return '<span class="status-accepted">Collaborateur actif</span>';
+        case 'declined':
+            return '<span class="status-declined">Invitation refusée</span>';
+        default:
+            return '<span class="status-unknown">Statut inconnu</span>';
+    }
+}
+
+// Fonction pour valider une adresse e-mail
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
 }

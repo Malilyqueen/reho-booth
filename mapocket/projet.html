@@ -88,6 +88,15 @@
                     <button class="btn-sm btn-create-wishlist" id="createWishlistBtn">
                         <i class="fas fa-gift"></i> Créer une liste de souhaits
                     </button>
+                    <button class="btn-sm btn-share-project">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </button>
+                    <button class="btn-sm btn-view-collaborators">
+                        <i class="fas fa-users"></i> <span class="collaborators-count">0</span> Collaborateurs
+                    </button>
+                </div>
+                <div class="shared-project-badge" style="display: none;">
+                    <i class="fas fa-users"></i> Projet partagé
                 </div>
             </header>
 
@@ -366,11 +375,65 @@
         </div>
     </div>
 
+    <!-- Modal pour partager le projet -->
+    <div id="share-project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Partager le projet</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Invitez un collaborateur à travailler sur ce projet avec vous.</p>
+                <div class="form-group">
+                    <label for="collaborator-email">Adresse e-mail</label>
+                    <input type="email" id="collaborator-email" class="form-control" placeholder="email@exemple.com" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="invite-collaborator" class="btn btn-primary" onclick="inviteCollaborator()">Envoyer l'invitation</button>
+                    <button type="button" class="btn btn-secondary cancel-modal">Annuler</button>
+                </div>
+                <div class="info-box">
+                    <p><i class="fas fa-info-circle"></i> Les collaborateurs pourront voir et modifier ce projet, ainsi que consulter la wishlist associée.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour gérer les collaborateurs -->
+    <div id="collaborators-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Collaborateurs du projet</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="collaborators-list-container">
+                    <div class="collaborators-list">
+                        <!-- Liste des collaborateurs générée dynamiquement -->
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary btn-invite-from-collab">
+                        <i class="fas fa-user-plus"></i> Inviter un collaborateur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/currencies.js"></script>
     <script src="js/project-detail.js"></script>
     <script src="js/voice-commands.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Ajouter un gestionnaire d'événements pour le bouton d'invitation dans la modal des collaborateurs
+            const btnInviteFromCollab = document.querySelector('.btn-invite-from-collab');
+            if (btnInviteFromCollab) {
+                btnInviteFromCollab.addEventListener('click', function() {
+                    document.getElementById('collaborators-modal').style.display = 'none';
+                    openShareProjectModal();
+                });
+            }
             // Mettre à jour l'étiquette de montant avec la devise active
             try {
                 const savedPrefs = localStorage.getItem("userPreferences");
