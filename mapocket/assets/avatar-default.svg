@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" fill-rule="evenodd">
-        <circle fill="#EAF4FB" cx="100" cy="100" r="100"></circle>
-        <path d="M100,50 C116.569,50 130,63.4315 130,80 C130,96.5685 116.569,110 100,110 C83.4315,110 70,96.5685 70,80 C70,63.4315 83.4315,50 100,50 Z" fill="#1D3557"></path>
-        <path d="M155,150 C155,128.9473 129.852,112 100,112 C70.148,112 45,128.9473 45,150 L155,150 Z" fill="#1D3557"></path>
-    </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .avatar-circle { fill: #e1e8ed; }
+    .avatar-figure { fill: #9aa9b8; }
+  </style>
+  <circle class="avatar-circle" cx="50" cy="50" r="50"/>
+  <path class="avatar-figure" d="M50,25 C41,25 34,33 34,42 C34,51 39,58 50,58 C61,58 66,51 66,42 C66,33 59,25 50,25 Z"/>
+  <path class="avatar-figure" d="M50,60 C33,60 20,72 20,85 L80,85 C80,72 67,60 50,60 Z"/>
 </svg>
