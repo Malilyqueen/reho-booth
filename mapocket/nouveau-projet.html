@@ -420,11 +420,19 @@
                 }
             }
             
-            // Mettre à jour les montants affichés avec le bon symbole
-            const amounts = document.querySelectorAll(".category-amount");
-            amounts.forEach(amount => {
-                const value = amount.textContent.replace("€", "").trim();
+            // Mettre à jour tous les montants affichés avec le bon symbole
+            // 1. Sélectionner tous les éléments contenant des montants
+            const allAmounts = document.querySelectorAll(".category-amount, .subcategory-amount, .total-budget-amount");
+            allAmounts.forEach(amount => {
+                const value = amount.textContent.replace(/[^0-9.,\s]/g, "").trim();
                 amount.textContent = `${currencySymbol} ${value}`;
+            });
+            
+            // 2. Mettre à jour les champs de saisie de montants
+            const inputAmounts = document.querySelectorAll(".expense-line-amount, #totalBudget");
+            inputAmounts.forEach(input => {
+                const value = input.value.replace(/[^0-9.,\s]/g, "").trim();
+                input.value = `${currencySymbol} ${value}`;
             });
         });
     </script>
