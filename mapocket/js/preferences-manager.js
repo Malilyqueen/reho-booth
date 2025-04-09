@@ -141,11 +141,12 @@ function applyLanguage() {
         });
     }
     
-    // Dictionnaire de traduction simplifiée (à développer selon les besoins)
+    // Dictionnaire de traduction complet
     const frToEn = {
         // Navigation
         'Tableau de bord': 'Dashboard',
         'Mes Projets': 'My Projects',
+        'Créer un projet': 'Create a project',
         'Mon Portefeuille': 'My Wallet',
         'Paramètres': 'Settings',
         'Objectifs & Défis': 'Goals & Challenges',
@@ -176,7 +177,134 @@ function applyLanguage() {
         'Devise': 'Currency',
         'Devise principale': 'Primary currency',
         'Devise d\'affichage secondaire': 'Secondary display currency',
-        'Aperçu': 'Preview'
+        'Aperçu': 'Preview',
+        
+        // Portefeuille
+        'Mon Portefeuille': 'My Wallet',
+        'Solde total': 'Total Balance',
+        'Dépenses': 'Expenses',
+        'Revenus': 'Income',
+        'Ajouter un portefeuille': 'Add a wallet',
+        'Gérer mes portefeuilles': 'Manage my wallets',
+        'Ajouter un revenu': 'Add income',
+        'Ajouter une dépense': 'Add expense',
+        'Transactions récentes': 'Recent transactions',
+        'Date': 'Date',
+        'Montant': 'Amount',
+        'Type': 'Type',
+        'Catégorie': 'Category',
+        'Description': 'Description',
+        'Voir toutes les transactions': 'View all transactions',
+        
+        // Objectifs & Défis
+        'Objectifs d\'épargne': 'Savings Goals',
+        'Défis budgétaires': 'Budget Challenges',
+        'Suivi & Statistiques': 'Tracking & Stats',
+        'Créer un objectif': 'Create a goal',
+        'Créer un défi': 'Create a challenge',
+        'Objectif': 'Goal',
+        'Défi': 'Challenge',
+        'Progression': 'Progress',
+        'Actions': 'Actions',
+        'Voir les détails': 'View details',
+        'Modifier': 'Edit',
+        'Supprimer': 'Delete',
+        
+        // Liste de souhaits
+        'Mes listes de souhaits': 'My wishlists',
+        'Créer une liste': 'Create a list',
+        'Partager': 'Share',
+        'Prix': 'Price',
+        'Priorité': 'Priority',
+        'Lien': 'Link',
+        'Ajouter un produit': 'Add a product',
+        'Haute': 'High',
+        'Moyenne': 'Medium',
+        'Basse': 'Low',
+        
+        // Produits Partenaires
+        'Produits recommandés': 'Recommended products',
+        'Offres spéciales': 'Special offers',
+        'Voir l\'offre': 'View offer',
+        'Ajouter à ma liste': 'Add to my list',
+        
+        // Outils Pro
+        'Gestion des devis': 'Quote management',
+        'Gestion des factures': 'Invoice management',
+        'Vue comptable': 'Accounting view',
+        'Créer un devis': 'Create a quote',
+        'Créer une facture': 'Create an invoice',
+        'Nouveau devis': 'New quote',
+        'Nouvelle facture': 'New invoice',
+        'Client': 'Client',
+        'Statut': 'Status',
+        'Total': 'Total',
+        'Brouillon': 'Draft',
+        'Envoyé': 'Sent',
+        'Accepté': 'Accepted',
+        'Refusé': 'Declined',
+        'En attente': 'Pending',
+        'Payée': 'Paid',
+        'En retard': 'Late',
+        'Annulée': 'Cancelled',
+        
+        // Projets et budget
+        'Tous les projets': 'All projects',
+        'Projets actifs': 'Active projects',
+        'Projets terminés': 'Completed projects',
+        'Projets archivés': 'Archived projects',
+        'Nom du projet': 'Project name',
+        'Budget total': 'Total budget',
+        'Budget disponible': 'Available budget',
+        'Budget utilisé': 'Used budget',
+        'Date de début': 'Start date',
+        'Date de fin': 'End date',
+        'Statut': 'Status',
+        'En cours': 'In progress',
+        'Terminé': 'Completed',
+        'Archivé': 'Archived',
+        'Catégories': 'Categories',
+        'Ajouter une catégorie': 'Add category',
+        'Ajouter une sous-catégorie': 'Add subcategory',
+        'Ajouter une ligne': 'Add line',
+        
+        // Messages et notifications
+        'Profil mis à jour avec succès': 'Profile updated successfully',
+        'Paramètres sauvegardés': 'Settings saved',
+        'Erreur': 'Error',
+        'Succès': 'Success',
+        'Attention': 'Warning',
+        'Information': 'Information',
+        
+        // Assistant IA
+        'Discuter avec l\'assistant': 'Chat with assistant',
+        'Générer un projet': 'Generate a project',
+        'Suggestions personnalisées': 'Personalized suggestions',
+        'Envoyer': 'Send',
+        'Effacer': 'Clear',
+        'Tapez votre message ici...': 'Type your message here...',
+        
+        // Communs
+        'Enregistrer': 'Save',
+        'Annuler': 'Cancel',
+        'Confirmer': 'Confirm',
+        'Continuer': 'Continue',
+        'Retour': 'Back',
+        'Suivant': 'Next',
+        'Rechercher': 'Search',
+        'Filtrer': 'Filter',
+        'Trier par': 'Sort by',
+        'Afficher': 'Show',
+        'Masquer': 'Hide',
+        'Partager': 'Share',
+        'Imprimer': 'Print',
+        'Télécharger': 'Download',
+        'Importer': 'Import',
+        'Exporter': 'Export',
+        'Tout': 'All',
+        'Aucun': 'None',
+        'Oui': 'Yes',
+        'Non': 'No'
     };
     
     const enToFr = {};
@@ -185,12 +313,38 @@ function applyLanguage() {
         enToFr[en] = fr;
     }
     
-    // Fonction simplifiée de traduction
+    // Fonction de traduction plus complète
     const dictionary = lang === 'en' ? frToEn : enToFr;
-    const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, button, a, label');
+    
+    // Sélectionner un éventail plus large d'éléments à traduire
+    const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, button, a, label, div.title, div.subtitle, div.caption, th, td, input[type="submit"], input[type="button"], textarea[placeholder], option, .menu-text, .card-title, .card-subtitle, .section-title, .tab-btn, .nav-link');
     
     elements.forEach(element => {
+        // Traduire le texte de l'élément
         translateElement(element, dictionary);
+        
+        // Traduire également les attributs placeholder et title si présents
+        if (element.hasAttribute('placeholder')) {
+            const placeholderText = element.getAttribute('placeholder');
+            if (dictionary[placeholderText]) {
+                element.setAttribute('placeholder', dictionary[placeholderText]);
+            }
+        }
+        
+        if (element.hasAttribute('title')) {
+            const titleText = element.getAttribute('title');
+            if (dictionary[titleText]) {
+                element.setAttribute('title', dictionary[titleText]);
+            }
+        }
+        
+        // Vérifier les attributs aria-label pour l'accessibilité
+        if (element.hasAttribute('aria-label')) {
+            const ariaText = element.getAttribute('aria-label');
+            if (dictionary[ariaText]) {
+                element.setAttribute('aria-label', dictionary[ariaText]);
+            }
+        }
     });
     
     console.log('Language applied:', lang);
