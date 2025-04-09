@@ -58,6 +58,7 @@ body {
     width: 40px;
     height: 40px;
     margin-right: 10px;
+    border-radius: 8px;
 }
 
 .logo h1 {
