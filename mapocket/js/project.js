@@ -2364,6 +2364,21 @@ function updateTemplateCategories(templateType) {
     
     console.log('Mise à jour des catégories avec la devise:', currencyCode, currencySymbol);
     
+    // Fonction utilitaire pour remplacer les symboles € dans les données de template
+    const replaceEuroSymbol = (obj) => {
+        if (obj && typeof obj === 'object') {
+            Object.keys(obj).forEach(key => {
+                if (key === 'amount' && typeof obj[key] === 'string') {
+                    // Remplacer le symbole € par le symbole de la devise active
+                    obj[key] = obj[key].replace('€', currencySymbol);
+                } else if (typeof obj[key] === 'object') {
+                    replaceEuroSymbol(obj[key]);
+                }
+            });
+        }
+        return obj;
+    };
+    
     // Gestion spéciale pour le type "Personnalisé"
     if (templateType === 'Personnalisé') {
         console.log('Creating empty template for personalized budget');
@@ -2381,6 +2396,12 @@ function updateTemplateCategories(templateType) {
                 ]
             }
         ];
+        
+        // Remplacer les symboles € par le symbole de devise choisi
+        categoriesData.forEach(category => {
+            replaceEuroSymbol(category);
+        });
+        
         updateCategoriesUI(categoriesData);
         return;
     }
@@ -2388,7 +2409,14 @@ function updateTemplateCategories(templateType) {
     // Vérifier si nous avons un modèle prédéfini pour ce type
     if (defaultBudgets[templateType]) {
         console.log('Found template data for:', templateType);
-        const categoriesData = defaultBudgets[templateType].categories;
+        // Copie profonde pour ne pas modifier l'original
+        const categoriesData = JSON.parse(JSON.stringify(defaultBudgets[templateType].categories));
+        
+        // Remplacer les symboles € par le symbole de devise choisi
+        categoriesData.forEach(category => {
+            replaceEuroSymbol(category);
+        });
+        
         // Mettre à jour l'interface avec les nouvelles catégories
         updateCategoriesUI(categoriesData);
         return;
@@ -2614,8 +2642,13 @@ function updateTemplateCategories(templateType) {
             return;
     }
     
-    // Mettre à jour l'interface avec les nouvelles catégories
+    // Remplacer les symboles € par le symbole de devise choisi dans les templates du switch
     if (categoriesData.length > 0) {
+        // Remplacer les symboles € par le symbole de devise choisi
+        categoriesData.forEach(category => {
+            replaceEuroSymbol(category);
+        });
+        
         updateCategoriesUI(categoriesData);
     }
 }
