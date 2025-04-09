@@ -15,6 +15,8 @@
     --warning-color: #ffc107;
     --danger-color: #dc3545;
     --info-color: #17a2b8;
+    --create-project-color: #6f802b;
+    --ai-suggestion-color: #6f802b;
 }
 
 * {
@@ -687,6 +689,20 @@ body {
 .btn-primary {
     background-color: var(--accent-color);
     color: var(--primary-color);
+}
+
+/* Boutons spécifiques avec la couleur verte (#6f802b) */
+.btn-primary[href="nouveau-projet.html"],
+.btn-primary[href="assistant-projet.html"], 
+.btn-primary[href="suggestions-ia.html"] {
+    background-color: var(--create-project-color);
+    color: var(--white);
+}
+
+.btn-primary[href="nouveau-projet.html"]:hover,
+.btn-primary[href="assistant-projet.html"]:hover,
+.btn-primary[href="suggestions-ia.html"]:hover {
+    background-color: #596a22; /* Version plus foncée pour le hover */
 }
 
 .btn-primary:hover {
