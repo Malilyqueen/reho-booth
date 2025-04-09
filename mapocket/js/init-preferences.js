@@ -53,6 +53,15 @@ function initPreferencesUI() {
     if (lightThemeRadio && darkThemeRadio) {
         lightThemeRadio.checked = preferences.theme === 'light';
         darkThemeRadio.checked = preferences.theme === 'dark';
+        
+        // Appliquer visuellement le thème sélectionné aux prévisualisations
+        const lightThemePreview = document.querySelector('.theme-preview.light-theme');
+        const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
+        
+        if (lightThemePreview && darkThemePreview) {
+            lightThemePreview.classList.toggle('active', preferences.theme === 'light');
+            darkThemePreview.classList.toggle('active', preferences.theme === 'dark');
+        }
     }
     
     // Initialiser le sélecteur de taille de police
@@ -184,12 +193,30 @@ function initThemeHandlers() {
         lightThemeRadio.addEventListener('change', () => {
             if (lightThemeRadio.checked) {
                 preferencesManager.setTheme('light');
+                
+                // Mettre à jour visuellement les prévisualisations
+                const lightThemePreview = document.querySelector('.theme-preview.light-theme');
+                const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
+                
+                if (lightThemePreview && darkThemePreview) {
+                    lightThemePreview.classList.add('active');
+                    darkThemePreview.classList.remove('active');
+                }
             }
         });
         
         darkThemeRadio.addEventListener('change', () => {
             if (darkThemeRadio.checked) {
                 preferencesManager.setTheme('dark');
+                
+                // Mettre à jour visuellement les prévisualisations
+                const lightThemePreview = document.querySelector('.theme-preview.light-theme');
+                const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
+                
+                if (lightThemePreview && darkThemePreview) {
+                    lightThemePreview.classList.remove('active');
+                    darkThemePreview.classList.add('active');
+                }
             }
         });
     }
