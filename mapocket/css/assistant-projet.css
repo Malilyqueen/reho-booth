@@ -351,6 +351,12 @@
     
     .prompt-input {
         width: 100%;
+        padding-left: 45px;
+    }
+    
+    .input-icon {
+        top: 16px;
+        z-index: 1;
     }
     
     .generate-btn {
@@ -361,6 +367,7 @@
     
     .action-buttons {
         flex-direction: column;
+        gap: 15px;
     }
     
     .primary-btn,
@@ -371,5 +378,21 @@
     
     .adjustment-column {
         width: 100px;
+    }
+    
+    .example-chips {
+        flex-wrap: wrap;
+    }
+    
+    .example-chip {
+        margin-bottom: 8px;
+    }
+    
+    .categories-container {
+        overflow-x: auto;
+    }
+    
+    .categories-table {
+        min-width: 650px;
     }
 }
