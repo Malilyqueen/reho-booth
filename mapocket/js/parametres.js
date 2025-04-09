@@ -239,58 +239,262 @@ function initLanguageSelector() {
 }
 
 /**
- * Initialise le sélecteur de devise
+ * Initialise les sélecteurs de devise
  */
 function initCurrencySelector() {
-    const currencyRadios = document.querySelectorAll('input[name="currency"]');
-    
-    // S'assurer que la devise correcte est sélectionnée au chargement
-    if (userPreferences.currency) {
-        const currencyRadio = document.getElementById('currency-' + userPreferences.currency.toLowerCase());
-        if (currencyRadio) {
-            currencyRadio.checked = true;
-        }
+    // Configuration et préférences par défaut
+    if (!userPreferences.currency) {
+        userPreferences.currency = 'EUR';
     }
     
-    // Gestionnaire d'événements pour les radios de devise
-    currencyRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            const selectedCurrency = radio.value;
-            const oldCurrency = userPreferences.currency;
+    if (!userPreferences.secondaryCurrency) {
+        userPreferences.secondaryCurrency = 'USD';
+    }
+    
+    // Génération des listes déroulantes de devises
+    const primaryCurrencyContainer = document.getElementById('primaryCurrencyContainer');
+    const secondaryCurrencyContainer = document.getElementById('secondaryCurrencyContainer');
+    
+    if (primaryCurrencyContainer) {
+        primaryCurrencyContainer.innerHTML = generateCurrencyDropdown('primaryCurrency', userPreferences.currency);
+    }
+    
+    if (secondaryCurrencyContainer) {
+        secondaryCurrencyContainer.innerHTML = generateCurrencyDropdown('secondaryCurrency', userPreferences.secondaryCurrency);
+    }
+    
+    // Mise à jour de l'aperçu des devises
+    updateCurrencyPreview();
+    
+    // Ajout des gestionnaires d'événements
+    document.getElementById('primaryCurrency').addEventListener('change', function() {
+        const selectedCurrency = this.value;
+        const oldCurrency = userPreferences.currency;
+        
+        // Si la devise principale est la même que la secondaire, permuter
+        if (selectedCurrency === userPreferences.secondaryCurrency) {
+            userPreferences.secondaryCurrency = oldCurrency;
+            document.getElementById('secondaryCurrency').value = oldCurrency;
+        }
+        
+        userPreferences.currency = selectedCurrency;
+        
+        try {
+            // Sauvegarde des préférences
+            localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+            console.log('Préférences de devise principale sauvegardées:', userPreferences);
             
-            // Mettre à jour la préférence de devise
-            userPreferences.currency = selectedCurrency;
-            
-            try {
-                // Sauvegarder les préférences sans appeler convertAllCurrencies
-                localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
-                console.log('Préférences de devise sauvegardées:', userPreferences);
+            // Appliquer les changements aux projets et portefeuilles
+            if (oldCurrency !== selectedCurrency) {
+                const result = convertAllProjectsAndWallets(oldCurrency, selectedCurrency);
                 
-                // Appliquer les changements de devise aux projets et portefeuilles uniquement si nécessaire
-                if (oldCurrency !== selectedCurrency && oldCurrency) {
-                    // Convertir les projets et portefeuilles
-                    const result = convertAllCurrencies(oldCurrency, selectedCurrency);
-                    
-                    // Afficher une notification appropriée
-                    if (result) {
-                        const currencyNames = {
-                            'EUR': 'euros',
-                            'USD': 'dollars US'
-                        };
-                        showNotification(`Devise changée en ${currencyNames[selectedCurrency]}. Tous les montants ont été convertis.`, 'success');
-                    }
-                } else {
-                    showNotification('Préférences de devise mises à jour.', 'success');
+                if (result) {
+                    const currencyInfo = AVAILABLE_CURRENCIES.find(c => c.code === selectedCurrency);
+                    showNotification(`Devise principale changée en ${currencyInfo.name}. Tous les montants ont été convertis.`, 'success');
                 }
-            } catch (error) {
-                console.error('Erreur lors du changement de devise:', error);
-                showNotification('Erreur lors du changement de devise', 'error');
             }
-        });
+            
+            // Mise à jour de l'aperçu
+            updateCurrencyPreview();
+            
+        } catch (error) {
+            console.error('Erreur lors du changement de devise principale:', error);
+            showNotification('Erreur lors du changement de devise', 'error');
+        }
     });
     
-    // Ajouter des styles CSS pour les boutons de devise
-    addCurrencySelectorStyles();
+    document.getElementById('secondaryCurrency').addEventListener('change', function() {
+        const selectedCurrency = this.value;
+        const oldSecondaryCurrency = userPreferences.secondaryCurrency;
+        
+        // Si la devise secondaire est la même que la principale, permuter
+        if (selectedCurrency === userPreferences.currency) {
+            userPreferences.currency = oldSecondaryCurrency;
+            document.getElementById('primaryCurrency').value = oldSecondaryCurrency;
+        }
+        
+        userPreferences.secondaryCurrency = selectedCurrency;
+        
+        try {
+            // Sauvegarde des préférences
+            localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+            console.log('Préférences de devise secondaire sauvegardées:', userPreferences);
+            
+            // Mise à jour de l'aperçu
+            updateCurrencyPreview();
+            
+            const currencyInfo = AVAILABLE_CURRENCIES.find(c => c.code === selectedCurrency);
+            showNotification(`Devise secondaire changée en ${currencyInfo.name}.`, 'success');
+            
+        } catch (error) {
+            console.error('Erreur lors du changement de devise secondaire:', error);
+            showNotification('Erreur lors du changement de devise', 'error');
+        }
+    });
+}
+
+/**
+ * Met à jour l'aperçu des devises
+ */
+function updateCurrencyPreview() {
+    const currencyPreview = document.getElementById('currencyPreview');
+    if (!currencyPreview) return;
+    
+    const primaryCurrency = userPreferences.currency;
+    const secondaryCurrency = userPreferences.secondaryCurrency;
+    
+    // Exemple de montant pour l'aperçu
+    const amount = 100;
+    
+    const formattedAmount = formatCurrencyWithEquivalent(amount, primaryCurrency, secondaryCurrency);
+    currencyPreview.querySelector('.example').textContent = formattedAmount;
+}
+
+/**
+ * Convertit tous les projets et portefeuilles de l'ancienne devise vers la nouvelle
+ * en utilisant l'API de devises du fichier currencies.js
+ * @param {string} fromCurrency - Code ISO de la devise source
+ * @param {string} toCurrency - Code ISO de la devise cible
+ * @returns {boolean} - true si la conversion a réussi, false sinon
+ */
+function convertAllProjectsAndWallets(fromCurrency, toCurrency) {
+    try {
+        // Récupérer le taux de conversion
+        const exchangeRate = getExchangeRate(fromCurrency, toCurrency);
+        
+        // Récupérer les projets
+        const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        
+        // Convertir chaque projet
+        const convertedProjects = projects.map(project => {
+            // Mettre à jour la devise du projet si disponible
+            if (project.currency) {
+                project.currency = toCurrency;
+            }
+            
+            // Convertir le budget total
+            if (project.totalBudget) {
+                const numericValue = parseMonetaryValue(project.totalBudget);
+                if (!isNaN(numericValue)) {
+                    const convertedValue = numericValue * exchangeRate;
+                    project.totalBudget = formatCurrency(convertedValue, toCurrency);
+                }
+            }
+            
+            // Convertir les catégories et sous-catégories
+            if (project.categories && Array.isArray(project.categories)) {
+                project.categories.forEach(category => {
+                    // Convertir le montant de la catégorie
+                    if (category.amount) {
+                        const numericValue = parseMonetaryValue(category.amount);
+                        if (!isNaN(numericValue)) {
+                            const convertedValue = numericValue * exchangeRate;
+                            category.amount = formatCurrency(convertedValue, toCurrency);
+                        }
+                    }
+                    
+                    // Convertir les sous-catégories
+                    if (category.subcategories && Array.isArray(category.subcategories)) {
+                        category.subcategories.forEach(subcategory => {
+                            if (subcategory.amount) {
+                                const numericValue = parseMonetaryValue(subcategory.amount);
+                                if (!isNaN(numericValue)) {
+                                    const convertedValue = numericValue * exchangeRate;
+                                    subcategory.amount = formatCurrency(convertedValue, toCurrency);
+                                }
+                            }
+                            
+                            // Convertir les lignes
+                            if (subcategory.lines && Array.isArray(subcategory.lines)) {
+                                subcategory.lines.forEach(line => {
+                                    if (line.amount) {
+                                        const numericValue = parseMonetaryValue(line.amount);
+                                        if (!isNaN(numericValue)) {
+                                            const convertedValue = numericValue * exchangeRate;
+                                            line.amount = formatCurrency(convertedValue, toCurrency);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Convertir les dépenses réelles
+            if (project.realExpenses && Array.isArray(project.realExpenses)) {
+                project.realExpenses.forEach(expense => {
+                    if (expense.amount) {
+                        const numericAmount = typeof expense.amount === 'string' 
+                            ? parseMonetaryValue(expense.amount) 
+                            : expense.amount;
+                        
+                        if (!isNaN(numericAmount)) {
+                            expense.amount = numericAmount * exchangeRate;
+                        }
+                    }
+                });
+            }
+            
+            return project;
+        });
+        
+        // Enregistrer les projets convertis
+        localStorage.setItem('savedProjects', JSON.stringify(convertedProjects));
+        
+        // Récupérer et convertir les portefeuilles
+        const wallets = JSON.parse(localStorage.getItem('mapocket_wallets') || '[]');
+        
+        const convertedWallets = wallets.map(wallet => {
+            // Mettre à jour la devise du portefeuille
+            wallet.currency = getCurrencySymbol(toCurrency);
+            
+            // Convertir le solde
+            if (wallet.balance) {
+                wallet.balance = wallet.balance * exchangeRate;
+            }
+            
+            // Convertir les transactions
+            if (wallet.transactions && Array.isArray(wallet.transactions)) {
+                wallet.transactions.forEach(transaction => {
+                    if (transaction.amount) {
+                        transaction.amount = transaction.amount * exchangeRate;
+                    }
+                });
+            }
+            
+            return wallet;
+        });
+        
+        // Enregistrer les portefeuilles convertis
+        localStorage.setItem('mapocket_wallets', JSON.stringify(convertedWallets));
+        
+        console.log(`Conversion réussie de ${fromCurrency} vers ${toCurrency}`);
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de la conversion des devises:', error);
+        showNotification('Erreur lors de la conversion des devises', 'error');
+        return false;
+    }
+}
+
+/**
+ * Fonction utilitaire pour extraire la valeur numérique d'une chaîne de devise formatée
+ * @param {string} monetaryString - Chaîne formatée (ex: "€ 123,45" ou "$100.00")
+ * @returns {number} - Valeur numérique
+ */
+function parseMonetaryValue(monetaryString) {
+    if (typeof monetaryString !== 'string') {
+        return parseFloat(monetaryString) || 0;
+    }
+    
+    // Supprime tous les caractères non numériques sauf le point et la virgule
+    const numericString = monetaryString.replace(/[^0-9.,]/g, '');
+    
+    // Remplace la virgule par un point pour la conversion
+    const normalized = numericString.replace(',', '.');
+    
+    return parseFloat(normalized) || 0;
 }
 
 /**

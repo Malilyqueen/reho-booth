@@ -253,41 +253,111 @@ input[name="language"]:checked + .language-btn {
     font-size: 20px;
 }
 
-/* Styles pour le sélecteur de devise */
-.currency-selector {
+/* Styles pour les paramètres de devise */
+.currency-settings {
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.currency-option {
-    flex: 1;
+.setting-option {
+    margin-bottom: 10px;
 }
 
-.currency-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.setting-option label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.option-help {
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #64748b;
+}
+
+.currency-selector {
+    width: 100%;
+    max-width: 300px;
+}
+
+.currency-select {
     width: 100%;
     padding: 12px 15px;
     border-radius: 8px;
     background-color: #f8fafc;
     border: 2px solid #e2e8f0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 500;
     color: #555;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    cursor: pointer;
 }
 
-.currency-btn:hover {
-    background-color: #f1f5f9;
+.currency-select:hover {
     border-color: #cbd5e1;
 }
 
-input[name="currency"]:checked + .currency-btn {
-    background-color: #dbeafe;
+.currency-select:focus {
+    outline: none;
     border-color: #3b82f6;
-    color: #1e40af;
+    background-color: #f0f9ff;
+}
+
+.currency-examples {
+    padding: 15px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.currency-examples h5 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.currency-preview {
+    padding: 15px;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px dashed #cbd5e1;
+}
+
+.currency-preview .example {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #334155;
+}
+
+.currency-info {
+    margin-top: 10px;
+}
+
+.info-text {
+    font-size: 0.9em;
+    color: #64748b;
+}
+
+.info-text i {
+    margin-right: 5px;
+    color: #3b82f6;
+}
+
+.mt-20 {
+    margin-top: 20px;
 }
 
 .currency-symbol {
@@ -895,15 +965,37 @@ body.dark-mode input[name="language"]:checked + .language-btn {
     border-color: #1d3557;
 }
 
-body.dark-mode .currency-btn {
+body.dark-mode .currency-select {
     background-color: #374151;
     border-color: #4b5563;
     color: #f5f5f5;
 }
 
-body.dark-mode input[name="currency"]:checked + .currency-btn {
-    background-color: #1d3557;
-    border-color: #1d3557;
+body.dark-mode .currency-select:focus {
+    border-color: #3b82f6;
+    background-color: #1f2937;
+}
+
+body.dark-mode .currency-examples {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+body.dark-mode .currency-preview {
+    background-color: #111827;
+    border-color: #4b5563;
+}
+
+body.dark-mode .currency-preview .example {
+    color: #f5f5f5;
+}
+
+body.dark-mode .info-text {
+    color: #9ca3af;
+}
+
+body.dark-mode .option-help {
+    color: #9ca3af;
 }
 
 body.dark-mode .select-input {

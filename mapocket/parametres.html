@@ -211,18 +211,32 @@
                                 <h4>Devise</h4>
                                 <p>Choisissez votre devise préférée</p>
                             </div>
-                            <div class="currency-selector">
-                                <div class="currency-option">
-                                    <input type="radio" id="currency-eur" name="currency" value="EUR" checked hidden>
-                                    <label for="currency-eur" class="currency-btn">
-                                        <span class="currency-symbol">€</span> Euro
-                                    </label>
+                            <div class="currency-settings">
+                                <div class="setting-option">
+                                    <label for="primaryCurrency">Devise principale</label>
+                                    <div class="currency-selector" id="primaryCurrencyContainer">
+                                        <!-- Contenu généré dynamiquement par JS -->
+                                    </div>
+                                    <p class="option-help">Cette devise sera utilisée pour tous les nouveaux projets et portefeuilles.</p>
                                 </div>
-                                <div class="currency-option">
-                                    <input type="radio" id="currency-usd" name="currency" value="USD" hidden>
-                                    <label for="currency-usd" class="currency-btn">
-                                        <span class="currency-symbol">$</span> Dollar US
-                                    </label>
+                                
+                                <div class="setting-option mt-20">
+                                    <label for="displayCurrency">Devise d'affichage secondaire</label>
+                                    <div class="currency-selector" id="secondaryCurrencyContainer">
+                                        <!-- Contenu généré dynamiquement par JS -->
+                                    </div>
+                                    <p class="option-help">Les montants seront aussi affichés dans cette devise pour comparaison.</p>
+                                </div>
+                                
+                                <div class="currency-examples mt-20">
+                                    <h5>Aperçu</h5>
+                                    <div class="currency-preview" id="currencyPreview">
+                                        <p class="example">100 EUR ≈ 109 USD</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="currency-info mt-20">
+                                    <p class="info-text"><i class="fas fa-info-circle"></i> Les taux de change sont mis à jour quotidiennement. Dernière mise à jour: <span id="lastUpdateDate">09/04/2025</span></p>
                                 </div>
                             </div>
                         </div>
@@ -534,6 +548,7 @@
         </div>
     </div>
 
-    <script src="js/parametres.js"></script>
+    <script src="js/currencies.js"></script>
+<script src="js/parametres.js"></script>
 </body>
 </html>
