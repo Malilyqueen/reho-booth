@@ -13,6 +13,11 @@ let projects = [];
  * Initialisation de la page des listes de souhaits
  */
 document.addEventListener('DOMContentLoaded', function() {
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
+    
     // Chargement des listes de souhaits
     loadWishlists();
     

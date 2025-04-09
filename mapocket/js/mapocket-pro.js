@@ -6,6 +6,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('MaPocket Pro initialized');
     
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
+    
     // Configuration des onglets
     setupTabs();
     

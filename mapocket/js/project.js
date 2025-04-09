@@ -7,6 +7,11 @@ let lastSavedData = null;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('New Project page initialized');
     
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
+    
     // Vérifier si on est en mode visualisation
     const urlParams = new URLSearchParams(window.location.search);
     const viewMode = urlParams.get('view') === 'true' || localStorage.getItem('viewMode') === 'true';

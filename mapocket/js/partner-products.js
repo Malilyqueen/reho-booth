@@ -77,6 +77,11 @@ let wishlistProducts = [];
  * Initialisation du module produits partenaires
  */
 document.addEventListener('DOMContentLoaded', function() {
+    // S'assurer que les préférences sont appliquées avant d'initialiser la page
+    if (window.preferencesManager) {
+        window.preferencesManager.applyAllPreferences();
+    }
+    
     // Vérifier si nous sommes sur la page des produits partenaires
     const partnerProductsContainer = document.getElementById('partner-products-container');
     if (!partnerProductsContainer) return;
