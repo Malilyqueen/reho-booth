@@ -95,20 +95,40 @@ function initCurrencySelectors() {
     const primaryCurrencyContainer = document.getElementById('primaryCurrencyContainer');
     const secondaryCurrencyContainer = document.getElementById('secondaryCurrencyContainer');
     
+    // Liste complète des devises proposées
+    const currencies = [
+        {code: 'EUR', name: 'Euro (€)', symbol: '€'},
+        {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
+        {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
+        {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},
+        {code: 'CHF', name: 'Franc suisse (Fr)', symbol: 'Fr'},
+        {code: 'CAD', name: 'Dollar canadien (C$)', symbol: 'C$'},
+        {code: 'AUD', name: 'Dollar australien (A$)', symbol: 'A$'},
+        {code: 'CNY', name: 'Yuan chinois (¥)', symbol: '¥'},
+        {code: 'INR', name: 'Roupie indienne (₹)', symbol: '₹'},
+        {code: 'RUB', name: 'Rouble russe (₽)', symbol: '₽'},
+        {code: 'BRL', name: 'Real brésilien (R$)', symbol: 'R$'},
+        {code: 'KRW', name: 'Won sud-coréen (₩)', symbol: '₩'},
+        {code: 'TRY', name: 'Lire turque (₺)', symbol: '₺'},
+        {code: 'MXN', name: 'Peso mexicain (Mex$)', symbol: 'Mex$'},
+        {code: 'IDR', name: 'Roupie indonésienne (Rp)', symbol: 'Rp'},
+        {code: 'PHP', name: 'Peso philippin (₱)', symbol: '₱'},
+        {code: 'MYR', name: 'Ringgit malaisien (RM)', symbol: 'RM'},
+        {code: 'SGD', name: 'Dollar de Singapour (S$)', symbol: 'S$'},
+        {code: 'THB', name: 'Baht thaïlandais (฿)', symbol: '฿'},
+        {code: 'AED', name: 'Dirham des Émirats arabes unis (د.إ)', symbol: 'د.إ'}
+    ];
+    
     if (primaryCurrencyContainer) {
+        // Vider le conteneur
+        primaryCurrencyContainer.innerHTML = '';
+        
+        // Créer le sélecteur principal
         const primarySelect = document.createElement('select');
         primarySelect.id = 'primaryCurrency';
         primarySelect.className = 'select-input';
         
-        const currencies = [
-            {code: 'EUR', name: 'Euro (€)', symbol: '€'},
-            {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
-            {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
-            {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},
-            {code: 'CHF', name: 'Franc suisse (Fr)', symbol: 'Fr'},
-            {code: 'CAD', name: 'Dollar canadien (C$)', symbol: 'C$'}
-        ];
-        
+        // Ajouter les options pour chaque devise
         currencies.forEach(currency => {
             const option = document.createElement('option');
             option.value = currency.code;
@@ -116,6 +136,7 @@ function initCurrencySelectors() {
             primarySelect.appendChild(option);
         });
         
+        // Ajouter au DOM
         primaryCurrencyContainer.appendChild(primarySelect);
         
         // Sélectionner la devise actuelle
@@ -123,19 +144,15 @@ function initCurrencySelectors() {
     }
     
     if (secondaryCurrencyContainer) {
+        // Vider le conteneur
+        secondaryCurrencyContainer.innerHTML = '';
+        
+        // Créer le sélecteur secondaire
         const secondarySelect = document.createElement('select');
         secondarySelect.id = 'secondaryCurrency';
         secondarySelect.className = 'select-input';
         
-        const currencies = [
-            {code: 'EUR', name: 'Euro (€)', symbol: '€'},
-            {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
-            {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
-            {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},
-            {code: 'CHF', name: 'Franc suisse (Fr)', symbol: 'Fr'},
-            {code: 'CAD', name: 'Dollar canadien (C$)', symbol: 'C$'}
-        ];
-        
+        // Ajouter les options pour chaque devise
         currencies.forEach(currency => {
             const option = document.createElement('option');
             option.value = currency.code;
@@ -143,6 +160,7 @@ function initCurrencySelectors() {
             secondarySelect.appendChild(option);
         });
         
+        // Ajouter au DOM
         secondaryCurrencyContainer.appendChild(secondarySelect);
         
         // Sélectionner la devise secondaire actuelle
@@ -232,16 +250,10 @@ function updateCurrencyPreview() {
 
 // Récupère le symbole d'une devise
 function getCurrencySymbol(currencyCode) {
-    const symbols = {
-        'EUR': '€',
-        'USD': '$',
-        'GBP': '£',
-        'JPY': '¥',
-        'CHF': 'Fr',
-        'CAD': 'C$'
-    };
-    
-    return symbols[currencyCode] || currencyCode;
+    // Utiliser la même fonction que dans preferences-manager.js
+    return preferencesManager.getPreferences ? 
+        window.preferencesManager.getCurrencySymbol(currencyCode) : 
+        currencyCode;
 }
 
 // Récupère le taux de change entre deux devises (simulé)
@@ -253,7 +265,21 @@ function getExchangeRate(fromCurrency, toCurrency) {
         'GBP': 0.85,
         'JPY': 164.53,
         'CHF': 0.98,
-        'CAD': 1.47
+        'CAD': 1.47,
+        'AUD': 1.62,
+        'CNY': 7.87,
+        'INR': 90.12,
+        'RUB': 98.65,
+        'BRL': 5.45,
+        'KRW': 1465.32,
+        'TRY': 35.26,
+        'MXN': 18.23,
+        'IDR': 17203.45,
+        'PHP': 61.85,
+        'MYR': 5.02,
+        'SGD': 1.46,
+        'THB': 38.67,
+        'AED': 4.01
     };
     
     // Calculer le taux de change entre les deux devises

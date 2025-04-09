@@ -249,7 +249,21 @@ function getCurrencySymbol(currency) {
         'GBP': '£',
         'JPY': '¥',
         'CHF': 'Fr',
-        'CAD': 'C$'
+        'CAD': 'C$',
+        'AUD': 'A$',
+        'CNY': '¥',
+        'INR': '₹',
+        'RUB': '₽',
+        'BRL': 'R$',
+        'KRW': '₩',
+        'TRY': '₺',
+        'MXN': 'Mex$',
+        'IDR': 'Rp',
+        'PHP': '₱',
+        'MYR': 'RM',
+        'SGD': 'S$',
+        'THB': '฿',
+        'AED': 'د.إ'
     };
     return symbols[currency] || currency;
 }
@@ -286,6 +300,7 @@ window.preferencesManager = {
     applyLanguage,
     applyCurrency,
     applyAllPreferences,
+    getCurrencySymbol,
     setTheme: (theme) => {
         if (theme === 'light' || theme === 'dark') {
             userPrefs.theme = theme;
