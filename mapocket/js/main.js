@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Met à jour l'icône de devise en fonction des préférences utilisateur
 function updateCurrencyIcon() {
-    const currencyIcon = document.querySelector('.stat-card .stat-icon i.fas.fa-euro-sign');
-    if (!currencyIcon) return;
+    const currencyIcons = document.querySelectorAll('.stat-icon i.fas.fa-euro-sign');
+    if (currencyIcons.length === 0) return;
     
     // Trouver la devise sélectionnée
     const currencyCode = userPreferences.currency || 'EUR';
@@ -92,18 +92,51 @@ function updateCurrencyIcon() {
             break;
         case 'MGA':
             // Ariary n'a pas d'icône FontAwesome, on utilise du texte
-            currencyIcon.className = 'currency-text';
-            currencyIcon.textContent = 'Ar';
+            currencyIcons.forEach(icon => {
+                icon.className = 'currency-text';
+                icon.textContent = 'Ar';
+            });
             return;
         default:
             // Pour les autres devises, on garde l'euro par défaut
             iconClass = 'fas fa-euro-sign';
     }
     
-    // Mettre à jour la classe
-    currencyIcon.className = iconClass;
-    // S'assurer que le texte est vide (important pour le cas où on a utilisé 'Ar' avant)
-    currencyIcon.textContent = '';
+    // Mettre à jour la classe pour toutes les icônes
+    currencyIcons.forEach(icon => {
+        icon.className = iconClass;
+        // S'assurer que le texte est vide (important pour le cas où on a utilisé 'Ar' avant)
+        icon.textContent = '';
+    });
+    
+    // Mettre à jour également les montants affichés
+    updateCurrencyDisplay();
+}
+
+// Mettre à jour l'affichage des montants avec la devise actuelle
+function updateCurrencyDisplay() {
+    // Trouver la devise sélectionnée
+    const currencyCode = userPreferences.currency || 'EUR';
+    let currencySymbol = '€'; // Symbole par défaut
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
+        if (currency) {
+            currencySymbol = currency.symbol;
+        }
+    }
+    
+    // Mettre à jour tous les éléments qui contiennent des montants
+    const budgetElements = document.querySelectorAll('#totalBudget, #walletBalance');
+    
+    budgetElements.forEach(element => {
+        if (element) {
+            // Conserver uniquement les chiffres et le point décimal
+            const value = parseFloat(element.innerText.replace(/[^\d.]/g, '') || 0);
+            element.innerText = `${currencySymbol} ${value.toFixed(2)}`;
+        }
+    });
 }
 
 /**
