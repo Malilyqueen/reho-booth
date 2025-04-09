@@ -2402,7 +2402,7 @@ function updateTemplateCategories(templateType) {
             replaceEuroSymbol(category);
         });
         
-        updateCategoriesUI(categoriesData);
+        updateCategoriesUI(categoriesData, currencySymbol);
         return;
     }
     
@@ -2418,7 +2418,7 @@ function updateTemplateCategories(templateType) {
         });
         
         // Mettre à jour l'interface avec les nouvelles catégories
-        updateCategoriesUI(categoriesData);
+        updateCategoriesUI(categoriesData, currencySymbol);
         return;
     }
     
@@ -2649,12 +2649,13 @@ function updateTemplateCategories(templateType) {
             replaceEuroSymbol(category);
         });
         
-        updateCategoriesUI(categoriesData);
+        updateCategoriesUI(categoriesData, currencySymbol);
     }
 }
 
 // Fonction pour mettre à jour l'UI avec les nouvelles catégories
-function updateCategoriesUI(categoriesData) {
+function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
+    const currencySymbol = incomingCurrencySymbol || "€";
     console.log('Updating categories UI with data:', categoriesData);
     // Trouver le conteneur des catégories
     const expenseCategories = document.querySelector('.expense-categories');
