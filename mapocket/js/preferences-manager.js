@@ -143,6 +143,22 @@ function applyLanguage() {
         });
     }
     
+    // Messages de notification
+    const notifications = {
+        fr: {
+            themeApplied: 'Thème appliqué avec succès',
+            languageChanged: 'Langue changée',
+            currencyChanged: 'Devise changée',
+            fontSizeChanged: 'Taille de texte modifiée'
+        },
+        en: {
+            themeApplied: 'Theme applied successfully',
+            languageChanged: 'Language changed',
+            currencyChanged: 'Currency changed',
+            fontSizeChanged: 'Font size changed'
+        }
+    };
+
     // Dictionnaire de traduction complet
     const frToEn = {
         // Navigation
@@ -471,6 +487,12 @@ window.preferencesManager = {
             applyTheme();
             // Enregistrer la valeur 'light' même si l'utilisateur choisit 'dark'
             savePreferences();
+            // Afficher une notification
+            if (window.NotificationManager) {
+                window.NotificationManager.success(
+                    notifications[userPrefs.language]?.themeApplied || 'Thème appliqué avec succès'
+                );
+            }
             return true;
         }
         return false;
@@ -480,6 +502,13 @@ window.preferencesManager = {
             userPrefs.language = lang;
             applyLanguage();
             savePreferences();
+            // Afficher une notification
+            if (window.NotificationManager) {
+                const message = notifications[lang]?.languageChanged ?
+                    `${notifications[lang].languageChanged} : ${lang === 'fr' ? 'Français' : 'English'}` :
+                    (lang === 'fr' ? 'Langue changée : Français' : 'Language changed: English');
+                window.NotificationManager.success(message);
+            }
             return true;
         }
         return false;
@@ -489,6 +518,14 @@ window.preferencesManager = {
             userPrefs.currency = currency;
             applyCurrency();
             savePreferences();
+            // Afficher une notification
+            if (window.NotificationManager) {
+                const currencyName = CURRENCY_DATA[currency]?.name || currency;
+                const message = notifications[userPrefs.language]?.currencyChanged ?
+                    `${notifications[userPrefs.language].currencyChanged} : ${currencyName}` :
+                    `Devise changée : ${currencyName}`;
+                window.NotificationManager.success(message);
+            }
             return true;
         }
         return false;

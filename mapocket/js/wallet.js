@@ -415,7 +415,11 @@ function saveIncome() {
     closeIncomeModal();
     
     // Afficher une notification
-    showNotification(incomeId ? 'Revenu modifié avec succès' : 'Revenu ajouté avec succès');
+    if (window.NotificationManager) {
+        window.NotificationManager.success(incomeId ? 'Revenu modifié avec succès' : 'Revenu ajouté avec succès');
+    } else {
+        showNotification(incomeId ? 'Revenu modifié avec succès' : 'Revenu ajouté avec succès');
+    }
 }
 
 // Fonction pour enregistrer les données du portefeuille
@@ -471,7 +475,11 @@ function deleteIncome(incomeId) {
     saveWalletData(walletData);
     
     // Afficher une notification
-    showNotification('Revenu supprimé avec succès');
+    if (window.NotificationManager) {
+        window.NotificationManager.success('Revenu supprimé avec succès');
+    } else {
+        showNotification('Revenu supprimé avec succès');
+    }
 }
 
 // Fonction pour visualiser un projet
@@ -492,7 +500,11 @@ function unlinkProject(projectId) {
     saveWalletData(walletData);
     
     // Afficher une notification
-    showNotification('Projet délié avec succès');
+    if (window.NotificationManager) {
+        window.NotificationManager.success('Projet délié avec succès');
+    } else {
+        showNotification('Projet délié avec succès');
+    }
 }
 
 // Fonction pour déterminer la prochaine date de revenu

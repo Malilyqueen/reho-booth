@@ -354,7 +354,11 @@ function createNewSavingsGoal() {
         document.getElementById('newGoalForm').reset();
         
         // Notification de succès
-        showNotification('Objectif d\'épargne créé avec succès !');
+        if (window.NotificationManager) {
+            window.NotificationManager.success('Objectif d\'épargne créé avec succès !');
+        } else {
+            showNotification('Objectif d\'épargne créé avec succès !');
+        }
     } catch (error) {
         console.error('Erreur lors de la création de l\'objectif:', error);
         showNotification('Erreur lors de la création de l\'objectif.', 'error');
