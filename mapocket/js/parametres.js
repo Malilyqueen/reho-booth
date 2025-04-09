@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initFontSizeSelector();
     initLanguageSelector();
     initCurrencySelector();
+    // Ajouter le bouton de conversion de devises
+    addCurrencyConversionButton();
     initProfileForm();
     
     // Initialiser les fonctionnalités selon le plan utilisateur
@@ -280,22 +282,19 @@ function initCurrencySelector() {
         userPreferences.currency = selectedCurrency;
         
         try {
-            // Sauvegarde des préférences
+            // Sauvegarde des préférences sans conversion automatique
             localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
             console.log('Préférences de devise principale sauvegardées:', userPreferences);
             
-            // Appliquer les changements aux projets et portefeuilles
-            if (oldCurrency !== selectedCurrency) {
-                const result = convertAllProjectsAndWallets(oldCurrency, selectedCurrency);
-                
-                if (result) {
-                    const currencyInfo = AVAILABLE_CURRENCIES.find(c => c.code === selectedCurrency);
-                    showNotification(`Devise principale changée en ${currencyInfo.name}. Tous les montants ont été convertis.`, 'success');
-                }
-            }
-            
             // Mise à jour de l'aperçu
             updateCurrencyPreview();
+            
+            // Afficher une notification
+            const currencyInfo = AVAILABLE_CURRENCIES.find(c => c.code === selectedCurrency);
+            showNotification(`Devise principale changée en ${currencyInfo.name}.`, 'success');
+            
+            // Ajouter ou mettre à jour le bouton de conversion
+            addCurrencyConversionButton();
             
         } catch (error) {
             console.error('Erreur lors du changement de devise principale:', error);
@@ -964,4 +963,56 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }, 5000);
     }
+}
+
+/**
+ * Ajoute un bouton de conversion de devises
+ */
+function addCurrencyConversionButton() {
+    const currencySettings = document.querySelector('.currency-settings');
+    if (!currencySettings) return;
+    
+    // Vérifier si le bouton existe déjà
+    let convertButton = document.getElementById('convertProjectsButton');
+    
+    // Si le bouton n'existe pas, le créer
+    if (!convertButton) {
+        convertButton = document.createElement('button');
+        convertButton.id = 'convertProjectsButton';
+        convertButton.className = 'btn btn-primary mt-20';
+        convertButton.style.width = '100%';
+        convertButton.innerHTML = `<i class="fas fa-sync-alt"></i> Convertir tous les montants en ${userPreferences.currency}`;
+        
+        // Insérer le bouton après les paramètres de devise
+        currencySettings.appendChild(convertButton);
+    } else {
+        // Mise à jour du texte du bouton si nécessaire
+        convertButton.innerHTML = `<i class="fas fa-sync-alt"></i> Convertir tous les montants en ${userPreferences.currency}`;
+    }
+    
+    // Supprimer les gestionnaires d'événements existants pour éviter les doublons
+    const newButton = convertButton.cloneNode(true);
+    if (convertButton.parentNode) {
+        currencySettings.replaceChild(newButton, convertButton);
+    }
+    
+    // Ajouter le gestionnaire d'événements
+    newButton.addEventListener('click', function() {
+        const primaryCurrency = userPreferences.currency;
+        
+        showNotification(`Conversion des montants en ${primaryCurrency} en cours...`, 'info');
+        
+        // Appeler la fonction de conversion
+        const result = convertAllProjectsAndWallets('EUR', primaryCurrency);
+        
+        if (result) {
+            showNotification(`Tous les montants ont été convertis avec succès en ${primaryCurrency}`, 'success');
+            
+            // Ajouter un délai pour que l'utilisateur voie la notification
+            setTimeout(() => {
+                // Recharger la page pour voir les changements
+                window.location.reload();
+            }, 2000);
+        }
+    });
 }
