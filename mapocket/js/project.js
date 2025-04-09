@@ -254,16 +254,30 @@ function initializeProjectForm() {
     
     console.log('Mise à jour du budget total avec la devise:', currencyCode, currencySymbol);
     
+    // Mettre à jour le budget total avec le bon symbole de devise
+    const totalBudgetInput = document.getElementById('totalBudget');
+    if (totalBudgetInput) {
+        const value = totalBudgetInput.value.replace(/[^0-9.,\s]/g, '').trim(); // Enlève tous les symboles de devise
+        totalBudgetInput.value = `${currencySymbol} ${value}`;
+    }
+    
+    // Mettre à jour les montants de projets affichés sur la page
+    const totalBudgetDisplay = document.querySelector('.total-budget-amount');
+    if (totalBudgetDisplay) {
+        const value = totalBudgetDisplay.textContent.replace(/[^0-9.,\s]/g, '').trim();
+        totalBudgetDisplay.textContent = `${currencySymbol} ${value}`;
+    }
+    
     // Mettre à jour les montants affichés avec le bon symbole dans le HTML initial
     const amounts = document.querySelectorAll('.category-amount, .subcategory-amount, .expense-line-amount');
     amounts.forEach(amount => {
         if (amount.tagName.toLowerCase() === 'input') {
             // Pour les inputs (expense-line-amount)
-            const value = amount.value.replace('€', '').trim();
+            const value = amount.value.replace(/[^0-9.,\s]/g, '').trim();
             amount.value = `${currencySymbol} ${value}`;
         } else {
             // Pour les spans (category-amount, subcategory-amount)
-            const value = amount.textContent.replace('€', '').trim();
+            const value = amount.textContent.replace(/[^0-9.,\s]/g, '').trim();
             amount.textContent = `${currencySymbol} ${value}`;
         }
     });
@@ -344,10 +358,44 @@ function initializeProjectForm() {
 
 // Fonction pour restaurer un projet sauvegardé
 function restoreProjectData(data) {
+    // Récupérer les préférences utilisateur pour obtenir la devise actuelle
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencyCode = 'EUR';
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+            currencyCode = currency.code;
+        }
+    }
+    
     // Restaurer les informations de base du projet
     if (data.projectName) document.getElementById('projectName').value = data.projectName;
     if (data.projectDate) document.getElementById('projectDate').value = data.projectDate;
-    if (data.totalBudget) document.getElementById('totalBudget').value = data.totalBudget;
+    
+    // Mettre à jour le budget total avec le symbole de devise actuel
+    if (data.totalBudget) {
+        // Extraire uniquement la valeur numérique du budget total
+        const totalBudgetValue = data.totalBudget.replace(/[^0-9.,\s]/g, '').trim();
+        document.getElementById('totalBudget').value = `${currencySymbol} ${totalBudgetValue}`;
+    }
+    
     // Restaurer l'option de liaison au portefeuille
     if (document.getElementById('linkToWallet')) {
         document.getElementById('linkToWallet').checked = data.linkToWallet || false;
@@ -2413,7 +2461,8 @@ function updateTemplateCategories(templateType) {
             Object.keys(obj).forEach(key => {
                 if (key === 'amount' && typeof obj[key] === 'string') {
                     // Remplacer le symbole € par le symbole de la devise active
-                    obj[key] = obj[key].replace('€', currencySymbol);
+                    // Utiliser une regex pour remplacer tous les symboles € dans la chaîne
+                    obj[key] = obj[key].replace(/€/g, currencySymbol);
                 } else if (typeof obj[key] === 'object') {
                     replaceEuroSymbol(obj[key]);
                 }
@@ -2755,7 +2804,7 @@ function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
                         categoryHTML += `
                             <div class="expense-line">
                                 <input type="text" class="form-control expense-line-name" value="${line.name}">
-                                <input type="text" class="form-control expense-line-amount" value="${line.amount.replace('€', currencySymbol)}">
+                                <input type="text" class="form-control expense-line-amount" value="${line.amount.replace(/€/g, currencySymbol)}">
                                 <div class="expense-line-actions">
                                     <button type="button" class="btn-sm btn-delete-line">
                                         <i class="fas fa-times"></i>
