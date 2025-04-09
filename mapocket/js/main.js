@@ -246,6 +246,31 @@ function initializeUI() {
 }
 
 function loadProjectsList() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+        }
+    }
+    
     // Récupérer les projets depuis le localStorage
     let projects = [];
     try {
@@ -352,8 +377,8 @@ function loadProjectsList() {
                 </a>
             </td>
             <td>${formattedDate}</td>
-            <td>${budgetTotal} €</td>
-            <td>${depensesTotal} €</td>
+            <td>${budgetTotal} ${currencySymbol}</td>
+            <td>${depensesTotal} ${currencySymbol}</td>
             <td>
                 <div class="progress-container">
                     <div class="progress-bar ${statusClass}" style="width: ${Math.min(utilizationPercent, 100)}%"></div>
@@ -523,6 +548,33 @@ function deleteProject(projectId) {
 }
 
 function updateDashboardStats() {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+        }
+    }
+    
+    console.log('Devise actuelle: ', userPreferences.currency, 'Symbole:', currencySymbol);
+    
     // Récupérer tous les projets
     let projects = [];
     try {
@@ -554,7 +606,7 @@ function updateDashboardStats() {
     // Mettre à jour le budget total
     const totalBudgetElement = document.getElementById('totalBudget');
     if (totalBudgetElement) {
-        totalBudgetElement.textContent = `€ ${totalBudget.toFixed(2)}`;
+        totalBudgetElement.textContent = `${currencySymbol} ${totalBudget.toFixed(2)}`;
     }
     
     // Récupération et mise à jour du solde du portefeuille
@@ -603,10 +655,10 @@ function updateDashboardStats() {
                 console.log('Solde net des portefeuilles:', netBalance);
                 
                 // Mettre à jour l'affichage avec le solde net
-                walletBalanceElement.textContent = `€ ${netBalance.toFixed(2)}`;
+                walletBalanceElement.textContent = `${currencySymbol} ${netBalance.toFixed(2)}`;
                 
                 // Ajouter une info-bulle explicative
-                walletBalanceElement.setAttribute('title', `Solde total: €${totalBalance.toFixed(2)} - Dépenses des projets liés: €${totalProjectExpenses.toFixed(2)}`);
+                walletBalanceElement.setAttribute('title', `Solde total: ${currencySymbol}${totalBalance.toFixed(2)} - Dépenses des projets liés: ${currencySymbol}${totalProjectExpenses.toFixed(2)}`);
                 
                 return;
             } else {
@@ -617,7 +669,7 @@ function updateDashboardStats() {
         }
         
         // Si on arrive ici, c'est qu'il y a eu une erreur dans le calcul
-        walletBalanceElement.textContent = `€ ${totalBalance.toFixed(2)}`;
+        walletBalanceElement.textContent = `${currencySymbol} ${totalBalance.toFixed(2)}`;
     }
     
     // Récupération et mise à jour des statistiques d'activité professionnelle
@@ -694,6 +746,31 @@ function viewProject(projectId) {
 
 // Fonction utilitaire pour créer un portefeuille de test
 function createTestWallet(name = "Portefeuille Principal", balance = 2000) {
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+        if (currency) {
+            currencySymbol = currency.symbol;
+        }
+    }
+    
     // Récupérer les portefeuilles existants ou créer un tableau vide
     let wallets = JSON.parse(localStorage.getItem('mapocket_wallets') || '[]');
     
@@ -703,7 +780,7 @@ function createTestWallet(name = "Portefeuille Principal", balance = 2000) {
         name: name,
         balance: balance,
         createdAt: new Date().toISOString(),
-        currency: "€"
+        currency: currencySymbol
     };
     
     wallets.push(newWallet);
