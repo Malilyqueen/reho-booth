@@ -45,7 +45,7 @@ const AVAILABLE_CURRENCIES = [
     {
         code: "AED",
         name: "Dirham émirati",
-        symbol: "د.إ",
+        symbol: "AED",
         countries: "Émirats arabes unis"
     },
     {

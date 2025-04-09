@@ -205,6 +205,24 @@ function initCurrencySelectors() {
             // Mise à jour du bouton de conversion
             updateConversionButton();
             
+            // Mettre à jour automatiquement tous les projets avec la nouvelle devise
+            try {
+                // Afficher une notification de début
+                showNotification(`Mise à jour des symboles de devise en ${selected} en cours...`, 'info');
+                
+                // Mise à jour des projets
+                convertProjects(selected);
+                
+                // Mise à jour des portefeuilles
+                convertWallets(selected);
+                
+                // Notification de succès
+                showNotification(`Tous les symboles ont été mis à jour en ${selected}`, 'success');
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des symboles:', error);
+                showNotification('Erreur lors de la mise à jour des symboles', 'error');
+            }
+            
             // Sauvegarder les préférences
             saveUserPreferences();
         });
@@ -457,13 +475,26 @@ function convertProject(project, currencyCode) {
     // Cloner le projet pour éviter de modifier l'original
     const convertedProject = JSON.parse(JSON.stringify(project));
     
-    // Obtenir le taux de conversion
-    const rate = getExchangeRate(fromCurrency, currencyCode);
+    // Option 1: Conversion réelle avec taux de change
+    const doRealConversion = false; // Mettre à true pour convertir les valeurs
+    
+    // Obtenir le taux de conversion si nécessaire
+    const rate = doRealConversion ? getExchangeRate(fromCurrency, currencyCode) : 1;
+    
+    // Obtenir le symbole de la nouvelle devise
+    const newCurrencySymbol = getCurrencySymbol(currencyCode);
     
     // Convertir le budget total
     if (convertedProject.totalBudget) {
-        const amount = extractNumericValue(convertedProject.totalBudget);
-        convertedProject.totalBudget = formatCurrency(amount * rate, currencyCode);
+        if (doRealConversion) {
+            // Conversion réelle des montants
+            const amount = extractNumericValue(convertedProject.totalBudget);
+            convertedProject.totalBudget = formatCurrency(amount * rate, currencyCode);
+        } else {
+            // Juste remplacer le symbole sans changer la valeur
+            const amount = convertedProject.totalBudget.replace(/[^0-9.,\s]/g, '').trim();
+            convertedProject.totalBudget = `${newCurrencySymbol} ${amount}`;
+        }
     }
     
     // Convertir les catégories
@@ -471,24 +502,45 @@ function convertProject(project, currencyCode) {
         convertedProject.categories.forEach(category => {
             // Convertir le montant de la catégorie
             if (category.amount) {
-                const amount = extractNumericValue(category.amount);
-                category.amount = formatCurrency(amount * rate, currencyCode);
+                if (doRealConversion) {
+                    // Conversion réelle des montants
+                    const amount = extractNumericValue(category.amount);
+                    category.amount = formatCurrency(amount * rate, currencyCode);
+                } else {
+                    // Juste remplacer le symbole sans changer la valeur
+                    const amount = category.amount.replace(/[^0-9.,\s]/g, '').trim();
+                    category.amount = `${newCurrencySymbol} ${amount}`;
+                }
             }
             
             // Convertir les sous-catégories
             if (category.subcategories && Array.isArray(category.subcategories)) {
                 category.subcategories.forEach(subcategory => {
                     if (subcategory.amount) {
-                        const amount = extractNumericValue(subcategory.amount);
-                        subcategory.amount = formatCurrency(amount * rate, currencyCode);
+                        if (doRealConversion) {
+                            // Conversion réelle des montants
+                            const amount = extractNumericValue(subcategory.amount);
+                            subcategory.amount = formatCurrency(amount * rate, currencyCode);
+                        } else {
+                            // Juste remplacer le symbole sans changer la valeur
+                            const amount = subcategory.amount.replace(/[^0-9.,\s]/g, '').trim();
+                            subcategory.amount = `${newCurrencySymbol} ${amount}`;
+                        }
                     }
                     
                     // Convertir les lignes
                     if (subcategory.lines && Array.isArray(subcategory.lines)) {
                         subcategory.lines.forEach(line => {
                             if (line.amount) {
-                                const amount = extractNumericValue(line.amount);
-                                line.amount = formatCurrency(amount * rate, currencyCode);
+                                if (doRealConversion) {
+                                    // Conversion réelle des montants
+                                    const amount = extractNumericValue(line.amount);
+                                    line.amount = formatCurrency(amount * rate, currencyCode);
+                                } else {
+                                    // Juste remplacer le symbole sans changer la valeur
+                                    const amount = line.amount.replace(/[^0-9.,\s]/g, '').trim();
+                                    line.amount = `${newCurrencySymbol} ${amount}`;
+                                }
                             }
                         });
                     }
@@ -501,10 +553,25 @@ function convertProject(project, currencyCode) {
     if (convertedProject.realExpenses && Array.isArray(convertedProject.realExpenses)) {
         convertedProject.realExpenses.forEach(expense => {
             if (expense.amount !== undefined) {
-                const amount = typeof expense.amount === 'string' ? 
-                    extractNumericValue(expense.amount) : expense.amount;
-                
-                expense.amount = amount * rate;
+                if (doRealConversion) {
+                    // Conversion réelle des montants
+                    const amount = typeof expense.amount === 'string' ? 
+                        extractNumericValue(expense.amount) : expense.amount;
+                    
+                    expense.amount = amount * rate;
+                    // Formater le montant avec le nouveau symbole
+                    if (expense.formattedAmount) {
+                        expense.formattedAmount = formatCurrency(expense.amount, currencyCode);
+                    }
+                } else {
+                    // Juste mettre à jour le symbole pour formattedAmount si présent
+                    if (expense.formattedAmount) {
+                        const numericAmount = typeof expense.amount === 'string' ? 
+                            extractNumericValue(expense.amount) : expense.amount;
+                        expense.formattedAmount = `${newCurrencySymbol} ${numericAmount.toFixed(2)}`;
+                    }
+                    // Ne pas modifier la valeur numérique réelle (expense.amount)
+                }
             }
         });
     }
@@ -578,22 +645,44 @@ function convertWallet(wallet, currencyCode) {
     // Cloner le portefeuille pour éviter de modifier l'original
     const convertedWallet = JSON.parse(JSON.stringify(wallet));
     
-    // Obtenir le taux de conversion
-    const rate = getExchangeRate(fromCurrency, currencyCode);
+    // Option 1: Conversion réelle avec taux de change
+    const doRealConversion = false; // Mettre à true pour convertir les valeurs
+    
+    // Obtenir le taux de conversion si nécessaire
+    const rate = doRealConversion ? getExchangeRate(fromCurrency, currencyCode) : 1;
+    
+    // Obtenir le symbole de la nouvelle devise
+    const newCurrencySymbol = getCurrencySymbol(currencyCode);
     
     // Mettre à jour le symbole de la devise
-    convertedWallet.currency = getCurrencySymbol(currencyCode);
+    convertedWallet.currency = newCurrencySymbol;
     
     // Convertir le solde
     if (convertedWallet.balance !== undefined) {
-        convertedWallet.balance = convertedWallet.balance * rate;
+        if (doRealConversion) {
+            // Conversion réelle des montants
+            convertedWallet.balance = convertedWallet.balance * rate;
+        }
+        // Si doRealConversion est false, on garde le solde tel quel
     }
     
     // Convertir les transactions
     if (convertedWallet.transactions && Array.isArray(convertedWallet.transactions)) {
         convertedWallet.transactions.forEach(transaction => {
             if (transaction.amount !== undefined) {
-                transaction.amount = transaction.amount * rate;
+                if (doRealConversion) {
+                    // Conversion réelle des montants
+                    transaction.amount = transaction.amount * rate;
+                }
+                // Si doRealConversion est false, on garde les montants tels quels
+                
+                // Mettre à jour le symbole dans formattedAmount si présent
+                if (transaction.formattedAmount) {
+                    if (typeof transaction.formattedAmount === 'string') {
+                        const amount = transaction.formattedAmount.replace(/[^0-9.,\s]/g, '').trim();
+                        transaction.formattedAmount = `${newCurrencySymbol} ${amount}`;
+                    }
+                }
             }
         });
     }

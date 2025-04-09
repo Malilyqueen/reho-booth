@@ -22,11 +22,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mettre à jour l'icône de devise
     updateCurrencyIcon();
     
+    // Mettre à jour les affichages de devise sur la page
+    updateCurrencyDisplays();
+    
+    // Écouter les changements de devise
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'userPreferences') {
+            try {
+                const newPrefs = JSON.parse(e.newValue);
+                const oldCurrency = userPreferences.currency;
+                
+                // Mettre à jour les préférences
+                userPreferences = newPrefs;
+                
+                // Si la devise a changé, mettre à jour tous les affichages
+                if (oldCurrency !== userPreferences.currency) {
+                    console.log('Devise changée de', oldCurrency, 'à', userPreferences.currency);
+                    
+                    // Mettre à jour l'icône de devise
+                    updateCurrencyIcon();
+                    
+                    // Mettre à jour tous les affichages de devise
+                    updateCurrencyDisplays();
+                }
+            } catch (error) {
+                console.error('Erreur lors du traitement des changements de préférences:', error);
+            }
+        }
+    });
+    
     // Vérifier si l'utilisateur est administrateur (version simplifiée)
     checkAdminStatus();
     
     // Initialiser l'accès à la page d'administration
     initAdminAccess();
+});
     
     // Initialize the UI elements
     initializeUI();
@@ -117,6 +147,26 @@ function updateCurrencyIcon() {
     updateDashboardStats();
 }
 
+// Mettre à jour tous les affichages de devise sur la page
+function updateCurrencyDisplays() {
+    console.log('Mise à jour de tous les affichages de devise');
+    
+    // Mettre à jour l'affichage des montants
+    updateCurrencyDisplay();
+    
+    // Mettre à jour les montants spécifiques
+    updateAllAmountsWithCurrency();
+    
+    // Déclencher un événement personnalisé pour informer les autres composants
+    const event = new CustomEvent('currencyChanged', {
+        detail: { 
+            currency: userPreferences.currency,
+            symbol: getCurrencySymbol(userPreferences.currency)
+        }
+    });
+    window.dispatchEvent(event);
+}
+
 // Mettre à jour l'affichage des montants avec la devise actuelle
 function updateCurrencyDisplay() {
     // Trouver la devise sélectionnée
@@ -131,6 +181,8 @@ function updateCurrencyDisplay() {
         }
     }
     
+    console.log("Devise actuelle:", currencyCode, "Symbole:", currencySymbol);
+    
     // Mettre à jour tous les éléments qui contiennent des montants
     const budgetElements = document.querySelectorAll('#totalBudget, #walletBalance');
     
@@ -144,6 +196,60 @@ function updateCurrencyDisplay() {
     
     // Mettre à jour les statistiques mobiles
     updateMobileStatsDisplay();
+}
+
+// Obtient le symbole d'une devise
+function getCurrencySymbol(currencyCode) {
+    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
+    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+        const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
+        if (currency) {
+            return currency.symbol;
+        }
+    }
+    
+    // Fallback pour les symboles courants
+    switch (currencyCode) {
+        case 'EUR': return '€';
+        case 'USD': return '$';
+        case 'GBP': return '£';
+        case 'JPY': return '¥';
+        case 'CNY': return '¥';
+        case 'MGA': return 'Ar';
+        case 'MAD': return 'DH';
+        case 'XAF': return 'F CFA';
+        case 'XOF': return 'F CFA';
+        default: return currencyCode;
+    }
+}
+
+// Mise à jour de tous les montants avec la nouvelle devise
+function updateAllAmountsWithCurrency() {
+    // Trouver la devise sélectionnée
+    const currencyCode = userPreferences.currency || 'EUR';
+    let currencySymbol = getCurrencySymbol(currencyCode);
+    
+    // Mettre à jour tous les éléments avec la classe .currency-amount
+    const amountElements = document.querySelectorAll('.currency-amount');
+    
+    amountElements.forEach(element => {
+        if (element) {
+            // Conserver uniquement les chiffres et le point décimal
+            const valueText = element.innerText || element.textContent;
+            const value = parseFloat(valueText.replace(/[^\d.,]/g, '').replace(',', '.') || 0);
+            element.textContent = `${currencySymbol} ${value.toFixed(2)}`;
+        }
+    });
+    
+    // Mettre à jour les éléments avec attribut data-amount
+    const dataAmountElements = document.querySelectorAll('[data-amount]');
+    
+    dataAmountElements.forEach(element => {
+        if (element) {
+            const amount = parseFloat(element.getAttribute('data-amount') || 0);
+            element.textContent = `${currencySymbol} ${amount.toFixed(2)}`;
+        }
+    });
 }
 
 /**
