@@ -11,28 +11,59 @@
     <link rel="stylesheet" href="css/wishlist.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Menu de navigation -->
-        <nav class="main-nav">
-            <div class="brand">
-                <img src="img/logo-mapocket.png" alt="MaPocket Logo" class="logo">
-                <span class="brand-name">MaPocket</span>
+    <div class="wrapper">
+        <!-- Sidebar navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="assets/logo.svg" alt="MaPocket Logo" class="logo">
+                    <h1 class="logo-text">MaPocket</h1>
+                </div>
+                <button class="toggle-sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <div class="nav-links">
-                <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
-                <a href="nouveau-projet.html"><i class="fas fa-plus-circle"></i> Nouveau Projet</a>
-                <a href="portefeuille.html"><i class="fas fa-wallet"></i> Portefeuille</a>
-                <a href="objectifs.html"><i class="fas fa-bullseye"></i> Objectifs</a>
-                <a href="tresorerie.html"><i class="fas fa-chart-line"></i> Trésorerie</a>
-                <a href="wishlist.html" class="active"><i class="fas fa-gift"></i> Liste de souhaits</a>
-                <a href="mapocket-pro.html"><i class="fas fa-briefcase"></i> MaPocket Pro</a>
-            </div>
-            <div class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </nav>
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            <span class="menu-text">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="nouveau-projet.html">
+                            <i class="fas fa-folder-plus"></i>
+                            <span class="menu-text">Nouveau Projet</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            <span class="menu-text">Mon Portefeuille</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            <span class="menu-text">Objectifs & Défis</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="wishlist.html">
+                            <i class="fas fa-gift"></i>
+                            <span class="menu-text">Liste de souhaits</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mapocket-pro.html">
+                            <i class="fas fa-briefcase"></i>
+                            <span class="menu-text">Outils Pro</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
         <!-- Contenu principal -->
         <div class="content-container">
