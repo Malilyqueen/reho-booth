@@ -8,17 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisation des onglets
     initTabs();
 
-    // Initialisation des éléments de préférences utilisateur
-    initPreferencesSelectors();
+    // Initialisation des sélecteurs de préférences
+    initPreferencesUI();
 
     // Ajouter un gestionnaire pour les changements de langue
     initLanguageHandlers();
 
     // Ajouter un gestionnaire pour les changements de devise
     initCurrencyHandlers();
-
-    // Ajouter un gestionnaire pour les changements de thème
-    initThemeHandlers();
 
     // Initialiser le formulaire de profil
     initProfileForm();
@@ -35,378 +32,320 @@ function initTabs() {
             
             // Désactiver tous les onglets
             tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.style.display = 'none');
+            contents.forEach(c => c.classList.remove('active'));
             
             // Activer l'onglet cible
             tab.classList.add('active');
-            document.getElementById(target + '-content').style.display = 'block';
+            document.getElementById(target + '-content').classList.add('active');
+        });
+    });
+}
+
+// Initialise les sélecteurs de préférences UI
+function initPreferencesUI() {
+    // Récupérer les préférences actuelles
+    const preferences = preferencesManager.getPreferences();
+    
+    // Initialiser le sélecteur de thème
+    const lightThemeRadio = document.getElementById('light-theme');
+    const darkThemeRadio = document.getElementById('dark-theme');
+    
+    if (lightThemeRadio && darkThemeRadio) {
+        lightThemeRadio.checked = preferences.theme === 'light';
+        darkThemeRadio.checked = preferences.theme === 'dark';
+    }
+    
+    // Initialiser le sélecteur de taille de police
+    const fontSizeButtons = document.querySelectorAll('.font-size-btn');
+    fontSizeButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.size === preferences.fontSize);
+        
+        btn.addEventListener('click', () => {
+            fontSizeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            preferencesManager.updatePreference('fontSize', btn.dataset.size);
         });
     });
     
-    // Activer le premier onglet par défaut
-    if (tabs.length > 0 && tabs[0].classList.contains('active')) {
-        tabs[0].click();
+    // Initialiser le sélecteur de langue
+    const langFrRadio = document.getElementById('lang-fr');
+    const langEnRadio = document.getElementById('lang-en');
+    
+    if (langFrRadio && langEnRadio) {
+        langFrRadio.checked = preferences.language === 'fr';
+        langEnRadio.checked = preferences.language === 'en';
     }
-}
-
-// Initialise les sélecteurs de préférences
-function initPreferencesSelectors() {
-    // Mettre à jour les radio buttons de thème
-    const themeRadios = document.querySelectorAll('input[name="theme"]');
-    if (themeRadios.length > 0) {
-        themeRadios.forEach(radio => {
-            radio.checked = radio.value === window.userPrefs.theme;
+    
+    // Initialiser le sélecteur de format de date
+    const dateFormatSelect = document.getElementById('dateFormat');
+    if (dateFormatSelect) {
+        dateFormatSelect.value = preferences.dateFormat;
+        
+        dateFormatSelect.addEventListener('change', () => {
+            preferencesManager.updatePreference('dateFormat', dateFormatSelect.value);
         });
     }
-
-    // Mettre à jour les radio buttons de langue
-    const langRadios = document.querySelectorAll('input[name="language"]');
-    if (langRadios.length > 0) {
-        langRadios.forEach(radio => {
-            radio.checked = radio.value === window.userPrefs.language;
-        });
-    }
-
+    
     // Initialiser les sélecteurs de devise
     initCurrencySelectors();
-
-    // Afficher le plan actuel
-    const planBadge = document.querySelector('.plan-badge');
-    const currentPlanName = document.getElementById('currentPlanName');
-    if (planBadge && currentPlanName) {
-        planBadge.className = 'plan-badge ' + window.userPrefs.plan;
-        currentPlanName.textContent = window.userPrefs.plan.charAt(0).toUpperCase() + window.userPrefs.plan.slice(1);
-    }
-
-    // Masquer ou afficher les onglets selon le plan
-    const usersTab = document.getElementById('usersTab');
-    if (usersTab) {
-        usersTab.style.display = window.userPrefs.plan === 'freemium' ? 'none' : 'flex';
-    }
-}
-
-// Initialise les gestionnaires de langues
-function initLanguageHandlers() {
-    const langRadios = document.querySelectorAll('input[name="language"]');
-    
-    langRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            if (radio.checked) {
-                // Utiliser l'API du gestionnaire de préférences pour changer la langue
-                window.preferencesManager.setLanguage(radio.value);
-                
-                // Afficher une notification de succès
-                showNotification('Langue mise à jour avec succès', 'success');
-            }
-        });
-    });
-}
-
-// Initialise les gestionnaires de thème
-function initThemeHandlers() {
-    const themeRadios = document.querySelectorAll('input[name="theme"]');
-    
-    themeRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-            if (radio.checked) {
-                // Utiliser l'API du gestionnaire de préférences pour changer le thème
-                window.preferencesManager.setTheme(radio.value);
-                
-                // Afficher une notification de succès
-                showNotification('Thème mis à jour avec succès', 'success');
-            }
-        });
-    });
-    
-    // Ajouter des gestionnaires aux prévisualisations
-    const lightThemePreview = document.getElementById('light-theme-preview');
-    const darkThemePreview = document.getElementById('dark-theme-preview');
-    
-    if (lightThemePreview) {
-        lightThemePreview.addEventListener('click', () => {
-            const lightThemeRadio = document.getElementById('light-theme');
-            if (lightThemeRadio) {
-                lightThemeRadio.checked = true;
-                window.preferencesManager.setTheme('light');
-                showNotification('Thème mis à jour avec succès', 'success');
-            }
-        });
-    }
-    
-    if (darkThemePreview) {
-        darkThemePreview.addEventListener('click', () => {
-            const darkThemeRadio = document.getElementById('dark-theme');
-            if (darkThemeRadio) {
-                darkThemeRadio.checked = true;
-                window.preferencesManager.setTheme('dark');
-                showNotification('Thème mis à jour avec succès', 'success');
-            }
-        });
-    }
 }
 
 // Initialise les sélecteurs de devise
 function initCurrencySelectors() {
-    // Générer les options pour les sélecteurs
-    const primaryContainer = document.getElementById('primaryCurrencyContainer');
-    const secondaryContainer = document.getElementById('secondaryCurrencyContainer');
+    const primaryCurrencyContainer = document.getElementById('primaryCurrencyContainer');
+    const secondaryCurrencyContainer = document.getElementById('secondaryCurrencyContainer');
     
-    if (primaryContainer) {
-        primaryContainer.innerHTML = generateCurrencyDropdown('primaryCurrency', window.userPrefs.currency);
+    if (primaryCurrencyContainer) {
+        const primarySelect = document.createElement('select');
+        primarySelect.id = 'primaryCurrency';
+        primarySelect.className = 'select-input';
+        
+        const currencies = [
+            {code: 'EUR', name: 'Euro (€)', symbol: '€'},
+            {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
+            {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
+            {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},
+            {code: 'CHF', name: 'Franc suisse (Fr)', symbol: 'Fr'},
+            {code: 'CAD', name: 'Dollar canadien (C$)', symbol: 'C$'}
+        ];
+        
+        currencies.forEach(currency => {
+            const option = document.createElement('option');
+            option.value = currency.code;
+            option.textContent = currency.name;
+            primarySelect.appendChild(option);
+        });
+        
+        primaryCurrencyContainer.appendChild(primarySelect);
+        
+        // Sélectionner la devise actuelle
+        primarySelect.value = preferencesManager.getPreferences().currency;
     }
     
-    if (secondaryContainer) {
-        secondaryContainer.innerHTML = generateCurrencyDropdown('secondaryCurrency', window.userPrefs.secondaryCurrency);
+    if (secondaryCurrencyContainer) {
+        const secondarySelect = document.createElement('select');
+        secondarySelect.id = 'secondaryCurrency';
+        secondarySelect.className = 'select-input';
+        
+        const currencies = [
+            {code: 'EUR', name: 'Euro (€)', symbol: '€'},
+            {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
+            {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
+            {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},
+            {code: 'CHF', name: 'Franc suisse (Fr)', symbol: 'Fr'},
+            {code: 'CAD', name: 'Dollar canadien (C$)', symbol: 'C$'}
+        ];
+        
+        currencies.forEach(currency => {
+            const option = document.createElement('option');
+            option.value = currency.code;
+            option.textContent = currency.name;
+            secondarySelect.appendChild(option);
+        });
+        
+        secondaryCurrencyContainer.appendChild(secondarySelect);
+        
+        // Sélectionner la devise secondaire actuelle
+        secondarySelect.value = preferencesManager.getPreferences().secondaryCurrency;
     }
-    
-    // Mise à jour de l'aperçu
-    updateCurrencyPreview();
 }
 
-// Initialise les gestionnaires de devise
+// Initialise les gestionnaires d'événements pour les changements de thème
+function initThemeHandlers() {
+    const lightThemeRadio = document.getElementById('light-theme');
+    const darkThemeRadio = document.getElementById('dark-theme');
+    
+    if (lightThemeRadio && darkThemeRadio) {
+        lightThemeRadio.addEventListener('change', () => {
+            if (lightThemeRadio.checked) {
+                preferencesManager.setTheme('light');
+            }
+        });
+        
+        darkThemeRadio.addEventListener('change', () => {
+            if (darkThemeRadio.checked) {
+                preferencesManager.setTheme('dark');
+            }
+        });
+    }
+}
+
+// Initialise les gestionnaires d'événements pour les changements de langue
+function initLanguageHandlers() {
+    const langFrRadio = document.getElementById('lang-fr');
+    const langEnRadio = document.getElementById('lang-en');
+    
+    if (langFrRadio && langEnRadio) {
+        langFrRadio.addEventListener('change', () => {
+            if (langFrRadio.checked) {
+                preferencesManager.setLanguage('fr');
+            }
+        });
+        
+        langEnRadio.addEventListener('change', () => {
+            if (langEnRadio.checked) {
+                preferencesManager.setLanguage('en');
+            }
+        });
+    }
+}
+
+// Initialise les gestionnaires d'événements pour les changements de devise
 function initCurrencyHandlers() {
-    // Ajouter les gestionnaires d'événements après avoir généré les sélecteurs
-    setTimeout(() => {
-        const primarySelect = document.getElementById('primaryCurrency');
-        const secondarySelect = document.getElementById('secondaryCurrency');
-        
-        if (primarySelect) {
-            primarySelect.addEventListener('change', () => {
-                // Récupérer la valeur sélectionnée
-                const selected = primarySelect.value;
-                
-                // Si la devise principale est la même que la secondaire, permuter
-                if (selected === window.userPrefs.secondaryCurrency && secondarySelect) {
-                    const old = window.userPrefs.currency;
-                    window.userPrefs.secondaryCurrency = old;
-                    secondarySelect.value = old;
-                }
-                
-                // Utiliser l'API du gestionnaire de préférences pour changer la devise
-                window.preferencesManager.setCurrency(selected);
-                
-                // Afficher une notification de succès
-                showNotification(`Devise mise à jour en ${selected} avec succès`, 'success');
-                
-                // Mise à jour de l'aperçu
-                updateCurrencyPreview();
-            });
-        }
-        
-        if (secondarySelect) {
-            secondarySelect.addEventListener('change', () => {
-                // Récupérer la valeur sélectionnée
-                const selected = secondarySelect.value;
-                
-                // Si la devise secondaire est la même que la principale, permuter
-                if (selected === window.userPrefs.currency && primarySelect) {
-                    const old = window.userPrefs.secondaryCurrency;
-                    window.userPrefs.currency = old;
-                    primarySelect.value = old;
-                    
-                    // Convertir les projets et portefeuilles à la nouvelle devise principale
-                    window.preferencesManager.convertProjects(old);
-                    window.preferencesManager.convertWallets(old);
-                }
-                
-                // Mettre à jour les préférences
-                window.userPrefs.secondaryCurrency = selected;
-                window.preferencesManager.updatePreference('secondaryCurrency', selected);
-                
-                // Mise à jour de l'aperçu
-                updateCurrencyPreview();
-                
-                // Afficher une notification de succès
-                showNotification(`Devise secondaire mise à jour en ${selected} avec succès`, 'success');
-            });
-        }
-        
-        // Ajouter le bouton de conversion
-        addConversionButton();
-    }, 100);
-}
-
-// Génère une liste déroulante de devises
-function generateCurrencyDropdown(id, selectedCurrency) {
-    // Obtenir les devises depuis currencies.js
-    const currencies = window.availableCurrencies || [];
+    const primaryCurrencySelect = document.getElementById('primaryCurrency');
+    const secondaryCurrencySelect = document.getElementById('secondaryCurrency');
     
-    let html = `<select id="${id}" class="form-control">`;
+    if (primaryCurrencySelect) {
+        primaryCurrencySelect.addEventListener('change', () => {
+            preferencesManager.setCurrency(primaryCurrencySelect.value);
+            updateCurrencyPreview();
+        });
+    }
     
-    currencies.forEach(curr => {
-        const selected = curr === selectedCurrency ? 'selected' : '';
-        html += `<option value="${curr}" ${selected}>${curr}</option>`;
-    });
+    if (secondaryCurrencySelect) {
+        secondaryCurrencySelect.addEventListener('change', () => {
+            preferencesManager.updatePreference('secondaryCurrency', secondaryCurrencySelect.value);
+            updateCurrencyPreview();
+        });
+    }
     
-    html += '</select>';
-    return html;
+    // Mise à jour initiale de l'aperçu
+    updateCurrencyPreview();
 }
 
 // Met à jour l'aperçu des devises
 function updateCurrencyPreview() {
-    const preview = document.getElementById('currencyPreview');
-    if (!preview) return;
+    const currencyPreview = document.getElementById('currencyPreview');
+    const preferences = preferencesManager.getPreferences();
     
-    const amount = 100;
-    const primaryCurrency = window.userPrefs.currency;
-    const secondaryCurrency = window.userPrefs.secondaryCurrency;
-    
-    // Utiliser la fonction de conversion de devise du gestionnaire de préférences
-    const formattedAmount = formatCurrencyWithEquivalent(amount, primaryCurrency, secondaryCurrency);
-    
-    const example = preview.querySelector('.example');
-    if (example) {
-        example.textContent = formattedAmount;
+    if (currencyPreview) {
+        const primarySymbol = getCurrencySymbol(preferences.currency);
+        const secondarySymbol = getCurrencySymbol(preferences.secondaryCurrency);
+        const exchangeRate = getExchangeRate(preferences.currency, preferences.secondaryCurrency);
+        
+        const amount = 100;
+        const convertedAmount = Math.round(amount * exchangeRate);
+        
+        currencyPreview.innerHTML = `<p class="example">${amount} ${preferences.currency} ≈ ${convertedAmount} ${preferences.secondaryCurrency}</p>`;
     }
 }
 
-// Formate un montant avec la devise et son équivalent dans une autre devise
-function formatCurrencyWithEquivalent(amount, primaryCurrency, secondaryCurrency) {
-    // Ceci est un exemple simple, dans une application réelle, il faudrait utiliser des taux de change à jour
-    const conversionRates = {
-        EUR: 1,
-        USD: 1.1,
-        GBP: 0.85,
-        JPY: 130,
-        CAD: 1.45,
-        AUD: 1.6,
-        CHF: 1.02,
-        CNY: 7.5,
-        INR: 85,
-        BRL: 5.8,
-        RUB: 85,
-        KRW: 1300,
-        TRY: 15,
-        MXN: 22,
-        IDR: 15500,
-        PHP: 55,
-        MYR: 4.5,
-        SGD: 1.5,
-        THB: 35,
-        AED: 4.0
+// Récupère le symbole d'une devise
+function getCurrencySymbol(currencyCode) {
+    const symbols = {
+        'EUR': '€',
+        'USD': '$',
+        'GBP': '£',
+        'JPY': '¥',
+        'CHF': 'Fr',
+        'CAD': 'C$'
     };
     
-    // Convertir vers EUR comme base
-    let amountInEUR = amount;
-    if (primaryCurrency !== 'EUR') {
-        amountInEUR = amount / conversionRates[primaryCurrency];
-    }
-    
-    // Convertir de EUR vers la devise secondaire
-    const amountInSecondary = amountInEUR * conversionRates[secondaryCurrency];
-    
-    // Formater le montant principal
-    const formattedPrimary = `${primaryCurrency} ${amount.toFixed(2).replace('.', ',00')}`;
-    
-    // Formater le montant secondaire
-    const formattedSecondary = `${secondaryCurrency} ${amountInSecondary.toFixed(2).replace('.', ',00')}`;
-    
-    return `${formattedPrimary} (${formattedSecondary})`;
+    return symbols[currencyCode] || currencyCode;
 }
 
-// Ajoute un bouton de conversion de devise
-function addConversionButton() {
-    const currencySettings = document.querySelector('.currency-settings');
-    if (!currencySettings) return;
+// Récupère le taux de change entre deux devises (simulé)
+function getExchangeRate(fromCurrency, toCurrency) {
+    // Taux de change simulés par rapport à l'EUR
+    const ratesVsEUR = {
+        'EUR': 1,
+        'USD': 1.09,
+        'GBP': 0.85,
+        'JPY': 164.53,
+        'CHF': 0.98,
+        'CAD': 1.47
+    };
     
-    // Vérifier si le bouton existe déjà
-    let convertButton = document.getElementById('convertProjectsButton');
+    // Calculer le taux de change entre les deux devises
+    const fromRate = ratesVsEUR[fromCurrency] || 1;
+    const toRate = ratesVsEUR[toCurrency] || 1;
     
-    // Si le bouton n'existe pas, le créer
-    if (!convertButton) {
-        convertButton = document.createElement('button');
-        convertButton.id = 'convertProjectsButton';
-        convertButton.className = 'btn btn-primary mt-20';
-        convertButton.style.width = '100%';
-        
-        // Insérer le bouton après les paramètres de devise
-        currencySettings.appendChild(convertButton);
-    }
-    
-    // Mise à jour du texte du bouton
-    const currency = window.userPrefs.currency;
-    convertButton.textContent = `Convertir les montants en ${currency}`;
-    
-    // Supprimer les gestionnaires d'événements existants
-    const newButton = convertButton.cloneNode(true);
-    if (convertButton.parentNode) {
-        currencySettings.replaceChild(newButton, convertButton);
-    }
-    
-    // Gestionnaire d'événements pour le bouton de conversion
-    newButton.addEventListener('click', () => {
-        const currency = window.userPrefs.currency;
-        
-        // Afficher une notification de début
-        showNotification(`Conversion des montants en ${currency} en cours...`, 'info');
-        
-        // Essayer de convertir tous les projets et portefeuilles
-        setTimeout(() => {
-            try {
-                // Convertir les projets
-                window.preferencesManager.convertProjects(currency);
-                
-                // Convertir les portefeuilles
-                window.preferencesManager.convertWallets(currency);
-                
-                // Afficher une notification de succès
-                showNotification(`Tous les montants ont été convertis en ${currency}`, 'success');
-                
-                // Recharger la page après un délai
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } catch (error) {
-                console.error('Erreur lors de la conversion:', error);
-                showNotification('Erreur lors de la conversion', 'error');
-            }
-        }, 500);
-    });
+    return toRate / fromRate;
 }
 
-// Fonction pour initialiser le formulaire de profil
+// Initialise le formulaire de profil
 function initProfileForm() {
-    const saveBtn = document.getElementById('saveProfileBtn');
-    const nameInput = document.getElementById('profileNameInput');
-    const emailInput = document.getElementById('profileEmailInput');
-    const nameDisplay = document.getElementById('profileName');
-    const emailDisplay = document.getElementById('profileEmail');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
     
-    if (saveBtn) {
-        saveBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+    if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', () => {
+            // Simuler une sauvegarde réussie
+            showNotification('success', 'Profil mis à jour avec succès');
+        });
+    }
+    
+    // Gestionnaire pour le changement d'avatar
+    const avatarUpload = document.getElementById('avatarUpload');
+    const profileAvatar = document.getElementById('profileAvatar');
+    
+    if (avatarUpload && profileAvatar) {
+        avatarUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
             
-            if (nameDisplay && nameInput) {
-                nameDisplay.textContent = nameInput.value;
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    profileAvatar.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
             }
-            
-            if (emailDisplay && emailInput) {
-                emailDisplay.textContent = emailInput.value;
-            }
-            
-            showNotification('Profil mis à jour avec succès', 'success');
         });
     }
 }
 
 // Affiche une notification
-function showNotification(message, type = 'info') {
-    const notificationEl = document.getElementById('notification');
-    const messageEl = document.getElementById('notificationMessage');
+function showNotification(type, message) {
+    const notification = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notificationMessage');
+    const notificationIcon = document.getElementById('notificationIcon').querySelector('i');
     
-    if (notificationEl && messageEl) {
-        messageEl.textContent = message;
+    if (notification && notificationMessage && notificationIcon) {
+        // Définir le message
+        notificationMessage.textContent = message;
         
-        // Définir le type
-        notificationEl.className = 'notification';
-        notificationEl.classList.add(type);
+        // Définir l'icône selon le type
+        notificationIcon.className = 'fas';
+        
+        switch (type) {
+            case 'success':
+                notificationIcon.classList.add('fa-check-circle');
+                notification.className = 'notification success';
+                break;
+            case 'error':
+                notificationIcon.classList.add('fa-times-circle');
+                notification.className = 'notification error';
+                break;
+            case 'warning':
+                notificationIcon.classList.add('fa-exclamation-triangle');
+                notification.className = 'notification warning';
+                break;
+            default:
+                notificationIcon.classList.add('fa-info-circle');
+                notification.className = 'notification info';
+        }
         
         // Afficher la notification
-        notificationEl.style.display = 'flex';
+        notification.style.display = 'flex';
         
         // Masquer après 3 secondes
         setTimeout(() => {
-            notificationEl.style.display = 'none';
+            notification.style.display = 'none';
         }, 3000);
     }
 }
+
+// Ajouter un gestionnaire pour fermer la notification
+document.addEventListener('DOMContentLoaded', () => {
+    const notificationClose = document.getElementById('notificationClose');
+    
+    if (notificationClose) {
+        notificationClose.addEventListener('click', () => {
+            const notification = document.getElementById('notification');
+            if (notification) {
+                notification.style.display = 'none';
+            }
+        });
+    }
+});
