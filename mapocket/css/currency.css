@@ -1,0 +1,10 @@
+/* Styles spécifiques pour l'affichage des devises */
+
+.currency-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
