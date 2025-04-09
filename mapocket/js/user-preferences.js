@@ -1,7 +1,7 @@
 // Gestion des préférences utilisateur globales pour MaPocket
 // Ce fichier est inclus dans toutes les pages pour assurer la cohérence des préférences utilisateur
 
-const USER_PREFS_KEY = 'mapocket_user_preferences';
+const USER_PREFS_KEY = 'userPreferences';
 
 // Préférences par défaut
 const defaultPreferences = {
