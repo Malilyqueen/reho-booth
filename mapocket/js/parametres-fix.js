@@ -92,16 +92,73 @@ function initTabs() {
 
 // Initialise le sélecteur de thème
 function initThemeSelector() {
+    // Pour la nouvelle version avec radio buttons
+    const lightThemeRadio = document.getElementById('light-theme');
+    const darkThemeRadio = document.getElementById('dark-theme');
+    
+    if (lightThemeRadio && darkThemeRadio) {
+        // Mettre le bon radio en fonction des préférences
+        if (userPreferences.theme === 'dark') {
+            darkThemeRadio.checked = true;
+            lightThemeRadio.checked = false;
+        } else {
+            lightThemeRadio.checked = true;
+            darkThemeRadio.checked = false;
+        }
+        
+        // Ajouter des écouteurs d'événements
+        lightThemeRadio.addEventListener('change', () => {
+            if (lightThemeRadio.checked) {
+                userPreferences.theme = 'light';
+                applyTheme();
+                saveUserPreferences();
+            }
+        });
+        
+        darkThemeRadio.addEventListener('change', () => {
+            if (darkThemeRadio.checked) {
+                userPreferences.theme = 'dark';
+                applyTheme();
+                saveUserPreferences();
+            }
+        });
+        
+        // Ajouter des gestionnaires aux prévisualisations
+        const lightThemePreview = document.getElementById('light-theme-preview');
+        const darkThemePreview = document.getElementById('dark-theme-preview');
+        
+        if (lightThemePreview) {
+            lightThemePreview.addEventListener('click', () => {
+                lightThemeRadio.checked = true;
+                darkThemeRadio.checked = false;
+                userPreferences.theme = 'light';
+                applyTheme();
+                saveUserPreferences();
+            });
+        }
+        
+        if (darkThemePreview) {
+            darkThemePreview.addEventListener('click', () => {
+                darkThemeRadio.checked = true;
+                lightThemeRadio.checked = false;
+                userPreferences.theme = 'dark';
+                applyTheme();
+                saveUserPreferences();
+            });
+        }
+    }
+    
+    // Conserver la compatibilité avec la version switch
     const themeSwitch = document.getElementById('themeSwitch');
-    if (!themeSwitch) return;
-    
-    themeSwitch.checked = userPreferences.theme === 'dark';
-    
-    themeSwitch.addEventListener('change', () => {
-        userPreferences.theme = themeSwitch.checked ? 'dark' : 'light';
-        applyTheme();
-        saveUserPreferences();
-    });
+    if (themeSwitch) {
+        themeSwitch.checked = userPreferences.theme === 'dark';
+        
+        themeSwitch.addEventListener('change', () => {
+            userPreferences.theme = themeSwitch.checked ? 'dark' : 'light';
+            applyTheme();
+            saveUserPreferences();
+        });
+    }
 }
 
 // Applique le thème actuel
@@ -200,76 +257,206 @@ function applyLanguage() {
 
 // Fonction de traduction en anglais pour la démo
 function translatePageToEnglish() {
-    // Traduire les onglets
-    translateElement('#profileTab', 'Profile');
-    translateElement('#interfaceTab', 'Interface');
-    translateElement('#securityTab', 'Security');
-    translateElement('#usersTab', 'Users');
-    translateElement('#subscriptionTab', 'Subscription');
-    
-    // Traduire les titres et descriptions des sections
-    translateElement('.settings-header h2', 'Settings');
-    translateElement('.settings-header p', 'Personalize your MaPocket experience');
-    
-    // Traduire les éléments du profil
-    translateElement('label[for="profileNameInput"]', 'Full name');
-    translateElement('label[for="profileEmailInput"]', 'Email address');
-    translateElement('label[for="profilePhoneInput"]', 'Phone (optional)');
-    translateElement('#saveProfileBtn', 'Save');
-    
-    // Traduire les éléments de l'interface
-    translateElement('.theme-section h4', 'Theme');
-    translateElement('.theme-section p', 'Choose between light and dark mode');
-    translateElement('.font-size-section h4', 'Font size');
-    translateElement('.language-section h4', 'Language');
-    translateElement('.currency-section h4', 'Currency');
-    translateElement('.currency-section p', 'Set your preferred currency for all projects');
-    
-    // Traduire les textes des options de langue
-    document.querySelectorAll('.language-option label').forEach(label => {
-        if (label.textContent.includes('Français')) {
-            label.querySelector('.language-name').textContent = 'French';
-        } else if (label.textContent.includes('English')) {
-            label.querySelector('.language-name').textContent = 'English';
-        }
-    });
+    try {
+        // Traduire les onglets
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            const tabContent = tab.textContent.trim();
+            if (tabContent.includes('Profil')) {
+                tab.innerHTML = `<i class="fas fa-user"></i> Profile`;
+            } else if (tabContent.includes('Apparence')) {
+                tab.innerHTML = `<i class="fas fa-palette"></i> Appearance`;
+            } else if (tabContent.includes('Sécurité')) {
+                tab.innerHTML = `<i class="fas fa-shield-alt"></i> Security`;
+            } else if (tabContent.includes('Utilisateurs')) {
+                tab.innerHTML = `<i class="fas fa-users"></i> Users`;
+            } else if (tabContent.includes('Abonnement')) {
+                tab.innerHTML = `<i class="fas fa-crown"></i> Subscription`;
+            } else if (tabContent.includes('Notifications')) {
+                tab.innerHTML = `<i class="fas fa-bell"></i> Notifications`;
+            }
+        });
+        
+        // Traduire les titres et descriptions des sections pour la page paramètres
+        document.querySelectorAll('h2').forEach(h2 => {
+            if (h2.textContent.includes('Paramètres')) {
+                h2.textContent = 'Settings';
+            }
+        });
+        
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Personnalisez')) {
+                p.textContent = 'Personalize your MaPocket experience';
+            }
+        });
+        
+        // Traduire les éléments du profil
+        document.querySelectorAll('label').forEach(label => {
+            if (label.textContent.includes('Nom complet')) {
+                label.textContent = 'Full name';
+            } else if (label.textContent.includes('Adresse e-mail')) {
+                label.textContent = 'Email address';
+            } else if (label.textContent.includes('Téléphone')) {
+                label.textContent = 'Phone (optional)';
+            }
+        });
+        
+        // Traduire les boutons
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Enregistrer')) {
+                button.textContent = 'Save';
+            }
+        });
+        
+        // Traduire les sections spécifiques
+        document.querySelectorAll('h4').forEach(h4 => {
+            switch(h4.textContent.trim()) {
+                case 'Thème':
+                    h4.textContent = 'Theme';
+                    break;
+                case 'Taille de police':
+                    h4.textContent = 'Font size';
+                    break;
+                case 'Langue':
+                    h4.textContent = 'Language';
+                    break;
+                case 'Devise':
+                    h4.textContent = 'Currency';
+                    break;
+                case 'Fonctionnalités incluses :':
+                    h4.textContent = 'Included features:';
+                    break;
+            }
+        });
+        
+        // Traduire certains paragraphes spécifiques
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Choisissez entre le mode clair et sombre')) {
+                p.textContent = 'Choose between light and dark mode';
+            } else if (p.textContent.includes('Définissez votre devise préférée')) {
+                p.textContent = 'Set your preferred currency for all projects';
+            } else if (p.textContent.includes('Vous utilisez actuellement le plan')) {
+                p.textContent = 'You are currently using the Freemium plan with limited features.';
+            }
+        });
+        
+        // Traduire les éléments de liste d'abonnement
+        document.querySelectorAll('.features-list li').forEach(li => {
+            const text = li.textContent.trim();
+            if (text.includes('1 projet maximum')) {
+                li.innerHTML = '<i class="fas fa-check"></i> 1 project maximum';
+            } else if (text.includes('Fonctionnalités de base')) {
+                li.innerHTML = '<i class="fas fa-check"></i> Basic budget management features';
+            } else if (text.includes('Accès à la version mobile')) {
+                li.innerHTML = '<i class="fas fa-check"></i> Mobile version access';
+            }
+        });
+        
+        console.log('Page traduite en anglais');
+    } catch (error) {
+        console.error('Erreur lors de la traduction en anglais:', error);
+    }
 }
 
 // Fonction de traduction en français pour la démo
 function translatePageToFrench() {
-    // Restaurer les onglets
-    translateElement('#profileTab', 'Profil');
-    translateElement('#interfaceTab', 'Interface');
-    translateElement('#securityTab', 'Sécurité');
-    translateElement('#usersTab', 'Utilisateurs');
-    translateElement('#subscriptionTab', 'Abonnement');
-    
-    // Restaurer les titres et descriptions des sections
-    translateElement('.settings-header h2', 'Paramètres');
-    translateElement('.settings-header p', 'Personnalisez votre expérience MaPocket');
-    
-    // Restaurer les éléments du profil
-    translateElement('label[for="profileNameInput"]', 'Nom complet');
-    translateElement('label[for="profileEmailInput"]', 'Adresse e-mail');
-    translateElement('label[for="profilePhoneInput"]', 'Téléphone (optionnel)');
-    translateElement('#saveProfileBtn', 'Enregistrer');
-    
-    // Restaurer les éléments de l'interface
-    translateElement('.theme-section h4', 'Thème');
-    translateElement('.theme-section p', 'Choisissez entre le mode clair et sombre');
-    translateElement('.font-size-section h4', 'Taille de police');
-    translateElement('.language-section h4', 'Langue');
-    translateElement('.currency-section h4', 'Devise');
-    translateElement('.currency-section p', 'Définissez votre devise préférée pour tous les projets');
-    
-    // Restaurer les textes des options de langue
-    document.querySelectorAll('.language-option label').forEach(label => {
-        if (label.textContent.includes('French')) {
-            label.querySelector('.language-name').textContent = 'Français';
-        } else if (label.textContent.includes('English')) {
-            label.querySelector('.language-name').textContent = 'English';
-        }
-    });
+    try {
+        // Restaurer les onglets
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            const tabContent = tab.textContent.trim();
+            if (tabContent.includes('Profile')) {
+                tab.innerHTML = `<i class="fas fa-user"></i> Profil`;
+            } else if (tabContent.includes('Appearance')) {
+                tab.innerHTML = `<i class="fas fa-palette"></i> Apparence`;
+            } else if (tabContent.includes('Security')) {
+                tab.innerHTML = `<i class="fas fa-shield-alt"></i> Sécurité`;
+            } else if (tabContent.includes('Users')) {
+                tab.innerHTML = `<i class="fas fa-users"></i> Utilisateurs`;
+            } else if (tabContent.includes('Subscription')) {
+                tab.innerHTML = `<i class="fas fa-crown"></i> Abonnement`;
+            } else if (tabContent.includes('Notifications')) {
+                tab.innerHTML = `<i class="fas fa-bell"></i> Notifications`;
+            }
+        });
+        
+        // Restaurer les titres et descriptions des sections
+        document.querySelectorAll('h2').forEach(h2 => {
+            if (h2.textContent.includes('Settings')) {
+                h2.textContent = 'Paramètres';
+            }
+        });
+        
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Personalize your')) {
+                p.textContent = 'Personnalisez votre expérience MaPocket';
+            }
+        });
+        
+        // Restaurer les éléments du profil
+        document.querySelectorAll('label').forEach(label => {
+            if (label.textContent.includes('Full name')) {
+                label.textContent = 'Nom complet';
+            } else if (label.textContent.includes('Email address')) {
+                label.textContent = 'Adresse e-mail';
+            } else if (label.textContent.includes('Phone')) {
+                label.textContent = 'Téléphone (optionnel)';
+            }
+        });
+        
+        // Restaurer les boutons
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Save')) {
+                button.textContent = 'Enregistrer';
+            }
+        });
+        
+        // Restaurer les sections spécifiques
+        document.querySelectorAll('h4').forEach(h4 => {
+            switch(h4.textContent.trim()) {
+                case 'Theme':
+                    h4.textContent = 'Thème';
+                    break;
+                case 'Font size':
+                    h4.textContent = 'Taille de police';
+                    break;
+                case 'Language':
+                    h4.textContent = 'Langue';
+                    break;
+                case 'Currency':
+                    h4.textContent = 'Devise';
+                    break;
+                case 'Included features:':
+                    h4.textContent = 'Fonctionnalités incluses :';
+                    break;
+            }
+        });
+        
+        // Restaurer certains paragraphes spécifiques
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Choose between light and dark mode')) {
+                p.textContent = 'Choisissez entre le mode clair et sombre';
+            } else if (p.textContent.includes('Set your preferred currency')) {
+                p.textContent = 'Définissez votre devise préférée pour tous les projets';
+            } else if (p.textContent.includes('You are currently using the')) {
+                p.textContent = 'Vous utilisez actuellement le plan Freemium avec des fonctionnalités limitées.';
+            }
+        });
+        
+        // Restaurer les éléments de liste d'abonnement
+        document.querySelectorAll('.features-list li').forEach(li => {
+            const text = li.textContent.trim();
+            if (text.includes('1 project maximum')) {
+                li.innerHTML = '<i class="fas fa-check"></i> 1 projet maximum';
+            } else if (text.includes('Basic budget management')) {
+                li.innerHTML = '<i class="fas fa-check"></i> Fonctionnalités de base de gestion de budget';
+            } else if (text.includes('Mobile version access')) {
+                li.innerHTML = '<i class="fas fa-check"></i> Accès à la version mobile';
+            }
+        });
+        
+        console.log('Page traduite en français');
+    } catch (error) {
+        console.error('Erreur lors de la traduction en français:', error);
+    }
 }
 
 // Fonction utilitaire pour traduire un élément

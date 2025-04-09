@@ -122,6 +122,15 @@
     transition: all 0.2s ease;
 }
 
+.theme-preview.active, .theme-preview:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.theme-preview.active {
+    border-color: #1d3557;
+}
+
 .theme-preview.light-theme {
     background-color: #ffffff;
 }
