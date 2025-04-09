@@ -194,7 +194,7 @@
                         <div class="expense-category">
                             <div class="category-header">
                                 <h4 class="category-name">Restauration</h4>
-                                <span class="category-amount">€ 300</span>
+                                <span class="category-amount" id="cat1-amount">€ 300</span>
                                 <div class="category-controls">
                                     <button type="button" class="category-toggle open">
                                         <i class="fas fa-chevron-up"></i>
@@ -282,7 +282,7 @@
                         <div class="expense-category">
                             <div class="category-header">
                                 <h4 class="category-name">Animation</h4>
-                                <span class="category-amount">€ 200</span>
+                                <span class="category-amount" id="cat2-amount">€ 200</span>
                                 <div class="category-controls">
                                     <button type="button" class="category-toggle">
                                         <i class="fas fa-chevron-down"></i>
@@ -391,7 +391,43 @@
         </main>
     </div>
 
+    <script src="js/currencies.js"></script>
     <script src="js/project.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Charger les préférences utilisateur pour obtenir la devise
+            let userPreferences = {
+                currency: "EUR", // Devise par défaut
+            };
+            
+            try {
+                const savedPrefs = localStorage.getItem("userPreferences");
+                if (savedPrefs) {
+                    userPreferences = JSON.parse(savedPrefs);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des préférences:", error);
+            }
+            
+            // Obtenir le symbole de la devise
+            let currencySymbol = "€"; // Symbole par défaut (Euro)
+            
+            // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
+            if (typeof AVAILABLE_CURRENCIES !== "undefined") {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
+            }
+            
+            // Mettre à jour les montants affichés avec le bon symbole
+            const amounts = document.querySelectorAll(".category-amount");
+            amounts.forEach(amount => {
+                const value = amount.textContent.replace("€", "").trim();
+                amount.textContent = `${currencySymbol} ${value}`;
+            });
+        });
+    </script>
     <script src="js/voice-commands.js"></script>
 </body>
 </html>
