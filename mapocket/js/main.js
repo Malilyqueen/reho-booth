@@ -109,8 +109,8 @@ function updateCurrencyIcon() {
         icon.textContent = '';
     });
     
-    // Mettre à jour également les montants affichés
-    updateCurrencyDisplay();
+    // Forcer la mise à jour des statistiques du tableau de bord
+    updateDashboardStats();
 }
 
 // Mettre à jour l'affichage des montants avec la devise actuelle
