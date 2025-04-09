@@ -1,9 +1,13 @@
 /**
  * Script pour la gestion des paramètres de l'application - version simplifiée
  * 
- * Note: Ce script utilise les fonctions et variables définies dans user-preferences.js
- * pour garantir une cohérence dans la gestion des préférences utilisateur.
+ * Note: Ce script utilise les préférences utilisateur définies dans l'élément script
+ * directement dans la page parametres.html et les fonctions de user-preferences.js
  */
+
+// Déclaration globale des variables et constantes utilisées dans ce script
+const USER_PREFS_KEY = 'userPreferences';
+const availableCurrencies = window.availableCurrencies || ['EUR', 'USD', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR', 'BRL', 'RUB', 'KRW', 'TRY', 'MXN', 'IDR', 'PHP', 'MYR', 'SGD', 'THB', 'AED'];
 
 // Initialization
 document.addEventListener('DOMContentLoaded', function() {
@@ -31,14 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initLanguageSelectors();
     
     // Appliquer le thème actuel
-    if (typeof applyTheme === 'function') {
-        applyTheme();
-    }
+    applyTheme();
     
     // Appliquer la langue actuelle
-    if (typeof applyLanguage === 'function') {
-        applyLanguage();
-    }
+    applyLanguage();
 });
 
 // Initialise les onglets
@@ -592,5 +592,148 @@ function convertWallets(newCurrency) {
     } catch (error) {
         console.error('Erreur lors de la conversion des portefeuilles:', error);
         return false;
+    }
+}
+
+// Fonction pour appliquer le thème (implémentée ici pour assurer la compatibilité)
+function applyTheme() {
+    const isDarkMode = userPreferences.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    
+    // Mettre à jour le switch si présent
+    const themeSwitch = document.getElementById('themeSwitch');
+    if (themeSwitch) {
+        themeSwitch.checked = isDarkMode;
+    }
+    
+    // Mettre à jour les radio buttons si présents
+    const lightThemeRadio = document.getElementById('light-theme');
+    const darkThemeRadio = document.getElementById('dark-theme');
+    
+    if (lightThemeRadio && darkThemeRadio) {
+        lightThemeRadio.checked = !isDarkMode;
+        darkThemeRadio.checked = isDarkMode;
+    }
+    
+    // Mettre à jour les prévisualisations de thèmes si elles existent
+    const lightThemePreview = document.querySelector('.theme-preview.light-theme');
+    const darkThemePreview = document.querySelector('.theme-preview.dark-theme');
+    
+    if (lightThemePreview && darkThemePreview) {
+        lightThemePreview.classList.toggle('active', !isDarkMode);
+        darkThemePreview.classList.toggle('active', isDarkMode);
+    }
+    
+    console.log('Theme applied:', isDarkMode ? 'dark' : 'light');
+}
+
+// Fonction pour appliquer la langue
+function applyLanguage() {
+    const currentLang = userPreferences.language;
+    document.documentElement.lang = currentLang;
+    
+    // Mettre à jour le sélecteur de langue
+    const langRadios = document.querySelectorAll('input[name="language"]');
+    langRadios.forEach(radio => {
+        radio.checked = radio.value === currentLang;
+    });
+    
+    // Appliquer la traduction en fonction de la langue
+    if (currentLang === 'en') {
+        translatePageToEnglish();
+    } else {
+        translatePageToFrench();
+    }
+    
+    console.log('Language applied:', currentLang);
+}
+
+// Fonction pour sauvegarder les préférences
+function saveUserPreferences() {
+    try {
+        localStorage.setItem(USER_PREFS_KEY, JSON.stringify(userPreferences));
+        console.log('Préférences utilisateur sauvegardées:', userPreferences);
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde des préférences utilisateur:', error);
+    }
+}
+
+// Fonction de traduction en anglais
+function translatePageToEnglish() {
+    try {
+        // Traduire les onglets
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            const tabContent = tab.textContent.trim();
+            if (tabContent.includes('Profil')) {
+                tab.innerHTML = tab.innerHTML.replace('Profil', 'Profile');
+            } else if (tabContent.includes('Apparence')) {
+                tab.innerHTML = tab.innerHTML.replace('Apparence', 'Appearance');
+            } else if (tabContent.includes('Sécurité')) {
+                tab.innerHTML = tab.innerHTML.replace('Sécurité', 'Security');
+            } else if (tabContent.includes('Utilisateurs')) {
+                tab.innerHTML = tab.innerHTML.replace('Utilisateurs', 'Users');
+            } else if (tabContent.includes('Abonnement')) {
+                tab.innerHTML = tab.innerHTML.replace('Abonnement', 'Subscription');
+            } else if (tabContent.includes('Notifications')) {
+                tab.innerHTML = tab.innerHTML.replace('Notifications', 'Notifications');
+            }
+        });
+        
+        // Traduire les titres de section et textes communs
+        document.querySelectorAll('h1, h2').forEach(h => {
+            if (h.textContent.includes('Paramètres')) {
+                h.textContent = h.textContent.replace('Paramètres', 'Settings');
+            }
+        });
+        
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Personnalisez')) {
+                p.textContent = 'Personalize your MaPocket experience';
+            }
+        });
+        
+        console.log('Page traduite en anglais');
+    } catch (error) {
+        console.error('Erreur lors de la traduction en anglais:', error);
+    }
+}
+
+// Fonction de traduction en français
+function translatePageToFrench() {
+    try {
+        // Traduire les onglets
+        document.querySelectorAll('.tab-btn').forEach(tab => {
+            const tabContent = tab.textContent.trim();
+            if (tabContent.includes('Profile')) {
+                tab.innerHTML = tab.innerHTML.replace('Profile', 'Profil');
+            } else if (tabContent.includes('Appearance')) {
+                tab.innerHTML = tab.innerHTML.replace('Appearance', 'Apparence');
+            } else if (tabContent.includes('Security')) {
+                tab.innerHTML = tab.innerHTML.replace('Security', 'Sécurité');
+            } else if (tabContent.includes('Users')) {
+                tab.innerHTML = tab.innerHTML.replace('Users', 'Utilisateurs');
+            } else if (tabContent.includes('Subscription')) {
+                tab.innerHTML = tab.innerHTML.replace('Subscription', 'Abonnement');
+            } else if (tabContent.includes('Notifications')) {
+                tab.innerHTML = tab.innerHTML.replace('Notifications', 'Notifications');
+            }
+        });
+        
+        // Traduire les titres de section et textes communs
+        document.querySelectorAll('h1, h2').forEach(h => {
+            if (h.textContent.includes('Settings')) {
+                h.textContent = h.textContent.replace('Settings', 'Paramètres');
+            }
+        });
+        
+        document.querySelectorAll('p').forEach(p => {
+            if (p.textContent.includes('Personalize your')) {
+                p.textContent = 'Personnalisez votre expérience MaPocket';
+            }
+        });
+        
+        console.log('Page traduite en français');
+    } catch (error) {
+        console.error('Erreur lors de la traduction en français:', error);
     }
 }
