@@ -845,9 +845,10 @@ function editProject(projectId) {
     if (projectToEdit) {
         // Sauvegarder le projet en cours d'édition dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToEdit));
+        localStorage.setItem('projectInEditing', projectId);
         
-        // Rediriger vers la page d'édition
-        window.location.href = 'nouveau-projet.html?edit=true';
+        // Rediriger vers la page d'édition avec l'ID du projet
+        window.location.href = 'nouveau-projet.html?edit=true&id=' + projectId;
     }
 }
 

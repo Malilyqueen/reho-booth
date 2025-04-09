@@ -354,6 +354,11 @@ function initializeProjectForm() {
     }
 
     // Handle form submission
+    // Vérifier si nous sommes en mode édition
+    const urlParams = new URLSearchParams(window.location.search);
+    const editMode = urlParams.get('edit') === 'true';
+    const projectId = urlParams.get('id');
+    
     const projectForm = document.getElementById('newProjectForm');
     if (projectForm) {
         projectForm.addEventListener('submit', function(e) {
@@ -376,9 +381,32 @@ function initializeProjectForm() {
                 savedProjects = [];
             }
             
-            formData.id = Date.now().toString(); // Identifiant unique pour le projet
-            formData.createdAt = new Date().toISOString();
-            savedProjects.push(formData);
+            // Si nous sommes en mode édition, mettre à jour le projet existant
+            if (editMode && projectId) {
+                console.log('Mise à jour du projet existant avec ID:', projectId);
+                formData.id = projectId;
+                
+                // Conserver la date de création d'origine du projet
+                const existingProject = savedProjects.find(p => p.id === projectId);
+                if (existingProject) {
+                    formData.createdAt = existingProject.createdAt;
+                } else {
+                    formData.createdAt = new Date().toISOString();
+                }
+                
+                // Remplacer le projet existant par le projet mis à jour
+                savedProjects = savedProjects.map(project => {
+                    if (project.id === projectId) {
+                        return formData;
+                    }
+                    return project;
+                });
+            } else {
+                // Création d'un nouveau projet
+                formData.id = Date.now().toString(); // Identifiant unique pour le projet
+                formData.createdAt = new Date().toISOString();
+                savedProjects.push(formData);
+            }
             
             try {
                 localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
@@ -447,8 +475,12 @@ function initializeProjectForm() {
                 console.log('Liste de souhaits créée avec succès pour le projet:', formData.id);
             }
             
-            // In a real application, this would save the data and redirect to the dashboard
-            alert('Projet créé avec succès!');
+            // Afficher un message de succès différent selon le mode
+            if (editMode && projectId) {
+                alert('Projet mis à jour avec succès!');
+            } else {
+                alert('Projet créé avec succès!');
+            }
             // Then redirect to dashboard
             window.location.href = 'index.html';
         });
@@ -3128,9 +3160,15 @@ function updateAIAdvice(templateType) {
 
 // Fonction pour activer le mode édition d'un projet existant
 function enableEditMode(projectId) {
+    // Si l'ID du projet n'est pas fourni, essayer de le récupérer depuis l'URL
     if (!projectId) {
-        console.error("L'ID du projet est manquant pour le mode édition");
-        return;
+        const urlParams = new URLSearchParams(window.location.search);
+        projectId = urlParams.get('id');
+        
+        if (!projectId) {
+            console.error("L'ID du projet est manquant pour le mode édition");
+            return;
+        }
     }
     
     console.log("Mode édition activé pour le projet:", projectId);
@@ -3151,6 +3189,7 @@ function enableEditMode(projectId) {
     const projectToEdit = savedProjects.find(project => project.id === projectId);
     if (!projectToEdit) {
         console.error('Projet non trouvé avec ID:', projectId);
+        console.log('Projets disponibles:', savedProjects);
         return;
     }
     
