@@ -7,6 +7,46 @@ let lastSavedData = null;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('New Project page initialized');
     
+    // Ajouter les styles CSS pour le mode édition
+    const style = document.createElement('style');
+    style.textContent = `
+        .edit-mode-notice {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .edit-mode-notice i {
+            margin-right: 8px;
+        }
+        
+        .project-form-container.edit-mode .form-header h3 {
+            color: #0d6efd;
+        }
+        
+        .btn-update {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        
+        .save-changes-btn {
+            margin-right: 10px;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        
+        .cancel-edit-btn {
+            margin-left: 10px;
+        }
+    `;
+    document.head.appendChild(style);
+    
     // S'assurer que les préférences sont appliquées avant d'initialiser la page
     if (window.preferencesManager) {
         window.preferencesManager.applyAllPreferences();
@@ -552,8 +592,18 @@ function restoreProjectData(data) {
         }
     }
     
-    // Les catégories et sous-catégories seront automatiquement chargées via updateTemplateCategories
-    // qui est appelé lors de la sélection du modèle
+    // Restaurer les catégories et sous-catégories du projet
+    if (data.categories && Array.isArray(data.categories)) {
+        console.log('Restauration des catégories du projet:', data.categories);
+        
+        // D'abord, déclencher la mise à jour du template pour créer la structure
+        updateTemplateCategories(data.template);
+        
+        // Ensuite, mettre à jour avec les données réelles du projet
+        updateCategoriesUI(data.categories, currencySymbol);
+    } else {
+        console.warn('Aucune catégorie trouvée dans les données du projet ou format incorrect');
+    }
     
     // Définir lastSavedData pour la sauvegarde automatique
     lastSavedData = data;
@@ -3204,86 +3254,166 @@ function enableEditMode(projectId) {
     // Charger les données du projet dans le formulaire
     restoreProjectData(projectToEdit);
     
-    // Modifier le bouton de soumission
+    // Modifier l'apparence du formulaire pour le mode édition
+    document.querySelector('.project-form-container').classList.add('edit-mode');
+    
+    // Ajouter un message indiquant qu'on est en mode édition
+    const formHeader = document.querySelector('.form-header');
+    if (formHeader) {
+        const editModeNotice = document.createElement('div');
+        editModeNotice.className = 'edit-mode-notice';
+        editModeNotice.innerHTML = '<i class="fas fa-pencil-alt"></i> Mode Édition';
+        formHeader.appendChild(editModeNotice);
+    }
+    
+    // Ajouter un bouton de sauvegarde en temps réel
+    const formActions = document.querySelector('.form-actions');
+    if (formActions) {
+        const saveButton = document.createElement('button');
+        saveButton.type = 'button';
+        saveButton.className = 'btn btn-secondary save-changes-btn';
+        saveButton.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+        
+        // Insérer avant le bouton de soumission
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (submitButton && submitButton.parentNode) {
+            submitButton.parentNode.insertBefore(saveButton, submitButton);
+            
+            // Ajouter l'event listener pour sauvegarder sans quitter
+            saveButton.addEventListener('click', function() {
+                // Collecter les données du formulaire
+                const formData = getProjectData();
+                // Conserver l'ID et la date de création du projet original
+                formData.id = projectId;
+                formData.createdAt = projectToEdit.createdAt;
+                
+                // Mise à jour du projet
+                updateExistingProject(formData, projectToEdit, projectId, false);
+            });
+        }
+    }
+    
+    // Modifier le bouton de soumission principal
     const submitButton = document.querySelector('button[type="submit"]');
     if (submitButton) {
-        submitButton.textContent = 'Mettre à jour le projet';
+        submitButton.innerHTML = '<i class="fas fa-check"></i> Mettre à jour et quitter';
         submitButton.classList.add('btn-update');
         
         // Supprimer tous les event listeners existants
         const oldButton = submitButton.cloneNode(true);
         submitButton.parentNode.replaceChild(oldButton, submitButton);
         
-        // Ajouter le nouvel event listener pour la mise à jour
+        // Ajouter le nouvel event listener pour la mise à jour et redirection
         oldButton.addEventListener('click', function(e) {
             e.preventDefault();
             
             // Collecter les données du formulaire
             const formData = getProjectData();
-            console.log('Formulaire de mise à jour soumis:', formData);
-            
             // Conserver l'ID et la date de création du projet original
             formData.id = projectId;
             formData.createdAt = projectToEdit.createdAt;
             
-            // Charger les projets existants
-            let savedProjects = [];
-            try {
-                savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
-                if (!Array.isArray(savedProjects)) {
-                    console.error('savedProjects n\'est pas un tableau:', savedProjects);
-                    savedProjects = [];
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des projets sauvegardés:', error);
-                savedProjects = [];
-            }
-            
-            // Remplacer le projet existant par le projet mis à jour
-            const updatedProjects = savedProjects.map(project => {
-                if (project.id === projectId) {
-                    return formData;
-                }
-                return project;
-            });
-            
-            try {
-                localStorage.setItem('savedProjects', JSON.stringify(updatedProjects));
-                console.log('Projet mis à jour avec succès. Total projets:', updatedProjects.length);
-                
-                // Afficher une notification de succès
-                if (window.showNotification) {
-                    window.showNotification('Projet mis à jour avec succès!', 'success');
-                }
-                
-                // Si l'option de liaison au portefeuille a changé, mettre à jour les projets liés
-                if (formData.linkToWallet !== projectToEdit.linkToWallet) {
-                    let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
-                    
-                    if (formData.linkToWallet) {
-                        // Ajouter à la liste des projets liés s'il n'y est pas déjà
-                        if (!walletData.linkedProjects.includes(projectId)) {
-                            walletData.linkedProjects.push(projectId);
-                        }
-                    } else {
-                        // Retirer de la liste des projets liés
-                        walletData.linkedProjects = walletData.linkedProjects.filter(id => id !== projectId);
-                    }
-                    
-                    localStorage.setItem('walletData', JSON.stringify(walletData));
-                }
-                
-                // Effacer le projet en cours d'édition
+            // Mise à jour du projet et redirection
+            updateExistingProject(formData, projectToEdit, projectId, true);
+        });
+    }
+    
+    // Ajouter un bouton pour annuler l'édition
+    if (formActions && submitButton) {
+        const cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.className = 'btn btn-outline-secondary cancel-edit-btn';
+        cancelButton.innerHTML = '<i class="fas fa-times"></i> Annuler';
+        
+        // Ajouter après le bouton de soumission
+        submitButton.parentNode.appendChild(cancelButton);
+        
+        // Ajouter l'event listener pour annuler
+        cancelButton.addEventListener('click', function() {
+            if (confirm('Voulez-vous vraiment annuler les modifications ? Les changements non sauvegardés seront perdus.')) {
+                // Effacer les données d'édition
                 localStorage.removeItem('projectInEditing');
                 localStorage.removeItem('currentProject');
                 
                 // Rediriger vers la page d'accueil
                 window.location.href = 'index.html';
-                
-            } catch (error) {
-                console.error('Erreur lors de la mise à jour du projet:', error);
-                alert('Erreur lors de la mise à jour du projet. Veuillez réessayer.');
             }
         });
     }
+}
+
+// Fonction utilitaire pour mettre à jour un projet existant
+function updateExistingProject(formData, originalProject, projectId, shouldRedirect) {
+    // Charger les projets existants
+    let savedProjects = [];
+    try {
+        savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        if (!Array.isArray(savedProjects)) {
+            console.error('savedProjects n\'est pas un tableau:', savedProjects);
+            savedProjects = [];
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des projets sauvegardés:', error);
+        savedProjects = [];
+    }
+    
+    // Remplacer le projet existant par le projet mis à jour
+    const updatedProjects = savedProjects.map(project => {
+        if (project.id === projectId) {
+            return formData;
+        }
+        return project;
+    });
+    
+    try {
+        localStorage.setItem('savedProjects', JSON.stringify(updatedProjects));
+        console.log('Projet mis à jour avec succès. Total projets:', updatedProjects.length);
+        
+        // Afficher une notification de succès
+        if (window.showNotification) {
+            if (shouldRedirect) {
+                window.showNotification('Projet mis à jour avec succès!', 'success');
+            } else {
+                window.showNotification('Modifications enregistrées!', 'success');
+            }
+        } else {
+            if (shouldRedirect) {
+                alert('Projet mis à jour avec succès!');
+            } else {
+                alert('Modifications enregistrées!');
+            }
+        }
+        
+        // Si l'option de liaison au portefeuille a changé, mettre à jour les projets liés
+        if (formData.linkToWallet !== originalProject.linkToWallet) {
+            let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
+            
+            if (formData.linkToWallet) {
+                // Ajouter à la liste des projets liés s'il n'y est pas déjà
+                if (!walletData.linkedProjects.includes(projectId)) {
+                    walletData.linkedProjects.push(projectId);
+                }
+            } else {
+                // Retirer de la liste des projets liés
+                walletData.linkedProjects = walletData.linkedProjects.filter(id => id !== projectId);
+            }
+            
+            localStorage.setItem('walletData', JSON.stringify(walletData));
+        }
+        
+        // Si on doit rediriger, nettoyer et aller à l'accueil
+        if (shouldRedirect) {
+            // Effacer le projet en cours d'édition
+            localStorage.removeItem('projectInEditing');
+            localStorage.removeItem('currentProject');
+            
+            // Rediriger vers la page d'accueil
+            window.location.href = 'index.html';
+        }
+        
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du projet:', error);
+        alert('Erreur lors de la mise à jour du projet. Veuillez réessayer.');
+    }
+}
 }
