@@ -15,6 +15,12 @@
     overflow-y: auto;
 }
 
+@media (max-width: 768px) {
+    .content-container {
+        margin-left: 60px;
+    }
+}
+
 .wishlist-container {
     margin-top: 20px;
 }

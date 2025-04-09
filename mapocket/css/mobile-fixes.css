@@ -88,4 +88,22 @@
         margin-left: 60px;
         padding: 15px 10px;
     }
+    
+    /* Styles responsives pour les tables */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+    
+    /* Ajustements des boutons sur mobile */
+    .header-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .header-actions .btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
 }

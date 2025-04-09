@@ -8,6 +8,13 @@
     margin-bottom: 30px;
 }
 
+@media (max-width: 768px) {
+    .pro-stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
 /* Conteneur des onglets */
 .tabs-container {
     background-color: #fff;
@@ -393,5 +400,43 @@
         font-weight: 600;
         display: inline-block;
         width: 100px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    .tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .accounting-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .accounting-period {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .date-range {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .date-input {
+        width: 100%;
     }
 }

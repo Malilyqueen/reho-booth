@@ -3150,6 +3150,18 @@ label {
     margin-bottom: 30px;
 }
 
+/* Responsive pour wallet-summary et wallet-sections */
+@media (max-width: 768px) {
+    .wallet-summary {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .wallet-sections {
+        grid-template-columns: 1fr;
+    }
+}
+
 .section {
     background-color: #fff;
     border-radius: 10px;

@@ -178,6 +178,23 @@
     margin-top: 20px;
 }
 
+@media (max-width: 768px) {
+    #products-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .partner-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+    
+    .partner-tab-btn {
+        padding: 8px 15px;
+    }
+}
+
 .product-card {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
