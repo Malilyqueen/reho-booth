@@ -8,6 +8,7 @@ let userPreferences = {
     fontSize: 'medium',
     language: 'fr',
     dateFormat: 'DD/MM/YYYY',
+    currency: 'EUR',  // 'EUR' ou 'USD'
     plan: 'freemium'  // ou 'basic', 'pro'
 };
 
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initThemeSelector();
     initFontSizeSelector();
     initLanguageSelector();
+    initCurrencySelector();
     initProfileForm();
     
     // Initialiser les fonctionnalités selon le plan utilisateur
@@ -77,6 +79,14 @@ function applyUserPreferences() {
     
     // Appliquer le format de date
     document.getElementById('dateFormat').value = userPreferences.dateFormat;
+    
+    // Appliquer la devise
+    if (userPreferences.currency) {
+        const currencyRadio = document.getElementById('currency-' + userPreferences.currency.toLowerCase());
+        if (currencyRadio) {
+            currencyRadio.checked = true;
+        }
+    }
     
     // Appliquer le plan utilisateur
     updatePlanDisplay(userPreferences.plan);
@@ -227,6 +237,253 @@ function initLanguageSelector() {
         saveUserPreferences();
     });
 }
+
+/**
+ * Initialise le sélecteur de devise
+ */
+function initCurrencySelector() {
+    const currencyRadios = document.querySelectorAll('input[name="currency"]');
+    
+    // S'assurer que la devise correcte est sélectionnée au chargement
+    if (userPreferences.currency) {
+        const currencyRadio = document.getElementById('currency-' + userPreferences.currency.toLowerCase());
+        if (currencyRadio) {
+            currencyRadio.checked = true;
+        }
+    }
+    
+    // Gestionnaire d'événements pour les radios de devise
+    currencyRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            const selectedCurrency = radio.value;
+            const oldCurrency = userPreferences.currency;
+            userPreferences.currency = selectedCurrency;
+            
+            // Sauvegarder les préférences
+            saveUserPreferences();
+            
+            // Appliquer les changements de devise aux projets et portefeuilles
+            if (oldCurrency !== selectedCurrency) {
+                convertAllCurrencies(oldCurrency, selectedCurrency);
+                
+                // Afficher une notification de succès
+                const currencyNames = {
+                    'EUR': 'euros',
+                    'USD': 'dollars US'
+                };
+                showNotification(`Devise changée en ${currencyNames[selectedCurrency]}. Tous les montants ont été convertis.`, 'success');
+            }
+        });
+    });
+    
+    // Ajouter des styles CSS pour les boutons de devise
+    addCurrencySelectorStyles();
+}
+
+/**
+ * Convertit toutes les valeurs monétaires dans les projets et portefeuilles
+ * de l'ancienne devise vers la nouvelle
+ */
+function convertAllCurrencies(fromCurrency, toCurrency) {
+    try {
+        // Définir le taux de conversion
+        const conversionRate = getCurrencyConversionRate(fromCurrency, toCurrency);
+        
+        // Convertir les projets
+        const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        const convertedProjects = convertProjectsCurrency(projects, conversionRate, fromCurrency, toCurrency);
+        localStorage.setItem('savedProjects', JSON.stringify(convertedProjects));
+        
+        // Convertir les portefeuilles
+        const wallets = JSON.parse(localStorage.getItem('mapocket_wallets') || '[]');
+        const convertedWallets = convertWalletsCurrency(wallets, conversionRate, fromCurrency, toCurrency);
+        localStorage.setItem('mapocket_wallets', JSON.stringify(convertedWallets));
+        
+        console.log('Toutes les valeurs monétaires ont été converties avec succès');
+        return true;
+    } catch (error) {
+        console.error('Erreur lors de la conversion des devises:', error);
+        showNotification('Erreur lors de la conversion des devises', 'error');
+        return false;
+    }
+}
+
+/**
+ * Convertit les montants des projets de l'ancienne devise vers la nouvelle
+ */
+function convertProjectsCurrency(projects, conversionRate, fromCurrency, toCurrency) {
+    const currencySymbols = {
+        'EUR': '€',
+        'USD': '$'
+    };
+    
+    return projects.map(project => {
+        // Convertir le budget total du projet
+        if (project.totalBudget) {
+            // Extraire la valeur numérique du budget
+            const budgetValue = parseFloat(project.totalBudget.replace(/[^0-9.,]/g, '').replace(',', '.'));
+            if (!isNaN(budgetValue)) {
+                // Convertir et formater le nouveau montant
+                const convertedValue = (budgetValue * conversionRate).toFixed(2);
+                project.totalBudget = `${currencySymbols[toCurrency]} ${convertedValue}`;
+            }
+        }
+        
+        // Convertir les montants des catégories et sous-catégories
+        if (project.categories && Array.isArray(project.categories)) {
+            project.categories = project.categories.map(category => {
+                // Convertir le montant de la catégorie
+                if (category.amount) {
+                    const categoryValue = parseFloat(category.amount.replace(/[^0-9.,]/g, '').replace(',', '.'));
+                    if (!isNaN(categoryValue)) {
+                        const convertedValue = (categoryValue * conversionRate).toFixed(2);
+                        category.amount = `${currencySymbols[toCurrency]} ${convertedValue}`;
+                    }
+                }
+                
+                // Convertir les montants des sous-catégories
+                if (category.subcategories && Array.isArray(category.subcategories)) {
+                    category.subcategories = category.subcategories.map(subcategory => {
+                        if (subcategory.amount) {
+                            const subcategoryValue = parseFloat(subcategory.amount.replace(/[^0-9.,]/g, '').replace(',', '.'));
+                            if (!isNaN(subcategoryValue)) {
+                                const convertedValue = (subcategoryValue * conversionRate).toFixed(2);
+                                subcategory.amount = `${currencySymbols[toCurrency]} ${convertedValue}`;
+                            }
+                        }
+                        
+                        // Convertir les montants des lignes
+                        if (subcategory.lines && Array.isArray(subcategory.lines)) {
+                            subcategory.lines = subcategory.lines.map(line => {
+                                if (line.amount) {
+                                    const lineValue = parseFloat(line.amount.replace(/[^0-9.,]/g, '').replace(',', '.'));
+                                    if (!isNaN(lineValue)) {
+                                        const convertedValue = (lineValue * conversionRate).toFixed(2);
+                                        line.amount = `${currencySymbols[toCurrency]} ${convertedValue}`;
+                                    }
+                                }
+                                return line;
+                            });
+                        }
+                        
+                        return subcategory;
+                    });
+                }
+                
+                return category;
+            });
+        }
+        
+        // Convertir les dépenses réelles
+        if (project.realExpenses && Array.isArray(project.realExpenses)) {
+            project.realExpenses = project.realExpenses.map(expense => {
+                if (expense.amount) {
+                    const expenseValue = parseFloat(expense.amount.toString().replace(/[^0-9.,]/g, '').replace(',', '.'));
+                    if (!isNaN(expenseValue)) {
+                        expense.amount = expenseValue * conversionRate;
+                    }
+                }
+                return expense;
+            });
+        }
+        
+        return project;
+    });
+}
+
+/**
+ * Convertit les montants des portefeuilles de l'ancienne devise vers la nouvelle
+ */
+function convertWalletsCurrency(wallets, conversionRate, fromCurrency, toCurrency) {
+    return wallets.map(wallet => {
+        // Convertir le solde du portefeuille
+        if (wallet.balance) {
+            wallet.balance = wallet.balance * conversionRate;
+        }
+        
+        // Mettre à jour le symbole de la devise
+        wallet.currency = toCurrency === 'EUR' ? '€' : '$';
+        
+        // Convertir l'historique des transactions si présent
+        if (wallet.transactions && Array.isArray(wallet.transactions)) {
+            wallet.transactions = wallet.transactions.map(transaction => {
+                if (transaction.amount) {
+                    transaction.amount = transaction.amount * conversionRate;
+                }
+                return transaction;
+            });
+        }
+        
+        return wallet;
+    });
+}
+
+/**
+ * Retourne le taux de conversion entre deux devises
+ * Note: Dans une app réelle, nous utiliserions une API de taux de change
+ */
+function getCurrencyConversionRate(fromCurrency, toCurrency) {
+    // Taux de conversion simplifiés pour la démo
+    const rates = {
+        'EUR_USD': 1.09,  // 1 EUR = 1.09 USD (taux approximatif)
+        'USD_EUR': 0.92   // 1 USD = 0.92 EUR (taux approximatif)
+    };
+    
+    const rateKey = `${fromCurrency}_${toCurrency}`;
+    
+    // Si les devises sont identiques, le taux est 1
+    if (fromCurrency === toCurrency) {
+        return 1;
+    }
+    
+    // Retourner le taux approprié
+    if (rates[rateKey]) {
+        return rates[rateKey];
+    }
+    
+    // Taux par défaut si non trouvé (ne devrait pas arriver)
+    console.warn(`Taux de conversion non trouvé pour ${rateKey}, utilisation du taux par défaut 1`);
+    return 1;
+}
+
+/**
+ * Ajoute des styles CSS pour les boutons de devise
+ */
+function addCurrencySelectorStyles() {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        .currency-selector {
+            display: flex;
+            gap: 10px;
+        }
+        .currency-option {
+            flex: 1;
+        }
+        .currency-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .currency-symbol {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        input[name="currency"]:checked + .currency-btn {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+    `;
+    document.head.appendChild(styleElement);
+}
+
 
 /**
  * Initialise le formulaire de profil
