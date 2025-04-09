@@ -15,8 +15,8 @@ const defaultPreferences = {
     plan: 'freemium'
 };
 
-// Préférences utilisateur actuelles
-let userPrefs = { ...defaultPreferences };
+// Préférences utilisateur actuelles - Forcer le thème clair (light) temporairement
+let userPrefs = { ...defaultPreferences, theme: 'light' };
 
 /**
  * Charge les préférences utilisateur depuis le localStorage
@@ -25,7 +25,9 @@ function loadPreferences() {
     try {
         const savedPreferences = localStorage.getItem('userPreferences');
         if (savedPreferences) {
-            userPrefs = { ...defaultPreferences, ...JSON.parse(savedPreferences) };
+            // Charger les préférences mais forcer le thème clair (light) temporairement
+            const parsedPrefs = JSON.parse(savedPreferences);
+            userPrefs = { ...defaultPreferences, ...parsedPrefs, theme: 'light' };
             console.log('Préférences utilisateur chargées:', userPrefs);
         }
     } catch (error) {
@@ -464,8 +466,10 @@ window.preferencesManager = {
     getCurrencySymbol,
     setTheme: (theme) => {
         if (theme === 'light' || theme === 'dark') {
-            userPrefs.theme = theme;
+            // Forcer le thème clair (light) temporairement
+            userPrefs.theme = 'light';
             applyTheme();
+            // Enregistrer la valeur 'light' même si l'utilisateur choisit 'dark'
             savePreferences();
             return true;
         }
