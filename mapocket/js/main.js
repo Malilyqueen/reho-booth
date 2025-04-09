@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Met à jour l'icône de devise en fonction des préférences utilisateur
 function updateCurrencyIcon() {
-    const currencyIcons = document.querySelectorAll('.stat-icon i.fas.fa-euro-sign');
+    const currencyIcons = document.querySelectorAll('.budget-currency-icon');
     if (currencyIcons.length === 0) return;
     
     // Trouver la devise sélectionnée
@@ -104,7 +104,8 @@ function updateCurrencyIcon() {
     
     // Mettre à jour la classe pour toutes les icônes
     currencyIcons.forEach(icon => {
-        icon.className = iconClass;
+        // Conserver la classe 'budget-currency-icon' et ajouter les classes de FontAwesome
+        icon.className = 'budget-currency-icon ' + iconClass;
         // S'assurer que le texte est vide (important pour le cas où on a utilisé 'Ar' avant)
         icon.textContent = '';
     });
@@ -324,6 +325,9 @@ function initializeUI() {
             }
         });
     });
+    
+    // Mettre à jour l'icône de devise
+    updateCurrencyIcon();
     
     // Mettre à jour les statistiques
     updateDashboardStats();
