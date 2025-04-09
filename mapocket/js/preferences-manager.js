@@ -95,6 +95,15 @@ function applyTheme() {
     // Appliquer à l'élément body
     document.body.classList.toggle('dark-mode', isDarkMode);
     
+    // Appliquer aux conteneurs principaux pour assurer une application complète
+    document.querySelectorAll('.container, .app-container, .content, .sidebar').forEach(element => {
+        if (isDarkMode) {
+            element.classList.add('dark-mode');
+        } else {
+            element.classList.remove('dark-mode');
+        }
+    });
+    
     // Mettre à jour les éléments d'interface si nécessaire
     const themeSwitch = document.getElementById('themeSwitch');
     if (themeSwitch) {
@@ -119,8 +128,21 @@ function applyTheme() {
         darkThemePreview.classList.toggle('active', isDarkMode);
     }
     
+    // Appliquer le thème à tous les éléments importants
+    if (isDarkMode) {
+        // Appliquer le thème sombre à tous les composants importants
+        document.querySelectorAll('.dashboard-stats, .stat-card, .widget, .projects-table, .projects-table th, .projects-table td, .card, .panel, .modal, .notification, .timeline, .timeline-item').forEach(el => {
+            el.classList.add('dark-mode');
+        });
+    } else {
+        // Supprimer le thème sombre
+        document.querySelectorAll('.dashboard-stats, .stat-card, .widget, .projects-table, .projects-table th, .projects-table td, .card, .panel, .modal, .notification, .timeline, .timeline-item').forEach(el => {
+            el.classList.remove('dark-mode');
+        });
+    }
+    
     // Mettre à jour les menus (s'assurer qu'ils restent visibles en mode sombre)
-    const menuItems = document.querySelectorAll('.main-nav .nav-item');
+    const menuItems = document.querySelectorAll('.main-nav .nav-item, .main-nav li');
     menuItems.forEach(item => {
         if (isDarkMode) {
             item.classList.add('dark-nav-item');
@@ -128,6 +150,9 @@ function applyTheme() {
             item.classList.remove('dark-nav-item');
         }
     });
+    
+    // Sauvegarde de préférence dans localStorage en plus des settings
+    localStorage.setItem('theme_preference', isDarkMode ? 'dark' : 'light');
     
     console.log('Theme applied:', isDarkMode ? 'dark' : 'light');
 }
@@ -165,15 +190,35 @@ function applyLanguage() {
 function getAllTranslatableElements() {
     // Sélectionner tous les éléments qui contiennent du texte visible
     return [
-        ...document.querySelectorAll('.main-nav a .menu-text'), // Menu principal
-        ...document.querySelectorAll('.tab-btn'),               // Onglets
-        ...document.querySelectorAll('h1, h2, h3'),             // Titres
-        ...document.querySelectorAll('button'),                 // Boutons
-        ...document.querySelectorAll('label'),                  // Labels
-        ...document.querySelectorAll('p'),                      // Paragraphes
-        ...document.querySelectorAll('th'),                     // En-têtes de tableau
-        ...document.querySelectorAll('.card-title'),            // Titres de cartes
-        ...document.querySelectorAll('.section-title')          // Titres de sections
+        ...document.querySelectorAll('.main-nav a .menu-text'),    // Menu principal
+        ...document.querySelectorAll('.tab-btn'),                  // Onglets
+        ...document.querySelectorAll('h1, h2, h3, h4, h5, h6'),    // Tous les titres
+        ...document.querySelectorAll('button'),                    // Boutons
+        ...document.querySelectorAll('label'),                     // Labels
+        ...document.querySelectorAll('p'),                         // Paragraphes
+        ...document.querySelectorAll('th'),                        // En-têtes de tableau
+        ...document.querySelectorAll('td'),                        // Cellules de tableau
+        ...document.querySelectorAll('.card-title'),               // Titres de cartes
+        ...document.querySelectorAll('.section-title'),            // Titres de sections
+        ...document.querySelectorAll('.btn'),                      // Boutons avec classe .btn
+        ...document.querySelectorAll('.widget-header h3'),         // Titres de widgets
+        ...document.querySelectorAll('.stat-info h3'),             // Titres de statistiques
+        ...document.querySelectorAll('.user-greeting h2'),         // Titre de bienvenue
+        ...document.querySelectorAll('.user-greeting p'),          // Sous-titre de bienvenue
+        ...document.querySelectorAll('.content-header h2'),        // Titres d'en-tête de contenu
+        ...document.querySelectorAll('.content-header p'),         // Sous-titres d'en-tête
+        ...document.querySelectorAll('.stat-card .stat-info h3'),  // Titres de cartes statistiques
+        ...document.querySelectorAll('.btn-text'),                 // Texte des boutons
+        ...document.querySelectorAll('.advice-card p'),            // Texte des conseils
+        ...document.querySelectorAll('.empty-projects-message p'), // Message quand aucun projet
+        ...document.querySelectorAll('.option-help'),              // Textes d'aide
+        ...document.querySelectorAll('.form-group label'),         // Labels de formulaire
+        ...document.querySelectorAll('input[type="submit"]'),      // Boutons de soumission
+        ...document.querySelectorAll('input[type="button"]'),      // Boutons input
+        ...document.querySelectorAll('select option'),             // Options de select
+        ...document.querySelectorAll('.project-status'),           // Statut des projets
+        ...document.querySelectorAll('.timeline-header h3'),       // Titre de timeline
+        ...document.querySelectorAll('.empty-timeline-message p')  // Message quand timeline vide
     ];
 }
 
@@ -182,15 +227,43 @@ const frToEnDict = {
     // Menu principal
     'Tableau de bord': 'Dashboard',
     'Mes Projets': 'My Projects',
+    'Créer un projet': 'Create a project',
     'Mon Portefeuille': 'My Wallet',
     'Objectifs & Défis': 'Goals & Challenges',
     'Projets partagés': 'Shared Projects',
+    'Liste de souhaits': 'Wishlist',
     'Liste des souhaits': 'Wishlist',
     'Produits partenaires': 'Partner Products',
     'Suggestions IA': 'AI Suggestions',
+    'Assistant Projet': 'Project Assistant',
     'Assistant création de projet': 'Project Assistant',
     'MaPocket Pro': 'MaPocket Pro',
+    'Outils Pro': 'Pro Tools',
     'Paramètres': 'Settings',
+    'Créer avec l\'IA': 'Create with AI',
+    
+    // Éléments du tableau de bord
+    'Bonjour': 'Hello',
+    'Voici un aperçu de votre budget actuel': 'Here is an overview of your current budget',
+    'Projets en cours': 'Active projects',
+    'Budget total': 'Total budget',
+    'Solde portefeuille': 'Wallet balance',
+    'Activité pro': 'Pro activity',
+    'Conseil IA du jour': 'AI tip of the day',
+    'Répartition des budgets': 'Budget distribution',
+    'Statistiques générales': 'General statistics',
+    'À venir dans les 30 jours': 'Coming up in the next 30 days',
+    'Nouveau': 'New',
+    'Nom': 'Name',
+    'Date': 'Date',
+    'Dépenses': 'Expenses',
+    'Utilisation': 'Usage',
+    'Statut': 'Status',
+    'Actions': 'Actions',
+    'Vous n\'avez pas encore de projets. Créez votre premier projet pour commencer!': 'You don\'t have any projects yet. Create your first project to get started!',
+    'Aucun événement à venir dans les 30 prochains jours.': 'No events coming up in the next 30 days.',
+    'devis': 'quotes',
+    'factures': 'invoices',
     
     // Onglets de paramètres
     'Profil': 'Profile',
@@ -199,6 +272,7 @@ const frToEnDict = {
     'Utilisateurs': 'Users',
     'Abonnement': 'Subscription',
     'Notifications': 'Notifications',
+    'Personnalisez l\'application selon vos préférences': 'Customize the application according to your preferences',
     
     // Boutons d'action
     'Ajouter': 'Add',
@@ -210,6 +284,10 @@ const frToEnDict = {
     'Valider': 'Validate',
     'Enregistrer': 'Save',
     'Confirmer': 'Confirm',
+    'Exporter': 'Export',
+    'Importer': 'Import',
+    'Réinitialiser': 'Reset',
+    'Ajouter un rappel': 'Add reminder',
     
     // Projet
     'Nouveau projet': 'New project',
@@ -222,6 +300,16 @@ const frToEnDict = {
     'Ajouter une catégorie': 'Add category',
     'Ajouter une sous-catégorie': 'Add subcategory',
     'Ajouter une ligne': 'Add line',
+    'Titre': 'Title',
+    'Date': 'Date',
+    'Type': 'Type',
+    'Description': 'Description',
+    'Rappel': 'Reminder',
+    'Facture': 'Invoice',
+    'Devis': 'Quote',
+    'Revenu': 'Income',
+    'Objectif': 'Goal',
+    'Ajoutez des détails supplémentaires...': 'Add additional details...',
     
     // Portefeuille
     'Solde actuel': 'Current balance',
@@ -230,21 +318,51 @@ const frToEnDict = {
     'Dépenses': 'Expenses',
     'Transfert': 'Transfer',
     
+    // Statistiques
+    'Projets actifs': 'Active projects',
+    'Budget total': 'Total budget',
+    'Solde portefeuille': 'Wallet balance',
+    'Activité Pro': 'Pro Activity',
+    
+    // Timeline
+    'Tous les événements': 'All events',
+    'Projets': 'Projects',
+    'Factures': 'Invoices',
+    'Devis': 'Quotes',
+    'Revenus': 'Income',
+    'Objectifs': 'Goals',
+    'Alertes': 'Alerts',
+    
     // Phrases complètes
     'Personnalisez votre expérience MaPocket': 'Personalize your MaPocket experience',
     'Gérez vos paramètres de compte': 'Manage your account settings',
     'Choisissez votre thème': 'Choose your theme',
+    'Mode d\'affichage': 'Display mode',
+    'Choisissez un thème clair ou sombre': 'Choose a light or dark theme',
     'Clair': 'Light',
     'Sombre': 'Dark',
     'Langue': 'Language',
+    'Sélectionnez votre langue préférée': 'Select your preferred language',
     'Français': 'French',
     'Anglais': 'English',
+    'Format de date': 'Date format',
+    'Choisissez comment les dates sont affichées': 'Choose how dates are displayed',
+    'Devise': 'Currency',
+    'Choisissez votre devise préférée': 'Choose your preferred currency',
     'Devise principale': 'Primary currency',
     'Devise secondaire': 'Secondary currency',
-    'Prévisualisation': 'Preview',
+    'Devise d\'affichage secondaire': 'Secondary display currency',
+    'Cette devise sera utilisée pour tous les nouveaux projets et portefeuilles.': 'This currency will be used for all new projects and wallets.',
+    'Les montants seront aussi affichés dans cette devise pour comparaison.': 'Amounts will also be displayed in this currency for comparison.',
+    'Aperçu': 'Preview',
+    'Les taux de change sont mis à jour quotidiennement. Dernière mise à jour:': 'Exchange rates are updated daily. Last update:',
+    
+    // Profil
     'Nom complet': 'Full name',
     'Adresse e-mail': 'Email address',
     'Téléphone': 'Phone',
+    'Téléphone (optionnel)': 'Phone (optional)',
+    'Changer d\'avatar': 'Change avatar',
     'Changer le mot de passe': 'Change password',
     'Ancien mot de passe': 'Old password',
     'Nouveau mot de passe': 'New password',
@@ -254,13 +372,39 @@ const frToEnDict = {
     'Fonctionnalités disponibles': 'Available features',
     'Gérer les utilisateurs': 'Manage users',
     'Ajouter un utilisateur': 'Add user',
-    'Nom': 'Name',
-    'Email': 'Email',
     'Rôle': 'Role',
-    'Actions': 'Actions',
     'Administrateur': 'Administrator',
     'Éditeur': 'Editor',
     'Lecteur': 'Reader',
+    
+    // Taille de texte
+    'Taille du texte': 'Text size',
+    'Taille de police': 'Font size',
+    'Ajustez la taille du texte dans l\'application': 'Adjust the text size in the application',
+    
+    // Abonnement
+    'Freemium': 'Freemium',
+    'Basic': 'Basic',
+    'Pro': 'Pro',
+    'Vous utilisez actuellement le plan': 'You are currently using the plan',
+    'avec des fonctionnalités limitées': 'with limited features',
+    'Mettre à niveau pour débloquer toutes les fonctionnalités': 'Upgrade to unlock all features',
+    'Comparer les plans': 'Compare plans',
+    'Fonctionnalités': 'Features',
+    'Nombre de projets': 'Number of projects',
+    'illimité': 'unlimited',
+    'Portefeuilles': 'Wallets',
+    'Objectifs et défis': 'Goals and challenges',
+    'Outils pro': 'Pro tools',
+    'Suggestions IA': 'AI suggestions',
+    'Collaboration': 'Collaboration',
+    'Support premium': 'Premium support',
+    'par mois': 'per month',
+    'Démarrer gratuitement': 'Start for free',
+    'Choisir ce plan': 'Choose this plan',
+    'Plan actuel': 'Current plan',
+    'Contactez-nous': 'Contact us',
+    'pour plus d\'informations sur les offres entreprises': 'for more information on business offers',
     
     // Messages
     'Profil mis à jour avec succès': 'Profile updated successfully',
@@ -269,7 +413,23 @@ const frToEnDict = {
     'Utilisateur supprimé avec succès': 'User deleted successfully',
     'Une erreur est survenue': 'An error occurred',
     'Êtes-vous sûr de vouloir supprimer cet utilisateur ?': 'Are you sure you want to delete this user?',
-    'Cette action est irréversible': 'This action cannot be undone'
+    'Cette action est irréversible': 'This action cannot be undone',
+    'Thème mis à jour avec succès': 'Theme updated successfully',
+    'Langue mise à jour avec succès': 'Language updated successfully',
+    'Devise mise à jour avec succès': 'Currency updated successfully',
+    'Taille de texte mise à jour avec succès': 'Text size updated successfully',
+    'Préférences mises à jour avec succès': 'Preferences updated successfully',
+    'Tous les montants ont été convertis': 'All amounts have been converted',
+    'Vous n\'avez pas encore de projets.': 'You don\'t have any projects yet.',
+    'Créez votre premier projet pour commencer!': 'Create your first project to get started!',
+    'Optimisez votre budget alimentaire en planifiant vos repas': 'Optimize your food budget by planning your meals',
+    
+    // Timeline et rappels
+    'Ajouter un rappel': 'Add a reminder',
+    'Titre': 'Title',
+    'Date': 'Date',
+    'Type': 'Type',
+    'Description (optionnel)': 'Description (optional)'
 };
 
 // Dictionnaire de traduction anglais -> français
@@ -348,24 +508,286 @@ function applyCurrency() {
         secondarySelect.value = userPrefs.secondaryCurrency;
     }
     
-    // Mettre à jour les affichages de montants
+    // Mettre à jour l'icône de devise pour tous les éléments ayant la classe .budget-currency-icon
+    updateCurrencyIcons();
+    
+    // Mettre à jour tous les affichages de montants
     updateCurrencyDisplay();
+    
+    // Mettre à jour les montants dans le tableau de projets
+    updateProjectsTable();
+    
+    // Mettre à jour les statistiques
+    updateStatsCurrency();
+    
+    // Forcer la mise à jour visuelle
+    document.querySelectorAll('.currency-display').forEach(el => {
+        el.style.visibility = 'hidden';
+        setTimeout(() => {
+            el.style.visibility = 'visible';
+        }, 50);
+    });
+}
+
+// Met à jour les icônes de devise
+function updateCurrencyIcons() {
+    const currencySymbol = getCurrencySymbol(userPrefs.currency);
+    
+    // Mettre à jour toutes les icônes de devise
+    document.querySelectorAll('.budget-currency-icon').forEach(icon => {
+        // Supprimer toutes les classes d'icône de devise
+        icon.classList.remove('fa-euro-sign', 'fa-dollar-sign', 'fa-pound-sign', 'fa-yen-sign', 'fa-ruble-sign', 'fa-rupee-sign');
+        
+        // Ajouter la classe appropriée selon la devise
+        switch(userPrefs.currency) {
+            case 'USD':
+                icon.classList.add('fa-dollar-sign');
+                break;
+            case 'GBP':
+                icon.classList.add('fa-pound-sign');
+                break;
+            case 'JPY':
+                icon.classList.add('fa-yen-sign');
+                break;
+            case 'RUB':
+                icon.classList.add('fa-ruble-sign');
+                break;
+            case 'INR':
+                icon.classList.add('fa-rupee-sign');
+                break;
+            default:
+                icon.classList.add('fa-euro-sign'); // EUR et autres devises par défaut
+        }
+    });
+    
+    console.log('Devise actuelle:', userPrefs.currency, 'Symbole:', currencySymbol);
+}
+
+// Obtenir le symbole correspondant à une devise
+function getCurrencySymbol(currencyCode) {
+    const symbols = {
+        'EUR': '€',
+        'USD': '$',
+        'GBP': '£',
+        'JPY': '¥',
+        'CHF': 'Fr',
+        'CAD': 'C$',
+        'AUD': 'A$',
+        'CNY': '¥',
+        'INR': '₹',
+        'RUB': '₽',
+        'BRL': 'R$',
+        'KRW': '₩',
+        'TRY': '₺',
+        'MXN': 'Mex$',
+        'IDR': 'Rp',
+        'PHP': '₱',
+        'MYR': 'RM',
+        'SGD': 'S$',
+        'THB': '฿',
+        'AED': 'د.إ'
+    };
+    
+    return symbols[currencyCode] || currencyCode;
 }
 
 // Mettre à jour l'affichage des montants dans la devise actuelle
 function updateCurrencyDisplay() {
-    const currencySymbol = userPrefs.currency;
+    const currencyCode = userPrefs.currency;
+    const currencySymbol = getCurrencySymbol(currencyCode);
     
     // Mettre à jour tous les éléments qui affichent des montants
-    document.querySelectorAll('.amount, .budget-amount, .expense-amount, .income-amount').forEach(el => {
-        // Extraire le montant numérique (sans le symbole de devise actuel)
-        const numericAmount = parseFloat(el.textContent.replace(/[^\d.,\-]/g, '').replace(',', '.')) || 0;
+    document.querySelectorAll('.amount, .budget-amount, .expense-amount, .income-amount, .stat-value').forEach(el => {
+        if (!el.textContent || el.textContent.trim() === '') return;
         
-        // Formater avec la nouvelle devise
-        el.textContent = `${currencySymbol} ${numericAmount.toFixed(2).replace('.', ',')}`;
+        try {
+            // Extraire le montant numérique (sans le symbole de devise actuel)
+            let textContent = el.textContent.trim();
+            
+            // Ignorer certains éléments qui ne sont pas des montants de devise
+            if (textContent.includes('devis') || textContent.includes('factures') || 
+                textContent.includes('quotes') || textContent.includes('invoices') ||
+                !textContent.match(/[0-9]/)) {
+                return;
+            }
+            
+            // Extraire le montant numérique
+            let numericStr = textContent.replace(/[^\d.,\-]/g, '').trim();
+            if (!numericStr) return;
+            
+            // Convertir le format français (virgule) au format anglais (point)
+            numericStr = numericStr.replace(',', '.');
+            
+            // Convertir en nombre
+            const numericAmount = parseFloat(numericStr);
+            if (isNaN(numericAmount)) return;
+            
+            // Formater avec la nouvelle devise
+            const formattedAmount = `${currencySymbol} ${numericAmount.toFixed(2).replace('.', ',')}`;
+            
+            // Appliquer le texte formaté
+            el.textContent = formattedAmount;
+        } catch (error) {
+            console.error('Erreur lors du parsing de la dépense:', el.textContent, error);
+        }
     });
     
-    console.log('Currency display updated to', currencySymbol);
+    console.log('Currency display updated to', currencyCode);
+}
+
+// Met à jour le tableau des projets avec la nouvelle devise
+function updateProjectsTable() {
+    const projectsTableBody = document.getElementById('projectsTableBody');
+    if (!projectsTableBody) return;
+    
+    const currencySymbol = getCurrencySymbol(userPrefs.currency);
+    
+    // Récupérer les projets du localStorage
+    const projectsStr = localStorage.getItem('userProjects');
+    if (!projectsStr) return;
+    
+    try {
+        const projects = JSON.parse(projectsStr);
+        
+        // Parcourir toutes les cellules du tableau qui contiennent des montants
+        const budgetCells = projectsTableBody.querySelectorAll('td:nth-child(3)'); // Budget
+        const expenseCells = projectsTableBody.querySelectorAll('td:nth-child(4)'); // Dépenses
+        
+        // Mise à jour des cellules de budget
+        budgetCells.forEach((cell, index) => {
+            if (index < projects.length) {
+                const project = projects[index];
+                const budget = project.totalBudget.toString().replace(/[^0-9,\.]/g, '').trim();
+                cell.textContent = `${currencySymbol} ${budget}`;
+            }
+        });
+        
+        // Mise à jour des cellules de dépenses
+        expenseCells.forEach((cell, index) => {
+            if (index < projects.length) {
+                const project = projects[index];
+                let expenses = 0;
+                
+                if (project.realExpenses && project.realExpenses.length > 0) {
+                    expenses = project.realExpenses.reduce((total, expense) => {
+                        const amount = parseFloat(expense.amount.toString().replace(/[^0-9,\.]/g, '').replace(',', '.')) || 0;
+                        return total + amount;
+                    }, 0);
+                }
+                
+                cell.textContent = `${currencySymbol} ${expenses.toFixed(2).replace('.', ',')}`;
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du tableau des projets:', error);
+    }
+}
+
+// Mettre à jour les statistiques avec la nouvelle devise
+function updateStatsCurrency() {
+    const totalBudgetElements = document.querySelectorAll('#totalBudget');
+    const walletBalanceElements = document.querySelectorAll('#walletBalance');
+    
+    if (totalBudgetElements.length === 0 && walletBalanceElements.length === 0) return;
+    
+    const currencySymbol = getCurrencySymbol(userPrefs.currency);
+    
+    // Mise à jour des statistiques de projets
+    try {
+        const projectsStr = localStorage.getItem('userProjects');
+        if (projectsStr) {
+            const projects = JSON.parse(projectsStr);
+            console.log('Statistiques des projets à mettre à jour:', projects.length, 'projets trouvés');
+            
+            // Calculer le budget total
+            let totalBudget = 0;
+            projects.forEach(project => {
+                const budget = parseFloat(project.totalBudget.toString().replace(/[^0-9,\.]/g, '').replace(',', '.')) || 0;
+                totalBudget += budget;
+            });
+            
+            // Mettre à jour l'affichage du budget total
+            totalBudgetElements.forEach(el => {
+                el.textContent = `${currencySymbol} ${totalBudget.toFixed(2).replace('.', ',')}`;
+            });
+            
+            console.log('Mise à jour du budget total avec le symbole', currencySymbol);
+        }
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des statistiques de projets:', error);
+    }
+    
+    // Mise à jour des statistiques de portefeuilles
+    try {
+        const walletsStr = localStorage.getItem('userWallets');
+        let wallets = [];
+        
+        if (walletsStr) {
+            wallets = JSON.parse(walletsStr);
+        }
+        
+        console.log('Portefeuilles récupérés:', wallets);
+        
+        // Calculer le solde total des portefeuilles
+        let totalBalance = 0;
+        wallets.forEach(wallet => {
+            const balance = parseFloat(wallet.balance.toString().replace(/[^0-9,\.\-]/g, '').replace(',', '.')) || 0;
+            totalBalance += balance;
+        });
+        
+        console.log('Solde total des portefeuilles:', totalBalance);
+        
+        // Calculer les dépenses des projets liés aux portefeuilles
+        const projectsStr = localStorage.getItem('userProjects');
+        let totalProjectExpenses = 0;
+        
+        if (projectsStr) {
+            const projects = JSON.parse(projectsStr);
+            projects.forEach(project => {
+                if (project.linkToWallet && project.realExpenses) {
+                    project.realExpenses.forEach(expense => {
+                        const amount = parseFloat(expense.amount.toString().replace(/[^0-9,\.]/g, '').replace(',', '.')) || 0;
+                        totalProjectExpenses += amount;
+                    });
+                }
+            });
+        }
+        
+        console.log('Total des dépenses des projets liés:', totalProjectExpenses);
+        
+        // Calculer le solde net (solde - dépenses)
+        const netBalance = totalBalance - totalProjectExpenses;
+        console.log('Solde net des portefeuilles:', netBalance);
+        
+        // Mettre à jour l'affichage du solde portefeuille
+        walletBalanceElements.forEach(el => {
+            el.textContent = `${currencySymbol} ${netBalance.toFixed(2).replace('.', ',')}`;
+        });
+        
+        console.log('Mise à jour du solde portefeuille avec le symbole', currencySymbol);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des statistiques de portefeuilles:', error);
+    }
+    
+    // Mise à jour des statistiques mobiles
+    try {
+        const mobileStatsElements = document.querySelectorAll('.statistics-mobile .stat-value');
+        mobileStatsElements.forEach(el => {
+            const text = el.textContent;
+            if (text && text.match(/[0-9]/)) {
+                const numericPart = text.replace(/[^\d.,\-]/g, '').replace(',', '.');
+                const amount = parseFloat(numericPart) || 0;
+                el.textContent = `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
+            }
+        });
+        
+        console.log('Statistiques mobiles mises à jour avec la devise', userPrefs.currency);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des statistiques mobiles:', error);
+    }
+    
+    // Mise à jour de tous les éléments affichant des devises
+    console.log('Mise à jour de tous les affichages de devise');
 }
 
 // Convertir tous les projets à la nouvelle devise
