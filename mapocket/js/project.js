@@ -825,6 +825,9 @@ function initializeSubcategories() {
                 // Trouver le conteneur de lignes
                 const expenseLines = this.closest('.expense-lines');
                 
+                // Obtenir le symbole de devise actuel
+                const currencySymbol = getCurrencySymbol(); // Utilise notre fonction utilitaire
+                
                 // Créer une nouvelle ligne
                 const newLine = document.createElement('div');
                 newLine.className = 'expense-line';
@@ -873,50 +876,31 @@ function initializeSubcategories() {
 }
 
 function updateSubcategoryTotal(subcategory) {
-    // Récupérer les préférences utilisateur pour obtenir la devise
-    let userPreferences = {
-        currency: 'EUR', // Devise par défaut
-    };
-    
-    try {
-        const savedPrefs = localStorage.getItem('userPreferences');
-        if (savedPrefs) {
-            userPreferences = JSON.parse(savedPrefs);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des préférences utilisateur:', error);
-    }
-    
-    // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
-    let currencyCode = 'EUR';
-    
-    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
-    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-        if (currency) {
-            currencySymbol = currency.symbol;
-            currencyCode = currency.code;
-        }
-    }
+    // Obtenir le symbole de devise avec notre utilitaire
+    const currencySymbol = getCurrencySymbol();
     
     let total = 0;
     
     // Calculer le total à partir de toutes les lignes de dépenses
     const amountInputs = subcategory.querySelectorAll('.expense-line-amount');
     amountInputs.forEach(input => {
-        // Extraire le montant (supprimer le symbole € et convertir en nombre)
-        const value = input.value.trim();
-        const amount = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+        // Utiliser parseMonetaryValue pour extraire correctement le montant numérique
+        const amount = parseMonetaryValue(input.value);
         total += amount;
     });
     
     // Mettre à jour l'affichage du total de la sous-catégorie
     const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
     if (subcategoryAmount) {
-        subcategoryAmount.textContent = `${currencySymbol} ${total}`;
-        // Ajouter un attribut data pour stocker le code de devise
-        subcategoryAmount.setAttribute('data-currency', currencyCode);
+        subcategoryAmount.textContent = formatMoney(total);
+        
+        // Si nous avons besoin de stocker le code de devise séparément
+        try {
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            subcategoryAmount.setAttribute('data-currency', preferences.currency || 'EUR');
+        } catch (e) {
+            subcategoryAmount.setAttribute('data-currency', 'EUR');
+        }
     }
     
     // Mettre à jour le total de la catégorie parente
@@ -924,53 +908,39 @@ function updateSubcategoryTotal(subcategory) {
     if (parentCategory) {
         updateCategoryTotal(parentCategory);
     }
+    
+    // Sauvegarder les changements du projet
+    if (typeof saveProjectChanges === 'function') {
+        saveProjectChanges();
+    }
 }
 
 function updateCategoryTotal(category) {
-    // Récupérer les préférences utilisateur pour obtenir la devise
-    let userPreferences = {
-        currency: 'EUR', // Devise par défaut
-    };
-    
-    try {
-        const savedPrefs = localStorage.getItem('userPreferences');
-        if (savedPrefs) {
-            userPreferences = JSON.parse(savedPrefs);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des préférences utilisateur:', error);
-    }
-    
-    // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
-    let currencyCode = 'EUR';
-    
-    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
-    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-        if (currency) {
-            currencySymbol = currency.symbol;
-            currencyCode = currency.code;
-        }
-    }
+    // Obtenir le symbole de devise avec notre utilitaire
+    const currencySymbol = getCurrencySymbol();
     
     let total = 0;
     
     // Calculer le total à partir de toutes les sous-catégories
     const subcategoryAmounts = category.querySelectorAll('.subcategory-amount');
     subcategoryAmounts.forEach(amountElem => {
-        // Extraire le montant (supprimer le symbole € et convertir en nombre)
-        const value = amountElem.textContent.trim();
-        const amount = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+        // Utiliser parseMonetaryValue pour extraire correctement le montant numérique
+        const amount = parseMonetaryValue(amountElem.textContent);
         total += amount;
     });
     
     // Mettre à jour l'affichage du total de la catégorie
     const categoryAmount = category.querySelector('.category-amount');
     if (categoryAmount) {
-        categoryAmount.textContent = `${currencySymbol} ${total}`;
-        // Ajouter un attribut data pour stocker le code de devise
-        categoryAmount.setAttribute('data-currency', currencyCode);
+        categoryAmount.textContent = formatMoney(total);
+        
+        // Si nous avons besoin de stocker le code de devise séparément
+        try {
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            categoryAmount.setAttribute('data-currency', preferences.currency || 'EUR');
+        } catch (e) {
+            categoryAmount.setAttribute('data-currency', 'EUR');
+        }
     }
     
     // Mettre à jour le total général du budget
@@ -1262,58 +1232,47 @@ function addMainCategory() {
 }
 
 function updateTotalBudget() {
-    // Récupérer les préférences utilisateur pour obtenir la devise
-    let userPreferences = {
-        currency: 'EUR', // Devise par défaut
-    };
+    // Obtenir le symbole de devise avec notre utilitaire
+    const currencySymbol = getCurrencySymbol();
     
+    // Déterminer le code de devise pour les attributions de data-currency
+    let currencyCode = 'EUR'; // Valeur par défaut
     try {
-        const savedPrefs = localStorage.getItem('userPreferences');
-        if (savedPrefs) {
-            userPreferences = JSON.parse(savedPrefs);
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        if (preferences.currency) {
+            currencyCode = preferences.currency;
         }
-    } catch (error) {
-        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    } catch (e) {
+        console.error('Erreur lors de la récupération du code de devise:', e);
     }
-    
-    // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
-    let currencyCode = 'EUR';
-    
-    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
-    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-        if (currency) {
-            currencySymbol = currency.symbol;
-            currencyCode = currency.code;
-        }
-    }
-    
-    console.log('Mise à jour du budget total avec la devise:', currencyCode, currencySymbol);
     
     let total = 0;
     
     // Calculer le total à partir de toutes les catégories principales
     const categoryAmounts = document.querySelectorAll('.category-amount');
     categoryAmounts.forEach(amountElem => {
-        // Extraire le montant (supprimer le symbole € et convertir en nombre)
-        const value = amountElem.textContent.trim();
-        const amount = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+        // Utiliser parseMonetaryValue pour extraire correctement le montant numérique
+        const amount = parseMonetaryValue(amountElem.textContent);
         total += amount;
     });
     
     // Mettre à jour l'affichage du total du budget
     const totalBudgetAmount = document.querySelector('.total-budget-amount');
     if (totalBudgetAmount) {
-        totalBudgetAmount.textContent = `${currencySymbol} ${total}`;
+        totalBudgetAmount.textContent = formatMoney(total);
         totalBudgetAmount.setAttribute('data-currency', currencyCode);
     }
     
     // Mettre à jour le champ de budget total (pour le formulaire)
     const totalBudgetInput = document.getElementById('totalBudget');
     if (totalBudgetInput) {
-        totalBudgetInput.value = `${currencySymbol} ${total}`;
+        totalBudgetInput.value = formatMoney(total);
         totalBudgetInput.setAttribute('data-currency', currencyCode);
+    }
+    
+    // Si le projet est en cours d'édition, sauvegarder les modifications
+    if (typeof saveProjectChanges === 'function' && document.getElementById('projectForm')) {
+        saveProjectChanges();
     }
 }
 
