@@ -164,19 +164,43 @@ function setupWishlistIntegration() {
             itemElement.dataset.itemId = item.id;
             itemElement.dataset.price = item.price || 0;
             
+            // Style amélioré pour les éléments de la wishlist
+            itemElement.style.border = '1px solid #e0e0e0';
+            itemElement.style.borderRadius = '8px';
+            itemElement.style.padding = '12px';
+            itemElement.style.marginBottom = '10px';
+            itemElement.style.backgroundColor = '#ffffff';
+            itemElement.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+            itemElement.style.transition = 'all 0.2s ease';
+            itemElement.style.display = 'flex';
+            itemElement.style.justifyContent = 'space-between';
+            itemElement.style.alignItems = 'center';
+            
             itemElement.innerHTML = `
-                <div class="wishlist-item-info">
-                    <div class="wishlist-item-name">${item.name}</div>
-                    <div class="wishlist-item-price">${getProjectCurrencySymbol()} ${parseFloat(item.price || 0).toFixed(2)}</div>
+                <div class="wishlist-item-info" style="flex: 1;">
+                    <div class="wishlist-item-name" style="font-weight: 500; margin-bottom: 4px;">${item.name}</div>
+                    <div class="wishlist-item-price" style="color: #1d3557; font-size: 0.9rem;">${getProjectCurrencySymbol()} ${parseFloat(item.price || 0).toFixed(2)}</div>
                 </div>
-                <div class="wishlist-item-actions">
-                    <button class="add-to-budget-btn" title="Ajouter au budget">
-                        <i class="fas fa-plus"></i>
+                <div class="wishlist-item-actions" style="display: flex; gap: 8px;">
+                    <button class="add-to-budget-btn" title="Ajouter au budget" 
+                            style="background-color: #ffc300; color: #1d3557; border: none; border-radius: 6px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.85rem;">
+                        <i class="fas fa-plus"></i> Ajouter au budget
                     </button>
                 </div>
             `;
             
             itemsGrid.appendChild(itemElement);
+            
+            // Effet au survol
+            itemElement.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 3px 6px rgba(0,0,0,0.1)';
+            });
+            
+            itemElement.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+            });
             
             // Ajouter un gestionnaire d'événement pour le bouton d'ajout
             const addButton = itemElement.querySelector('.add-to-budget-btn');
@@ -371,7 +395,7 @@ function setupWishlistIntegration() {
                 
                 if (wishlistCategory) {
                     const subcategoriesContainer = wishlistCategory.querySelector('.subcategories-container');
-                    createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0);
+                    createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0, true);
                 }
             } else if (selectedCategory) {
                 // Ajouter le produit comme sous-catégorie de la catégorie sélectionnée
@@ -384,19 +408,61 @@ function setupWishlistIntegration() {
                 }
             }
             
-            // Notification
+            // Notification stylée et améliorée
             const notification = document.createElement('div');
-            notification.className = 'temporary-notification';
-            notification.innerHTML = `<i class="fas fa-check-circle"></i> "${item.name}" ajouté au budget`;
+            notification.className = 'temporary-notification success-notification';
+            notification.style.backgroundColor = '#f8f9fa';
+            notification.style.color = '#1d3557';
+            notification.style.padding = '12px 20px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            notification.style.border = '1px solid #e0e0e0';
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '10px';
+            
+            notification.innerHTML = `
+                <i class="fas fa-check-circle" style="color: #2e8540; font-size: 18px;"></i>
+                <div>
+                    <strong>"${item.name}"</strong> ajouté au budget
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">
+                        ${getProjectCurrencySymbol()} ${parseFloat(item.price || 0).toFixed(2)} dans ${selectedCategory === 'wishlist' ? 'Wishlist' : selectedCategory}
+                    </div>
+                </div>
+            `;
+            
             document.body.appendChild(notification);
             
             // Faire disparaître la notification
             setTimeout(() => {
-                notification.classList.add('fade-out');
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(20px)';
+                notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
-            }, 2000);
+            }, 3000);
+            
+            // Signaler via ModuleConnector que des éléments de wishlist ont été ajoutés au budget
+            if (window.ModuleConnector) {
+                try {
+                    ModuleConnector.publish(
+                        ModuleConnector.channels.WISHLIST,
+                        ModuleConnector.actions.wishlist.ADDED_TO_BUDGET, 
+                        {
+                            items: [item],
+                            category: selectedCategory === 'wishlist' ? 'Wishlist' : selectedCategory,
+                            total: parseFloat(item.price || 0)
+                        }
+                    );
+                } catch (e) {
+                    console.error("Erreur lors de la publication de l'événement d'ajout au budget:", e);
+                }
+            }
             
             // Fermer le dialogue
             dialog.remove();

@@ -1261,13 +1261,25 @@
 }
 
 .highlight-new {
-    animation: highlight-new 2s;
+    animation: highlight-new 2.5s ease;
+    box-shadow: 0 0 8px rgba(0, 150, 136, 0.5);
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 @keyframes highlight-new {
-    0% { background-color: #e0f7fa; }
-    50% { background-color: #e0f7fa; }
-    100% { background-color: white; }
+    0% { 
+        background-color: rgba(230, 255, 243, 0.8); 
+        transform: translateY(-2px);
+    }
+    30% { 
+        background-color: rgba(230, 255, 243, 0.8);
+        transform: translateY(-2px);
+    }
+    100% { 
+        background-color: transparent; 
+        transform: translateY(0);
+    }
 }
 
 .expense-line-name {

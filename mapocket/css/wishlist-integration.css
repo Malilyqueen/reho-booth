@@ -1,35 +1,135 @@
-/* Styles pour l'intégration de wishlist */
+/* 
+ * Styles pour l'intégration de la Wishlist avec le Budget
+ * Ce fichier contient les styles spécifiques à l'affichage et aux interactions
+ * entre la wishlist et le budget
+ */
 
+/* Conteneur principal des options de wishlist */
+.wishlist-options {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    margin-top: 0;
+    opacity: 0;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.wishlist-options.active {
+    max-height: 1000px;
+    margin-top: 15px;
+    padding: 15px;
+    opacity: 1;
+    transition: max-height 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+/* Formulaire de création de wishlist */
+.create-wishlist-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.create-wishlist-form input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.create-wishlist-form input:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.create-wishlist-form button {
+    background-color: #ffc300;
+    color: #1d3557;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.create-wishlist-form button:hover {
+    background-color: #e6b000;
+    transform: translateY(-1px);
+}
+
+/* Sélection de wishlist existante */
+.select-wishlist-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.select-wishlist-form select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: white;
+}
+
+.select-wishlist-form select:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Conteneur des produits de wishlist */
 .wishlist-items-container {
     margin-top: 20px;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: white;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.wishlist-items-container h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1d3557;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wishlist-items-container h4 i {
+    color: #ffc300;
 }
 
 .wishlist-items-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
+    grid-gap: 15px;
     margin-top: 15px;
-    margin-bottom: 15px;
 }
 
+/* Styles des éléments de wishlist */
 .wishlist-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
 }
 
 .wishlist-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .wishlist-item-info {
@@ -38,198 +138,172 @@
 
 .wishlist-item-name {
     font-weight: 500;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .wishlist-item-price {
-    color: #4a7aff;
-    font-weight: bold;
+    color: #1d3557;
+    font-size: 0.9rem;
 }
 
 .wishlist-item-actions {
     display: flex;
-    gap: 5px;
+    gap: 8px;
 }
 
 .add-to-budget-btn {
     background-color: #ffc300;
     color: #1d3557;
     border: none;
-    border-radius: 4px;
-    width: 32px;
-    height: 32px;
+    border-radius: 6px;
+    padding: 8px 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
 }
 
 .add-to-budget-btn:hover {
-    background-color: #ffb700;
-    transform: scale(1.05);
+    background-color: #e6b000;
+    transform: translateY(-1px);
 }
 
-.wishlist-budget-integration {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.wishlist-category-section {
-    width: 100%;
-}
-
-/* Notification centrée */
+/* Dialogue de sélection de catégorie */
 .center-notification {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    z-index: 1000;
+    padding: 20px;
+    z-index: 9999;
     width: 90%;
-    max-width: 450px;
+    max-width: 400px;
 }
 
-.center-notification .notification-content {
+.notification-content {
     margin-bottom: 20px;
 }
 
-.center-notification .notification-actions {
+.notification-content h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1d3557;
+}
+
+.notification-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
 }
 
-.center-notification button {
+.notification-cancel {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
     padding: 8px 15px;
-    border-radius: 4px;
-    border: none;
     cursor: pointer;
-    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.center-notification .notification-confirm {
+.notification-cancel:hover {
+    background-color: #e9ecef;
+}
+
+.notification-confirm {
     background-color: #ffc300;
     color: #1d3557;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.center-notification .notification-confirm:disabled {
-    background-color: #e0e0e0;
-    color: #666;
+.notification-confirm:hover {
+    background-color: #e6b000;
+}
+
+.notification-confirm:disabled {
+    background-color: #f8f9fa;
+    color: #adb5bd;
     cursor: not-allowed;
 }
 
-.center-notification .notification-cancel {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-}
-
-/* Notification temporaire */
+/* Notifications temporaires */
 .temporary-notification {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     right: 20px;
-    background-color: #1d3557;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-}
-
-.temporary-notification.fade-out {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Style pour l'entrée avec erreur */
-.error-input {
-    border: 2px solid #ff4d4d !important;
-    background-color: #fff0f0 !important;
-}
-
-/* Amélioration des animations */
-.form-appear {
-    animation: formAppear 0.3s ease-out;
-}
-
-@keyframes formAppear {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Style pour le bouton d'ajout de ligne amélioré */
-.btn-add-line {
-    background-color: #ffc300;
+    background-color: #f8f9fa;
     color: #1d3557;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+    z-index: 9999;
+    display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.btn-add-line:hover {
-    background-color: #ffb700;
-    transform: translateY(-2px);
+.success-notification i {
+    color: #2e8540;
+    font-size: 18px;
 }
 
-.btn-add-line i {
-    font-size: 14px;
+.fade-out {
+    opacity: 0;
+    transform: translateX(20px);
 }
 
-/* Validations visuelles */
-.validation-success {
-    position: relative;
+/* Styles pour une meilleure intégration des sous-catégories ajoutées depuis la wishlist */
+.subcategory.from-wishlist {
+    border-left: 3px solid #ffc300;
 }
 
-.validation-success::after {
-    content: '✓';
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #4caf50;
-    font-weight: bold;
-    font-size: 16px;
-    animation: fadeIn 0.3s ease;
+/* Utilitaires */
+.error-input {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    animation: shake 0.5s;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Styles pour écrans mobiles */
+@media (max-width: 768px) {
+    .create-wishlist-form,
+    .select-wishlist-form {
+        flex-direction: column;
     }
-    to {
-        opacity: 1;
+    
+    .wishlist-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .wishlist-item-actions {
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .add-to-budget-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .center-notification {
+        width: 95%;
     }
 }

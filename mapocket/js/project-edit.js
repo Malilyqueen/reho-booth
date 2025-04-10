@@ -1413,20 +1413,31 @@ function addNewSubcategory(categoryElement, subcategoryName) {
 }
 
 // Fonction pour créer une sous-catégorie dans un conteneur spécifié
-function createSubcategoryInContainer(container, subcategoryName, initialAmount = 0) {
+function createSubcategoryInContainer(container, subcategoryName, initialAmount = 0, fromWishlist = false) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = getProjectCurrencySymbol();
     
     // Formater le montant initial
     const formattedAmount = parseFloat(initialAmount || 0).toFixed(2);
     
-    // Créer l'élément de sous-catégorie
+    // Créer l'élément de sous-catégorie avec marqueur si elle vient de la wishlist
     const subcategoryElement = document.createElement('div');
-    subcategoryElement.className = 'subcategory';
+    subcategoryElement.className = fromWishlist ? 'subcategory from-wishlist' : 'subcategory';
+    
+    // Ajouter la classe highlight-new pour animation
+    subcategoryElement.classList.add('highlight-new');
     
     // En-tête de la sous-catégorie
     const subcategoryHeader = document.createElement('div');
     subcategoryHeader.className = 'subcategory-header';
+    
+    // Indicateur visuel si l'élément vient de la wishlist
+    if (fromWishlist) {
+        const wishlistIndicator = document.createElement('span');
+        wishlistIndicator.className = 'wishlist-source-indicator';
+        wishlistIndicator.innerHTML = `<i class="fas fa-gift" style="color: #ffc300; font-size: 12px; margin-right: 8px;" title="Élément de la wishlist"></i>`;
+        subcategoryHeader.appendChild(wishlistIndicator);
+    }
     
     const subcategoryTitle = document.createElement('h5');
     subcategoryTitle.className = 'subcategory-name editable-field';
