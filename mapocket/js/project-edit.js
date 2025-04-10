@@ -372,9 +372,10 @@ function setupBudgetCalculation() {
     });
 }
 
-// Fonction pour mettre à jour les catégories selon le template choisi - COMPLÈTEMENT DÉSACTIVÉ
+// Fonction pour mettre à jour les catégories selon le template choisi
+// MISE À JOUR: Désormais, seules les catégories principales sont suggérées, sans sous-catégories ni lignes
 function updateTemplateCategories(templateType) {
-    console.log('DÉSACTIVATION COMPLÈTE des templates prédéfinis pour:', templateType);
+    console.log('Application des catégories par défaut pour:', templateType);
     
     // Obtenir le symbole de la devise
     let currencySymbol = getProjectCurrencySymbol();
@@ -382,18 +383,28 @@ function updateTemplateCategories(templateType) {
     
     console.log('Configuration avec la devise:', currencyCode, currencySymbol);
     
-    // Créer un projet complètement vide
-    const emptyCategories = [
-        {
-            name: "Nouvelle catégorie",
-            subcategories: []
-        }
-    ];
+    // Créer les catégories par défaut selon le type de projet
+    let defaultCategories = [];
     
-    // Mise à jour avec un projet vide
-    updateCategoriesUI(emptyCategories, currencySymbol);
+    // Vérifier si nous avons des catégories prédéfinies pour ce type de projet
+    if (typeof DEFAULT_CATEGORIES !== 'undefined' && DEFAULT_CATEGORIES[templateType]) {
+        console.log('Utilisation des catégories par défaut pour:', templateType);
+        defaultCategories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES[templateType]));
+    } else {
+        console.log('Aucune catégorie par défaut trouvée pour:', templateType);
+        // Si aucune catégorie prédéfinie, créer une catégorie vide
+        defaultCategories = [
+            {
+                name: "Nouvelle catégorie",
+                subcategories: []
+            }
+        ];
+    }
     
-    // Terminer la fonction ici pour éviter tout le reste du code
+    // Mise à jour de l'interface utilisateur avec les catégories par défaut (sans sous-catégories ni lignes)
+    updateCategoriesUI(defaultCategories, currencySymbol);
+    
+    // Ne pas exécuter le reste du code (contenant les templates complets avec sous-catégories et lignes)
     return;
     
     // Fonction utilitaire pour remplacer les symboles € dans les données de template
