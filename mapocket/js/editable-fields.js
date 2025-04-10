@@ -119,27 +119,37 @@ function makeFieldEditable(element, type = 'text') {
         let newValue = input.value.trim();
         
         if (type === 'number') {
-            // Formater avec le symbole de devise
             try {
-                // Essayer d'obtenir le symbole de devise actuel
-                let currencySymbol = 'DH'; // Valeur par défaut
+                // Convertir la valeur en nombre
+                const numValue = parseFloat(newValue) || 0;
                 
-                if (typeof getProjectCurrencySymbol === 'function') {
-                    currencySymbol = getProjectCurrencySymbol();
-                } else if (typeof getCurrencySymbol === 'function') {
-                    currencySymbol = getCurrencySymbol();
+                // Utiliser la fonction formatMoney de notre utilitaire si disponible
+                if (typeof formatMoney === 'function') {
+                    newValue = formatMoney(numValue);
                 } else {
-                    // Essayer de récupérer depuis les préférences
-                    const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                    if (preferences.currency === 'EUR') currencySymbol = '€';
-                    else if (preferences.currency === 'USD') currencySymbol = '$';
-                    else if (preferences.currency === 'GBP') currencySymbol = '£';
-                    else if (preferences.currency === 'MAD') currencySymbol = 'DH';
+                    // Fallback si formatMoney n'est pas disponible
+                    let currencySymbol = 'DH'; // Valeur par défaut
+                    
+                    // Essayer différentes méthodes pour obtenir le symbole de devise
+                    if (typeof getCurrencySymbol === 'function') {
+                        currencySymbol = getCurrencySymbol();
+                    } else if (typeof getProjectCurrencySymbol === 'function') {
+                        currencySymbol = getProjectCurrencySymbol();
+                    } else {
+                        // Dernier recours: récupérer depuis les préférences
+                        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+                        if (preferences.currency === 'EUR') currencySymbol = '€';
+                        else if (preferences.currency === 'USD') currencySymbol = '$';
+                        else if (preferences.currency === 'GBP') currencySymbol = '£';
+                        else if (preferences.currency === 'MAD') currencySymbol = 'DH';
+                    }
+                    
+                    // Format manuel
+                    newValue = `${currencySymbol} ${numValue.toFixed(2)}`;
                 }
                 
-                // Formater le montant
-                const numValue = parseFloat(newValue) || 0;
-                newValue = `${currencySymbol} ${numValue.toFixed(2)}`;
+                // Ajouter une classe pour marquer ce champ comme modifié
+                element.classList.add('field-modified');
             } catch (error) {
                 console.error('Erreur lors du formatage du montant:', error);
                 // Fallback en cas d'erreur
@@ -153,9 +163,21 @@ function makeFieldEditable(element, type = 'text') {
         // Mettre à jour la valeur originale
         element.setAttribute('data-original-value', newValue);
         
-        // Mettre à jour les calculs si nécessaire
-        if (typeof updateBudgetCalculation === 'function') {
-            updateBudgetCalculation();
+        // Mise à jour spécifique pour les montants
+        if (type === 'number') {
+            // Rechercher la sous-catégorie parente et mettre à jour son total
+            const subcategory = element.closest('.subcategory');
+            if (subcategory && typeof updateSubcategoryTotal === 'function') {
+                updateSubcategoryTotal(subcategory);
+                return; // Pas besoin de faire les mises à jour suivantes car updateSubcategoryTotal se charge de tout
+            }
+            
+            // Si ce n'est pas un montant de ligne, essayer d'autres mises à jour
+            if (typeof updateTotalBudget === 'function') {
+                updateTotalBudget();
+            } else if (typeof updateBudgetCalculation === 'function') {
+                updateBudgetCalculation();
+            }
         }
     });
     
