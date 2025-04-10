@@ -1,0 +1,227 @@
+/**
+ * Styles spécifiques pour les lignes budgétaires
+ * Améliore la visibilité des lignes de dépenses avec une meilleure mise en forme
+ */
+
+/* Amélioration de la visibilité des lignes de dépenses */
+.expense-line {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 8px 0;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #8fb8de;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+}
+
+.expense-line:hover {
+    background-color: #e9f2fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation pour les nouvelles lignes ajoutées */
+.expense-line.highlight-new {
+    animation: highlightNew 2s ease-in-out;
+    border-left: 4px solid #6fc373;
+}
+
+@keyframes highlightNew {
+    0% { background-color: rgba(111, 195, 115, 0.3); }
+    50% { background-color: rgba(111, 195, 115, 0.15); }
+    100% { background-color: #f8f9fa; }
+}
+
+/* Styles pour le nom de la ligne de dépense */
+.expense-line-name {
+    flex: 1;
+    padding: 5px 8px;
+    font-weight: 500;
+    color: #1d3557;
+}
+
+/* Styles pour le montant de la ligne de dépense */
+.expense-line-amount {
+    padding: 4px 10px;
+    margin-right: 10px;
+    font-weight: 600;
+    color: #0d6efd;
+    background-color: #e6f0ff;
+    border-radius: 12px;
+    min-width: 90px;
+    text-align: right;
+}
+
+/* Styles pour le bouton de suppression */
+.delete-line-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+
+.delete-line-btn:hover {
+    background-color: #fff3f3;
+    opacity: 1;
+}
+
+/* Notification temporaire */
+.temporary-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #46a049;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.temporary-notification i {
+    margin-right: 8px;
+}
+
+.temporary-notification.fade-out {
+    opacity: 0;
+}
+
+/* Formulaire d'ajout de ligne */
+.expense-line-form {
+    background-color: #f8fbff;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 4px solid #6f802b;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: formAppear 0.3s forwards;
+}
+
+.expense-line-form h4 {
+    color: #6f802b;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.expense-line-form h4 i {
+    margin-right: 6px;
+}
+
+@keyframes formAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.expense-line-form.form-disappear {
+    animation: formDisappear 0.3s forwards;
+}
+
+@keyframes formDisappear {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Styles pour les sous-catégories */
+.subcategory {
+    background-color: #f5f9ff;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin: 10px 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #97bef9;
+}
+
+.subcategory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.subcategory-name {
+    font-weight: 600;
+    color: #2c5282;
+    font-size: 15px;
+    margin: 0;
+}
+
+.subcategory-amount {
+    font-weight: 600;
+    color: #3182ce;
+    padding: 4px 10px;
+    background-color: #ebf8ff;
+    border-radius: 20px;
+    min-width: 100px;
+    text-align: right;
+}
+
+.subcategory-actions {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.add-expense-line-btn {
+    background-color: #e6f0ff;
+    color: #3182ce;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+}
+
+.add-expense-line-btn:hover {
+    background-color: #d1e2ff;
+}
+
+.delete-subcategory-btn {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+}
+
+.delete-subcategory-btn:hover {
+    background-color: #fed7d7;
+}
+
+/* Amélioration des erreurs de validation */
+.validation-error {
+    color: #e53e3e;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Feedback visuel de confirmation d'ajout */
+.btn-success {
+    background-color: #48bb78 !important;
+    color: white !important;
+}

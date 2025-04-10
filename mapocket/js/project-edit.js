@@ -1957,12 +1957,12 @@ function createExpenseLine(container, name, amount) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = getProjectCurrencySymbol();
     
-    // Créer l'élément de ligne
+    // Créer l'élément de ligne avec des styles améliorés
     const lineElement = document.createElement('div');
     lineElement.className = 'expense-line';
     
     // Garantir que le nom exact de la ligne est utilisé, sans aucune substitution
-    // Cela corrige le bug où "Banderolle" était remplacé par "LinkedIn Ads"
+    // FIX: Ne jamais modifier le nom saisi par l'utilisateur
     const exactName = name;
     console.log("Création de ligne avec nom exact:", exactName);
     
