@@ -1,0 +1,123 @@
+/* Styles pour les champs éditables */
+.editable-field {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 2px 5px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.editable-field:hover {
+    background-color: rgba(255, 195, 0, 0.2);
+}
+
+.editable-field:hover::after {
+    content: '\f044';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-left: 5px;
+    font-size: 0.8em;
+    opacity: 0.6;
+}
+
+/* Formulaire inline */
+.inline-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+.inline-form .form-control {
+    flex: 1;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: inherit;
+    min-width: 50px;
+}
+
+.inline-form button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.inline-form .save-btn {
+    color: white;
+    background-color: #6f802b;
+}
+
+.inline-form .cancel-btn {
+    color: white;
+    background-color: #f44336;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.inline-form {
+    animation: fadeIn 0.2s;
+}
+
+/* Adaptations pour différents types de champs */
+.category-name.editable-field,
+.subcategory-name.editable-field {
+    display: inline-block;
+}
+
+.category-amount.editable-field,
+.subcategory-amount.editable-field,
+.expense-line-amount.editable-field {
+    display: inline-block;
+    min-width: 70px;
+    text-align: right;
+}
+
+/* Style spécifique pour les lignes de dépense */
+.expense-line .inline-form {
+    width: 100%;
+    margin: 0;
+}
+
+.expense-line-name.editable-field {
+    flex-grow: 1;
+    margin-right: auto;
+}
+
+.expense-line .editable-field {
+    flex-basis: auto;
+}
+
+/* Pour afficher visiblement que les champs sont éditables */
+.category-name.editable-field::after,
+.subcategory-name.editable-field::after,
+.category-amount.editable-field::after,
+.subcategory-amount.editable-field::after,
+.expense-line-name.editable-field::after,
+.expense-line-amount.editable-field::after {
+    content: ' \f044';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.7em;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.category-name.editable-field:hover::after,
+.subcategory-name.editable-field:hover::after,
+.category-amount.editable-field:hover::after,
+.subcategory-amount.editable-field:hover::after,
+.expense-line-name.editable-field:hover::after,
+.expense-line-amount.editable-field:hover::after {
+    opacity: 0.7;
+}
