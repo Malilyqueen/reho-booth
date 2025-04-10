@@ -301,12 +301,21 @@ function loadProjectCategories(categories) {
         categoryHeader.className = 'category-header';
         
         const categoryTitle = document.createElement('h3');
-        categoryTitle.className = 'category-name';
+        categoryTitle.className = 'category-name editable-field';
         categoryTitle.textContent = category.name;
+        categoryTitle.setAttribute('data-original-value', category.name);
+        // Ajouter le gestionnaire d'événement pour l'édition
+        categoryTitle.addEventListener('click', function() {
+            makeFieldEditable(this, 'text');
+        });
         
         const categoryAmount = document.createElement('span');
-        categoryAmount.className = 'category-amount';
+        categoryAmount.className = 'category-amount editable-field';
         categoryAmount.textContent = category.amount;
+        // Ajouter le gestionnaire d'événement pour l'édition
+        categoryAmount.addEventListener('click', function() {
+            makeFieldEditable(this, 'number');
+        });
         
         categoryHeader.appendChild(categoryTitle);
         categoryHeader.appendChild(categoryAmount);
@@ -438,12 +447,22 @@ function createSubcategoryElement(subcategory) {
     subcategoryHeader.className = 'subcategory-header';
     
     const subcategoryName = document.createElement('h4');
-    subcategoryName.className = 'subcategory-name';
+    subcategoryName.className = 'subcategory-name editable-field';
     subcategoryName.textContent = subcategory.name;
+    subcategoryName.setAttribute('data-original-value', subcategory.name);
+    // Ajouter le gestionnaire d'événement pour l'édition
+    subcategoryName.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
     
     const subcategoryAmount = document.createElement('span');
-    subcategoryAmount.className = 'subcategory-amount';
+    subcategoryAmount.className = 'subcategory-amount editable-field';
     subcategoryAmount.textContent = subcategory.amount;
+    subcategoryAmount.setAttribute('data-original-value', subcategory.amount);
+    // Ajouter le gestionnaire d'événement pour l'édition
+    subcategoryAmount.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
     
     subcategoryHeader.appendChild(subcategoryName);
     subcategoryHeader.appendChild(subcategoryAmount);
@@ -622,12 +641,21 @@ function addNewCategory(categoryName) {
     categoryHeader.className = 'category-header';
     
     const categoryTitle = document.createElement('h3');
-    categoryTitle.className = 'category-name';
+    categoryTitle.className = 'category-name editable-field';
     categoryTitle.textContent = categoryName;
+    categoryTitle.setAttribute('data-original-value', categoryName);
+    // Ajouter le gestionnaire d'événement pour l'édition
+    categoryTitle.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
     
     const categoryAmount = document.createElement('span');
-    categoryAmount.className = 'category-amount';
+    categoryAmount.className = 'category-amount editable-field';
     categoryAmount.textContent = `${currencySymbol} 0.00`;
+    // Ajouter le gestionnaire d'événement pour l'édition
+    categoryAmount.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
     
     categoryHeader.appendChild(categoryTitle);
     categoryHeader.appendChild(categoryAmount);
@@ -707,12 +735,22 @@ function addNewSubcategory(categoryElement, subcategoryName) {
     subcategoryHeader.className = 'subcategory-header';
     
     const subcategoryTitle = document.createElement('h4');
-    subcategoryTitle.className = 'subcategory-name';
+    subcategoryTitle.className = 'subcategory-name editable-field';
     subcategoryTitle.textContent = subcategoryName;
+    subcategoryTitle.setAttribute('data-original-value', subcategoryName);
+    // Ajouter le gestionnaire d'événement pour l'édition
+    subcategoryTitle.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
     
     const subcategoryAmount = document.createElement('span');
-    subcategoryAmount.className = 'subcategory-amount';
+    subcategoryAmount.className = 'subcategory-amount editable-field';
     subcategoryAmount.textContent = `${currencySymbol} 0.00`;
+    subcategoryAmount.setAttribute('data-original-value', `${currencySymbol} 0.00`);
+    // Ajouter le gestionnaire d'événement pour l'édition
+    subcategoryAmount.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
     
     subcategoryHeader.appendChild(subcategoryTitle);
     subcategoryHeader.appendChild(subcategoryAmount);
