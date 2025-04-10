@@ -498,28 +498,8 @@
     <script src="js/currency-helper.js"></script>
     <script src="js/project.js"></script>
     <script src="js/project-edit.js"></script>
-    <script src="js/project-edit-wishlist.js"></script>
+    <script src="js/wishlist-integration.js"></script>
+    <script src="js/budget-line-improvements.js"></script>
     <script src="js/voice-commands.js"></script>
-    <script>
-        // Initialisation de données wishlist pour la démonstration
-        document.addEventListener('DOMContentLoaded', function() {
-            // Créer des exemples de wishlist si aucune n'existe
-            const existingWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
-            if (existingWishlists.length === 0) {
-                const demoWishlist = {
-                    id: Date.now().toString(),
-                    name: "Anniversaire de Sophie",
-                    items: [
-                        { id: "item1", name: "Gâteau d'anniversaire", price: 45.00 },
-                        { id: "item2", name: "Décoration salle", price: 35.50 },
-                        { id: "item3", name: "Bougies spéciales", price: 8.75 }
-                    ],
-                    createdAt: new Date().toISOString(),
-                    linkedProjectId: null
-                };
-                localStorage.setItem('wishlists', JSON.stringify([demoWishlist]));
-            }
-        });
-    </script>
 </body>
 </html>

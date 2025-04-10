@@ -7,18 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les données de wishlist de démonstration
     initDemoWishlist();
     
-    // Remplacer la fonction setupWishlistFeatures du fichier project-edit.js
-    // par notre version améliorée
-    if (typeof window.originalSetupWishlistFeatures === 'undefined' && typeof setupWishlistFeatures === 'function') {
-        console.log("Remplacement de la fonction setupWishlistFeatures...");
-        window.originalSetupWishlistFeatures = setupWishlistFeatures;
-        setupWishlistFeatures = enhancedSetupWishlistFeatures;
-        
-        // Appeler la fonction améliorée si nous sommes sur la page de création/édition de projet
-        if (document.getElementById('linkToWishlist')) {
-            console.log("Exécution de la fonction setupWishlistFeatures améliorée");
-            setupWishlistFeatures();
-        }
+    // Appliquer directement nos fonctionnalités améliorées
+    // si nous sommes sur la page de création/édition de projet
+    if (document.getElementById('linkToWishlist')) {
+        console.log("Initialisation des fonctionnalités de wishlist améliorées");
+        // Attendre un court délai pour s'assurer que les autres scripts sont chargés
+        setTimeout(() => {
+            setupWishlistIntegration();
+        }, 100);
     }
 });
 
@@ -43,8 +39,8 @@ function initDemoWishlist() {
     }
 }
 
-// Version améliorée de la fonction setupWishlistFeatures
-function enhancedSetupWishlistFeatures() {
+// Fonction d'intégration de la wishlist
+function setupWishlistIntegration() {
     const linkToWishlistCheckbox = document.getElementById('linkToWishlist');
     const wishlistOptionsDiv = document.getElementById('wishlistOptions');
     const wishlistSelect = document.getElementById('wishlistSelect');
