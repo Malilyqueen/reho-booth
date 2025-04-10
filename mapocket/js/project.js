@@ -2666,9 +2666,7 @@ function updateTemplateCategories(templateType) {
                 subcategories: [
                     {
                         name: 'Sous-catégorie à personnaliser',
-                        lines: [
-                            { name: 'Ligne à personnaliser', amount: '€ 0' }
-                        ]
+                        lines: [] // Aucune ligne par défaut, l'utilisateur ajoutera les lignes lui-même
                     }
                 ]
             }
