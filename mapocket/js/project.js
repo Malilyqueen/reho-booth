@@ -699,6 +699,9 @@ function initializeExpenseCategories() {
             // Trouver le conteneur de lignes parent
             const expenseLines = this.closest('.expense-lines');
             
+            // Obtenir le symbole de devise en utilisant notre utilitaire
+            const currencySymbol = getCurrencySymbol();
+            
             // Créer une nouvelle ligne
             const newLine = document.createElement('div');
             newLine.className = 'expense-line';
@@ -776,6 +779,9 @@ function initializeSubcategories() {
             // Trouver le conteneur de sous-catégories parent
             const subcategoriesContainer = this.closest('.subcategories-container');
             const subcategoryFooter = this.closest('.subcategory-footer');
+            
+            // Obtenir le symbole de devise en utilisant notre utilitaire
+            const currencySymbol = getCurrencySymbol();
             
             // Créer une nouvelle sous-catégorie
             const newSubcategory = document.createElement('div');

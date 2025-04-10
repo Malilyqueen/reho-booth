@@ -437,6 +437,7 @@
     </div>
 
     <script src="js/currencies.js"></script>
+    <script src="js/currency-utils.js"></script>
     <script src="js/module-connector.js"></script>
     <script src="js/budget-line-improvements.js"></script>
     <script src="/default_categories.js"></script>
@@ -456,21 +457,13 @@
             }
             // Mettre à jour l'étiquette de montant avec la devise active
             try {
-                const savedPrefs = localStorage.getItem("userPreferences");
-                if (savedPrefs) {
-                    const userPreferences = JSON.parse(savedPrefs);
-                    
-                    // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
-                    if (typeof AVAILABLE_CURRENCIES !== "undefined") {
-                        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                        if (currency) {
-                            // Mettre à jour l'étiquette du montant
-                            const amountLabel = document.getElementById("expenseAmountLabel");
-                            if (amountLabel) {
-                                amountLabel.textContent = `Montant (${currency.symbol})`;
-                            }
-                        }
-                    }
+                // Utiliser notre fonction utilitaire pour obtenir le symbole de devise
+                const currencySymbol = getCurrencySymbol();
+                
+                // Mettre à jour l'étiquette du montant
+                const amountLabel = document.getElementById("expenseAmountLabel");
+                if (amountLabel) {
+                    amountLabel.textContent = `Montant (${currencySymbol})`;
                 }
             } catch (error) {
                 console.error("Erreur lors de la mise à jour de l'étiquette de montant:", error);
