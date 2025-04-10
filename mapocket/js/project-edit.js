@@ -3,22 +3,52 @@ document.addEventListener('DOMContentLoaded', function() {
     // Vérifier si nous sommes en mode édition
     const urlParams = new URLSearchParams(window.location.search);
     const editMode = urlParams.get('edit') === 'true';
-    const projectId = urlParams.get('id');
+    
+    // Obtenir l'ID du projet soit depuis l'URL, soit depuis localStorage
+    let projectId = urlParams.get('id');
+    
+    if (!projectId && editMode) {
+        // Si on est en mode édition mais sans ID dans l'URL, vérifier si on a un projet en cours d'édition
+        const currentProject = localStorage.getItem('currentProject');
+        if (currentProject) {
+            try {
+                const projectData = JSON.parse(currentProject);
+                if (projectData && projectData.id) {
+                    projectId = projectData.id;
+                    console.log("ID de projet récupéré depuis localStorage:", projectId);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération du projet en cours:", error);
+            }
+        }
+    }
     
     console.log("Mode édition:", editMode, "Project ID:", projectId);
 
-    if (editMode && projectId) {
-        // Activer le mode édition
-        enableEditMode(projectId);
+    if (editMode) {
+        if (projectId) {
+            // Activer le mode édition avec l'ID du projet
+            enableEditMode(projectId);
+        } else {
+            // Si nous sommes en mode édition mais sans ID, afficher un message d'erreur
+            alert("Erreur: Aucun projet sélectionné pour l'édition");
+            window.location.href = 'index.html';
+        }
+    } else {
+        // Si nous ne sommes pas en mode édition, on est en mode création de projet
+        // Rien de spécial à faire ici, le formulaire standard sera affiché
+        console.log("Mode création de projet");
+        
+        // S'assurer que le titre de la page est bien "NOUVEAU PROJET"
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = 'NOUVEAU PROJET';
+        }
     }
     
-    // Ajouter des gestionnaires d'événements pour les boutons d'ajout de ligne existants
+    // Toujours configurer les boutons d'interaction
     setupAddLineButtons();
-    
-    // Ajouter des gestionnaires d'événements pour les boutons d'ajout de sous-catégorie existants
     setupAddSubcategoryButtons();
-    
-    // Ajouter un gestionnaire d'événement pour le bouton d'ajout de catégorie principale
     setupAddCategoryButton();
 });
 
