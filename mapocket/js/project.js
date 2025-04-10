@@ -1162,15 +1162,7 @@ function addMainCategory() {
                 </button>
             </div>
             <div class="expense-lines open">
-                <div class="expense-line">
-                    <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                    <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
-                    <div class="expense-line-actions">
-                        <button type="button" class="btn-sm btn-delete-line">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
+                <!-- Pas de ligne automatique, l'utilisateur doit les ajouter lui-même -->
                 <button type="button" class="add-line-btn">
                     <i class="fas fa-plus"></i> Ajouter une ligne
                 </button>
@@ -2981,7 +2973,7 @@ function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
                         <div class="expense-lines open">
                 `;
                 
-                // Ajouter les lignes de dépenses
+                // Ajouter les lignes de dépenses (seulement si des lignes existent déjà dans les données)
                 if (subcategoryData.lines && subcategoryData.lines.length > 0) {
                     subcategoryData.lines.forEach(line => {
                         categoryHTML += `
