@@ -54,6 +54,21 @@ function setupWishlistIntegration() {
         return;
     }
     
+    // Ajouter un gestionnaire spécial pour le menu déroulant de wishlist
+    wishlistSelect.addEventListener('change', function() {
+        const selectedWishlistId = this.value;
+        if (selectedWishlistId) {
+            // Charger et afficher les produits de cette wishlist
+            loadWishlistItems(selectedWishlistId);
+        } else {
+            // Supprimer l'affichage des produits
+            const wishlistItemsDiv = document.getElementById('wishlistItems');
+            if (wishlistItemsDiv) {
+                wishlistItemsDiv.innerHTML = '';
+            }
+        }
+    });
+    
     // Charger les wishlists existantes
     function loadWishlists() {
         const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
@@ -352,40 +367,125 @@ function setupWishlistIntegration() {
     
     // Fonction pour ajouter tous les éléments d'une wishlist à une catégorie
     function addAllWishlistItemsToCategory(categoryName, items) {
+        if (!items || items.length === 0) {
+            console.error("Aucun élément à ajouter");
+            return;
+        }
+        
+        console.log(`Ajout de ${items.length} élément(s) à la catégorie "${categoryName}"`);
+        
         const categoriesContainer = document.getElementById('categoriesContainer');
-        let categoryElement = Array.from(categoriesContainer.querySelectorAll('.expense-category'))
+        if (!categoriesContainer) {
+            console.error("Conteneur de catégories non trouvé");
+            return;
+        }
+        
+        // Trouver ou créer la catégorie
+        let categoryElement = null;
+        
+        // Rechercher d'abord si la catégorie existe déjà
+        categoryElement = Array.from(categoriesContainer.querySelectorAll('.expense-category'))
             .find(cat => cat.querySelector('.category-name').textContent === categoryName);
-            
-        // Si la catégorie n'existe pas, la créer
+        
+        // Si la catégorie n'existe pas, la créer immédiatement
         if (!categoryElement) {
-            addNewCategory(categoryName);
-            // Attendre que la catégorie soit créée
-            setTimeout(() => {
-                categoryElement = Array.from(categoriesContainer.querySelectorAll('.expense-category'))
-                    .find(cat => cat.querySelector('.category-name').textContent === categoryName);
+            console.log(`Création de la catégorie "${categoryName}" pour les éléments de wishlist`);
+            
+            // Utiliser la fonction de création de catégorie du fichier project-edit.js
+            if (typeof addNewCategory === 'function') {
+                addNewCategory(categoryName);
                 
-                if (categoryElement) {
-                    addItemsToCategory(categoryElement, items);
-                }
-            }, 100);
+                // Attendre que la catégorie soit créée
+                setTimeout(() => {
+                    // Rechercher à nouveau la catégorie créée
+                    categoryElement = Array.from(categoriesContainer.querySelectorAll('.expense-category'))
+                        .find(cat => cat.querySelector('.category-name').textContent === categoryName);
+                    
+                    if (categoryElement) {
+                        console.log(`Catégorie "${categoryName}" créée, ajout des éléments...`);
+                        // Ajouter les éléments
+                        addItemsToCategory(categoryElement, items);
+                    } else {
+                        console.error(`Impossible de trouver la catégorie "${categoryName}" après sa création`);
+                    }
+                }, 300); // Délai plus long pour s'assurer que la catégorie est créée
+            } else {
+                console.error("Fonction addNewCategory non disponible");
+            }
         } else {
+            // La catégorie existe déjà, ajouter directement les éléments
+            console.log(`Catégorie "${categoryName}" trouvée, ajout des éléments...`);
             addItemsToCategory(categoryElement, items);
         }
     }
     
     // Fonction auxiliaire pour ajouter les éléments à une catégorie existante
     function addItemsToCategory(categoryElement, items) {
-        const subcategoriesContainer = categoryElement.querySelector('.subcategories-container');
+        if (!categoryElement) {
+            console.error("Catégorie non disponible pour l'ajout des éléments");
+            return;
+        }
         
-        if (subcategoriesContainer) {
-            items.forEach(item => {
-                createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0);
-            });
+        const subcategoriesContainer = categoryElement.querySelector('.subcategories-container');
+        if (!subcategoriesContainer) {
+            console.error("Conteneur de sous-catégories non trouvé");
+            return;
+        }
+        
+        // Obtenir le symbole de la devise pour l'affichage
+        const currencySymbol = getProjectCurrencySymbol();
+        let totalAdded = 0;
+        
+        items.forEach((item, index) => {
+            console.log(`Ajout de l'élément "${item.name}" (${currencySymbol} ${parseFloat(item.price || 0).toFixed(2)})`);
             
+            // Vérifier si la fonction pour créer une sous-catégorie est disponible
+            if (typeof createSubcategoryInContainer === 'function') {
+                // Créer la sous-catégorie
+                const newSubcategory = createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0);
+                if (newSubcategory) {
+                    totalAdded++;
+                    
+                    // Ajouter une animation pour la mise en évidence
+                    setTimeout(() => {
+                        newSubcategory.classList.add('highlight-new');
+                        setTimeout(() => {
+                            newSubcategory.classList.remove('highlight-new');
+                        }, 1500);
+                    }, index * 100); // Délai progressif pour une animation séquencée
+                }
+            } else {
+                console.error("Fonction createSubcategoryInContainer non disponible");
+            }
+        });
+        
+        // Notification de succès si des éléments ont été ajoutés
+        if (totalAdded > 0) {
             // Notification
             const notification = document.createElement('div');
-            notification.className = 'temporary-notification';
-            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${items.length} produits ajoutés au budget`;
+            notification.className = 'temporary-notification success-notification';
+            notification.style.backgroundColor = '#f8f9fa';
+            notification.style.color = '#1d3557';
+            notification.style.padding = '12px 20px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            notification.style.border = '1px solid #e0e0e0';
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '10px';
+            
+            notification.innerHTML = `
+                <i class="fas fa-check-circle" style="color: #2e8540; font-size: 18px;"></i>
+                <div>
+                    <strong>${totalAdded} produit${totalAdded > 1 ? 's' : ''}</strong> ajouté${totalAdded > 1 ? 's' : ''} au budget
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;">Le total a été mis à jour</div>
+                </div>
+            `;
+            
             document.body.appendChild(notification);
             
             // Faire disparaître la notification
@@ -394,10 +494,19 @@ function setupWishlistIntegration() {
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
-            }, 2000);
+            }, 3000);
             
             // Mettre à jour les calculs de budget
-            updateBudgetCalculation();
+            setTimeout(() => {
+                if (typeof updateBudgetCalculation === 'function') {
+                    updateBudgetCalculation();
+                    console.log("Calcul du budget mis à jour");
+                } else {
+                    console.error("Fonction updateBudgetCalculation non disponible");
+                }
+            }, items.length * 100 + 200); // Attendre que toutes les sous-catégories soient ajoutées
+        } else {
+            console.error("Aucun élément n'a pu être ajouté");
         }
     }
     

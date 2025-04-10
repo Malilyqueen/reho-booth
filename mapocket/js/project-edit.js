@@ -1703,24 +1703,27 @@ function showAddExpenseLineForm(container) {
     let currencySymbol = getProjectCurrencySymbol();
     
     lineForm.innerHTML = `
-        <h4>Ajouter une ligne de dépense</h4>
+        <h4><i class="fas fa-plus-circle"></i> Ajouter une ligne de dépense</h4>
         <div class="form-group">
-            <label for="newLineName">Description</label>
-            <input type="text" id="newLineName" class="form-control" placeholder="Ex: Menu principal">
+            <label for="newLineName"><b>Description de la dépense</b></label>
+            <input type="text" id="newLineName" class="form-control" placeholder="Ex: Menu principal" required>
         </div>
         <div class="form-group">
-            <label for="newLineAmount">Montant (${currencySymbol})</label>
-            <div class="amount-input-wrapper">
-                <span class="currency-symbol">${currencySymbol}</span>
-                <input type="number" id="newLineAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+            <label for="newLineAmount"><b>Montant (${currencySymbol})</b></label>
+            <div class="amount-input-wrapper" style="position: relative; display: flex; align-items: center;">
+                <span class="currency-symbol" style="position: absolute; left: 10px; color: #1d3557; font-weight: bold;">${currencySymbol}</span>
+                <input type="number" id="newLineAmount" class="form-control" min="0" step="0.01" placeholder="0.00" style="padding-left: 25px;" required>
             </div>
         </div>
-        <div class="form-action-buttons">
-            <button type="button" class="btn-cancel-line btn-outline">Annuler</button>
-            <button type="button" class="btn-add-line btn-primary">
-                <i class="fas fa-check"></i> Ajouter
+        <div class="form-action-buttons" style="display: flex; justify-content: space-between; margin-top: 15px;">
+            <button type="button" class="btn-cancel-line btn-outline" style="padding: 8px 15px; border-radius: 4px; border: 1px solid #ddd; background: #f5f5f5;">
+                <i class="fas fa-times"></i> Annuler
+            </button>
+            <button type="button" class="btn-add-line btn-primary" style="padding: 8px 15px; border-radius: 4px; background: #ffc300; color: #1d3557; font-weight: bold; border: none;">
+                <i class="fas fa-check"></i> Ajouter cette dépense
             </button>
         </div>
+        <div id="line-feedback" style="margin-top: 10px; text-align: center;"></div>
     `;
     
     // Ajouter le formulaire au conteneur
@@ -1969,20 +1972,32 @@ function setupAddSubcategoryButtons() {
             // Créer le formulaire d'ajout de sous-catégorie
             const subcategoryForm = document.createElement('div');
             subcategoryForm.className = 'subcategory-form';
+            
+            // Obtenir le symbole de la devise actuelle
+            let currencySymbol = getProjectCurrencySymbol();
+            
             subcategoryForm.innerHTML = `
-                <h4>Ajouter une sous-catégorie</h4>
+                <h4><i class="fas fa-folder-plus"></i> Ajouter une sous-catégorie</h4>
                 <div class="form-group">
-                    <label for="newSubcategoryName">Nom de la sous-catégorie</label>
-                    <input type="text" id="newSubcategoryName" class="form-control" placeholder="Ex: Traiteur">
+                    <label for="newSubcategoryName"><b>Nom de la sous-catégorie</b></label>
+                    <input type="text" id="newSubcategoryName" class="form-control" placeholder="Ex: Traiteur" required>
                 </div>
                 <div class="form-group">
-                    <label for="newSubcategoryAmount">Montant initial (optionnel)</label>
-                    <input type="number" id="newSubcategoryAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+                    <label for="newSubcategoryAmount"><b>Montant initial (${currencySymbol})</b></label>
+                    <div class="amount-input-wrapper" style="position: relative; display: flex; align-items: center;">
+                        <span class="currency-symbol" style="position: absolute; left: 10px; color: #1d3557; font-weight: bold;">${currencySymbol}</span>
+                        <input type="number" id="newSubcategoryAmount" class="form-control" min="0" step="0.01" placeholder="0.00" style="padding-left: 25px;">
+                    </div>
                 </div>
-                <div class="form-action-buttons">
-                    <button type="button" class="btn-cancel-subcategory">Annuler</button>
-                    <button type="button" class="btn-add-subcategory">Ajouter</button>
+                <div class="form-action-buttons" style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <button type="button" class="btn-cancel-subcategory" style="padding: 8px 15px; border-radius: 4px; border: 1px solid #ddd; background: #f5f5f5;">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button type="button" class="btn-add-subcategory" style="padding: 8px 15px; border-radius: 4px; background: #ffc300; color: #1d3557; font-weight: bold; border: none;">
+                        <i class="fas fa-check"></i> Ajouter cette sous-catégorie
+                    </button>
                 </div>
+                <div id="subcategory-feedback" style="margin-top: 10px; text-align: center;"></div>
             `;
             
             // Insérer le formulaire dans le conteneur
@@ -2109,15 +2124,20 @@ function setupAddCategoryButton() {
             const categoryForm = document.createElement('div');
             categoryForm.className = 'category-form';
             categoryForm.innerHTML = `
-                <h4>Ajouter une nouvelle catégorie</h4>
+                <h4><i class="fas fa-bookmark"></i> Ajouter une nouvelle catégorie</h4>
                 <div class="form-group">
-                    <label for="newCategoryName">Nom de la catégorie</label>
-                    <input type="text" id="newCategoryName" class="form-control" placeholder="Ex: Restauration">
+                    <label for="newCategoryName"><b>Nom de la catégorie</b></label>
+                    <input type="text" id="newCategoryName" class="form-control" placeholder="Ex: Restauration" required>
                 </div>
-                <div class="form-action-buttons">
-                    <button type="button" class="btn-cancel-category">Annuler</button>
-                    <button type="button" class="btn-add-category">Ajouter</button>
+                <div class="form-action-buttons" style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <button type="button" class="btn-cancel-category" style="padding: 8px 15px; border-radius: 4px; border: 1px solid #ddd; background: #f5f5f5;">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button type="button" class="btn-add-category" style="padding: 8px 15px; border-radius: 4px; background: #ffc300; color: #1d3557; font-weight: bold; border: none;">
+                        <i class="fas fa-check"></i> Ajouter cette catégorie
+                    </button>
                 </div>
+                <div id="category-feedback" style="margin-top: 10px; text-align: center;"></div>
             `;
             
             // Insérer le formulaire avant le bouton d'ajout
