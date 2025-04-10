@@ -2125,6 +2125,13 @@ function getProjectData() {
     const projectStatus = document.getElementById('projectStatus')?.value || 'inProgress';
     const linkToWallet = document.getElementById('linkToWallet')?.checked || false;
     
+    // Récupérer les informations de wishlist
+    const linkToWishlist = document.getElementById('linkToWishlist')?.checked || false;
+    let linkedWishlistId = null;
+    if (linkToWishlist) {
+        linkedWishlistId = document.getElementById('wishlistSelect')?.value || null;
+    }
+    
     // Construire l'objet de données du projet
     const projectData = {
         projectName,
@@ -2137,7 +2144,9 @@ function getProjectData() {
         createdAt: new Date().toISOString(),
         linkToWallet,
         projectEndDate,
-        projectStatus
+        projectStatus,
+        linkToWishlist,
+        linkedWishlistId
     };
     
     return projectData;
@@ -2171,6 +2180,36 @@ function updateExistingProject(formData, originalProject, projectId, shouldRedir
         // Sauvegarder la liste mise à jour
         localStorage.setItem('savedProjects', JSON.stringify(updatedProjects));
         console.log('Projet mis à jour avec succès. Total projets:', updatedProjects.length);
+        
+        // Mettre à jour les wishlists si nécessaire
+        if (formData.linkToWishlist && formData.linkedWishlistId) {
+            const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
+            const updatedWishlists = savedWishlists.map(wishlist => {
+                // Si c'est la wishlist liée au projet, mettre à jour le lien
+                if (wishlist.id === formData.linkedWishlistId) {
+                    wishlist.linkedProjectId = projectId;
+                }
+                // Si cette wishlist était liée à ce projet mais plus maintenant, supprimer le lien
+                else if (wishlist.linkedProjectId === projectId) {
+                    wishlist.linkedProjectId = null;
+                }
+                return wishlist;
+            });
+            localStorage.setItem('wishlists', JSON.stringify(updatedWishlists));
+            console.log('Wishlist liée au projet mise à jour avec succès');
+        }
+        // Si pas de lien wishlist mais avait un lien auparavant, supprimer l'ancien lien
+        else if (originalProject.linkedWishlistId) {
+            const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
+            const updatedWishlists = savedWishlists.map(wishlist => {
+                if (wishlist.id === originalProject.linkedWishlistId) {
+                    wishlist.linkedProjectId = null;
+                }
+                return wishlist;
+            });
+            localStorage.setItem('wishlists', JSON.stringify(updatedWishlists));
+            console.log('Lien avec l\'ancienne wishlist supprimé');
+        }
         
         // Afficher une notification de succès
         if (window.showNotification) {
@@ -2217,5 +2256,127 @@ function updateExistingProject(formData, originalProject, projectId, shouldRedir
     } catch (error) {
         console.error('Erreur lors de la mise à jour du projet:', error);
         alert('Erreur lors de la mise à jour du projet. Veuillez réessayer.');
+    }
+}
+
+// Fonction pour configurer les fonctionnalités liées à la wishlist
+function setupWishlistFeatures() {
+    const linkToWishlistCheckbox = document.getElementById('linkToWishlist');
+    const wishlistOptionsDiv = document.getElementById('wishlistOptions');
+    const wishlistSelect = document.getElementById('wishlistSelect');
+    const newWishlistNameInput = document.getElementById('newWishlistName');
+    const createWishlistBtn = document.getElementById('createWishlistBtn');
+    
+    if (!linkToWishlistCheckbox || !wishlistOptionsDiv) return;
+    
+    // Charger les wishlists existantes
+    function loadWishlists() {
+        const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
+        
+        // Vider le select
+        wishlistSelect.innerHTML = '<option value="">-- Sélectionner une liste --</option>';
+        
+        // Ajouter les options
+        savedWishlists.forEach(wishlist => {
+            const option = document.createElement('option');
+            option.value = wishlist.id;
+            option.textContent = wishlist.name;
+            wishlistSelect.appendChild(option);
+        });
+        
+        // Si aucune wishlist n'existe, afficher un message
+        if (savedWishlists.length === 0) {
+            const option = document.createElement('option');
+            option.disabled = true;
+            option.textContent = 'Aucune liste de souhaits existante';
+            wishlistSelect.appendChild(option);
+        }
+    }
+    
+    // Gérer l'affichage des options de wishlist en fonction de l'état de la checkbox
+    linkToWishlistCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            wishlistOptionsDiv.classList.add('active');
+            loadWishlists();
+        } else {
+            wishlistOptionsDiv.classList.remove('active');
+        }
+    });
+    
+    // Gérer la création d'une nouvelle wishlist
+    createWishlistBtn.addEventListener('click', function() {
+        const wishlistName = newWishlistNameInput.value.trim();
+        
+        if (!wishlistName) {
+            // Feedback visuel d'erreur
+            newWishlistNameInput.classList.add('error-input');
+            newWishlistNameInput.focus();
+            
+            // Retirer l'effet d'erreur après quelques secondes
+            setTimeout(() => {
+                newWishlistNameInput.classList.remove('error-input');
+            }, 2000);
+            return;
+        }
+        
+        // Créer la nouvelle wishlist
+        const newWishlist = {
+            id: Date.now().toString(),
+            name: wishlistName,
+            items: [],
+            createdAt: new Date().toISOString(),
+            linkedProjectId: null // Sera mis à jour lors de la création du projet
+        };
+        
+        // Sauvegarder la wishlist
+        const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
+        savedWishlists.push(newWishlist);
+        localStorage.setItem('wishlists', JSON.stringify(savedWishlists));
+        
+        // Mettre à jour le select et sélectionner la nouvelle wishlist
+        loadWishlists();
+        wishlistSelect.value = newWishlist.id;
+        
+        // Vider le champ
+        newWishlistNameInput.value = '';
+        
+        // Notification visuelle de succès
+        const notification = document.createElement('div');
+        notification.className = 'temporary-notification';
+        notification.textContent = `Liste de souhaits "${wishlistName}" créée`;
+        document.body.appendChild(notification);
+        
+        // Faire disparaître la notification
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 2000);
+    });
+    
+    // Gérer la touche Enter dans le champ de création de wishlist
+    newWishlistNameInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            createWishlistBtn.click();
+        }
+    });
+    
+    // Charger les wishlists initiales si la checkbox est cochée
+    if (linkToWishlistCheckbox.checked) {
+        wishlistOptionsDiv.classList.add('active');
+        loadWishlists();
+    }
+    
+    // Si nous sommes en mode édition, mettre à jour les champs de wishlist
+    const projectInEditing = JSON.parse(localStorage.getItem('projectInEditing') || 'null');
+    if (projectInEditing && projectInEditing.linkedWishlistId) {
+        linkToWishlistCheckbox.checked = true;
+        wishlistOptionsDiv.classList.add('active');
+        loadWishlists();
+        setTimeout(() => {
+            wishlistSelect.value = projectInEditing.linkedWishlistId;
+        }, 100);
     }
 }
