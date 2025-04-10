@@ -224,77 +224,178 @@ function enhanceLineForm(form) {
 
 // Fonction pour améliorer visuellement le formulaire
 function improveFormVisuals(form, nameInput, amountInput, addButton) {
-    // Nettoyer le formulaire existant pour éviter les problèmes d'affichage
-    form.innerHTML = '';
-    
-    // Conserver les références originales des inputs et du bouton
-    const newNameInput = nameInput.cloneNode(true);
-    const newAmountInput = amountInput.cloneNode(true);
-    const newAddButton = addButton.cloneNode(true);
-    
-    // Créer une structure claire pour le formulaire
-    form.classList.add('enhanced-line-form');
-    
-    // Créer le conteneur pour les champs
-    const fieldsContainer = document.createElement('div');
-    fieldsContainer.classList.add('line-fields-container');
-    fieldsContainer.style.display = 'flex';
-    fieldsContainer.style.flexWrap = 'wrap';
-    fieldsContainer.style.gap = '15px';
-    fieldsContainer.style.width = '100%';
-    
-    // Configurer le champ Nom
-    const nameContainer = document.createElement('div');
-    nameContainer.classList.add('form-input-container');
-    
-    const nameLabel = document.createElement('label');
-    nameLabel.htmlFor = `newLineName_${Date.now()}`;
-    nameInput.id = nameLabel.htmlFor;
-    nameLabel.textContent = 'Nom';
-    nameLabel.classList.add('expense-line-label');
-    
-    newNameInput.placeholder = 'Nom de la ligne';
-    newNameInput.classList.add('enhanced-input');
-    newNameInput.id = nameLabel.htmlFor;
-    
-    nameContainer.appendChild(nameLabel);
-    nameContainer.appendChild(newNameInput);
-    
-    // Configurer le champ Montant
-    const amountContainer = document.createElement('div');
-    amountContainer.classList.add('form-input-container');
-    
-    const amountLabel = document.createElement('label');
-    amountLabel.htmlFor = `newLineAmount_${Date.now()}`;
-    amountInput.id = amountLabel.htmlFor;
-    amountLabel.textContent = 'Montant';
-    amountLabel.classList.add('expense-line-label');
-    
-    newAmountInput.placeholder = 'Montant';
-    newAmountInput.classList.add('enhanced-input');
-    newAmountInput.id = amountLabel.htmlFor;
-    
-    amountContainer.appendChild(amountLabel);
-    amountContainer.appendChild(newAmountInput);
-    
-    // Configurer le bouton
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('form-button-container');
-    
-    // Améliorer le bouton
-    if (!newAddButton.querySelector('i')) {
-        newAddButton.innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter';
+    try {
+        // Sauvegarde des propriétés importantes
+        const originalNameId = nameInput.id;
+        const originalAmountId = amountInput.id;
+        const originalNameValue = nameInput.value;
+        const originalAmountValue = amountInput.value;
+        const originalAddHandler = addButton.onclick;
+        
+        // Création d'une structure HTML simple et directe
+        form.innerHTML = `
+            <div class="budget-line-form-row" style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%; align-items: flex-end;">
+                <div class="form-input-container" style="flex: 2; min-width: 180px;">
+                    <label for="${originalNameId || 'newLineName'}" style="display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: 500; color: #1d3557;">Nom</label>
+                    <input type="text" id="${originalNameId || 'newLineName'}" class="enhanced-input" placeholder="Nom de la ligne" 
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                <div class="form-input-container" style="flex: 1; min-width: 120px;">
+                    <label for="${originalAmountId || 'newLineAmount'}" style="display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: 500; color: #1d3557;">Montant</label>
+                    <input type="text" id="${originalAmountId || 'newLineAmount'}" class="enhanced-input" placeholder="Montant" 
+                           style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+                </div>
+                <div class="form-button-container" style="flex: 0 0 auto; display: flex; align-items: flex-end;">
+                    <button type="button" id="addLineButton" class="btn-add-line enhanced-add-btn" 
+                            style="padding: 10px 16px; border-radius: 6px; background-color: #ffc300; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-plus-circle"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Récupérer les nouveaux éléments
+        const newNameInput = form.querySelector(`#${originalNameId || 'newLineName'}`);
+        const newAmountInput = form.querySelector(`#${originalAmountId || 'newLineAmount'}`);
+        const newAddButton = form.querySelector('#addLineButton');
+        
+        // Restaurer les valeurs d'origine
+        if (originalNameValue) newNameInput.value = originalNameValue;
+        if (originalAmountValue) newAmountInput.value = originalAmountValue;
+        
+        // Ajouter le gestionnaire d'événements
+        newAddButton.onclick = function(event) {
+            // Vérifier les entrées avant d'ajouter
+            if (newNameInput.value.trim() === '' || newAmountInput.value.trim() === '') {
+                // Mettre en évidence les champs manquants
+                if (newNameInput.value.trim() === '') {
+                    newNameInput.style.border = '2px solid #f44336';
+                    newNameInput.style.backgroundColor = '#fff0f0';
+                    newNameInput.focus();
+                }
+                if (newAmountInput.value.trim() === '') {
+                    newAmountInput.style.border = '2px solid #f44336';
+                    newAmountInput.style.backgroundColor = '#fff0f0';
+                }
+                return false;
+            }
+            
+            // Normaliser les valeurs
+            const lineName = newNameInput.value.trim();
+            let lineAmount = newAmountInput.value.trim();
+            lineAmount = parseFloat(lineAmount.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+            
+            // Montrer un feedback visuel
+            const feedback = document.createElement('div');
+            feedback.style.backgroundColor = '#f0fff0';
+            feedback.style.border = '1px solid #c3e6cb';
+            feedback.style.color = '#155724';
+            feedback.style.padding = '10px 15px';
+            feedback.style.marginTop = '10px';
+            feedback.style.borderRadius = '6px';
+            feedback.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+            
+            let currencySymbol = '€';
+            if (typeof getProjectCurrencySymbol === 'function') {
+                currencySymbol = getProjectCurrencySymbol();
+            }
+            
+            feedback.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>
+                        <strong>Ligne ajoutée avec succès</strong><br>
+                        <span style="font-size: 0.85rem; opacity: 0.9;">
+                            "${lineName}" (${currencySymbol} ${lineAmount.toFixed(2)})
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            // Exécuter le gestionnaire d'origine
+            if (typeof originalAddHandler === 'function') {
+                originalAddHandler.call(newAddButton, event);
+            }
+            
+            // Nettoyer les champs
+            setTimeout(() => {
+                newNameInput.value = '';
+                newAmountInput.value = '';
+                form.appendChild(feedback);
+                
+                // Supprimer le feedback après un délai
+                setTimeout(() => {
+                    feedback.remove();
+                }, 2500);
+                
+                // Publier l'événement d'ajout
+                if (window.ModuleConnector) {
+                    window.ModuleConnector.publish(
+                        window.ModuleConnector.channels.BUDGET,
+                        window.ModuleConnector.actions.budget.ITEM_ADDED,
+                        { name: lineName, amount: lineAmount },
+                        { source: 'budget-line-improvements' }
+                    );
+                }
+            }, 10);
+            
+            return true;
+        };
+        
+        // Ajouter les gestionnaires d'événements pour l'entrée
+        newNameInput.addEventListener('input', () => {
+            newNameInput.style.border = '1px solid #ddd';
+            newNameInput.style.backgroundColor = '';
+        });
+        
+        newAmountInput.addEventListener('input', () => {
+            newAmountInput.style.border = '1px solid #ddd';
+            newAmountInput.style.backgroundColor = '';
+            
+            // Formatage du montant
+            let value = newAmountInput.value;
+            value = value.replace(/[^\d.,]/g, '');
+            if (value !== newAmountInput.value) {
+                newAmountInput.value = value;
+            }
+        });
+        
+        console.log("Formulaire d'ajout de ligne amélioré avec succès");
+        
+    } catch (error) {
+        console.error("Erreur lors de l'amélioration du formulaire:", error);
+        
+        // En cas d'erreur, essayer une approche minimaliste pour ne pas casser la fonctionnalité
+        try {
+            // Styles minimaux directs sur les éléments existants
+            form.style.display = 'flex';
+            form.style.gap = '10px';
+            form.style.marginBottom = '15px';
+            
+            nameInput.style.padding = '8px';
+            nameInput.style.border = '1px solid #ddd';
+            nameInput.style.borderRadius = '4px';
+            nameInput.placeholder = 'Nom de la ligne';
+            
+            amountInput.style.padding = '8px';
+            amountInput.style.border = '1px solid #ddd';
+            amountInput.style.borderRadius = '4px';
+            amountInput.placeholder = 'Montant';
+            
+            addButton.style.padding = '8px 12px';
+            addButton.style.backgroundColor = '#ffc300';
+            addButton.style.border = 'none';
+            addButton.style.borderRadius = '4px';
+            
+            if (!addButton.innerHTML.includes('Ajouter')) {
+                addButton.innerHTML = 'Ajouter';
+            }
+            
+            console.log("Appliqué une mise en forme minimaliste au formulaire après erreur");
+        } catch (fallbackError) {
+            console.error("Échec du fallback:", fallbackError);
+        }
     }
-    newAddButton.classList.add('enhanced-add-btn');
-    
-    buttonContainer.appendChild(newAddButton);
-    
-    // Assembler le formulaire
-    fieldsContainer.appendChild(nameContainer);
-    fieldsContainer.appendChild(amountContainer);
-    fieldsContainer.appendChild(buttonContainer);
-    
-    form.appendChild(fieldsContainer);
 }
 
 // Fonction pour formater l'entrée du montant en temps réel
