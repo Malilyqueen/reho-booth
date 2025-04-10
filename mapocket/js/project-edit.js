@@ -1587,19 +1587,15 @@ function createSubcategoryInContainer(container, subcategoryName, initialAmount 
         showAddExpenseLineForm(linesContainer);
     });
     
-    // Si un montant initial est fourni et que nous sommes en train de créer une nouvelle sous-catégorie vide
-    // (pas en train d'ajouter une ligne à une sous-catégorie existante)
-    // Cette vérification permet d'éviter la création de lignes non sollicitées
-    if (initialAmount && parseFloat(initialAmount) > 0 && !linesContainer.querySelector('.expense-line')) {
-        // Utiliser le nom de la sous-catégorie pour la ligne initiale pour éviter les noms génériques "Montant initial"
-        // Cela permet de personnaliser les lignes automatiques
-        const lineName = subcategoryName + " - Montant global";
-        createExpenseLine(linesContainer, lineName, initialAmount);
-        
-        console.log(`Ligne '${lineName}' ajoutée pour la sous-catégorie:`, subcategoryName);
-        
-        // Mettre à jour les calculs
-        setTimeout(() => {
+    // IMPORTANT: Ne pas créer automatiquement de ligne pour éviter de remplacer les entrées utilisateur
+    // On ne crée plus de ligne automatique avec un montant initial
+    // Cela permet aux utilisateurs d'ajouter leurs propres lignes sans substitution
+    
+    // Garder un log pour le débogage
+    console.log(`Aucune ligne automatique créée pour la sous-catégorie: ${subcategoryName} - l'utilisateur pourra créer ses propres lignes`);
+    
+    // Mettre à jour les calculs
+    setTimeout(() => {
             updateBudgetCalculation();
         }, 100);
     } else {
