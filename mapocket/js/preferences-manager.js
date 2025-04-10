@@ -16,7 +16,8 @@ const defaultPreferences = {
 };
 
 // Préférences utilisateur actuelles - Forcer le thème clair (light) temporairement
-let userPrefs = { ...defaultPreferences, theme: 'light' };
+// Utilisons window.userPrefs pour éviter les conflits de variable entre les fichiers
+window.userPrefs = window.userPrefs || { ...defaultPreferences, theme: 'light' };
 
 /**
  * Charge les préférences utilisateur depuis le localStorage
@@ -27,8 +28,8 @@ function loadPreferences() {
         if (savedPreferences) {
             // Charger les préférences mais forcer le thème clair (light) temporairement
             const parsedPrefs = JSON.parse(savedPreferences);
-            userPrefs = { ...defaultPreferences, ...parsedPrefs, theme: 'light' };
-            console.log('Préférences utilisateur chargées:', userPrefs);
+            window.userPrefs = { ...defaultPreferences, ...parsedPrefs, theme: 'light' };
+            console.log('Préférences utilisateur chargées:', window.userPrefs);
         }
     } catch (error) {
         console.error('Erreur lors du chargement des préférences:', error);
@@ -40,12 +41,12 @@ function loadPreferences() {
  */
 function savePreferences() {
     try {
-        localStorage.setItem('userPreferences', JSON.stringify(userPrefs));
-        console.log('Préférences utilisateur sauvegardées:', userPrefs);
+        localStorage.setItem('userPreferences', JSON.stringify(window.userPrefs));
+        console.log('Préférences utilisateur sauvegardées:', window.userPrefs);
         
         // Déclencher un événement pour informer les autres parties de l'application
         const event = new CustomEvent('userPreferencesChanged', { 
-            detail: { preferences: userPrefs } 
+            detail: { preferences: window.userPrefs } 
         });
         document.dispatchEvent(event);
         
@@ -63,8 +64,8 @@ function savePreferences() {
  * @returns {boolean} - Succès ou échec de la mise à jour
  */
 function updatePreference(key, value) {
-    if (userPrefs.hasOwnProperty(key)) {
-        userPrefs[key] = value;
+    if (window.userPrefs.hasOwnProperty(key)) {
+        window.userPrefs[key] = value;
         return savePreferences();
     }
     return false;
@@ -72,7 +73,7 @@ function updatePreference(key, value) {
 
 // Appliquer le thème actuel
 function applyTheme() {
-    const isDarkMode = userPrefs.theme === 'dark';
+    const isDarkMode = window.userPrefs.theme === 'dark';
     
     // Appliquer à l'élément body
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -117,7 +118,7 @@ function applyTheme() {
 // Appliquer la taille de police
 function applyFontSize() {
     document.body.classList.remove('font-small', 'font-medium', 'font-large');
-    document.body.classList.add('font-' + userPrefs.fontSize);
+    document.body.classList.add('font-' + window.userPrefs.fontSize);
 }
 
 // Fonction simple de traduction
@@ -132,7 +133,7 @@ function translateElement(element, dictionary) {
 
 // Appliquer la langue actuelle
 function applyLanguage() {
-    const lang = userPrefs.language;
+    const lang = window.userPrefs.language;
     document.documentElement.lang = lang;
     
     // Mettre à jour les radio buttons si présents
@@ -373,12 +374,12 @@ function applyCurrency() {
     // Mettre à jour les sélecteurs de devise si présents
     const primarySelect = document.getElementById('primaryCurrency');
     if (primarySelect) {
-        primarySelect.value = userPrefs.currency;
+        primarySelect.value = window.userPrefs.currency;
     }
     
     const secondarySelect = document.getElementById('secondaryCurrency');
     if (secondarySelect) {
-        secondarySelect.value = userPrefs.secondaryCurrency;
+        secondarySelect.value = window.userPrefs.secondaryCurrency;
     }
     
     // Mettre à jour les icônes de devise
@@ -386,7 +387,7 @@ function applyCurrency() {
     currencyIcons.forEach(icon => {
         icon.classList.remove('fa-euro-sign', 'fa-dollar-sign', 'fa-pound-sign');
         
-        switch(userPrefs.currency) {
+        switch(window.userPrefs.currency) {
             case 'USD':
                 icon.classList.add('fa-dollar-sign');
                 break;
@@ -406,7 +407,7 @@ function applyCurrency() {
             const numericMatch = element.textContent.match(/[\d\s,.]+/);
             if (numericMatch) {
                 const numericPart = numericMatch[0].trim();
-                const symbol = getCurrencySymbol(userPrefs.currency);
+                const symbol = getCurrencySymbol(window.userPrefs.currency);
                 element.textContent = `${symbol} ${numericPart}`;
             }
         }
