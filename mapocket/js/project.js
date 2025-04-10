@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const editMode = urlParams.get('edit') === 'true';
     const projectId = urlParams.get('id');
     
+    console.log("Mode détecté:", editMode ? "Édition" : viewMode ? "Visualisation" : "Création", "Projet ID:", projectId);
+    
     // Initialiser le formulaire de nouveau projet
     initializeProjectForm();
     
@@ -3415,5 +3417,4 @@ function updateExistingProject(formData, originalProject, projectId, shouldRedir
         console.error('Erreur lors de la mise à jour du projet:', error);
         alert('Erreur lors de la mise à jour du projet. Veuillez réessayer.');
     }
-}
 }
