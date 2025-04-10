@@ -292,8 +292,7 @@ function initMobileStatsDisplay() {
  */
 function updateMobileStatsDisplay() {
     // Récupérer les préférences utilisateur pour obtenir la devise
-    // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+    let userPreferences = {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -546,8 +545,7 @@ function initializeUI() {
 
 function loadProjectsList() {
     // Récupérer les préférences utilisateur pour obtenir la devise
-    // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+    let userPreferences = {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -892,8 +890,7 @@ function deleteProject(projectId) {
 
 function updateDashboardStats() {
     // Récupérer les préférences utilisateur pour obtenir la devise
-    // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+    let userPreferences = {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -1121,8 +1118,7 @@ function viewProject(projectId) {
 // Fonction utilitaire pour créer un portefeuille de test
 function createTestWallet(name = "Portefeuille Principal", balance = 2000) {
     // Récupérer les préférences utilisateur pour obtenir la devise
-    // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+    let userPreferences = {
         currency: 'EUR', // Devise par défaut
     };
     

@@ -4,7 +4,7 @@
 let isAdmin = false;
 window.userPreferences = window.userPreferences || {
     currency: 'EUR', // Devise par défaut
-};
+}; window.userPreferencesLoaded = true; };
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('MaPocket application initialized');
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDashboardStats();
         }
     });
-});
+}; window.userPreferencesLoaded = true; });
 
 // Met à jour l'icône de devise en fonction des préférences utilisateur
 function updateCurrencyIcon() {
@@ -143,7 +143,7 @@ function updateCurrencyIcon() {
     
     // Forcer la mise à jour des statistiques du tableau de bord
     updateDashboardStats();
-}
+}; window.userPreferencesLoaded = true; }
 
 // Mettre à jour tous les affichages de devise sur la page
 function updateCurrencyDisplays() {
@@ -163,7 +163,7 @@ function updateCurrencyDisplays() {
         }
     });
     window.dispatchEvent(event);
-}
+}; window.userPreferencesLoaded = true; }
 
 // Mettre à jour l'affichage des montants avec la devise actuelle
 function updateCurrencyDisplay() {
@@ -194,7 +194,7 @@ function updateCurrencyDisplay() {
     
     // Mettre à jour les statistiques mobiles
     updateMobileStatsDisplay();
-}
+}; window.userPreferencesLoaded = true; }
 
 // Fonction pour extraire la valeur numérique d'un montant avec devise
 function parseMonetaryValue(monetaryString) {
@@ -211,7 +211,7 @@ function parseMonetaryValue(monetaryString) {
     
     // Retourner 0 si la conversion échoue
     return isNaN(value) ? 0 : value;
-}
+}; window.userPreferencesLoaded = true; }
 
 // Obtient le symbole d'une devise (fonction globale)
 window.getCurrencySymbol = function(currencyCode) {
@@ -234,12 +234,12 @@ window.getCurrencySymbol = function(currencyCode) {
         case 'THB': return '฿';
         default: return currencyCode; // Utiliser le code de la devise si le symbole n'est pas connu
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 // Alias local pour la fonction globale
 function getCurrencySymbol(currencyCode) {
     return window.getCurrencySymbol(currencyCode);
-}
+}; window.userPreferencesLoaded = true; }
 
 // Mise à jour de tous les montants avec la nouvelle devise
 function updateAllAmountsWithCurrency() {
@@ -268,7 +268,7 @@ function updateAllAmountsWithCurrency() {
             element.textContent = `${currencySymbol} ${amount.toFixed(2)}`;
         }
     });
-}
+}; window.userPreferencesLoaded = true; }
 
 /**
  * Initialise l'affichage des statistiques mobiles
@@ -284,7 +284,7 @@ function initMobileStatsDisplay() {
     
     // Mettre à jour les statistiques initialement
     updateMobileStatsDisplay();
-}
+}; window.userPreferencesLoaded = true; }
 
 /**
  * Met à jour l'affichage des statistiques mobiles
@@ -293,7 +293,7 @@ function initMobileStatsDisplay() {
 function updateMobileStatsDisplay() {
     // Récupérer les préférences utilisateur pour obtenir la devise
     // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+if(!window.userPreferencesLoaded) { window.userPreferences = window.userPreferences || {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -346,7 +346,7 @@ window.userPreferences = window.userPreferences || {
     } catch (error) {
         console.error('Erreur lors de la mise à jour des statistiques mobiles:', error);
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 /**
  * Vérifie si l'utilisateur a le statut d'administrateur
@@ -364,7 +364,7 @@ function checkAdminStatus() {
     
     // Appliquer le statut admin à l'interface
     document.body.classList.toggle('is-admin', isAdmin);
-}
+}; window.userPreferencesLoaded = true; }
 
 /**
  * Initialise l'accès à la page d'administration
@@ -394,7 +394,7 @@ function initAdminAccess() {
     // Ajouter un bouton de test pour activer/désactiver le mode admin (pour la démo uniquement)
     // Dans une vraie application, cette fonctionnalité ne serait pas disponible
     addAdminToggle();
-}
+}; window.userPreferencesLoaded = true; }
 
 /**
  * Ajoute un bouton pour activer/désactiver le mode admin (pour la démo uniquement)
@@ -505,7 +505,7 @@ function addAdminToggle() {
             console.error('Erreur lors de l\'ajout du bouton admin simple:', fallbackError);
         }
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function initializeUI() {
     // Mobile menu toggle (for responsive design)
@@ -542,12 +542,12 @@ function initializeUI() {
     
     // Simulate data loading for charts (in a real application, this would fetch data from an API)
     simulateDataLoading();
-}
+}; window.userPreferencesLoaded = true; }
 
 function loadProjectsList() {
     // Récupérer les préférences utilisateur pour obtenir la devise
     // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+if(!window.userPreferencesLoaded) { window.userPreferences = window.userPreferences || {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -766,7 +766,7 @@ window.userPreferences = window.userPreferences || {
             });
         }
     });
-}
+}; window.userPreferencesLoaded = true; }
 
 function initializeProjectActions(projectCard) {
     const projectId = projectCard.getAttribute('data-id');
@@ -794,7 +794,7 @@ function initializeProjectActions(projectCard) {
             deleteProject(projectId);
         });
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function duplicateProject(projectId) {
     // Récupérer tous les projets
@@ -835,7 +835,7 @@ function duplicateProject(projectId) {
         // Mettre à jour les statistiques
         updateDashboardStats();
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function editProject(projectId) {
     // Récupérer tous les projets
@@ -857,7 +857,7 @@ function editProject(projectId) {
         console.error("Projet non trouvé avec ID:", projectId);
         alert("Impossible de trouver le projet demandé.");
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function deleteProject(projectId) {
     // Demander confirmation
@@ -888,12 +888,12 @@ function deleteProject(projectId) {
         // Mettre à jour les statistiques
         updateDashboardStats();
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function updateDashboardStats() {
     // Récupérer les préférences utilisateur pour obtenir la devise
     // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+if(!window.userPreferencesLoaded) { window.userPreferences = window.userPreferences || {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -1071,7 +1071,7 @@ window.userPreferences = window.userPreferences || {
         
         proActivitySummaryElement.textContent = `${pendingQuotes} devis / ${pendingInvoices} factures`;
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 function showNotification(message) {
     const notification = document.createElement('div');
@@ -1086,7 +1086,7 @@ function showNotification(message) {
             notification.remove();
         }, 500);
     }, 2500);
-}
+}; window.userPreferencesLoaded = true; }
 
 function simulateDataLoading() {
     // This function simulates loading data for the charts and other dynamic elements
@@ -1098,7 +1098,7 @@ function simulateDataLoading() {
         // Update the charts (in a real implementation)
         // updateCharts(data);
     }, 500);
-}
+}; window.userPreferencesLoaded = true; }
 
 function viewProject(projectId) {
     // Récupérer tous les projets
@@ -1116,13 +1116,13 @@ function viewProject(projectId) {
     } else {
         showNotification('Projet non trouvé');
     }
-}
+}; window.userPreferencesLoaded = true; }
 
 // Fonction utilitaire pour créer un portefeuille de test
 function createTestWallet(name = "Portefeuille Principal", balance = 2000) {
     // Récupérer les préférences utilisateur pour obtenir la devise
     // userPreferences initialisé globalement
-window.userPreferences = window.userPreferences || {
+if(!window.userPreferencesLoaded) { window.userPreferences = window.userPreferences || {
         currency: 'EUR', // Devise par défaut
     };
     
@@ -1168,4 +1168,4 @@ window.userPreferences = window.userPreferences || {
     
     console.log('Portefeuille de test créé avec succès:', newWallet);
     return newWallet;
-}
+}; window.userPreferencesLoaded = true; }
