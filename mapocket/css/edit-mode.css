@@ -96,3 +96,148 @@
 .temporary-notification.fade-out {
     opacity: 0;
 }
+
+/* Styles pour les formulaires intégrés */
+.inline-form {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    background-color: #f0f8ff;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.inline-form input, 
+.inline-form select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+    margin-right: 8px;
+}
+
+.inline-form button {
+    background-color: #ffc300;
+    color: #1d3557;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.inline-form button:hover {
+    background-color: #ffb700;
+}
+
+.inline-form button.cancel {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #ced4da;
+}
+
+.inline-form button.cancel:hover {
+    background-color: #e9ecef;
+}
+
+/* Styles pour les éléments éditables */
+.editable-field {
+    position: relative;
+    cursor: pointer;
+}
+
+.editable-field:hover::after {
+    content: "\f044"; /* Font Awesome edit icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 14px;
+    color: #2979ff;
+    margin-left: 8px;
+    opacity: 0.7;
+}
+
+.editable-field:hover {
+    background-color: rgba(41, 121, 255, 0.05);
+    border-radius: 4px;
+}
+
+/* Styles pour les formulaires de catégorie et de sous-catégorie */
+.category-form, 
+.subcategory-form,
+.expense-line-form {
+    background-color: #f5f9ff;
+    border: 1px solid #e0e9ff;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.category-form h4,
+.subcategory-form h4,
+.expense-line-form h4 {
+    color: #1d3557;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e9ff;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #1d3557;
+}
+
+.form-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.form-action-buttons button {
+    margin-left: 10px;
+}
+
+/* Styles pour les éléments en cours d'édition */
+.category-header.editing,
+.subcategory-header.editing,
+.expense-line.editing {
+    background-color: #f0f7ff;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles pour l'ajout d'éléments */
+.add-item-button {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px dashed #ced4da;
+    border-radius: 6px;
+    padding: 8px 15px;
+    color: #6c757d;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 10px 0;
+    transition: all 0.2s ease;
+}
+
+.add-item-button i {
+    margin-right: 10px;
+}
+
+.add-item-button:hover {
+    background-color: #e9ecef;
+    color: #495057;
+    border-color: #adb5bd;
+}

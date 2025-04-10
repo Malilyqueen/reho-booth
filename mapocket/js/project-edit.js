@@ -861,6 +861,278 @@ function setupAddLineButtons() {
 }
 
 // Fonction pour configurer les boutons d'ajout de sous-catégorie
+// Fonction pour créer une sous-catégorie dans un conteneur spécifié
+function createSubcategoryInContainer(container, subcategoryName) {
+    // Obtenir le symbole de la devise actuelle
+    let currencySymbol = getProjectCurrencySymbol();
+    
+    // Créer l'élément de sous-catégorie
+    const subcategoryElement = document.createElement('div');
+    subcategoryElement.className = 'subcategory';
+    
+    // En-tête de la sous-catégorie
+    const subcategoryHeader = document.createElement('div');
+    subcategoryHeader.className = 'subcategory-header';
+    
+    const subcategoryTitle = document.createElement('h5');
+    subcategoryTitle.className = 'subcategory-name editable-field';
+    subcategoryTitle.textContent = subcategoryName;
+    subcategoryTitle.setAttribute('data-original-value', subcategoryName);
+    
+    const subcategoryAmount = document.createElement('span');
+    subcategoryAmount.className = 'subcategory-amount editable-field';
+    subcategoryAmount.textContent = `${currencySymbol} 0.00`;
+    
+    // Ajouter la possibilité de modifier le nom de la sous-catégorie en cliquant dessus
+    subcategoryTitle.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
+    
+    // Ajouter la possibilité de modifier le montant de la sous-catégorie en cliquant dessus
+    subcategoryAmount.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
+    
+    subcategoryHeader.appendChild(subcategoryTitle);
+    subcategoryHeader.appendChild(subcategoryAmount);
+    
+    // Actions de la sous-catégorie
+    const subcategoryActions = document.createElement('div');
+    subcategoryActions.className = 'subcategory-actions';
+    
+    const addLineBtn = document.createElement('button');
+    addLineBtn.type = 'button';
+    addLineBtn.className = 'add-expense-line-btn';
+    addLineBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter ligne';
+    
+    const deleteSubcategoryBtn = document.createElement('button');
+    deleteSubcategoryBtn.type = 'button';
+    deleteSubcategoryBtn.className = 'delete-subcategory-btn';
+    deleteSubcategoryBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    
+    subcategoryActions.appendChild(addLineBtn);
+    subcategoryActions.appendChild(deleteSubcategoryBtn);
+    
+    // Conteneur des lignes de dépenses
+    const linesContainer = document.createElement('div');
+    linesContainer.className = 'expense-lines';
+    
+    // Assembler la sous-catégorie
+    subcategoryElement.appendChild(subcategoryHeader);
+    subcategoryElement.appendChild(subcategoryActions);
+    subcategoryElement.appendChild(linesContainer);
+    
+    // Ajouter au conteneur spécifié (avant le footer s'il existe)
+    const subcategoryFooter = container.querySelector('.subcategory-footer');
+    if (subcategoryFooter) {
+        container.insertBefore(subcategoryElement, subcategoryFooter);
+    } else {
+        container.appendChild(subcategoryElement);
+    }
+    
+    // Ajouter les gestionnaires d'événements
+    deleteSubcategoryBtn.addEventListener('click', function() {
+        if (confirm('Voulez-vous vraiment supprimer cette sous-catégorie et toutes ses lignes ?')) {
+            subcategoryElement.remove();
+        }
+    });
+    
+    // Ajouter le gestionnaire pour ajouter des lignes de dépense
+    addLineBtn.addEventListener('click', function() {
+        showAddExpenseLineForm(linesContainer);
+    });
+    
+    return subcategoryElement;
+}
+
+// Fonction pour rendre un champ modifiable
+function makeFieldEditable(element, type = 'text') {
+    // Vérifier si le champ est déjà en mode édition
+    if (element.querySelector('input')) return;
+    
+    // Sauvegarder la valeur actuelle
+    const currentValue = element.textContent.trim();
+    const originalValue = element.getAttribute('data-original-value') || currentValue;
+    
+    // Créer un formulaire inline
+    const form = document.createElement('div');
+    form.className = 'inline-form';
+    
+    // Créer l'input avec la valeur actuelle
+    const input = document.createElement('input');
+    input.type = type === 'number' ? 'number' : 'text';
+    input.value = type === 'number' ? parseMonetaryValue(currentValue) : currentValue;
+    input.className = 'form-control';
+    if (type === 'number') {
+        input.min = '0';
+        input.step = '0.01';
+    }
+    
+    // Créer les boutons de sauvegarde et d'annulation
+    const saveBtn = document.createElement('button');
+    saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+    saveBtn.type = 'button';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'cancel';
+    
+    // Ajouter les éléments au formulaire
+    form.appendChild(input);
+    form.appendChild(saveBtn);
+    form.appendChild(cancelBtn);
+    
+    // Vider l'élément et ajouter le formulaire
+    element.textContent = '';
+    element.appendChild(form);
+    
+    // Focus sur l'input
+    input.focus();
+    
+    // Gestionnaire pour le bouton de sauvegarde
+    saveBtn.addEventListener('click', function() {
+        let newValue = input.value.trim();
+        if (type === 'number') {
+            // Formater avec le symbole de devise
+            const currencySymbol = getProjectCurrencySymbol();
+            newValue = `${currencySymbol} ${parseFloat(newValue).toFixed(2)}`;
+        }
+        
+        // Mettre à jour le contenu de l'élément
+        element.textContent = newValue;
+        
+        // Mettre à jour les calculs si nécessaire
+        updateBudgetCalculation();
+    });
+    
+    // Gestionnaire pour le bouton d'annulation
+    cancelBtn.addEventListener('click', function() {
+        element.textContent = currentValue;
+    });
+    
+    // Gestionnaire pour la touche Enter et Escape
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            saveBtn.click();
+        } else if (e.key === 'Escape') {
+            cancelBtn.click();
+        }
+    });
+}
+
+// Fonction pour afficher le formulaire d'ajout de ligne de dépense
+function showAddExpenseLineForm(container) {
+    // Vérifier si un formulaire d'ajout de ligne existe déjà
+    if (container.querySelector('.expense-line-form')) {
+        return; // Éviter les doublons
+    }
+    
+    // Créer le formulaire d'ajout de ligne
+    const lineForm = document.createElement('div');
+    lineForm.className = 'expense-line-form';
+    lineForm.innerHTML = `
+        <h4>Ajouter une ligne de dépense</h4>
+        <div class="form-group">
+            <label for="newLineName">Description</label>
+            <input type="text" id="newLineName" class="form-control" placeholder="Ex: Menu principal">
+        </div>
+        <div class="form-group">
+            <label for="newLineAmount">Montant</label>
+            <input type="number" id="newLineAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+        </div>
+        <div class="form-action-buttons">
+            <button type="button" class="btn-cancel-line">Annuler</button>
+            <button type="button" class="btn-add-line">Ajouter</button>
+        </div>
+    `;
+    
+    // Ajouter le formulaire au conteneur
+    container.appendChild(lineForm);
+    
+    // Focus sur le champ de nom
+    setTimeout(() => {
+        lineForm.querySelector('#newLineName').focus();
+    }, 100);
+    
+    // Gestionnaire pour le bouton d'annulation
+    lineForm.querySelector('.btn-cancel-line').addEventListener('click', function() {
+        lineForm.remove();
+    });
+    
+    // Gestionnaire pour le bouton d'ajout
+    lineForm.querySelector('.btn-add-line').addEventListener('click', function() {
+        const lineName = lineForm.querySelector('#newLineName').value.trim();
+        const lineAmount = lineForm.querySelector('#newLineAmount').value;
+        
+        if (!lineName) {
+            alert('Veuillez saisir une description pour la ligne');
+            return;
+        }
+        
+        // Créer la ligne de dépense
+        createExpenseLine(container, lineName, lineAmount);
+        
+        // Supprimer le formulaire
+        lineForm.remove();
+        
+        // Mettre à jour les calculs
+        updateBudgetCalculation();
+    });
+}
+
+// Fonction pour créer une ligne de dépense
+function createExpenseLine(container, name, amount) {
+    // Obtenir le symbole de la devise actuelle
+    let currencySymbol = getProjectCurrencySymbol();
+    
+    // Créer l'élément de ligne
+    const lineElement = document.createElement('div');
+    lineElement.className = 'expense-line';
+    
+    // Nom de la ligne
+    const lineName = document.createElement('span');
+    lineName.className = 'expense-line-name editable-field';
+    lineName.textContent = name;
+    lineName.setAttribute('data-original-value', name);
+    
+    // Montant de la ligne
+    const lineAmount = document.createElement('span');
+    lineAmount.className = 'expense-line-amount editable-field';
+    lineAmount.textContent = `${currencySymbol} ${parseFloat(amount || 0).toFixed(2)}`;
+    
+    // Bouton de suppression
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-line-btn';
+    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+    
+    // Ajouter les éléments à la ligne
+    lineElement.appendChild(lineName);
+    lineElement.appendChild(lineAmount);
+    lineElement.appendChild(deleteBtn);
+    
+    // Ajouter au conteneur
+    container.appendChild(lineElement);
+    
+    // Ajouter la possibilité de modifier les champs
+    lineName.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
+    
+    lineAmount.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
+    
+    // Ajouter le gestionnaire d'événement pour la suppression
+    deleteBtn.addEventListener('click', function() {
+        lineElement.remove();
+        updateBudgetCalculation();
+    });
+    
+    return lineElement;
+}
+
 function setupAddSubcategoryButtons() {
     // Sélectionner tous les boutons d'ajout de sous-catégorie existants
     const addSubcategoryBtns = document.querySelectorAll('.add-subcategory-btn');
@@ -871,81 +1143,60 @@ function setupAddSubcategoryButtons() {
             
             if (!subcategoriesContainer) return;
             
-            const subcategoryName = prompt('Nom de la nouvelle sous-catégorie:');
-            if (!subcategoryName) return;
-            
-            // Obtenir le symbole de la devise actuelle
-            let currencySymbol = '€';
-            try {
-                const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                if (userPreferences.currency) {
-                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                    if (currency) {
-                        currencySymbol = currency.symbol;
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération de la devise:', error);
+            // Vérifier si un formulaire d'ajout de sous-catégorie existe déjà
+            if (subcategoriesContainer.querySelector('.subcategory-form')) {
+                return; // Éviter les doublons
             }
             
-            // Créer l'élément de sous-catégorie
-            const subcategoryElement = document.createElement('div');
-            subcategoryElement.className = 'subcategory';
+            // Créer le formulaire d'ajout de sous-catégorie
+            const subcategoryForm = document.createElement('div');
+            subcategoryForm.className = 'subcategory-form';
+            subcategoryForm.innerHTML = `
+                <h4>Ajouter une sous-catégorie</h4>
+                <div class="form-group">
+                    <label for="newSubcategoryName">Nom de la sous-catégorie</label>
+                    <input type="text" id="newSubcategoryName" class="form-control" placeholder="Ex: Traiteur">
+                </div>
+                <div class="form-action-buttons">
+                    <button type="button" class="btn-cancel-subcategory">Annuler</button>
+                    <button type="button" class="btn-add-subcategory">Ajouter</button>
+                </div>
+            `;
             
-            // En-tête de la sous-catégorie
-            const subcategoryHeader = document.createElement('div');
-            subcategoryHeader.className = 'subcategory-header';
-            
-            const subcategoryTitle = document.createElement('h5');
-            subcategoryTitle.className = 'subcategory-name';
-            subcategoryTitle.textContent = subcategoryName;
-            
-            const subcategoryAmount = document.createElement('span');
-            subcategoryAmount.className = 'subcategory-amount';
-            subcategoryAmount.textContent = `${currencySymbol} 0`;
-            
-            const subcategoryToggle = document.createElement('button');
-            subcategoryToggle.type = 'button';
-            subcategoryToggle.className = 'subcategory-toggle open';
-            subcategoryToggle.innerHTML = '<i class="fas fa-chevron-up"></i>';
-            
-            subcategoryHeader.appendChild(subcategoryTitle);
-            subcategoryHeader.appendChild(subcategoryAmount);
-            subcategoryHeader.appendChild(subcategoryToggle);
-            
-            // Conteneur des lignes de dépenses
-            const expenseLinesContainer = document.createElement('div');
-            expenseLinesContainer.className = 'expense-lines open';
-            
-            // Bouton d'ajout de ligne
-            const addLineBtn = document.createElement('button');
-            addLineBtn.type = 'button';
-            addLineBtn.className = 'add-line-btn';
-            addLineBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter une ligne';
-            
-            expenseLinesContainer.appendChild(addLineBtn);
-            
-            // Assembler la sous-catégorie
-            subcategoryElement.appendChild(subcategoryHeader);
-            subcategoryElement.appendChild(expenseLinesContainer);
-            
-            // Ajouter la sous-catégorie au conteneur, juste avant le footer
-            const footer = subcategoriesContainer.querySelector('.subcategory-footer');
-            if (footer) {
-                subcategoriesContainer.insertBefore(subcategoryElement, footer);
+            // Insérer le formulaire dans le conteneur
+            const subcategoryFooter = subcategoriesContainer.querySelector('.subcategory-footer');
+            if (subcategoryFooter) {
+                subcategoriesContainer.insertBefore(subcategoryForm, subcategoryFooter);
             } else {
-                subcategoriesContainer.appendChild(subcategoryElement);
+                subcategoriesContainer.appendChild(subcategoryForm);
             }
             
-            // Initialiser les fonctionnalités de la sous-catégorie
-            subcategoryToggle.addEventListener('click', function() {
-                this.classList.toggle('open');
-                expenseLinesContainer.classList.toggle('open');
+            // Focus sur le champ de nom
+            setTimeout(() => {
+                subcategoryForm.querySelector('#newSubcategoryName').focus();
+            }, 100);
+            
+            // Gestionnaire pour le bouton d'annulation
+            subcategoryForm.querySelector('.btn-cancel-subcategory').addEventListener('click', function() {
+                subcategoryForm.remove();
+            });
+            
+            // Gestionnaire pour le bouton d'ajout
+            subcategoryForm.querySelector('.btn-add-subcategory').addEventListener('click', function() {
+                const subcategoryName = subcategoryForm.querySelector('#newSubcategoryName').value.trim();
+                if (!subcategoryName) {
+                    alert('Veuillez saisir un nom de sous-catégorie');
+                    return;
+                }
                 
-                // Changer l'icône
-                const icon = this.querySelector('i');
-                if (icon) {
-                    if (this.classList.contains('open')) {
+                // Créer la sous-catégorie
+                createSubcategoryInContainer(subcategoriesContainer, subcategoryName);
+                
+                // Supprimer le formulaire
+                subcategoryForm.remove();
+            });
+        });
+    });.classList.contains('open')) {
                         icon.className = 'fas fa-chevron-up';
                     } else {
                         icon.className = 'fas fa-chevron-down';
@@ -1017,22 +1268,56 @@ function setupAddCategoryButton() {
     const addCategoryBtn = document.getElementById('addMainCategoryBtn');
     if (addCategoryBtn) {
         addCategoryBtn.addEventListener('click', function() {
-            const categoryName = prompt('Nom de la nouvelle catégorie:');
-            if (!categoryName) return;
-            
-            // Obtenir le symbole de la devise actuelle
-            let currencySymbol = '€';
-            try {
-                const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                if (userPreferences.currency) {
-                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                    if (currency) {
-                        currencySymbol = currency.symbol;
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération de la devise:', error);
+            // Vérifier si un formulaire d'ajout de catégorie existe déjà
+            if (document.querySelector('.category-form')) {
+                return; // Éviter les doublons
             }
+            
+            // Récupérer le conteneur des catégories
+            const categoriesContainer = document.getElementById('expenseCategories');
+            if (!categoriesContainer) return;
+            
+            // Créer le formulaire d'ajout de catégorie
+            const categoryForm = document.createElement('div');
+            categoryForm.className = 'category-form';
+            categoryForm.innerHTML = `
+                <h4>Ajouter une nouvelle catégorie</h4>
+                <div class="form-group">
+                    <label for="newCategoryName">Nom de la catégorie</label>
+                    <input type="text" id="newCategoryName" class="form-control" placeholder="Ex: Restauration">
+                </div>
+                <div class="form-action-buttons">
+                    <button type="button" class="btn-cancel-category">Annuler</button>
+                    <button type="button" class="btn-add-category">Ajouter</button>
+                </div>
+            `;
+            
+            // Insérer le formulaire avant le bouton d'ajout
+            categoriesContainer.insertBefore(categoryForm, addCategoryBtn.parentNode);
+            
+            // Focus sur le champ de nom
+            setTimeout(() => {
+                document.getElementById('newCategoryName').focus();
+            }, 100);
+            
+            // Gestionnaire pour le bouton d'annulation
+            categoryForm.querySelector('.btn-cancel-category').addEventListener('click', function() {
+                categoryForm.remove();
+            });
+            
+            // Gestionnaire pour le bouton d'ajout
+            categoryForm.querySelector('.btn-add-category').addEventListener('click', function() {
+                const categoryName = document.getElementById('newCategoryName').value.trim();
+                if (!categoryName) {
+                    alert('Veuillez saisir un nom de catégorie');
+                    return;
+                }
+                
+                // Obtenir le symbole de la devise actuelle
+                let currencySymbol = getProjectCurrencySymbol();
+                
+                // Supprimer le formulaire
+                categoryForm.remove();
             
             // Créer l'élément de catégorie
             const categoryElement = document.createElement('div');
@@ -1114,12 +1399,53 @@ function setupAddCategoryButton() {
             
             // Initialiser l'événement d'ajout de sous-catégorie
             addSubcategoryBtn.addEventListener('click', function() {
-                const subcategoryName = prompt('Nom de la nouvelle sous-catégorie:');
-                if (!subcategoryName) return;
+                // Vérifier si un formulaire d'ajout de sous-catégorie existe déjà dans cette catégorie
+                if (subcategoriesContainer.querySelector('.subcategory-form')) {
+                    return; // Éviter les doublons
+                }
                 
-                // Créer une sous-catégorie
-                // Le code est similaire à celui de setupAddSubcategoryButtons
-                // ...
+                // Créer le formulaire d'ajout de sous-catégorie
+                const subcategoryForm = document.createElement('div');
+                subcategoryForm.className = 'subcategory-form';
+                subcategoryForm.innerHTML = `
+                    <h4>Ajouter une sous-catégorie</h4>
+                    <div class="form-group">
+                        <label for="newSubcategoryName">Nom de la sous-catégorie</label>
+                        <input type="text" id="newSubcategoryName" class="form-control" placeholder="Ex: Traiteur">
+                    </div>
+                    <div class="form-action-buttons">
+                        <button type="button" class="btn-cancel-subcategory">Annuler</button>
+                        <button type="button" class="btn-add-subcategory">Ajouter</button>
+                    </div>
+                `;
+                
+                // Insérer le formulaire avant le footer
+                subcategoriesContainer.insertBefore(subcategoryForm, subcategoryFooter);
+                
+                // Focus sur le champ de nom
+                setTimeout(() => {
+                    subcategoryForm.querySelector('#newSubcategoryName').focus();
+                }, 100);
+                
+                // Gestionnaire pour le bouton d'annulation
+                subcategoryForm.querySelector('.btn-cancel-subcategory').addEventListener('click', function() {
+                    subcategoryForm.remove();
+                });
+                
+                // Gestionnaire pour le bouton d'ajout
+                subcategoryForm.querySelector('.btn-add-subcategory').addEventListener('click', function() {
+                    const subcategoryName = subcategoryForm.querySelector('#newSubcategoryName').value.trim();
+                    if (!subcategoryName) {
+                        alert('Veuillez saisir un nom de sous-catégorie');
+                        return;
+                    }
+                    
+                    // Créer la sous-catégorie avec la fonction existante
+                    createSubcategoryInContainer(subcategoriesContainer, subcategoryName);
+                    
+                    // Supprimer le formulaire
+                    subcategoryForm.remove();
+                });
             });
         });
     }
