@@ -706,8 +706,8 @@ function initializeExpenseCategories() {
             const newLine = document.createElement('div');
             newLine.className = 'expense-line';
             newLine.innerHTML = `
-                <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
+                <div class="expense-line-name" contenteditable="true">Nouvelle ligne</div>
+                <div class="expense-line-amount" contenteditable="true">${currencySymbol} 0</div>
                 <div class="expense-line-actions">
                     <button type="button" class="btn-sm btn-delete-line">
                         <i class="fas fa-times"></i>
@@ -838,8 +838,8 @@ function initializeSubcategories() {
                 const newLine = document.createElement('div');
                 newLine.className = 'expense-line';
                 newLine.innerHTML = `
-                    <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                    <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
+                    <div class="expense-line-name" contenteditable="true">Nouvelle ligne</div>
+                    <div class="expense-line-amount" contenteditable="true">${currencySymbol} 0</div>
                     <div class="expense-line-actions">
                         <button type="button" class="btn-sm btn-delete-line">
                             <i class="fas fa-times"></i>
@@ -1147,8 +1147,8 @@ function addMainCategory() {
             const newLine = document.createElement('div');
             newLine.className = 'expense-line';
             newLine.innerHTML = `
-                <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
+                <div class="expense-line-name" contenteditable="true">Nouvelle ligne</div>
+                <div class="expense-line-amount" contenteditable="true">${currencySymbol} 0</div>
                 <div class="expense-line-actions">
                     <button type="button" class="btn-sm btn-delete-line">
                         <i class="fas fa-times"></i>
