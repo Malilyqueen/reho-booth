@@ -147,21 +147,49 @@
 .editable-field {
     position: relative;
     cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: all 0.2s ease;
+    display: inline-block;
 }
 
-.editable-field:hover::after {
+.editable-field::after {
     content: "\f044"; /* Font Awesome edit icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
-    font-size: 14px;
+    font-size: 16px;
     color: #2979ff;
-    margin-left: 8px;
-    opacity: 0.7;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 .editable-field:hover {
-    background-color: rgba(41, 121, 255, 0.05);
-    border-radius: 4px;
+    background-color: #f0f7ff;
+    border-color: #c5d9ff;
+}
+
+.editable-field:hover::after {
+    opacity: 1;
+}
+
+/* Indication visuelle pour montrer que c'est modifiable */
+.editable-field {
+    position: relative;
+}
+
+.editable-field::before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #2979ff;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+    opacity: 0.7;
 }
 
 /* Styles pour les formulaires de catégorie et de sous-catégorie */
@@ -170,10 +198,230 @@
 .expense-line-form {
     background-color: #f5f9ff;
     border: 1px solid #e0e9ff;
-    border-radius: 6px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.category-form:hover,
+.subcategory-form:hover,
+.expense-line-form:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+/* Styles améliorés pour les catégories et leurs contenus */
+.expense-category {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e6ebf5;
+}
+
+.expense-category:hover {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+.category-header {
+    background-color: #f8faff;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e6ebf5;
+}
+
+.category-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1d3557;
+    margin: 0;
+    flex: 1;
+}
+
+.category-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2979ff;
+    background-color: rgba(41, 121, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-right: 15px;
+}
+
+.category-controls {
+    display: flex;
+    align-items: center;
+}
+
+.category-controls button {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px;
+    margin-left: 5px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.category-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #1d3557;
+}
+
+.delete-category-btn:hover {
+    color: #dc3545 !important;
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.subcategories-container {
+    padding: 15px 20px;
+}
+
+/* Styles pour les sous-catégories */
+.subcategory {
+    background-color: #fafcff;
+    border-radius: 8px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #edf2ff;
+    transition: all 0.2s ease;
+}
+
+.subcategory:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.subcategory-header {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #edf2ff;
+}
+
+.subcategory-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1d3557;
+    margin: 0;
+    flex: 1;
+}
+
+.subcategory-amount {
+    font-weight: 600;
+    color: #1976D2;
+    background-color: rgba(25, 118, 210, 0.08);
+    padding: 4px 10px;
+    border-radius: 15px;
+    margin-right: 10px;
+}
+
+.subcategory-actions {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    background-color: #f8faff;
+}
+
+.add-expense-line-btn, 
+.delete-subcategory-btn {
+    background: none;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.add-expense-line-btn {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.add-expense-line-btn:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.delete-subcategory-btn {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.delete-subcategory-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.add-expense-line-btn i, 
+.delete-subcategory-btn i {
+    margin-right: 5px;
+}
+
+/* Styles pour les lignes de dépenses */
+.expense-lines {
+    padding: 10px 15px;
+}
+
+.expense-line {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+}
+
+.expense-line:hover {
+    background-color: #f5f9ff;
+}
+
+.expense-line:last-child {
+    border-bottom: none;
+}
+
+.expense-line-name {
+    flex: 1;
+    padding: 4px 0;
+}
+
+.expense-line-amount {
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0 15px;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.delete-line-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.delete-line-btn:hover {
+    opacity: 1;
+    background-color: rgba(220, 53, 69, 0.1);
 }
 
 .category-form h4,
@@ -218,26 +466,200 @@
 }
 
 /* Styles pour l'ajout d'éléments */
-.add-item-button {
+.add-item-button, 
+.add-category-btn, 
+.add-subcategory-btn {
     display: flex;
     align-items: center;
-    background-color: #f8f9fa;
-    border: 1px dashed #ced4da;
-    border-radius: 6px;
-    padding: 8px 15px;
-    color: #6c757d;
-    cursor: pointer;
+    justify-content: center;
+    padding: 10px 18px;
     font-weight: 500;
-    margin: 10px 0;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin: 12px 0;
+    font-size: 0.95rem;
 }
 
-.add-item-button i {
+.add-item-button i,
+.add-category-btn i, 
+.add-subcategory-btn i {
     margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.add-item-button {
+    background-color: #f8f9fa;
+    border: 1px dashed #ced4da;
+    color: #6c757d;
 }
 
 .add-item-button:hover {
     background-color: #e9ecef;
     color: #495057;
     border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+.add-category-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    width: 100%;
+}
+
+.add-category-btn:hover {
+    background-color: #43a047;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    transform: translateY(-2px);
+}
+
+.add-subcategory-btn {
+    background-color: #f8faff;
+    color: #1976D2;
+    border: 1px solid #1976D2;
+}
+
+.add-subcategory-btn:hover {
+    background-color: #1976D2;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.add-category-container {
+    padding: 5px 20px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.subcategory-footer {
+    padding: 5px 15px 15px;
+}
+
+/* Styles pour le budget total et champs principaux */
+.project-total-budget {
+    background-color: #f0f7ff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 5px solid #1976D2;
+}
+
+.project-total-budget label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1d3557;
+    margin-right: 15px;
+}
+
+.project-total-budget input {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1976D2;
+    background-color: transparent;
+    border: none;
+    flex: 1;
+    text-align: right;
+}
+
+/* Styles pour les tooltip et indices */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    margin-bottom: 5px;
+}
+
+[data-tooltip]:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+    pointer-events: none;
+    margin-bottom: -5px;
+}
+
+/* Animation pour les modifications réussies */
+.edit-success {
+    animation: highlight-success 1s ease;
+}
+
+@keyframes highlight-success {
+    0% { background-color: rgba(40, 167, 69, 0); }
+    30% { background-color: rgba(40, 167, 69, 0.2); }
+    100% { background-color: rgba(40, 167, 69, 0); }
+}
+
+/* Style pour le datepicker */
+.date-field-container {
+    position: relative;
+}
+
+.date-field-container input[type="text"] {
+    padding-right: 30px;
+}
+
+.date-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1976D2;
+    pointer-events: none;
+}
+
+/* Style pour le calendrier de date (flatpickr) */
+.flatpickr-calendar {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+    border: none !important;
+}
+
+.flatpickr-day.selected {
+    background-color: #1976D2 !important;
+    border-color: #1976D2 !important;
+}
+
+.flatpickr-day:hover {
+    background-color: #e6f1ff !important;
+    color: #1976D2 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    background-color: #1976D2 !important;
+    color: white !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: white !important;
+}
+
+.flatpickr-months .flatpickr-prev-month, 
+.flatpickr-months .flatpickr-next-month {
+    color: rgba(255, 255, 255, 0.8) !important;
+    fill: rgba(255, 255, 255, 0.8) !important;
 }

@@ -1,0 +1,53 @@
+Merci pour les améliorations apportées. La creéation et modification de projet est désormais possible dans une certaine mesure. Cependant, plusieurs éléments rendent l’interface peu intuitive et visuellement dépassée.
+
+⚠️ Problèmes actuels constatés :
+1️⃣ Design non intuitif (UX/UI)
+Le champ pour modifier le nom d’une catégorie n’est pas du tout intuitif :
+
+L’utilisateur doit deviner qu’il faut cliquer sur un petit crayon bleu discret.
+
+Il n’y a aucun champ apparent ni effet visuel pour signaler que c’est modifiable.
+
+Le bouton “Ajouter une ligne” ne permet pas de modifier ensuite la ligne ajoutée.
+
+Les sous-totaux et totaux ne sont pas mis en valeur :
+
+Pas de gras, pas de contraste, difficile à repérer.
+
+Visuellement, on ne sait pas où regarder pour voir le budget final.
+
+2️⃣ Esthétique vieillotte / peu soignée
+Les blocs sont trop rigides et ressemblent à un design des années 2000 (voire 60s 🫠).
+
+Les icônes (poubelle, crayon) sont :
+
+trop petites
+
+trop éloignées de leur contexte
+
+sans infobulle ou animation pour les rendre vivantes
+
+Manque de couleurs d’accentuation pour structurer visuellement les blocs.
+
+3️⃣ Problème toujours non résolu sur la sélection de date
+Le calendrier ne s’affiche pas quand on clique sur l’icône.
+
+Cela bloque la sélection de date et génère parfois un mauvais format.
+
+✅ Ce qu’il faudrait faire pour améliorer :
+🧩 Expérience utilisateur (UX) :
+Ajouter un champ éditable en ligne visible avec une icône crayon ou texte cliquable.
+
+Permettre de modifier chaque ligne ajoutée dans les postes de dépense.
+
+Ajouter une confirmation ou animation quand une action est faite (ajout, édition).
+
+🎨 Design moderne et lisible (UI) :
+Utiliser des couleurs différenciées pour les sous-totaux, totaux et boutons.
+
+Agrandir les icônes ou les remplacer par des boutons avec texte (“Modifier”, “Supprimer”).
+
+Ajouter des infobulles ou labels flottants pour guider l’utilisateur.
+
+📅 Fonctionnement des dates :
+Intégrer un vrai composant de date avec calendrier visible au clic, pour éviter les bugs de format

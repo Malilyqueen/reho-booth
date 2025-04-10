@@ -221,50 +221,140 @@ function setupTemplateSelectionEvents() {
 
 // Fonction pour configurer les champs de date
 function setupDateFields() {
-    // Date du projet
+    // Obtenir les préférences utilisateur pour le format de date
+    const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+    const dateFormat = userPreferences.dateFormat || 'DD/MM/YYYY';
+    
+    // Configurer l'initialisation de flatpickr selon le format de date
+    let flatpickrDateFormat;
+    if (dateFormat === 'DD/MM/YYYY') {
+        flatpickrDateFormat = 'd/m/Y';
+    } else if (dateFormat === 'MM/DD/YYYY') {
+        flatpickrDateFormat = 'm/d/Y';
+    } else {
+        flatpickrDateFormat = 'Y-m-d';
+    }
+    
+    // Wrapper les champs de date dans des conteneurs
+    const dateFields = document.querySelectorAll('#projectDate, #projectEndDate');
+    dateFields.forEach(field => {
+        // Vérifier si le champ n'est pas déjà dans un conteneur
+        if (!field.parentElement.classList.contains('date-field-container')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'date-field-container';
+            
+            // Remplacer le champ par le wrapper
+            field.parentNode.insertBefore(wrapper, field);
+            wrapper.appendChild(field);
+            
+            // Ajouter l'icône de calendrier
+            const icon = document.createElement('span');
+            icon.className = 'date-icon';
+            icon.innerHTML = '<i class="fas fa-calendar-alt"></i>';
+            wrapper.appendChild(icon);
+        }
+    });
+    
+    // Date du projet - initialiser flatpickr
     const projectDateInput = document.getElementById('projectDate');
     if (projectDateInput) {
-        // Formater la date selon les préférences utilisateur
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        const dateFormat = userPreferences.dateFormat || 'DD/MM/YYYY';
-        
         // Si la date n'est pas déjà définie, définir la date actuelle
         if (!projectDateInput.value) {
             const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
             
             if (dateFormat === 'DD/MM/YYYY') {
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
                 projectDateInput.value = `${day}/${month}/${year}`;
             } else if (dateFormat === 'MM/DD/YYYY') {
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
                 projectDateInput.value = `${month}/${day}/${year}`;
             } else {
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
                 projectDateInput.value = `${year}-${month}-${day}`;
             }
+        }
+        
+        // Initialiser flatpickr
+        try {
+            flatpickr(projectDateInput, {
+                dateFormat: flatpickrDateFormat,
+                locale: 'fr',
+                disableMobile: true,
+                allowInput: true,
+                static: true,
+                // Ajouter un événement d'animation lorsque la date change
+                onChange: function(selectedDates, dateStr) {
+                    projectDateInput.classList.add('edit-success');
+                    setTimeout(() => {
+                        projectDateInput.classList.remove('edit-success');
+                    }, 1000);
+                }
+            });
+            
+            // Ajouter une information tooltip
+            projectDateInput.setAttribute('data-tooltip', 'Cliquez pour sélectionner une date');
+            
+            console.log('Calendrier flatpickr initialisé pour la date du projet');
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation du calendrier:', error);
         }
     }
     
     // Idem pour la date de fin si elle existe
     const projectEndDateInput = document.getElementById('projectEndDate');
-    if (projectEndDateInput && !projectEndDateInput.value) {
-        // Ajouter 30 jours à la date actuelle
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + 30);
+    if (projectEndDateInput) {
+        // Si la date n'est pas déjà définie, définir la date future (30 jours plus tard)
+        if (!projectEndDateInput.value) {
+            const futureDate = new Date();
+            futureDate.setDate(futureDate.getDate() + 30);
+            
+            if (dateFormat === 'DD/MM/YYYY') {
+                const day = String(futureDate.getDate()).padStart(2, '0');
+                const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+                const year = futureDate.getFullYear();
+                projectEndDateInput.value = `${day}/${month}/${year}`;
+            } else if (dateFormat === 'MM/DD/YYYY') {
+                const day = String(futureDate.getDate()).padStart(2, '0');
+                const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+                const year = futureDate.getFullYear();
+                projectEndDateInput.value = `${month}/${day}/${year}`;
+            } else {
+                const day = String(futureDate.getDate()).padStart(2, '0');
+                const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+                const year = futureDate.getFullYear();
+                projectEndDateInput.value = `${year}-${month}-${day}`;
+            }
+        }
         
-        const day = String(futureDate.getDate()).padStart(2, '0');
-        const month = String(futureDate.getMonth() + 1).padStart(2, '0');
-        const year = futureDate.getFullYear();
-        
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        const dateFormat = userPreferences.dateFormat || 'DD/MM/YYYY';
-        
-        if (dateFormat === 'DD/MM/YYYY') {
-            projectEndDateInput.value = `${day}/${month}/${year}`;
-        } else if (dateFormat === 'MM/DD/YYYY') {
-            projectEndDateInput.value = `${month}/${day}/${year}`;
-        } else {
-            projectEndDateInput.value = `${year}-${month}-${day}`;
+        try {
+            // Initialiser flatpickr pour la date de fin
+            flatpickr(projectEndDateInput, {
+                dateFormat: flatpickrDateFormat,
+                locale: 'fr',
+                disableMobile: true,
+                allowInput: true,
+                static: true,
+                // Ajouter un événement d'animation lorsque la date change
+                onChange: function(selectedDates, dateStr) {
+                    projectEndDateInput.classList.add('edit-success');
+                    setTimeout(() => {
+                        projectEndDateInput.classList.remove('edit-success');
+                    }, 1000);
+                }
+            });
+            
+            // Ajouter une information tooltip
+            projectEndDateInput.setAttribute('data-tooltip', 'Cliquez pour sélectionner une date de fin');
+            
+            console.log('Calendrier flatpickr initialisé pour la date de fin du projet');
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation du calendrier de fin:', error);
         }
     }
 }
@@ -1414,6 +1504,9 @@ function makeFieldEditable(element, type = 'text') {
     // Vérifier si le champ est déjà en mode édition
     if (element.querySelector('input')) return;
     
+    // Ajouter une classe pour indiquer que l'élément est en cours d'édition
+    element.classList.add('editing');
+    
     // Sauvegarder la valeur actuelle
     const currentValue = element.textContent.trim();
     const originalValue = element.getAttribute('data-original-value') || currentValue;
@@ -1432,15 +1525,17 @@ function makeFieldEditable(element, type = 'text') {
         input.step = '0.01';
     }
     
-    // Créer les boutons de sauvegarde et d'annulation
+    // Créer les boutons de sauvegarde et d'annulation avec des tooltips
     const saveBtn = document.createElement('button');
     saveBtn.innerHTML = '<i class="fas fa-check"></i>';
     saveBtn.type = 'button';
+    saveBtn.setAttribute('data-tooltip', 'Valider');
     
     const cancelBtn = document.createElement('button');
     cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
     cancelBtn.type = 'button';
     cancelBtn.className = 'cancel';
+    cancelBtn.setAttribute('data-tooltip', 'Annuler');
     
     // Ajouter les éléments au formulaire
     form.appendChild(input);
@@ -1451,20 +1546,43 @@ function makeFieldEditable(element, type = 'text') {
     element.textContent = '';
     element.appendChild(form);
     
-    // Focus sur l'input
-    input.focus();
+    // Focus sur l'input et sélectionner tout le texte
+    setTimeout(() => {
+        input.focus();
+        input.select();
+    }, 100);
     
     // Gestionnaire pour le bouton de sauvegarde
     saveBtn.addEventListener('click', function() {
         let newValue = input.value.trim();
+        
+        // Valider que la valeur n'est pas vide
+        if (!newValue) {
+            // Ajouter un effet de secousse pour indiquer une erreur
+            input.classList.add('shake');
+            setTimeout(() => {
+                input.classList.remove('shake');
+            }, 500);
+            return;
+        }
+        
         if (type === 'number') {
             // Formater avec le symbole de devise
             const currencySymbol = getProjectCurrencySymbol();
             newValue = `${currencySymbol} ${parseFloat(newValue).toFixed(2)}`;
         }
         
+        // Retirer la classe d'édition
+        element.classList.remove('editing');
+        
         // Mettre à jour le contenu de l'élément
         element.textContent = newValue;
+        
+        // Ajouter une animation pour indiquer la réussite de la modification
+        element.classList.add('edit-success');
+        setTimeout(() => {
+            element.classList.remove('edit-success');
+        }, 1000);
         
         // Mettre à jour les calculs si nécessaire
         updateBudgetCalculation();
@@ -1472,6 +1590,8 @@ function makeFieldEditable(element, type = 'text') {
     
     // Gestionnaire pour le bouton d'annulation
     cancelBtn.addEventListener('click', function() {
+        // Retirer la classe d'édition
+        element.classList.remove('editing');
         element.textContent = currentValue;
     });
     
@@ -1483,6 +1603,21 @@ function makeFieldEditable(element, type = 'text') {
             cancelBtn.click();
         }
     });
+    
+    // Ajouter un gestionnaire pour cliquer hors du champ
+    document.addEventListener('click', function handleClickOutside(event) {
+        // Si on clique hors du formulaire et pas sur un bouton du formulaire
+        if (!form.contains(event.target) && event.target !== saveBtn && event.target !== cancelBtn) {
+            // On sauvegarde si la valeur a changé
+            if (input.value.trim() !== currentValue) {
+                saveBtn.click();
+            } else {
+                cancelBtn.click();
+            }
+            // Retirer ce gestionnaire après utilisation
+            document.removeEventListener('click', handleClickOutside);
+        }
+    }, { once: true });
 }
 
 // Fonction pour afficher le formulaire d'ajout de ligne de dépense
