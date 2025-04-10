@@ -744,117 +744,68 @@ function addNewSubcategory(categoryElement, subcategoryName) {
 // Fonction pour ajouter une nouvelle ligne de dépense
 function addNewExpenseLine(expenseLinesContainer) {
     // Obtenir le symbole de la devise actuelle
-    let currencySymbol = '€';
-    try {
-        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (preferences.currency) {
-            if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
-                if (currency) {
-                    currencySymbol = currency.symbol;
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la devise:', error);
-    }
+    let currencySymbol = getProjectCurrencySymbol();
     
-    // Créer l'élément de ligne de dépense
+    // Créer l'élément de ligne de dépense dans le style exact de l'image de référence
     const lineElement = document.createElement('div');
     lineElement.className = 'expense-line';
     
-    const lineNameInput = document.createElement('input');
-    lineNameInput.type = 'text';
-    lineNameInput.className = 'expense-line-name';
-    lineNameInput.placeholder = 'Nom de la dépense';
+    // Créer le nom de la dépense (à gauche)
+    const lineNameSpan = document.createElement('span');
+    lineNameSpan.className = 'expense-line-name editable-field';
+    lineNameSpan.textContent = 'Nouvelle dépense';
+    lineNameSpan.addEventListener('click', function() {
+        makeFieldEditable(this, 'text');
+    });
     
-    const lineAmountInput = document.createElement('input');
-    lineAmountInput.type = 'text';
-    lineAmountInput.className = 'expense-line-amount';
-    lineAmountInput.value = `${currencySymbol} 0.00`;
-    lineAmountInput.placeholder = '0.00';
+    // Créer le montant (à droite)
+    const lineAmountSpan = document.createElement('span');
+    lineAmountSpan.className = 'expense-line-amount editable-field';
+    lineAmountSpan.textContent = `${currencySymbol} 0`;
+    lineAmountSpan.addEventListener('click', function() {
+        makeFieldEditable(this, 'number');
+    });
     
+    // Créer le bouton de suppression (à l'extrême droite)
     const deleteLineBtn = document.createElement('button');
     deleteLineBtn.type = 'button';
     deleteLineBtn.className = 'delete-line-btn';
     deleteLineBtn.innerHTML = '<i class="fas fa-times"></i>';
     
-    lineElement.appendChild(lineNameInput);
-    lineElement.appendChild(lineAmountInput);
+    // Assembler la ligne
+    lineElement.appendChild(lineNameSpan);
+    lineElement.appendChild(lineAmountSpan);
     lineElement.appendChild(deleteLineBtn);
     
     // Ajouter à la sous-catégorie
     expenseLinesContainer.appendChild(lineElement);
     
-    // Focus sur le champ de nom pour faciliter la saisie
-    lineNameInput.focus();
-    
     // Ajouter l'événement de suppression
     deleteLineBtn.addEventListener('click', function() {
         lineElement.remove();
+        updateBudgetCalculation();
     });
+    
+    // Mise à jour des calculs de budget
+    updateBudgetCalculation();
+    
+    return lineElement;
 }
 
 // Fonction pour configurer les boutons d'ajout de ligne
 function setupAddLineButtons() {
     // Sélectionner tous les boutons d'ajout de ligne existants (comme ceux du HTML d'origine)
-    const addLineBtns = document.querySelectorAll('.add-line-btn');
+    const addLineBtns = document.querySelectorAll('.add-line-btn, .add-expense-line-btn');
     addLineBtns.forEach(btn => {
         btn.addEventListener('click', function() {
-            const expenseLinesContainer = this.closest('.expense-lines');
+            const subcategoryElement = this.closest('.subcategory');
+            const expenseLinesContainer = subcategoryElement.querySelector('.expense-lines');
             if (expenseLinesContainer) {
-                // Obtenir le symbole de la devise actuelle
-                let currencySymbol = '€';
-                try {
-                    const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                    if (userPreferences.currency) {
-                        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                        if (currency) {
-                            currencySymbol = currency.symbol;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de la récupération de la devise:', error);
-                }
+                // Utiliser la nouvelle fonction d'ajout de ligne
+                addNewExpenseLine(expenseLinesContainer);
                 
-                // Créer la nouvelle ligne
-                const lineElement = document.createElement('div');
-                lineElement.className = 'expense-line';
-                
-                const lineNameInput = document.createElement('input');
-                lineNameInput.type = 'text';
-                lineNameInput.className = 'form-control expense-line-name';
-                lineNameInput.placeholder = 'Nom de la dépense';
-                
-                const lineAmountInput = document.createElement('input');
-                lineAmountInput.type = 'text';
-                lineAmountInput.className = 'form-control expense-line-amount';
-                lineAmountInput.value = `${currencySymbol} 0`;
-                
-                const lineActions = document.createElement('div');
-                lineActions.className = 'expense-line-actions';
-                
-                const deleteLineBtn = document.createElement('button');
-                deleteLineBtn.type = 'button';
-                deleteLineBtn.className = 'btn-sm btn-delete-line';
-                deleteLineBtn.innerHTML = '<i class="fas fa-times"></i>';
-                
-                lineActions.appendChild(deleteLineBtn);
-                
-                lineElement.appendChild(lineNameInput);
-                lineElement.appendChild(lineAmountInput);
-                lineElement.appendChild(lineActions);
-                
-                // Ajouter à la sous-catégorie, juste avant le bouton d'ajout
-                expenseLinesContainer.insertBefore(lineElement, this);
-                
-                // Ajouter l'événement de suppression
-                deleteLineBtn.addEventListener('click', function() {
-                    lineElement.remove();
-                });
-                
-                // Focus sur le champ de nom
-                lineNameInput.focus();
+                // Notification visuelle
+                showNotification('Ligne de dépense ajoutée', 'success');
             }
         });
     });
