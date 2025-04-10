@@ -14,11 +14,11 @@ const defaultPreferences = {
     secondaryCurrency: 'USD'
 };
 
-// Vérifier si userPreferences existe déjà (définie dans main.js)
+// Vérifier si userPreferences existe déjà dans l'espace global window
 // Si non, la définir ici
-if (typeof userPreferences === 'undefined') {
+if (typeof window.userPreferences === 'undefined') {
     // Charger les préférences existantes ou utiliser les valeurs par défaut
-    var userPreferences = loadUserPreferences();
+    window.userPreferences = loadUserPreferences();
 }
 
 // Fonction pour charger les préférences
@@ -39,8 +39,8 @@ function loadUserPreferences() {
 // Fonction pour sauvegarder les préférences
 function saveUserPreferences() {
     try {
-        localStorage.setItem(USER_PREFS_KEY, JSON.stringify(userPreferences));
-        console.log('Préférences utilisateur sauvegardées:', userPreferences);
+        localStorage.setItem(USER_PREFS_KEY, JSON.stringify(window.userPreferences));
+        console.log('Préférences utilisateur sauvegardées:', window.userPreferences);
     } catch (error) {
         console.error('Erreur lors de la sauvegarde des préférences utilisateur:', error);
     }
@@ -48,7 +48,7 @@ function saveUserPreferences() {
 
 // Fonction pour appliquer le thème
 function applyTheme() {
-    const isDarkMode = userPreferences.theme === 'dark';
+    const isDarkMode = window.userPreferences.theme === 'dark';
     document.body.classList.toggle('dark-mode', isDarkMode);
     
     // Mettre à jour les éléments spécifiques si nécessaire
@@ -81,12 +81,12 @@ function applyTheme() {
 // Fonction pour appliquer la taille de police
 function applyFontSize() {
     document.body.classList.remove('font-small', 'font-medium', 'font-large');
-    document.body.classList.add('font-' + userPreferences.fontSize);
+    document.body.classList.add('font-' + window.userPreferences.fontSize);
 }
 
 // Fonction pour appliquer la langue
 function applyLanguage() {
-    const currentLang = userPreferences.language;
+    const currentLang = window.userPreferences.language;
     document.documentElement.lang = currentLang;
     
     // Mettre à jour les radio buttons si présents
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         themeSelectors.forEach(selector => {
             selector.addEventListener('change', () => {
                 if (selector.checked) {
-                    userPreferences.theme = selector.value;
+                    window.userPreferences.theme = selector.value;
                     applyTheme();
                     saveUserPreferences();
                 }
