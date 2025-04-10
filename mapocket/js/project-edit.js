@@ -42,6 +42,9 @@ function getProjectCurrencySymbol() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser les sélecteurs de date avec Flatpickr
+    initializeDatePickers();
+    
     // Vérifier si nous sommes en mode édition
     const urlParams = new URLSearchParams(window.location.search);
     const editMode = urlParams.get('edit') === 'true';
@@ -71,6 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (projectId) {
             // Activer le mode édition avec l'ID du projet
             enableEditMode(projectId);
+            
+            // Ajouter un bouton "Enregistrer les modifications" si nous sommes en mode édition
+            addSaveButton();
         } else {
             // Si nous sommes en mode édition mais sans ID, afficher un message d'erreur
             alert("Erreur: Aucun projet sélectionné pour l'édition");
@@ -86,6 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pageTitle) {
             pageTitle.textContent = 'NOUVEAU PROJET';
         }
+        
+        // Rendre la fenêtre de création moins intrusive
+        makeProjectFormLessIntrusive();
     }
     
     // Toujours configurer les boutons d'interaction
