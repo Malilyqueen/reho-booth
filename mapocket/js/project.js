@@ -1098,6 +1098,20 @@ function addMainCategory() {
         // Trouver le conteneur de lignes
         const expenseLines = this.closest('.expense-lines');
         
+        // Récupérer le symbole de devise actuel
+        let currencySymbol = '€'; // Symbole par défaut
+        try {
+            const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des préférences:', error);
+        }
+        
         // Créer une nouvelle ligne
         const newLine = document.createElement('div');
         newLine.className = 'expense-line';
@@ -1133,6 +1147,20 @@ function addMainCategory() {
         // Trouver le conteneur de sous-catégories
         const subcategoriesContainer = this.closest('.subcategories-container');
         const subcategoryFooter = this.closest('.subcategory-footer');
+        
+        // Récupérer le symbole de devise actuel
+        let currencySymbol = '€'; // Symbole par défaut
+        try {
+            const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des préférences:', error);
+        }
         
         // Créer une nouvelle sous-catégorie
         const newSubcategory = document.createElement('div');
@@ -1181,6 +1209,20 @@ function addMainCategory() {
         newAddLineBtn.addEventListener('click', function() {
             // Trouver le conteneur de lignes
             const expenseLines = this.closest('.expense-lines');
+            
+            // Récupérer le symbole de devise actuel
+            let currencySymbol = '€'; // Symbole par défaut
+            try {
+                const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+                if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
+                    if (currency) {
+                        currencySymbol = currency.symbol;
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des préférences:', error);
+            }
             
             // Créer une nouvelle ligne
             const newLine = document.createElement('div');
