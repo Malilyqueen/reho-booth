@@ -954,32 +954,8 @@ function updateCategoryTotal(category) {
 }
 
 function addMainCategory() {
-    // Récupérer les préférences utilisateur pour obtenir la devise
-    let userPreferences = {
-        currency: 'EUR', // Devise par défaut
-    };
-    
-    try {
-        const savedPrefs = localStorage.getItem('userPreferences');
-        if (savedPrefs) {
-            userPreferences = JSON.parse(savedPrefs);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des préférences utilisateur:', error);
-    }
-    
-    // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
-    let currencyCode = 'EUR';
-    
-    // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
-    if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-        const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-        if (currency) {
-            currencySymbol = currency.symbol;
-            currencyCode = currency.code;
-        }
-    }
+    // Utiliser notre fonction utilitaire pour obtenir le symbole de devise
+    const currencySymbol = getCurrencySymbol();
     
     // Trouver le conteneur des catégories de dépenses
     const expenseCategories = document.querySelector('.expense-categories');
@@ -1074,19 +1050,8 @@ function addMainCategory() {
         // Trouver le conteneur de lignes
         const expenseLines = this.closest('.expense-lines');
         
-        // Récupérer le symbole de devise actuel
-        let currencySymbol = '€'; // Symbole par défaut
-        try {
-            const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-            if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
-                if (currency) {
-                    currencySymbol = currency.symbol;
-                }
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des préférences:', error);
-        }
+        // Obtenir le symbole de devise actuel en utilisant notre utilitaire
+        const currencySymbol = getCurrencySymbol();
         
         // Créer une nouvelle ligne
         const newLine = document.createElement('div');
@@ -1124,19 +1089,8 @@ function addMainCategory() {
         const subcategoriesContainer = this.closest('.subcategories-container');
         const subcategoryFooter = this.closest('.subcategory-footer');
         
-        // Récupérer le symbole de devise actuel
-        let currencySymbol = '€'; // Symbole par défaut
-        try {
-            const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-            if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
-                if (currency) {
-                    currencySymbol = currency.symbol;
-                }
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des préférences:', error);
-        }
+        // Obtenir le symbole de devise en utilisant notre utilitaire
+        const currencySymbol = getCurrencySymbol();
         
         // Créer une nouvelle sous-catégorie
         const newSubcategory = document.createElement('div');
@@ -1186,19 +1140,8 @@ function addMainCategory() {
             // Trouver le conteneur de lignes
             const expenseLines = this.closest('.expense-lines');
             
-            // Récupérer le symbole de devise actuel
-            let currencySymbol = '€'; // Symbole par défaut
-            try {
-                const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                if (userPrefs.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPrefs.currency);
-                    if (currency) {
-                        currencySymbol = currency.symbol;
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des préférences:', error);
-            }
+            // Obtenir le symbole de devise actuel en utilisant notre utilitaire
+            const currencySymbol = getCurrencySymbol();
             
             // Créer une nouvelle ligne
             const newLine = document.createElement('div');
