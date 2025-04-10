@@ -390,8 +390,29 @@ function updateTemplateCategories(templateType) {
     switch(templateType) {
         case 'Mariage':
             categories = [
-                { name: "Lieu de réception", subcategories: [] },
-                { name: "Traiteur", subcategories: [] },
+                { 
+                    name: "Lieu de réception", 
+                    subcategories: [
+                        { 
+                            name: "Salle", 
+                            lines: [
+                                { name: "Location", amount: `${currencySymbol} 0` }
+                            ] 
+                        }
+                    ] 
+                },
+                { 
+                    name: "Traiteur", 
+                    subcategories: [
+                        { 
+                            name: "Repas", 
+                            lines: [
+                                { name: "Menu", amount: `${currencySymbol} 0` },
+                                { name: "Desserts", amount: `${currencySymbol} 0` }
+                            ] 
+                        }
+                    ] 
+                },
                 { name: "Tenues", subcategories: [] },
                 { name: "Décoration", subcategories: [] },
                 { name: "Animation", subcategories: [] },
@@ -702,9 +723,16 @@ function updateTemplateCategories(templateType) {
 function updateCategoriesUI(categoriesData, currencySymbol) {
     // Vider le conteneur existant
     const categoriesContainer = document.getElementById('expenseCategories');
-    if (!categoriesContainer) return;
+    if (!categoriesContainer) {
+        console.error("Le conteneur expenseCategories n'a pas été trouvé !");
+        return;
+    }
     
+    // Vider complètement le conteneur existant
     categoriesContainer.innerHTML = '';
+    
+    // Ajouter un log pour déboguer
+    console.log("Mise à jour des catégories:", categoriesData);
     
     // Créer les nouvelles catégories et sous-catégories
     categoriesData.forEach(categoryData => {
