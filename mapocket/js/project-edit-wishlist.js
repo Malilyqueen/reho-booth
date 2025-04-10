@@ -1,4 +1,5 @@
-// Fonction pour configurer les fonctionnalités liées à la wishlist
+// Fonction principale pour configurer les fonctionnalités liées à la wishlist
+// Cette fonction est appelée depuis project-edit.js lorsque la page est chargée
 function setupWishlistFeatures() {
     const linkToWishlistCheckbox = document.getElementById('linkToWishlist');
     const wishlistOptionsDiv = document.getElementById('wishlistOptions');
@@ -6,11 +7,17 @@ function setupWishlistFeatures() {
     const newWishlistNameInput = document.getElementById('newWishlistName');
     const createWishlistBtn = document.getElementById('createWishlistBtn');
     
-    if (!linkToWishlistCheckbox || !wishlistOptionsDiv) return;
+    console.log("Initialisation des fonctionnalités de wishlist améliorées");
+    
+    if (!linkToWishlistCheckbox || !wishlistOptionsDiv) {
+        console.error("Éléments de wishlist manquants dans le DOM");
+        return;
+    }
     
     // Charger les wishlists existantes
     function loadWishlists() {
         const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
+        console.log("Chargement des wishlists:", savedWishlists.length, "trouvées");
         
         // Vider le select
         wishlistSelect.innerHTML = '<option value="">-- Sélectionner une liste --</option>';
@@ -38,6 +45,7 @@ function setupWishlistFeatures() {
         
         const savedWishlists = JSON.parse(localStorage.getItem('wishlists') || '[]');
         const wishlist = savedWishlists.find(w => w.id === wishlistId);
+        console.log("Chargement des produits de la wishlist:", wishlistId, wishlist?.items?.length || 0, "produits trouvés");
         
         if (!wishlist || !wishlist.items || wishlist.items.length === 0) {
             // Aucun élément dans la wishlist
@@ -60,7 +68,7 @@ function setupWishlistFeatures() {
         
         // Vider et remplir la section
         wishlistItemsDiv.innerHTML = `
-            <h4>Produits de la liste de souhaits</h4>
+            <h4><i class="fas fa-list"></i> Produits de la liste (${wishlist.items.length})</h4>
             <div class="wishlist-items-grid"></div>
             <div class="wishlist-budget-integration">
                 <button id="addAllWishlistItems" class="btn-primary">
@@ -70,6 +78,7 @@ function setupWishlistFeatures() {
                     <p><strong>Catégoriser les produits :</strong></p>
                     <select id="wishlistCategorySelect" class="form-control">
                         <option value="">-- Sélectionner une catégorie --</option>
+                        <option value="wishlist">Créer catégorie "Wishlist"</option>
                     </select>
                 </div>
             </div>
@@ -82,10 +91,13 @@ function setupWishlistFeatures() {
             const categories = Array.from(categoriesContainer.querySelectorAll('.expense-category'));
             categories.forEach(category => {
                 const categoryName = category.querySelector('.category-name').textContent;
-                const option = document.createElement('option');
-                option.value = categoryName;
-                option.textContent = categoryName;
-                categorySelect.appendChild(option);
+                // Vérifier si ce n'est pas déjà l'option "Wishlist" que nous avons ajoutée
+                if (categoryName !== 'Wishlist') {
+                    const option = document.createElement('option');
+                    option.value = categoryName;
+                    option.textContent = categoryName;
+                    categorySelect.appendChild(option);
+                }
             });
         }
         
@@ -141,7 +153,7 @@ function setupWishlistFeatures() {
                     confirmDialog.className = 'center-notification';
                     confirmDialog.innerHTML = `
                         <div class="notification-content">
-                            <h4>Ajouter à la catégorie "${selectedCategory}"</h4>
+                            <h4>Ajouter à la catégorie "${selectedCategory === 'wishlist' ? 'Wishlist (nouvelle)' : selectedCategory}"</h4>
                             <p>Voulez-vous ajouter tous les produits de la wishlist (${wishlist.items.length}) à cette catégorie ?</p>
                         </div>
                         <div class="notification-actions">
@@ -160,8 +172,15 @@ function setupWishlistFeatures() {
                     
                     // Gérer le bouton de confirmation
                     confirmDialog.querySelector('.notification-confirm').addEventListener('click', function() {
-                        // Ajouter tous les éléments à la catégorie sélectionnée
-                        addAllWishlistItemsToCategory(selectedCategory, wishlist.items);
+                        if (selectedCategory === 'wishlist') {
+                            // Créer une catégorie Wishlist si elle n'existe pas
+                            addWishlistCategoryIfNeeded();
+                            // Ajouter tous les éléments à cette catégorie
+                            addAllWishlistItemsToCategory('Wishlist', wishlist.items);
+                        } else {
+                            // Ajouter tous les éléments à la catégorie sélectionnée
+                            addAllWishlistItemsToCategory(selectedCategory, wishlist.items);
+                        }
                         confirmDialog.remove();
                         categorySelect.value = '';
                     });
@@ -389,11 +408,15 @@ function setupWishlistFeatures() {
             return;
         }
         
-        // Créer la nouvelle wishlist
+        // Créer la nouvelle wishlist avec des exemples de produits
         const newWishlist = {
             id: Date.now().toString(),
             name: wishlistName,
-            items: [],
+            items: [
+                { id: "item1" + Date.now(), name: "Gâteau d'anniversaire", price: 45.00 },
+                { id: "item2" + Date.now(), name: "Décoration salle", price: 35.50 },
+                { id: "item3" + Date.now(), name: "Bougies spéciales", price: 8.75 }
+            ],
             createdAt: new Date().toISOString(),
             linkedProjectId: null // Sera mis à jour lors de la création du projet
         };
@@ -407,7 +430,7 @@ function setupWishlistFeatures() {
         loadWishlists();
         wishlistSelect.value = newWishlist.id;
         
-        // Charger les produits (qui seront vides)
+        // Charger les produits
         loadWishlistItems(newWishlist.id);
         
         // Vider le champ
@@ -436,6 +459,10 @@ function setupWishlistFeatures() {
         }
     });
     
+    // Remplacement de la fonction setupWishlistFeatures de project-edit.js
+    // pour utiliser notre version améliorée
+    console.log("Remplacement de la fonction setupWishlistFeatures originale effectué");
+
     // Initialiser l'état initial de la section wishlist
     const currentProject = JSON.parse(localStorage.getItem('currentProject') || '{}');
     if (currentProject.linkToWishlist) {
