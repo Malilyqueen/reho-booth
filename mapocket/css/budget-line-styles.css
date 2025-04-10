@@ -1,227 +1,238 @@
 /**
- * Styles spécifiques pour les lignes budgétaires
- * Améliore la visibilité des lignes de dépenses avec une meilleure mise en forme
+ * Styles pour les lignes budgétaires et leur affichage
  */
 
-/* Amélioration de la visibilité des lignes de dépenses */
+/* Amélioration des lignes de dépense */
 .expense-line {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
-    margin: 8px 0;
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    border-left: 4px solid #8fb8de;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease-in-out;
+    padding: 8px 10px;
+    margin: 6px 0;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border-left: 3px solid #6f802b;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .expense-line:hover {
-    background-color: #e9f2fa;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    background-color: #f0f7ff;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Animation pour les nouvelles lignes ajoutées */
+/* Mise en évidence des nouvelles lignes ajoutées */
 .expense-line.highlight-new {
-    animation: highlightNew 2s ease-in-out;
-    border-left: 4px solid #6fc373;
+    animation: highlightNew 1.5s ease;
+    border-left: 3px solid #ffc300;
+    background-color: #fffaeb;
 }
 
 @keyframes highlightNew {
-    0% { background-color: rgba(111, 195, 115, 0.3); }
-    50% { background-color: rgba(111, 195, 115, 0.15); }
-    100% { background-color: #f8f9fa; }
+    0% {
+        background-color: #fffaeb;
+        border-left: 3px solid #ffc300;
+        transform: translateX(0);
+    }
+    50% {
+        background-color: #fff5d6;
+        border-left: 3px solid #ffb700;
+        transform: translateX(3px);
+    }
+    100% {
+        background-color: #f9f9f9;
+        border-left: 3px solid #6f802b;
+        transform: translateX(0);
+    }
 }
 
-/* Styles pour le nom de la ligne de dépense */
+/* Style pour le nom de la ligne */
 .expense-line-name {
     flex: 1;
-    padding: 5px 8px;
+    font-size: 14px;
     font-weight: 500;
+    color: #333;
+    margin-right: 15px;
+    cursor: pointer;
+    border-bottom: 1px dashed transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.expense-line-name:hover {
     color: #1d3557;
+    border-bottom: 1px dashed #1d3557;
 }
 
-/* Styles pour le montant de la ligne de dépense */
+/* Style pour le montant de la ligne */
 .expense-line-amount {
-    padding: 4px 10px;
-    margin-right: 10px;
+    font-size: 14px;
     font-weight: 600;
-    color: #0d6efd;
-    background-color: #e6f0ff;
-    border-radius: 12px;
-    min-width: 90px;
+    color: #1d3557;
+    min-width: 80px;
     text-align: right;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Styles pour le bouton de suppression */
+.expense-line-amount:hover {
+    color: #0056b3;
+}
+
+/* Bouton de suppression de ligne */
 .delete-line-btn {
     background: none;
     border: none;
     color: #dc3545;
-    padding: 5px;
     cursor: pointer;
-    opacity: 0.7;
+    font-size: 14px;
+    padding: 2px 5px;
+    border-radius: 3px;
     transition: all 0.2s;
-    border-radius: 50%;
+    opacity: 0.5;
 }
 
-.delete-line-btn:hover {
-    background-color: #fff3f3;
+.expense-line:hover .delete-line-btn {
     opacity: 1;
 }
 
-/* Notification temporaire */
+.delete-line-btn:hover {
+    background-color: #fff1f1;
+    color: #b30000;
+}
+
+/* Formulaire d'ajout de ligne */
+.expense-line-form {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 3px solid #ffc300;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.expense-line-form.form-appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.expense-line-form h4 {
+    margin-top: 0;
+    color: #1d3557;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.expense-line-form .form-group {
+    margin-bottom: 12px;
+}
+
+.expense-line-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #495057;
+    font-size: 14px;
+}
+
+.expense-line-form input.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.expense-line-form input.form-control:focus {
+    border-color: #ffc300;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(255, 195, 0, 0.25);
+}
+
+.expense-line-form input.error-input {
+    border-color: #dc3545;
+    animation: shakeError 0.6s;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Conteneur des lignes de dépense */
+.expense-lines {
+    padding: 5px 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    background-color: #fcfcfc;
+    min-height: 10px; /* Hauteur minimale pour le drop */
+}
+
+/* Message vide */
+.empty-expense-lines {
+    padding: 15px;
+    color: #6c757d;
+    text-align: center;
+    font-style: italic;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* Notification temporaire pour les actions réussies */
 .temporary-notification {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #46a049;
+    background-color: #28a745;
     color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     opacity: 1;
-    transition: opacity 0.3s;
-}
-
-.temporary-notification i {
-    margin-right: 8px;
+    transition: opacity 0.3s ease;
 }
 
 .temporary-notification.fade-out {
     opacity: 0;
 }
 
-/* Formulaire d'ajout de ligne */
-.expense-line-form {
-    background-color: #f8fbff;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
-    border-left: 4px solid #6f802b;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* Animation pour les éléments en cours de suppression */
+.removing {
     opacity: 0;
-    transform: translateY(10px);
-    animation: formAppear 0.3s forwards;
+    transform: translateX(30px);
+    transition: all 0.3s ease;
 }
 
-.expense-line-form h4 {
-    color: #6f802b;
-    font-size: 16px;
-    margin-bottom: 12px;
-}
-
-.expense-line-form h4 i {
-    margin-right: 6px;
-}
-
-@keyframes formAppear {
-    to {
-        opacity: 1;
-        transform: translateY(0);
+/* Responsive design pour petit écran */
+@media (max-width: 768px) {
+    .expense-line {
+        flex-direction: column;
+        align-items: flex-start;
     }
-}
-
-.expense-line-form.form-disappear {
-    animation: formDisappear 0.3s forwards;
-}
-
-@keyframes formDisappear {
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
+    
+    .expense-line-name {
+        max-width: 90%;
+        margin-bottom: 5px;
     }
-}
-
-/* Styles pour les sous-catégories */
-.subcategory {
-    background-color: #f5f9ff;
-    border-radius: 8px;
-    padding: 12px 15px;
-    margin: 10px 0;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    border-left: 4px solid #97bef9;
-}
-
-.subcategory-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.subcategory-name {
-    font-weight: 600;
-    color: #2c5282;
-    font-size: 15px;
-    margin: 0;
-}
-
-.subcategory-amount {
-    font-weight: 600;
-    color: #3182ce;
-    padding: 4px 10px;
-    background-color: #ebf8ff;
-    border-radius: 20px;
-    min-width: 100px;
-    text-align: right;
-}
-
-.subcategory-actions {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-}
-
-.add-expense-line-btn {
-    background-color: #e6f0ff;
-    color: #3182ce;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 13px;
-}
-
-.add-expense-line-btn:hover {
-    background-color: #d1e2ff;
-}
-
-.delete-subcategory-btn {
-    background-color: #fff5f5;
-    color: #e53e3e;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 13px;
-}
-
-.delete-subcategory-btn:hover {
-    background-color: #fed7d7;
-}
-
-/* Amélioration des erreurs de validation */
-.validation-error {
-    color: #e53e3e;
-    font-size: 13px;
-    margin-top: 5px;
-    display: block;
-    animation: shake 0.5s;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-/* Feedback visuel de confirmation d'ajout */
-.btn-success {
-    background-color: #48bb78 !important;
-    color: white !important;
+    
+    .expense-line-amount {
+        align-self: flex-end;
+    }
+    
+    .delete-line-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
 }

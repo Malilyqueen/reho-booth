@@ -1589,12 +1589,14 @@ function createSubcategoryInContainer(container, subcategoryName, initialAmount 
     
     // Si un montant initial est fourni et que nous sommes en train de créer une nouvelle sous-catégorie vide
     // (pas en train d'ajouter une ligne à une sous-catégorie existante)
-    // Cette vérification permet d'éviter la création de lignes "Montant initial" non sollicitées
+    // Cette vérification permet d'éviter la création de lignes non sollicitées
     if (initialAmount && parseFloat(initialAmount) > 0 && !linesContainer.querySelector('.expense-line')) {
-        // Pour éviter tout problème de remplacement, on utilise un nom différent pour la ligne initiale
-        createExpenseLine(linesContainer, "Montant initial", initialAmount);
+        // Utiliser le nom de la sous-catégorie pour la ligne initiale pour éviter les noms génériques "Montant initial"
+        // Cela permet de personnaliser les lignes automatiques
+        const lineName = subcategoryName + " - Montant global";
+        createExpenseLine(linesContainer, lineName, initialAmount);
         
-        console.log("Ligne 'Montant initial' ajoutée pour la sous-catégorie:", subcategoryName);
+        console.log(`Ligne '${lineName}' ajoutée pour la sous-catégorie:`, subcategoryName);
         
         // Mettre à jour les calculs
         setTimeout(() => {
