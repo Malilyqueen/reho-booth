@@ -372,33 +372,29 @@ function setupBudgetCalculation() {
     });
 }
 
-// Fonction pour mettre à jour les catégories selon le template choisi
+// Fonction pour mettre à jour les catégories selon le template choisi - COMPLÈTEMENT DÉSACTIVÉ
 function updateTemplateCategories(templateType) {
-    console.log('Mise à jour des catégories pour le template:', templateType);
-    
-    // DÉSACTIVATION COMPLÈTE DES TEMPLATES PRÉDÉFINIS POUR LES LIGNES ET SOUS-CATÉGORIES
-    // L'utilisateur doit pouvoir créer ses propres lignes et sous-catégories librement
-    // sans que le système impose des valeurs par défaut
-    
-    // Récupérer les préférences utilisateur pour obtenir la devise
-    let userPreferences = {
-        currency: 'EUR', // Devise par défaut
-    };
-    
-    try {
-        const savedPrefs = localStorage.getItem('userPreferences');
-        if (savedPrefs) {
-            userPreferences = JSON.parse(savedPrefs);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des préférences utilisateur:', error);
-    }
+    console.log('DÉSACTIVATION COMPLÈTE des templates prédéfinis pour:', templateType);
     
     // Obtenir le symbole de la devise
     let currencySymbol = getProjectCurrencySymbol();
     let currencyCode = getProjectCurrencyCode();
     
-    console.log('Mise à jour des catégories avec la devise:', currencyCode, currencySymbol);
+    console.log('Configuration avec la devise:', currencyCode, currencySymbol);
+    
+    // Créer un projet complètement vide
+    const emptyCategories = [
+        {
+            name: "Nouvelle catégorie",
+            subcategories: []
+        }
+    ];
+    
+    // Mise à jour avec un projet vide
+    updateCategoriesUI(emptyCategories, currencySymbol);
+    
+    // Terminer la fonction ici pour éviter tout le reste du code
+    return;
     
     // Fonction utilitaire pour remplacer les symboles € dans les données de template
     const replaceEuroSymbol = (obj) => {
