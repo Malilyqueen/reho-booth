@@ -319,9 +319,9 @@ function setupWishlistIntegration() {
             
             // Faire disparaître la notification
             setTimeout(() => {
-                notification.classList.add('fade-out');
                 notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.3s ease';
+                notification.style.transform = 'translateX(20px)';
+                notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
@@ -548,8 +548,8 @@ function setupWishlistIntegration() {
             
             // Vérifier si la fonction pour créer une sous-catégorie est disponible
             if (typeof createSubcategoryInContainer === 'function') {
-                // Créer la sous-catégorie
-                const newSubcategory = createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0);
+                // Créer la sous-catégorie avec marqueur wishlist
+                const newSubcategory = createSubcategoryInContainer(subcategoriesContainer, item.name, item.price || 0, true);
                 if (newSubcategory) {
                     totalAdded++;
                     
@@ -597,7 +597,9 @@ function setupWishlistIntegration() {
             
             // Faire disparaître la notification
             setTimeout(() => {
-                notification.classList.add('fade-out');
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(20px)';
+                notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
@@ -700,7 +702,9 @@ function setupWishlistIntegration() {
         
         // Faire disparaître la notification
         setTimeout(() => {
-            notification.classList.add('fade-out');
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(20px)';
+            notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
             setTimeout(() => {
                 notification.remove();
             }, 300);
