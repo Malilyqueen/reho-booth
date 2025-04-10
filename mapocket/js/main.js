@@ -843,12 +843,17 @@ function editProject(projectId) {
     const projectToEdit = projects.find(p => p.id === projectId);
     
     if (projectToEdit) {
+        console.log("Ouverture du projet en mode édition:", projectToEdit.projectName);
+        
         // Sauvegarder le projet en cours d'édition dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToEdit));
         localStorage.setItem('projectInEditing', projectId);
         
         // Rediriger vers la page d'édition avec l'ID du projet
         window.location.href = 'nouveau-projet.html?edit=true&id=' + projectId;
+    } else {
+        console.error("Projet non trouvé avec ID:", projectId);
+        alert("Impossible de trouver le projet demandé.");
     }
 }
 

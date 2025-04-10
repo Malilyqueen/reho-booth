@@ -1,0 +1,98 @@
+/* Styles pour le mode édition de projet */
+
+.edit-mode-notice {
+    background-color: #2979ff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.edit-mode-notice i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.edit-mode .form-header {
+    border-bottom: 2px solid #2979ff;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.edit-mode .project-form {
+    background-color: #f9f9ff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(41, 121, 255, 0.1);
+}
+
+/* Styles des boutons */
+#saveChangesBtn {
+    background-color: #4CAF50;
+    color: white;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+#saveChangesBtn:hover {
+    background-color: #388E3C;
+}
+
+#saveExitBtn {
+    background-color: #1976D2;
+    color: white;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+#saveExitBtn:hover {
+    background-color: #0D47A1;
+}
+
+#cancelEditBtn {
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 9px 20px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+#cancelEditBtn:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.temporary-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.temporary-notification.fade-out {
+    opacity: 0;
+}
