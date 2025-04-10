@@ -373,7 +373,7 @@ function setupBudgetCalculation() {
 }
 
 // Fonction pour mettre à jour les catégories selon le template choisi
-// Version simplifiée pour résoudre les problèmes de catégories et noms de lignes
+// Version entièrement réécrite pour résoudre définitivement les problèmes de catégories
 function updateTemplateCategories(templateType) {
     console.log('Application des catégories par défaut pour:', templateType);
     
@@ -383,45 +383,123 @@ function updateTemplateCategories(templateType) {
     
     console.log('Configuration avec la devise:', currencyCode, currencySymbol);
     
-    // Créer les catégories par défaut selon le type de projet
+    // Définition directe (hard-coded) des catégories de base selon le type de projet
     let categories = [];
     
-    try {
-        // Vérifier si nous avons des catégories prédéfinies pour ce type de projet
-        if (DEFAULT_CATEGORIES && DEFAULT_CATEGORIES[templateType]) {
-            console.log('Catégories par défaut trouvées pour:', templateType);
-            
-            // Créer une copie profonde des catégories par défaut
-            categories = DEFAULT_CATEGORIES[templateType].map(category => {
-                return {
-                    name: category.name,
-                    subcategories: []
-                };
-            });
-            
-            console.log('Catégories préparées:', categories);
-        } else {
-            console.log('Aucune catégorie par défaut trouvée pour:', templateType);
-            // Si aucune catégorie prédéfinie, créer une catégorie vide
+    // Création des catégories en fonction du type de projet
+    switch(templateType) {
+        case 'Mariage':
             categories = [
-                {
-                    name: "Nouvelle catégorie",
-                    subcategories: []
-                }
+                { name: "Lieu de réception", subcategories: [] },
+                { name: "Traiteur", subcategories: [] },
+                { name: "Tenues", subcategories: [] },
+                { name: "Décoration", subcategories: [] },
+                { name: "Animation", subcategories: [] },
+                { name: "Photo & Vidéo", subcategories: [] },
+                { name: "Transport", subcategories: [] },
+                { name: "Divers", subcategories: [] }
             ];
-        }
-    } catch (error) {
-        console.error('Erreur lors de la création des catégories:', error);
-        // En cas d'erreur, créer une catégorie vide
-        categories = [
-            {
-                name: "Nouvelle catégorie",
-                subcategories: []
-            }
-        ];
+            break;
+        
+        case 'Anniversaire':
+            categories = [
+                { name: "Lieu", subcategories: [] },
+                { name: "Nourriture", subcategories: [] },
+                { name: "Boissons", subcategories: [] },
+                { name: "Décoration", subcategories: [] },
+                { name: "Animation", subcategories: [] },
+                { name: "Cadeaux", subcategories: [] }
+            ];
+            break;
+            
+        case 'Vacances':
+            categories = [
+                { name: "Transport", subcategories: [] },
+                { name: "Hébergement", subcategories: [] },
+                { name: "Nourriture", subcategories: [] },
+                { name: "Activités", subcategories: [] },
+                { name: "Shopping", subcategories: [] },
+                { name: "Assurances", subcategories: [] }
+            ];
+            break;
+            
+        case 'Rénovation':
+            categories = [
+                { name: "Matériaux", subcategories: [] },
+                { name: "Main d'œuvre", subcategories: [] },
+                { name: "Outils", subcategories: [] },
+                { name: "Décoration", subcategories: [] },
+                { name: "Équipements", subcategories: [] },
+                { name: "Permis & Documents", subcategories: [] }
+            ];
+            break;
+            
+        case 'Études':
+            categories = [
+                { name: "Frais de scolarité", subcategories: [] },
+                { name: "Livres & Fournitures", subcategories: [] },
+                { name: "Logement", subcategories: [] },
+                { name: "Transport", subcategories: [] },
+                { name: "Nourriture", subcategories: [] },
+                { name: "Loisirs", subcategories: [] }
+            ];
+            break;
+            
+        case 'Déménagement':
+            categories = [
+                { name: "Location véhicule", subcategories: [] },
+                { name: "Déménageurs", subcategories: [] },
+                { name: "Cartons & Emballages", subcategories: [] },
+                { name: "Frais administratifs", subcategories: [] },
+                { name: "Nouveaux achats", subcategories: [] },
+                { name: "Équipements", subcategories: [] }
+            ];
+            break;
+            
+        case 'Naissance':
+            categories = [
+                { name: "Chambre bébé", subcategories: [] },
+                { name: "Vêtements", subcategories: [] },
+                { name: "Équipements", subcategories: [] },
+                { name: "Puériculture", subcategories: [] },
+                { name: "Soins médicaux", subcategories: [] },
+                { name: "Divers", subcategories: [] }
+            ];
+            break;
+            
+        case 'Campagne marketing':
+            categories = [
+                { name: "Conception", subcategories: [] },
+                { name: "Médias sociaux", subcategories: [] },
+                { name: "Publicité en ligne", subcategories: [] },
+                { name: "Imprimés", subcategories: [] },
+                { name: "Évènements", subcategories: [] },
+                { name: "Analyse & Suivi", subcategories: [] }
+            ];
+            break;
+            
+        case 'Lancement d\'entreprise':
+        case 'Démarrage entreprise':
+            categories = [
+                { name: "Frais juridiques", subcategories: [] },
+                { name: "Équipement", subcategories: [] },
+                { name: "Marketing", subcategories: [] },
+                { name: "Locaux", subcategories: [] },
+                { name: "Personnel", subcategories: [] },
+                { name: "Stock initial", subcategories: [] }
+            ];
+            break;
+            
+        default:
+            // Catégorie par défaut pour tout autre type de projet
+            categories = [
+                { name: "Nouvelle catégorie", subcategories: [] }
+            ];
     }
     
-    // Mise à jour de l'interface utilisateur avec les catégories simplifiées
+    console.log('Catégories préparées:', categories);
+    
+    // Mise à jour de l'interface utilisateur avec les catégories
     updateCategoriesUI(categories, currencySymbol);
     return;
     
