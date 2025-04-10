@@ -1698,6 +1698,10 @@ function showAddExpenseLineForm(container) {
     // Créer le formulaire d'ajout de ligne
     const lineForm = document.createElement('div');
     lineForm.className = 'expense-line-form';
+    
+    // Obtenir le symbole de la devise actuelle
+    let currencySymbol = getProjectCurrencySymbol();
+    
     lineForm.innerHTML = `
         <h4>Ajouter une ligne de dépense</h4>
         <div class="form-group">
@@ -1705,17 +1709,25 @@ function showAddExpenseLineForm(container) {
             <input type="text" id="newLineName" class="form-control" placeholder="Ex: Menu principal">
         </div>
         <div class="form-group">
-            <label for="newLineAmount">Montant</label>
-            <input type="number" id="newLineAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+            <label for="newLineAmount">Montant (${currencySymbol})</label>
+            <div class="amount-input-wrapper">
+                <span class="currency-symbol">${currencySymbol}</span>
+                <input type="number" id="newLineAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+            </div>
         </div>
         <div class="form-action-buttons">
-            <button type="button" class="btn-cancel-line">Annuler</button>
-            <button type="button" class="btn-add-line">Ajouter</button>
+            <button type="button" class="btn-cancel-line btn-outline">Annuler</button>
+            <button type="button" class="btn-add-line btn-primary">
+                <i class="fas fa-check"></i> Ajouter
+            </button>
         </div>
     `;
     
     // Ajouter le formulaire au conteneur
     container.appendChild(lineForm);
+    
+    // Ajouter une classe pour l'animation d'entrée
+    lineForm.classList.add('form-appear');
     
     // Focus sur le champ de nom
     setTimeout(() => {
@@ -1732,6 +1744,8 @@ function showAddExpenseLineForm(container) {
         const lineName = nameInput.value.trim();
         const lineAmount = amountInput.value;
         
+        let isValid = true;
+        
         if (!lineName) {
             // Feedback visuel d'erreur
             nameInput.classList.add('error-input');
@@ -1741,36 +1755,81 @@ function showAddExpenseLineForm(container) {
             setTimeout(() => {
                 nameInput.classList.remove('error-input');
             }, 2000);
-            return;
+            
+            isValid = false;
         }
         
-        // Créer la ligne de dépense
-        createExpenseLine(container, lineName, lineAmount || 0);
+        // Validation du montant (optionnel mais montrer un avertissement)
+        if (!lineAmount || parseFloat(lineAmount) === 0) {
+            const warningElement = document.createElement('div');
+            warningElement.className = 'input-warning';
+            warningElement.innerHTML = `<i class="fas fa-info-circle"></i> Montant à 0, est-ce volontaire ?`;
+            
+            const amountWrapper = amountInput.closest('.form-group');
+            
+            // S'assurer qu'on n'ajoute pas plusieurs avertissements
+            if (!amountWrapper.querySelector('.input-warning')) {
+                amountWrapper.appendChild(warningElement);
+                
+                // Disparaître après quelques secondes
+                setTimeout(() => {
+                    warningElement.classList.add('fade-out');
+                    setTimeout(() => {
+                        warningElement.remove();
+                    }, 300);
+                }, 3000);
+            }
+        }
         
-        // Notification visuelle de succès
-        const notification = document.createElement('div');
-        notification.className = 'temporary-notification';
-        notification.textContent = `Ligne "${lineName}" ajoutée`;
-        document.body.appendChild(notification);
+        if (!isValid) return;
         
-        // Faire disparaître la notification
+        // Ajouter un effet visuel au bouton d'ajout
+        addButton.classList.add('btn-success');
+        addButton.innerHTML = '<i class="fas fa-check"></i> Ajouté !';
+        
+        // Attendre un court instant pour montrer le succès
         setTimeout(() => {
-            notification.classList.add('fade-out');
+            // Créer la ligne de dépense
+            const newLine = createExpenseLine(container, lineName, lineAmount || 0);
+            
+            // Ajouter une animation sur la nouvelle ligne
+            newLine.classList.add('highlight-new');
             setTimeout(() => {
-                notification.remove();
+                newLine.classList.remove('highlight-new');
+            }, 2000);
+            
+            // Notification visuelle de succès
+            const notification = document.createElement('div');
+            notification.className = 'temporary-notification';
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> Ligne "${lineName}" ajoutée`;
+            document.body.appendChild(notification);
+            
+            // Faire disparaître la notification
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 2000);
+            
+            // Animer la suppression du formulaire
+            lineForm.classList.add('form-disappear');
+            setTimeout(() => {
+                lineForm.remove();
+                
+                // Mettre à jour les calculs
+                updateBudgetCalculation();
             }, 300);
-        }, 2000);
-        
-        // Supprimer le formulaire
-        lineForm.remove();
-        
-        // Mettre à jour les calculs
-        updateBudgetCalculation();
+        }, 500);
     };
     
     // Gestionnaire pour le bouton d'annulation
     lineForm.querySelector('.btn-cancel-line').addEventListener('click', function() {
-        lineForm.remove();
+        // Animer la sortie du formulaire
+        lineForm.classList.add('form-disappear');
+        setTimeout(() => {
+            lineForm.remove();
+        }, 300);
     });
     
     // Gestionnaire pour le bouton d'ajout
@@ -1796,6 +1855,23 @@ function showAddExpenseLineForm(container) {
         }
     });
     
+    // Mettre en évidence si le champ est rempli
+    nameInput.addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.add('has-content');
+        } else {
+            this.classList.remove('has-content');
+        }
+    });
+    
+    amountInput.addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.add('has-content');
+        } else {
+            this.classList.remove('has-content');
+        }
+    });
+    
     // Ajouter un gestionnaire d'événement pour la soumission du formulaire principal
     // afin d'éviter la soumission accidentelle
     const mainForm = document.getElementById('newProjectForm');
@@ -1805,6 +1881,14 @@ function showAddExpenseLineForm(container) {
             // Si un formulaire d'ajout de ligne est ouvert, empêcher la soumission
             if (document.querySelector('.expense-line-form')) {
                 e.preventDefault();
+                
+                // Mettre en évidence le formulaire ouvert
+                const openForm = document.querySelector('.expense-line-form');
+                openForm.classList.add('form-highlight');
+                setTimeout(() => {
+                    openForm.classList.remove('form-highlight');
+                }, 2000);
+                
                 return false;
             }
             
