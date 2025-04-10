@@ -276,6 +276,40 @@
     transition: all 0.3s ease;
 }
 
+/* Style pour le bouton "Enregistrer les modifications" */
+.save-edit-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: #1d3557;
+    color: white;
+    font-weight: 600;
+    border: none;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.save-edit-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.save-edit-btn i {
+    margin-right: 8px;
+}
+
+/* Style pour le formulaire moins intrusif */
+.new-project {
+    transition: all 0.3s ease;
+}
+
 /* Responsive design pour petit écran */
 @media (max-width: 768px) {
     .expense-line {

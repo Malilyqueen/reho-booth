@@ -103,6 +103,179 @@ document.addEventListener('DOMContentLoaded', function() {
     setupAddCategoryButton();
 });
 
+// Fonction pour initialiser les date pickers
+function initializeDatePickers() {
+    // Initialiser le datepicker principal avec flatpickr
+    const projectDateInput = document.getElementById('projectDate');
+    if (projectDateInput) {
+        flatpickr(projectDateInput, {
+            dateFormat: "d/m/Y",
+            locale: "fr",
+            allowInput: true,
+            disableMobile: false
+        });
+        
+        console.log("Date picker principal initialisé");
+    }
+    
+    // Initialiser le datepicker de date de fin si présent
+    const projectEndDateInput = document.getElementById('projectEndDate');
+    if (projectEndDateInput) {
+        flatpickr(projectEndDateInput, {
+            dateFormat: "d/m/Y",
+            locale: "fr",
+            allowInput: true,
+            disableMobile: false
+        });
+        
+        console.log("Date picker de fin initialisé");
+    }
+}
+
+// Fonction pour ajouter un bouton "Enregistrer les modifications"
+function addSaveButton() {
+    // Vérifier si le bouton existe déjà
+    if (document.getElementById('saveChangesBtn')) {
+        return; // Le bouton existe déjà
+    }
+    
+    // Créer le bouton
+    const saveButton = document.createElement('button');
+    saveButton.type = 'button';
+    saveButton.id = 'saveChangesBtn';
+    saveButton.className = 'btn btn-primary save-edit-btn';
+    saveButton.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+    
+    // Chercher l'endroit où ajouter le bouton
+    const formActions = document.querySelector('.form-actions');
+    if (formActions) {
+        formActions.appendChild(saveButton);
+    } else {
+        // Si form-actions n'existe pas, trouver un autre endroit approprié
+        const projectForm = document.getElementById('projectForm');
+        if (projectForm) {
+            // Créer un conteneur pour les actions si nécessaire
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'form-actions';
+            actionsDiv.appendChild(saveButton);
+            projectForm.appendChild(actionsDiv);
+        }
+    }
+    
+    // Ajouter l'événement de clic
+    saveButton.addEventListener('click', function() {
+        // Collecter les données du formulaire
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        if (!projectId) return;
+        
+        const savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        const projectToEdit = savedProjects.find(p => p.id === projectId);
+        if (!projectToEdit) return;
+        
+        const formData = getProjectData();
+        formData.id = projectId;
+        formData.createdAt = projectToEdit.createdAt;
+        
+        // Mise à jour du projet sans redirection
+        updateExistingProject(formData, projectToEdit, projectId, false);
+        
+        // Notification visuelle
+        showNotification('Modifications enregistrées avec succès', 'success');
+    });
+    
+    console.log("Bouton de sauvegarde ajouté");
+}
+
+// Fonction pour rendre le formulaire de projet moins intrusif
+function makeProjectFormLessIntrusive() {
+    const projectForm = document.querySelector('.new-project');
+    if (projectForm) {
+        // Réduire la taille du formulaire
+        projectForm.style.maxWidth = '960px';
+        projectForm.style.margin = '0 auto';
+        projectForm.style.borderRadius = '8px';
+        projectForm.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+        
+        // Réduire la taille des en-têtes
+        const headers = projectForm.querySelectorAll('h1, h2, h3');
+        headers.forEach(header => {
+            header.style.fontSize = '1.5rem';
+            header.style.marginBottom = '1rem';
+        });
+        
+        // Ajouter une animation d'entrée
+        projectForm.style.opacity = '0';
+        projectForm.style.transform = 'translateY(-10px)';
+        projectForm.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        
+        // Déclencher l'animation
+        setTimeout(() => {
+            projectForm.style.opacity = '1';
+            projectForm.style.transform = 'translateY(0)';
+        }, 100);
+    }
+}
+
+// Fonction pour afficher une notification
+function showNotification(message, type = 'info') {
+    // Vérifier si la fonction existe déjà dans l'application
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+        return;
+    }
+    
+    // Créer notre propre notification si nécessaire
+    const notif = document.createElement('div');
+    notif.className = `notification ${type}`;
+    notif.innerHTML = `<div class="notification-content">${message}</div>`;
+    
+    // Ajouter au document
+    document.body.appendChild(notif);
+    
+    // Ajouter du style si nécessaire
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            z-index: 9999;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+            max-width: 350px;
+        }
+        .notification.success {
+            background-color: #28a745;
+            color: white;
+        }
+        .notification.error {
+            background-color: #dc3545;
+            color: white;
+        }
+        .notification.info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Supprimer après 3 secondes
+    setTimeout(() => {
+        notif.remove();
+        style.remove();
+    }, 3000);
+}
+
 // Fonction pour activer le mode édition de projet
 function enableEditMode(projectId) {
     console.log("Activation du mode édition pour le projet:", projectId);
