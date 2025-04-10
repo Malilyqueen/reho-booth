@@ -87,6 +87,29 @@ function enableEditMode(projectId) {
     const projectType = document.querySelector('.project-type');
     if (projectType && projectToEdit.template) {
         projectType.textContent = projectToEdit.template;
+        
+        // Sélectionner également le bon modèle dans l'accordéon
+        const templateOption = document.querySelector(`.template-option[data-template="${projectToEdit.template}"]`);
+        if (templateOption) {
+            // Désélectionner tout autre option précédemment sélectionnée
+            document.querySelectorAll('.template-option.selected').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Sélectionner cette option
+            templateOption.classList.add('selected');
+            
+            // Ouvrir l'accordéon parent
+            const accordionContent = templateOption.closest('.accordion-content');
+            if (accordionContent) {
+                accordionContent.style.display = 'block';
+                const accordionHeader = accordionContent.previousElementSibling;
+                if (accordionHeader) {
+                    accordionHeader.classList.add('active');
+                    accordionHeader.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                }
+            }
+        }
     }
     
     // Charger les données du projet dans le formulaire
@@ -103,6 +126,17 @@ function enableEditMode(projectId) {
     const totalBudgetInput = document.getElementById('totalBudget');
     if (totalBudgetInput && projectToEdit.totalBudget) {
         totalBudgetInput.value = projectToEdit.totalBudget;
+    }
+    
+    // Mettre à jour les champs supplémentaires s'ils existent
+    const projectEndDateInput = document.getElementById('projectEndDate');
+    if (projectEndDateInput && projectToEdit.projectEndDate) {
+        projectEndDateInput.value = projectToEdit.projectEndDate;
+    }
+    
+    const projectStatusSelect = document.getElementById('projectStatus');
+    if (projectStatusSelect && projectToEdit.status) {
+        projectStatusSelect.value = projectToEdit.status;
     }
     
     const linkToWalletCheckbox = document.getElementById('linkToWallet');
