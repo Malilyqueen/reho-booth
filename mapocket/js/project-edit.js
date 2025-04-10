@@ -1,4 +1,28 @@
 // Fonctions spécifiques à l'édition de projet
+
+// Fonction utilitaire pour obtenir le symbole de devise actuel
+function getProjectCurrencySymbol() {
+    let currencySymbol = '€';
+    try {
+        if (typeof getCurrencySymbol === 'function') {
+            // Utiliser la fonction du helper si disponible
+            currencySymbol = getCurrencySymbol();
+        } else {
+            // Fallback si le helper n'est pas chargé
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (preferences.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération du symbole de devise:', error);
+    }
+    return currencySymbol;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Vérifier si nous sommes en mode édition
     const urlParams = new URLSearchParams(window.location.search);
