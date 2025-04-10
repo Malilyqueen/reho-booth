@@ -108,12 +108,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 60%;
-    padding: 6px 0;
+    padding: 6px 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
 }
 
-.expense-line-name:hover {
+.expense-line-name:hover, .expense-line-name:focus {
     color: #1d3557;
     border-bottom: 1px dashed #1d3557;
+    background-color: rgba(255, 255, 255, 0.9);
+    outline: none;
+    box-shadow: 0 0 3px rgba(29, 53, 87, 0.2);
 }
 
 /* Style pour le montant de la ligne */
@@ -126,11 +131,16 @@
     margin-right: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
-    padding: 6px 0;
+    padding: 6px 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
 }
 
-.expense-line-amount:hover {
+.expense-line-amount:hover, .expense-line-amount:focus {
     color: #0056b3;
+    background-color: rgba(255, 255, 255, 0.9);
+    outline: none;
+    box-shadow: 0 0 3px rgba(0, 86, 179, 0.2);
 }
 
 /* Bouton de suppression de ligne */
