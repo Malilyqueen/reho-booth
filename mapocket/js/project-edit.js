@@ -39,7 +39,9 @@ function enableEditMode(projectId) {
     // Changer le titre de la page
     const pageTitle = document.querySelector('.page-title');
     if (pageTitle) {
+        console.log("Changement du titre de la page en 'MODIFIER PROJET'");
         pageTitle.textContent = 'MODIFIER PROJET';
+        pageTitle.style.color = '#2979ff'; // Mettre en bleu pour renforcer la visibilité
     }
     
     // Changer le type de projet si défini
@@ -233,8 +235,9 @@ function loadProjectCategories(categories) {
     });
     
     // Initialiser les fonctionnalités interactives
-    initializeSubcategories();
-    initializeBudgetCalculation();
+    console.log('Initialisation des interactions de sous-catégories');
+    // Nous n'avons pas besoin d'appeler ces fonctions car elles sont déjà dans project.js
+    // Si on les appelle elles seront définies dans ce contexte aussi
 }
 
 // Fonction pour créer un élément de sous-catégorie
@@ -321,6 +324,84 @@ function createExpenseLineElement(line) {
     lineElement.appendChild(deleteLineBtn);
     
     return lineElement;
+}
+
+// Fonction pour obtenir les données du formulaire
+function getProjectData() {
+    // Récupération des valeurs du formulaire
+    const projectName = document.getElementById('projectName').value;
+    const projectDate = document.getElementById('projectDate').value;
+    const totalBudget = document.getElementById('totalBudget').value;
+    
+    // Récupération du modèle sélectionné
+    const selectedTemplate = document.querySelector('.template-option.selected');
+    const template = selectedTemplate ? selectedTemplate.getAttribute('data-template') : 'Personnalisé';
+    
+    // Récupération des catégories
+    const categories = [];
+    const categoryElements = document.querySelectorAll('.expense-category');
+    
+    categoryElements.forEach(categoryEl => {
+        const categoryNameEl = categoryEl.querySelector('.category-name');
+        const categoryAmountEl = categoryEl.querySelector('.category-amount');
+        
+        if (categoryNameEl && categoryAmountEl) {
+            const categoryName = categoryNameEl.textContent;
+            const categoryAmount = categoryAmountEl.textContent;
+            
+            const subcategories = [];
+            const subcategoryElements = categoryEl.querySelectorAll('.subcategory');
+            
+            subcategoryElements.forEach(subcategoryEl => {
+                const subcategoryNameEl = subcategoryEl.querySelector('.subcategory-name');
+                const subcategoryAmountEl = subcategoryEl.querySelector('.subcategory-amount');
+                
+                if (subcategoryNameEl && subcategoryAmountEl) {
+                    const subcategoryName = subcategoryNameEl.textContent;
+                    const subcategoryAmount = subcategoryAmountEl.textContent;
+                    
+                    const lines = [];
+                    const lineElements = subcategoryEl.querySelectorAll('.expense-line');
+                    
+                    lineElements.forEach(lineEl => {
+                        const lineNameEl = lineEl.querySelector('.expense-line-name');
+                        const lineAmountEl = lineEl.querySelector('.expense-line-amount');
+                        
+                        if (lineNameEl && lineAmountEl) {
+                            lines.push({
+                                name: lineNameEl.value,
+                                amount: lineAmountEl.value
+                            });
+                        }
+                    });
+                    
+                    subcategories.push({
+                        name: subcategoryName,
+                        amount: subcategoryAmount,
+                        lines: lines
+                    });
+                }
+            });
+            
+            categories.push({
+                name: categoryName,
+                amount: categoryAmount,
+                subcategories: subcategories
+            });
+        }
+    });
+    
+    // Création de l'objet de projet
+    const projectData = {
+        projectName: projectName,
+        projectDate: projectDate,
+        totalBudget: totalBudget,
+        template: template,
+        categories: categories,
+        linkToWallet: document.getElementById('linkToWallet') ? document.getElementById('linkToWallet').checked : false
+    };
+    
+    return projectData;
 }
 
 // Fonction pour mettre à jour un projet existant
