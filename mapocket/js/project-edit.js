@@ -389,7 +389,19 @@ function updateTemplateCategories(templateType) {
     // Vérifier si nous avons des catégories prédéfinies pour ce type de projet
     if (typeof DEFAULT_CATEGORIES !== 'undefined' && DEFAULT_CATEGORIES[templateType]) {
         console.log('Utilisation des catégories par défaut pour:', templateType);
+        
+        // Copie profonde des catégories par défaut
         defaultCategories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES[templateType]));
+        
+        // Nettoyer les tableaux de sous-catégories pour éviter tout problème
+        defaultCategories.forEach(category => {
+            // S'assurer que la propriété 'subcategories' existe et est un tableau
+            if (!category.subcategories) {
+                category.subcategories = [];
+            }
+        });
+        
+        console.log('Catégories préparées avec sous-catégories vides:', defaultCategories);
     } else {
         console.log('Aucune catégorie par défaut trouvée pour:', templateType);
         // Si aucune catégorie prédéfinie, créer une catégorie vide
@@ -401,7 +413,7 @@ function updateTemplateCategories(templateType) {
         ];
     }
     
-    // Mise à jour de l'interface utilisateur avec les catégories par défaut (sans sous-catégories ni lignes)
+    // Mise à jour de l'interface utilisateur avec les catégories par défaut (sans sous-catégories)
     updateCategoriesUI(defaultCategories, currencySymbol);
     
     // Ne pas exécuter le reste du code (contenant les templates complets avec sous-catégories et lignes)
