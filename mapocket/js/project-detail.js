@@ -610,11 +610,18 @@ function showNotification(message, type = 'success') {
 function editProject() {
     const project = window.currentProject;
     
+    if (!project || !project.id) {
+        console.error("Erreur: Aucun projet valide à éditer");
+        showNotification('Erreur lors de l\'édition du projet', 'error');
+        return;
+    }
+    
     // Sauvegarder le projet en cours d'édition
     localStorage.setItem('currentProject', JSON.stringify(project));
+    localStorage.setItem('projectInEditing', project.id);
     
-    // Rediriger vers la page d'édition
-    window.location.href = 'nouveau-projet.html?edit=true';
+    // Rediriger vers la page d'édition avec l'ID du projet
+    window.location.href = 'nouveau-projet.html?edit=true&id=' + project.id;
 }
 
 function openRealExpenseModal(expenseIndex = null) {
