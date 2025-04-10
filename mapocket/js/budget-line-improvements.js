@@ -224,48 +224,77 @@ function enhanceLineForm(form) {
 
 // Fonction pour améliorer visuellement le formulaire
 function improveFormVisuals(form, nameInput, amountInput, addButton) {
-    // Ajouter des labels clairs s'ils n'existent pas déjà
+    // Nettoyer le formulaire existant pour éviter les problèmes d'affichage
+    form.innerHTML = '';
+    
+    // Conserver les références originales des inputs et du bouton
+    const newNameInput = nameInput.cloneNode(true);
+    const newAmountInput = amountInput.cloneNode(true);
+    const newAddButton = addButton.cloneNode(true);
+    
+    // Créer une structure claire pour le formulaire
+    form.classList.add('enhanced-line-form');
+    
+    // Créer le conteneur pour les champs
+    const fieldsContainer = document.createElement('div');
+    fieldsContainer.classList.add('line-fields-container');
+    fieldsContainer.style.display = 'flex';
+    fieldsContainer.style.flexWrap = 'wrap';
+    fieldsContainer.style.gap = '15px';
+    fieldsContainer.style.width = '100%';
+    
+    // Configurer le champ Nom
+    const nameContainer = document.createElement('div');
+    nameContainer.classList.add('form-input-container');
+    
     const nameLabel = document.createElement('label');
-    nameLabel.htmlFor = nameInput.id || `newLineName_${Date.now()}`;
-    if (!nameInput.id) nameInput.id = nameLabel.htmlFor;
-    nameLabel.textContent = 'Nom de la ligne';
+    nameLabel.htmlFor = `newLineName_${Date.now()}`;
+    nameInput.id = nameLabel.htmlFor;
+    nameLabel.textContent = 'Nom';
     nameLabel.classList.add('expense-line-label');
     
+    newNameInput.placeholder = 'Nom de la ligne';
+    newNameInput.classList.add('enhanced-input');
+    newNameInput.id = nameLabel.htmlFor;
+    
+    nameContainer.appendChild(nameLabel);
+    nameContainer.appendChild(newNameInput);
+    
+    // Configurer le champ Montant
+    const amountContainer = document.createElement('div');
+    amountContainer.classList.add('form-input-container');
+    
     const amountLabel = document.createElement('label');
-    amountLabel.htmlFor = amountInput.id || `newLineAmount_${Date.now()}`;
-    if (!amountInput.id) amountInput.id = amountLabel.htmlFor;
+    amountLabel.htmlFor = `newLineAmount_${Date.now()}`;
+    amountInput.id = amountLabel.htmlFor;
     amountLabel.textContent = 'Montant';
     amountLabel.classList.add('expense-line-label');
     
-    // Ajouter du texte indicatif dans les champs vides
-    nameInput.placeholder = nameInput.placeholder || 'Nom de la ligne';
-    amountInput.placeholder = amountInput.placeholder || 'Montant';
+    newAmountInput.placeholder = 'Montant';
+    newAmountInput.classList.add('enhanced-input');
+    newAmountInput.id = amountLabel.htmlFor;
     
-    // Améliorer l'apparence des entrées
-    nameInput.classList.add('enhanced-input');
-    amountInput.classList.add('enhanced-input');
-    
-    // Créer des conteneurs pour les champs avec les labels
-    const nameContainer = document.createElement('div');
-    nameContainer.classList.add('form-input-container');
-    nameInput.parentNode.insertBefore(nameContainer, nameInput);
-    nameContainer.appendChild(nameLabel);
-    nameContainer.appendChild(nameInput);
-    
-    const amountContainer = document.createElement('div');
-    amountContainer.classList.add('form-input-container');
-    amountInput.parentNode.insertBefore(amountContainer, amountInput);
     amountContainer.appendChild(amountLabel);
-    amountContainer.appendChild(amountInput);
+    amountContainer.appendChild(newAmountInput);
+    
+    // Configurer le bouton
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('form-button-container');
     
     // Améliorer le bouton
-    if (!addButton.querySelector('i')) {
-        addButton.innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter';
+    if (!newAddButton.querySelector('i')) {
+        newAddButton.innerHTML = '<i class="fas fa-plus-circle"></i> Ajouter';
     }
-    addButton.classList.add('enhanced-add-btn');
+    newAddButton.classList.add('enhanced-add-btn');
     
-    // Mise en page flexible
-    form.classList.add('enhanced-line-form');
+    buttonContainer.appendChild(newAddButton);
+    
+    // Assembler le formulaire
+    fieldsContainer.appendChild(nameContainer);
+    fieldsContainer.appendChild(amountContainer);
+    fieldsContainer.appendChild(buttonContainer);
+    
+    form.appendChild(fieldsContainer);
 }
 
 // Fonction pour formater l'entrée du montant en temps réel
@@ -536,5 +565,4 @@ styleElement.textContent = `
         100% { background-color: transparent; }
     }
 `;
-document.head.appendChild(styleElement);
 document.head.appendChild(styleElement);
