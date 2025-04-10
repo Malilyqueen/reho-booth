@@ -327,8 +327,13 @@ function loadProjectCategories(categories) {
         btn.addEventListener('click', function() {
             const categoryElement = this.closest('.expense-category');
             const subcategoryName = prompt('Nom de la nouvelle sous-catégorie:');
-            if (subcategoryName && categoryElement) {
+            if (subcategoryName && subcategoryName.trim() !== '' && categoryElement) {
                 addNewSubcategory(categoryElement, subcategoryName);
+                
+                // Notification visuelle
+                showNotification('Sous-catégorie ajoutée avec succès', 'success');
+            } else if (subcategoryName && subcategoryName.trim() === '') {
+                showNotification('Le nom de la sous-catégorie ne peut pas être vide', 'error');
             }
         });
     });
@@ -341,6 +346,9 @@ function loadProjectCategories(categories) {
             const expenseLinesContainer = subcategoryElement.querySelector('.expense-lines');
             if (expenseLinesContainer) {
                 addNewExpenseLine(expenseLinesContainer);
+                
+                // Notification visuelle
+                showNotification('Ligne de dépense ajoutée', 'success');
             }
         });
     });
@@ -550,11 +558,13 @@ function addNewCategory(categoryName) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = '€';
     try {
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (userPreferences.currency) {
-            const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-            if (currency) {
-                currencySymbol = currency.symbol;
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        if (preferences.currency) {
+            if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
             }
         }
     } catch (error) {
@@ -710,11 +720,13 @@ function addNewExpenseLine(expenseLinesContainer) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = '€';
     try {
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (userPreferences.currency) {
-            const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-            if (currency) {
-                currencySymbol = currency.symbol;
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        if (preferences.currency) {
+            if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
             }
         }
     } catch (error) {

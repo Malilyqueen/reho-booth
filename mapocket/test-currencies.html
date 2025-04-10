@@ -1,59 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test des devises - MaPocket</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/currency.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="js/preferences-manager.js"></script>
     <script src="js/notifications.js"></script>
-    <style>
-        .currency-test-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .currency-row {
-            display: grid;
-            grid-template-columns: 100px 100px 200px;
-            gap: 10px;
-            margin-bottom: 8px;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-            align-items: center;
-        }
-        .currency-row:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        .header {
-            font-weight: bold;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 15px;
-        }
-        .btn-test {
-            background-color: #ffc300;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            color: #1d3557;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        .btn-test:hover {
-            background-color: #ffb700;
-            transform: translateY(-2px);
-        }
-        .current-currency {
-            background-color: #e8f4fe;
-            border-left: 4px solid #1d3557;
-        }
-    </style>
+    <script src="js/reset-currency-symbols.js"></script>
+    <script src="js/preferences-manager.js"></script>
+    <script src="js/currencies.js"></script>
 </head>
 <body>
     <div class="container">
@@ -66,189 +25,137 @@
                 <ul>
                     <li>
                         <a href="index.html">
-                            <i class="fas fa-arrow-left"></i>
-                            <span class="menu-text">Retour au tableau de bord</span>
+                            <i class="fas fa-home"></i>
+                            <span class="menu-text">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            <span class="menu-text">Mes Projets</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="parametres.html">
+                            <i class="fas fa-cog"></i>
+                            <span class="menu-text">Paramètres</span>
                         </a>
                     </li>
                 </ul>
             </nav>
         </aside>
-
+        
         <main class="content">
             <header class="content-header">
-                <div class="user-greeting">
-                    <h2>Test des symboles de devises</h2>
-                    <p>Vérification de l'affichage correct de tous les symboles monétaires</p>
-                </div>
+                <h1 class="page-title">Test des devises</h1>
             </header>
-
+            
             <div class="currency-test-container">
-                <div class="currency-row header">
-                    <div>Code</div>
-                    <div>Symbole</div>
-                    <div>Action</div>
+                <h2>Devises disponibles</h2>
+                <div id="currencies-list" class="currencies-grid">
+                    <!-- Les devises seront injectées ici par JavaScript -->
                 </div>
-                <div id="currencyList">
-                    <!-- Le contenu sera généré par JavaScript -->
+                
+                <h2>Test d'affichage des montants</h2>
+                <div class="test-amount-display">
+                    <div class="form-group">
+                        <label for="testAmount">Montant de test:</label>
+                        <input type="number" id="testAmount" class="form-control" value="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="testCurrency">Devise de test:</label>
+                        <select id="testCurrency" class="form-control">
+                            <!-- Les devises seront injectées ici par JavaScript -->
+                        </select>
+                    </div>
+                    <button id="testFormatBtn" class="btn btn-primary">Tester le formatage</button>
+                    
+                    <div class="test-results">
+                        <h3>Résultats:</h3>
+                        <div id="formattedAmount" class="formatted-amount"></div>
+                    </div>
+                </div>
+                
+                <h2>Préférences de devise actuelle</h2>
+                <div id="currentPreferences" class="current-preferences">
+                    <!-- Les préférences seront injectées ici par JavaScript -->
                 </div>
             </div>
         </main>
     </div>
-
-    <script src="js/main.js"></script>
+    
     <script>
-        // Liste des devises à tester
-        const currencies = [
-            { code: 'EUR', name: 'Euro' },
-            { code: 'USD', name: 'Dollar américain' },
-            { code: 'GBP', name: 'Livre sterling' },
-            { code: 'JPY', name: 'Yen japonais' },
-            { code: 'CNY', name: 'Yuan chinois' },
-            { code: 'THB', name: 'Baht thaïlandais' },
-            { code: 'SGD', name: 'Dollar de Singapour' },
-            { code: 'MYR', name: 'Ringgit malaisien' },
-            { code: 'AUD', name: 'Dollar australien' },
-            { code: 'CAD', name: 'Dollar canadien' },
-            { code: 'CHF', name: 'Franc suisse' },
-            { code: 'KRW', name: 'Won sud-coréen' },
-            { code: 'INR', name: 'Roupie indienne' },
-            { code: 'RUB', name: 'Rouble russe' },
-            { code: 'BRL', name: 'Real brésilien' },
-            { code: 'PHP', name: 'Peso philippin' },
-            { code: 'ILS', name: 'Shekel israélien' },
-            { code: 'MAD', name: 'Dirham marocain' },
-            { code: 'DZD', name: 'Dinar algérien' },
-            { code: 'TND', name: 'Dinar tunisien' },
-            { code: 'MGA', name: 'Ariary malgache' },
-            { code: 'MUR', name: 'Roupie mauricienne' },
-            { code: 'XOF', name: 'Franc CFA BCEAO' },
-            { code: 'XAF', name: 'Franc CFA BEAC' },
-            { code: 'AED', name: 'Dirham des Émirats arabes unis' }
-        ];
-
-        // Récupérer et afficher les préférences utilisateur actuelles
-        let userPreferences = { currency: 'EUR' };
-        try {
-            const savedPrefs = localStorage.getItem('userPreferences');
-            if (savedPrefs) {
-                userPreferences = JSON.parse(savedPrefs);
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des préférences utilisateur:', error);
-        }
-        
-        const currentCurrency = userPreferences.currency || 'EUR';
-
-        // Générer la liste des devises avec leurs symboles
         document.addEventListener('DOMContentLoaded', function() {
-            const currencyList = document.getElementById('currencyList');
+            // Afficher toutes les devises disponibles
+            const currenciesList = document.getElementById('currencies-list');
+            const testCurrencySelect = document.getElementById('testCurrency');
             
-            currencies.forEach(currency => {
-                const symbol = getCurrencySymbol(currency.code);
-                const isCurrentCurrency = currency.code === currentCurrency;
-                
-                const row = document.createElement('div');
-                row.className = `currency-row ${isCurrentCurrency ? 'current-currency' : ''}`;
-                row.id = `currency-${currency.code}`;
-                
-                row.innerHTML = `
-                    <div>${currency.code}</div>
-                    <div>${symbol}</div>
-                    <div>
-                        <button class="btn-test" onclick="testCurrency('${currency.code}')">
-                            Tester ${currency.code}
-                        </button>
-                    </div>
-                `;
-                
-                currencyList.appendChild(row);
-            });
-        });
-
-        // Fonction pour tester une devise
-        function testCurrency(currencyCode) {
-            // Récupérer les préférences utilisateur
-            let userPreferences = { 
-                currency: 'EUR',
-                theme: 'light',
-                fontSize: 'medium',
-                language: 'fr',
-                dateFormat: 'DD/MM/YYYY',
-                secondaryCurrency: 'USD',
-                plan: 'freemium'
-            };
+            if (currenciesList && testCurrencySelect && typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                AVAILABLE_CURRENCIES.forEach(currency => {
+                    // Ajouter à la liste des devises
+                    const currencyItem = document.createElement('div');
+                    currencyItem.className = 'currency-item';
+                    currencyItem.innerHTML = `
+                        <div class="currency-code">${currency.code}</div>
+                        <div class="currency-symbol">${currency.symbol}</div>
+                        <div class="currency-name">${currency.name}</div>
+                    `;
+                    currenciesList.appendChild(currencyItem);
+                    
+                    // Ajouter à la liste déroulante
+                    const option = document.createElement('option');
+                    option.value = currency.code;
+                    option.textContent = `${currency.code} - ${currency.name} (${currency.symbol})`;
+                    testCurrencySelect.appendChild(option);
+                });
+            }
             
-            try {
-                const savedPrefs = localStorage.getItem('userPreferences');
-                if (savedPrefs) {
-                    userPreferences = JSON.parse(savedPrefs);
+            // Afficher les préférences actuelles
+            const currentPreferences = document.getElementById('currentPreferences');
+            if (currentPreferences) {
+                try {
+                    const userPrefs = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+                    const currencyCode = userPrefs.currency || 'EUR';
+                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
+                    
+                    currentPreferences.innerHTML = `
+                        <div><strong>Devise sélectionnée:</strong> ${currencyCode}</div>
+                        <div><strong>Symbole associé:</strong> ${currency ? currency.symbol : '€'}</div>
+                        <div><strong>Nom complet:</strong> ${currency ? currency.name : 'Euro'}</div>
+                    `;
+                } catch (error) {
+                    currentPreferences.innerHTML = `<div class="error">Erreur: ${error.message}</div>`;
                 }
-            } catch (error) {
-                console.error('Erreur lors du chargement des préférences utilisateur:', error);
             }
             
-            // Mettre à jour la devise
-            userPreferences.currency = currencyCode;
+            // Tester le formatage des montants
+            const testFormatBtn = document.getElementById('testFormatBtn');
+            const testAmount = document.getElementById('testAmount');
+            const formattedAmount = document.getElementById('formattedAmount');
             
-            // Enregistrer les préférences mises à jour
-            localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
-            
-            // Mettre à jour l'interface
-            const currentCurrencyElem = document.querySelector('.current-currency');
-            if (currentCurrencyElem) {
-                currentCurrencyElem.classList.remove('current-currency');
+            if (testFormatBtn && testAmount && formattedAmount) {
+                testFormatBtn.addEventListener('click', function() {
+                    const amount = parseFloat(testAmount.value || 0);
+                    const currencyCode = testCurrencySelect.value;
+                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === currencyCode);
+                    
+                    // Formater le montant selon les conventions françaises
+                    const formatted = new Intl.NumberFormat('fr-FR', {
+                        style: 'currency',
+                        currency: currencyCode,
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(amount);
+                    
+                    // Afficher le résultat
+                    formattedAmount.innerHTML = `
+                        <div class="format-result">
+                            <div><strong>Format Intl:</strong> ${formatted}</div>
+                            <div><strong>Format personnalisé:</strong> ${currency ? currency.symbol : '€'} ${amount.toFixed(2).replace('.', ',')}</div>
+                        </div>
+                    `;
+                });
             }
-            
-            const newCurrencyElem = document.getElementById(`currency-${currencyCode}`);
-            if (newCurrencyElem) {
-                newCurrencyElem.classList.add('current-currency');
-            }
-            
-            // Afficher une notification
-            try {
-                const symbol = getCurrencySymbol(currencyCode);
-                window.NotificationManager.success(`Devise modifiée en ${currencyCode} (${symbol})`);
-                
-                // Mettre à jour le texte d'exemple
-                updateExampleAmount(currencyCode, symbol);
-            } catch (error) {
-                console.error('Erreur lors de l\'affichage de la notification:', error);
-                alert(`Devise modifiée en ${currencyCode}`);
-            }
-        }
-        
-        // Mise à jour du texte d'exemple
-        function updateExampleAmount(currencyCode, symbol) {
-            const exampleAmount = 1234.56;
-            
-            // Si un élément d'exemple existe, le mettre à jour
-            const exampleElem = document.getElementById('exampleAmount');
-            if (!exampleElem) {
-                // Sinon, créer un nouvel élément
-                const container = document.querySelector('.currency-test-container');
-                const exampleBox = document.createElement('div');
-                exampleBox.style.margin = '30px 0';
-                exampleBox.style.padding = '15px';
-                exampleBox.style.backgroundColor = '#f0f8ff';
-                exampleBox.style.borderRadius = '8px';
-                exampleBox.style.textAlign = 'center';
-                
-                exampleBox.innerHTML = `
-                    <h3>Exemple de montant avec la devise actuelle</h3>
-                    <p id="exampleAmount" style="font-size: 24px; font-weight: bold;">${symbol} ${exampleAmount.toFixed(2)}</p>
-                    <p style="font-size: 14px; color: #666;">Code de devise : ${currencyCode}</p>
-                `;
-                
-                container.appendChild(exampleBox);
-            } else {
-                exampleElem.textContent = `${symbol} ${exampleAmount.toFixed(2)}`;
-                exampleElem.nextElementSibling.textContent = `Code de devise : ${currencyCode}`;
-            }
-        }
-        
-        // Initialiser l'exemple avec la devise actuelle
-        document.addEventListener('DOMContentLoaded', function() {
-            updateExampleAmount(currentCurrency, getCurrencySymbol(currentCurrency));
         });
     </script>
 </body>
