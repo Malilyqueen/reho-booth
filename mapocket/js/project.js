@@ -3248,9 +3248,9 @@ function enableEditMode(projectId) {
     console.log('Projet à modifier:', projectToEdit);
     
     // Changer le titre de la page
-    const pageTitle = document.querySelector('.page-header h2');
+    const pageTitle = document.querySelector('.page-title');
     if (pageTitle) {
-        pageTitle.textContent = 'Modifier le projet';
+        pageTitle.textContent = 'MODIFIER PROJET';
     }
     
     // Charger les données du projet dans le formulaire

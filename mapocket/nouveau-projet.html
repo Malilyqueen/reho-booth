@@ -462,49 +462,6 @@
 
     <script src="js/currencies.js"></script>
     <script src="js/project.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Charger les préférences utilisateur pour obtenir la devise
-            let userPreferences = {
-                currency: "EUR", // Devise par défaut
-            };
-            
-            try {
-                const savedPrefs = localStorage.getItem("userPreferences");
-                if (savedPrefs) {
-                    userPreferences = JSON.parse(savedPrefs);
-                }
-            } catch (error) {
-                console.error("Erreur lors du chargement des préférences:", error);
-            }
-            
-            // Obtenir le symbole de la devise
-            let currencySymbol = "€"; // Symbole par défaut (Euro)
-            
-            // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
-            if (typeof AVAILABLE_CURRENCIES !== "undefined") {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                if (currency) {
-                    currencySymbol = currency.symbol;
-                }
-            }
-            
-            // Mettre à jour tous les montants affichés avec le bon symbole
-            // 1. Sélectionner tous les éléments contenant des montants
-            const allAmounts = document.querySelectorAll(".category-amount, .subcategory-amount, .total-budget-amount");
-            allAmounts.forEach(amount => {
-                const value = amount.textContent.replace(/[^0-9.,\s]/g, "").trim();
-                amount.textContent = `${currencySymbol} ${value}`;
-            });
-            
-            // 2. Mettre à jour les champs de saisie de montants
-            const inputAmounts = document.querySelectorAll(".expense-line-amount, #totalBudget");
-            inputAmounts.forEach(input => {
-                const value = input.value.replace(/[^0-9.,\s]/g, "").trim();
-                input.value = `${currencySymbol} ${value}`;
-            });
-        });
-    </script>
     <script src="js/voice-commands.js"></script>
 </body>
 </html>
