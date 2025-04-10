@@ -782,6 +782,13 @@
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.wishlist-section h3 i {
+    margin-right: 10px;
+    color: #6f802b;
 }
 
 .wishlist-toggle {
@@ -797,15 +804,17 @@
 }
 
 .wishlist-options {
-    padding: 10px 0;
-    transition: all 0.3s;
+    padding: 0;
+    transition: all 0.3s ease-in-out;
     max-height: 0;
     overflow: hidden;
+    opacity: 0;
 }
 
 .wishlist-options.active {
     max-height: 500px;
     padding: 15px 0;
+    opacity: 1;
 }
 
 .wishlist-select {
@@ -814,6 +823,14 @@
     padding: 10px;
     border: 1px solid #ced4da;
     border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.wishlist-select:focus {
+    border-color: #6f802b;
+    box-shadow: 0 0 0 0.2rem rgba(111, 128, 43, 0.25);
 }
 
 .wishlist-create {
@@ -826,6 +843,13 @@
     padding: 8px 12px;
     border: 1px solid #ced4da;
     border-radius: 4px 0 0 4px;
+    transition: all 0.2s;
+}
+
+.wishlist-create input:focus {
+    border-color: #6f802b;
+    box-shadow: 0 0 0 0.2rem rgba(111, 128, 43, 0.25);
+    outline: none;
 }
 
 .wishlist-create button {
@@ -835,8 +859,97 @@
     padding: 8px 15px;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .wishlist-create button:hover {
     background-color: #5a6a22;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.wishlist-create button:active {
+    transform: translateY(1px);
+}
+
+/* Notifications */
+.temporary-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 128, 0, 0.8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s;
+    font-weight: 500;
+    max-width: 80%;
+    word-break: break-word;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-out {
+    animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+}
+
+/* Styles pour les notifications au centre de l'écran */
+.center-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1100;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    animation: zoomIn 0.3s;
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.notification-content {
+    margin-bottom: 20px;
+}
+
+.notification-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.notification-actions button {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+}
+
+.notification-confirm {
+    background-color: #28a745;
+    color: white;
+}
+
+.notification-cancel {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #ced4da;
 }

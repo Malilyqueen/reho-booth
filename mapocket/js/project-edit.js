@@ -155,6 +155,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setupTemplateSelectionEvents();
     setupBudgetCalculation();
     
+    // Configurer les fonctionnalités de wishlist
+    setupWishlistFeatures();
+    
     // Configurer les dates (par défaut et validation)
     setupDateFields();
     
