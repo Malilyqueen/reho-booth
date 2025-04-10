@@ -2158,7 +2158,7 @@ const defaultBudgets = {
                         "lines": [
                             { "name": "Google Ads", "amount": "€ 500" },
                             { "name": "Facebook/Instagram", "amount": "€ 400" },
-                            { "name": "LinkedIn", "amount": "€ 300" }
+                            { "name": "Bannière Web", "amount": "€ 300" }
                         ]
                     },
                     {

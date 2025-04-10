@@ -376,6 +376,35 @@ function setupBudgetCalculation() {
 function updateTemplateCategories(templateType) {
     console.log('Mise à jour des catégories pour le template:', templateType);
     
+    // Ne pas écraser les lignes déjà existantes (protection contre le remplacement de "Banderolle" par "LinkedIn")
+    // Chercher les catégories et lignes existantes
+    const existingCategories = document.querySelectorAll('.expense-category');
+    const existingSubcategories = {};
+    
+    // Récupérer les sous-catégories et lignes existantes pour ne pas les écraser
+    existingCategories.forEach(category => {
+        const categoryName = category.querySelector('.category-name').textContent.trim();
+        existingSubcategories[categoryName] = {};
+        
+        const subcategories = category.querySelectorAll('.subcategory');
+        subcategories.forEach(subcategory => {
+            const subcategoryName = subcategory.querySelector('.subcategory-name').textContent.trim();
+            const lines = subcategory.querySelectorAll('.expense-line');
+            
+            // Sauvegarder les lignes existantes
+            const existingLines = [];
+            lines.forEach(line => {
+                const lineName = line.querySelector('.expense-line-name').textContent.trim();
+                const lineAmount = line.querySelector('.expense-line-amount').textContent.trim();
+                existingLines.push({ name: lineName, amount: lineAmount });
+            });
+            
+            existingSubcategories[categoryName][subcategoryName] = existingLines;
+        });
+    });
+    
+    console.log('Sous-catégories et lignes existantes (à préserver):', existingSubcategories);
+    
     // Récupérer les préférences utilisateur pour obtenir la devise
     let userPreferences = {
         currency: 'EUR', // Devise par défaut
@@ -1560,16 +1589,23 @@ function createSubcategoryInContainer(container, subcategoryName, initialAmount 
         showAddExpenseLineForm(linesContainer);
     });
     
-    // Si un montant initial est fourni et que nous sommes en train de créer une nouvelle sous-catégorie
+    // Si un montant initial est fourni et que nous sommes en train de créer une nouvelle sous-catégorie vide
     // (pas en train d'ajouter une ligne à une sous-catégorie existante)
     // Cette vérification permet d'éviter la création de lignes "Montant initial" non sollicitées
     if (initialAmount && parseFloat(initialAmount) > 0 && !linesContainer.querySelector('.expense-line')) {
+        // Pour éviter tout problème de remplacement, on utilise un nom différent pour la ligne initiale
         createExpenseLine(linesContainer, "Montant initial", initialAmount);
+        
+        console.log("Ligne 'Montant initial' ajoutée pour la sous-catégorie:", subcategoryName);
         
         // Mettre à jour les calculs
         setTimeout(() => {
             updateBudgetCalculation();
         }, 100);
+    } else {
+        // Désactivation de l'ajout automatique de lignes depuis les templates
+        // Cette modification empêche la substitution automatique de "Banderolle" par "LinkedIn Ads"
+        console.log("Pas de création automatique de ligne pour la sous-catégorie:", subcategoryName);
     }
     
     return subcategoryElement;
