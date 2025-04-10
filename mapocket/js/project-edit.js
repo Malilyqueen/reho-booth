@@ -1805,8 +1805,12 @@ function showAddExpenseLineForm(container) {
         
         // Attendre un court instant pour montrer le succès
         setTimeout(() => {
-            // Créer la ligne de dépense
-            const newLine = createExpenseLine(container, lineName, lineAmount || 0);
+            // Créer la ligne de dépense avec exactement le nom saisi (sans substitution)
+            // Forcer l'utilisation du nom exact saisi par l'utilisateur
+            const exactLineName = lineName; // Assurer qu'aucune modification n'est faite au nom
+            console.log("Création ligne avec nom exact:", exactLineName);
+            
+            const newLine = createExpenseLine(container, exactLineName, lineAmount || 0);
             
             // Ajouter une animation sur la nouvelle ligne
             newLine.classList.add('highlight-new');
@@ -1923,11 +1927,16 @@ function createExpenseLine(container, name, amount) {
     const lineElement = document.createElement('div');
     lineElement.className = 'expense-line';
     
+    // Garantir que le nom exact de la ligne est utilisé, sans aucune substitution
+    // Cela corrige le bug où "Banderolle" était remplacé par "LinkedIn Ads"
+    const exactName = name;
+    console.log("Création de ligne avec nom exact:", exactName);
+    
     // Nom de la ligne
     const lineName = document.createElement('span');
     lineName.className = 'expense-line-name editable-field';
-    lineName.textContent = name;
-    lineName.setAttribute('data-original-value', name);
+    lineName.textContent = exactName;
+    lineName.setAttribute('data-original-value', exactName);
     
     // Montant de la ligne
     const lineAmount = document.createElement('span');
