@@ -126,6 +126,33 @@
                             </select>
                         </div>
                     </div>
+                    
+                    <!-- Section Wishlist -->
+                    <div class="wishlist-section">
+                        <h3><i class="fas fa-gift"></i> Liste de souhaits</h3>
+                        <div class="wishlist-toggle">
+                            <input type="checkbox" id="linkToWishlist" name="linkToWishlist">
+                            <label for="linkToWishlist">Lier ce projet à une liste de souhaits</label>
+                        </div>
+                        
+                        <div class="wishlist-options" id="wishlistOptions">
+                            <div class="form-group">
+                                <label for="wishlistSelect">Choisir une liste existante</label>
+                                <select id="wishlistSelect" class="wishlist-select">
+                                    <option value="">-- Sélectionner une liste --</option>
+                                    <!-- Les options seront remplies dynamiquement -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Ou créer une nouvelle liste</label>
+                                <div class="wishlist-create">
+                                    <input type="text" id="newWishlistName" placeholder="Nom de la liste">
+                                    <button type="button" id="createWishlistBtn">Créer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="template-selection">
                         <h3>Sélectionnez un modèle</h3>

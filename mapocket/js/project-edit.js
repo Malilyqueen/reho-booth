@@ -1410,9 +1410,12 @@ function addNewSubcategory(categoryElement, subcategoryName) {
 }
 
 // Fonction pour créer une sous-catégorie dans un conteneur spécifié
-function createSubcategoryInContainer(container, subcategoryName) {
+function createSubcategoryInContainer(container, subcategoryName, initialAmount = 0) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = getProjectCurrencySymbol();
+    
+    // Formater le montant initial
+    const formattedAmount = parseFloat(initialAmount || 0).toFixed(2);
     
     // Créer l'élément de sous-catégorie
     const subcategoryElement = document.createElement('div');
@@ -1426,10 +1429,12 @@ function createSubcategoryInContainer(container, subcategoryName) {
     subcategoryTitle.className = 'subcategory-name editable-field';
     subcategoryTitle.textContent = subcategoryName;
     subcategoryTitle.setAttribute('data-original-value', subcategoryName);
+    subcategoryTitle.setAttribute('data-tooltip', 'Cliquez pour modifier le nom');
     
     const subcategoryAmount = document.createElement('span');
     subcategoryAmount.className = 'subcategory-amount editable-field';
-    subcategoryAmount.textContent = `${currencySymbol} 0.00`;
+    subcategoryAmount.textContent = `${currencySymbol} ${formattedAmount}`;
+    subcategoryAmount.setAttribute('data-tooltip', 'Cliquez pour modifier le montant');
     
     // Ajouter la possibilité de modifier le nom de la sous-catégorie en cliquant dessus
     subcategoryTitle.addEventListener('click', function() {
@@ -1480,16 +1485,76 @@ function createSubcategoryInContainer(container, subcategoryName) {
     
     // Ajouter les gestionnaires d'événements
     deleteSubcategoryBtn.addEventListener('click', function() {
-        if (confirm('Voulez-vous vraiment supprimer cette sous-catégorie et toutes ses lignes ?')) {
-            subcategoryElement.remove();
-            updateBudgetCalculation();
-        }
+        // Créer une boîte de dialogue de confirmation personnalisée
+        const confirmDialog = document.createElement('div');
+        confirmDialog.className = 'confirm-dialog';
+        confirmDialog.innerHTML = `
+            <div class="confirm-dialog-content">
+                <h4><i class="fas fa-exclamation-triangle"></i> Confirmation</h4>
+                <p>Êtes-vous sûr de vouloir supprimer la sous-catégorie "${subcategoryName}" ?</p>
+                <div class="confirm-dialog-buttons">
+                    <button type="button" class="btn-cancel">Annuler</button>
+                    <button type="button" class="btn-confirm">Supprimer</button>
+                </div>
+            </div>
+        `;
+        
+        // Ajouter la boîte de dialogue au corps du document
+        document.body.appendChild(confirmDialog);
+        
+        // Gestionnaire pour le bouton d'annulation
+        confirmDialog.querySelector('.btn-cancel').addEventListener('click', function() {
+            confirmDialog.remove();
+        });
+        
+        // Gestionnaire pour le bouton de confirmation
+        confirmDialog.querySelector('.btn-confirm').addEventListener('click', function() {
+            subcategoryElement.classList.add('removing');
+            
+            // Animation de suppression
+            setTimeout(() => {
+                subcategoryElement.remove();
+                updateBudgetCalculation();
+                confirmDialog.remove();
+                
+                // Notification visuelle
+                const notification = document.createElement('div');
+                notification.className = 'temporary-notification';
+                notification.textContent = `Sous-catégorie "${subcategoryName}" supprimée`;
+                document.body.appendChild(notification);
+                
+                // Faire disparaître la notification
+                setTimeout(() => {
+                    notification.classList.add('fade-out');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 2000);
+            }, 300);
+        });
+        
+        // Permettre de fermer la boîte de dialogue en cliquant à l'extérieur
+        confirmDialog.addEventListener('click', function(e) {
+            if (e.target === confirmDialog) {
+                confirmDialog.remove();
+            }
+        });
     });
     
     // Ajouter le gestionnaire pour ajouter des lignes de dépense
     addLineBtn.addEventListener('click', function() {
         showAddExpenseLineForm(linesContainer);
     });
+    
+    // Si un montant initial est fourni, créer une ligne implicite
+    if (initialAmount && parseFloat(initialAmount) > 0) {
+        createExpenseLine(linesContainer, "Montant initial", initialAmount);
+        
+        // Mettre à jour les calculs
+        setTimeout(() => {
+            updateBudgetCalculation();
+        }, 100);
+    }
     
     return subcategoryElement;
 }
@@ -1654,30 +1719,96 @@ function showAddExpenseLineForm(container) {
         lineForm.querySelector('#newLineName').focus();
     }, 100);
     
-    // Gestionnaire pour le bouton d'annulation
-    lineForm.querySelector('.btn-cancel-line').addEventListener('click', function() {
-        lineForm.remove();
-    });
+    // Obtenir les éléments du formulaire
+    const nameInput = lineForm.querySelector('#newLineName');
+    const amountInput = lineForm.querySelector('#newLineAmount');
+    const addButton = lineForm.querySelector('.btn-add-line');
     
-    // Gestionnaire pour le bouton d'ajout
-    lineForm.querySelector('.btn-add-line').addEventListener('click', function() {
-        const lineName = lineForm.querySelector('#newLineName').value.trim();
-        const lineAmount = lineForm.querySelector('#newLineAmount').value;
+    // Fonction pour valider et ajouter la ligne
+    const validateAndAddLine = () => {
+        const lineName = nameInput.value.trim();
+        const lineAmount = amountInput.value;
         
         if (!lineName) {
-            alert('Veuillez saisir une description pour la ligne');
+            // Feedback visuel d'erreur
+            nameInput.classList.add('error-input');
+            nameInput.focus();
+            
+            // Retirer l'effet d'erreur après quelques secondes
+            setTimeout(() => {
+                nameInput.classList.remove('error-input');
+            }, 2000);
             return;
         }
         
         // Créer la ligne de dépense
-        createExpenseLine(container, lineName, lineAmount);
+        createExpenseLine(container, lineName, lineAmount || 0);
+        
+        // Notification visuelle de succès
+        const notification = document.createElement('div');
+        notification.className = 'temporary-notification';
+        notification.textContent = `Ligne "${lineName}" ajoutée`;
+        document.body.appendChild(notification);
+        
+        // Faire disparaître la notification
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 2000);
         
         // Supprimer le formulaire
         lineForm.remove();
         
         // Mettre à jour les calculs
         updateBudgetCalculation();
+    };
+    
+    // Gestionnaire pour le bouton d'annulation
+    lineForm.querySelector('.btn-cancel-line').addEventListener('click', function() {
+        lineForm.remove();
     });
+    
+    // Gestionnaire pour le bouton d'ajout
+    addButton.addEventListener('click', validateAndAddLine);
+    
+    // Gestionnaire pour la touche Enter dans les champs
+    nameInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Empêcher la soumission du formulaire
+            if (nameInput.value.trim()) {
+                // Si le nom est rempli, passer au montant
+                amountInput.focus();
+            } else {
+                validateAndAddLine();
+            }
+        }
+    });
+    
+    amountInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Empêcher la soumission du formulaire
+            validateAndAddLine();
+        }
+    });
+    
+    // Ajouter un gestionnaire d'événement pour la soumission du formulaire principal
+    // afin d'éviter la soumission accidentelle
+    const mainForm = document.getElementById('newProjectForm');
+    if (mainForm) {
+        const originalSubmitHandler = mainForm.onsubmit;
+        mainForm.onsubmit = function(e) {
+            // Si un formulaire d'ajout de ligne est ouvert, empêcher la soumission
+            if (document.querySelector('.expense-line-form')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Sinon, continuer avec le gestionnaire d'origine
+            return originalSubmitHandler ? originalSubmitHandler(e) : true;
+        };
+    }
 }
 
 // Fonction pour créer une ligne de dépense
@@ -1757,6 +1888,10 @@ function setupAddSubcategoryButtons() {
                     <label for="newSubcategoryName">Nom de la sous-catégorie</label>
                     <input type="text" id="newSubcategoryName" class="form-control" placeholder="Ex: Traiteur">
                 </div>
+                <div class="form-group">
+                    <label for="newSubcategoryAmount">Montant initial (optionnel)</label>
+                    <input type="number" id="newSubcategoryAmount" class="form-control" min="0" step="0.01" placeholder="0.00">
+                </div>
                 <div class="form-action-buttons">
                     <button type="button" class="btn-cancel-subcategory">Annuler</button>
                     <button type="button" class="btn-add-subcategory">Ajouter</button>
@@ -1771,10 +1906,56 @@ function setupAddSubcategoryButtons() {
                 subcategoriesContainer.appendChild(subcategoryForm);
             }
             
+            // Récupérer les éléments du formulaire
+            const nameInput = subcategoryForm.querySelector('#newSubcategoryName');
+            const amountInput = subcategoryForm.querySelector('#newSubcategoryAmount');
+            const addButton = subcategoryForm.querySelector('.btn-add-subcategory');
+            
             // Focus sur le champ de nom
             setTimeout(() => {
-                subcategoryForm.querySelector('#newSubcategoryName').focus();
+                nameInput.focus();
             }, 100);
+            
+            // Fonction pour valider et ajouter la sous-catégorie
+            const validateAndAddSubcategory = () => {
+                const subcategoryName = nameInput.value.trim();
+                const subcategoryAmount = amountInput.value;
+                
+                if (!subcategoryName) {
+                    // Feedback visuel d'erreur
+                    nameInput.classList.add('error-input');
+                    nameInput.focus();
+                    
+                    // Retirer l'effet d'erreur après quelques secondes
+                    setTimeout(() => {
+                        nameInput.classList.remove('error-input');
+                    }, 2000);
+                    return;
+                }
+                
+                // Créer la sous-catégorie avec montant initial si disponible
+                const newSubcategory = createSubcategoryInContainer(subcategoriesContainer, subcategoryName, subcategoryAmount);
+                
+                // Notification visuelle de succès
+                const notification = document.createElement('div');
+                notification.className = 'temporary-notification';
+                notification.textContent = `Sous-catégorie "${subcategoryName}" ajoutée`;
+                document.body.appendChild(notification);
+                
+                // Faire disparaître la notification
+                setTimeout(() => {
+                    notification.classList.add('fade-out');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 2000);
+                
+                // Supprimer le formulaire
+                subcategoryForm.remove();
+                
+                // Mettre à jour les calculs
+                updateBudgetCalculation();
+            };
             
             // Gestionnaire pour le bouton d'annulation
             subcategoryForm.querySelector('.btn-cancel-subcategory').addEventListener('click', function() {
@@ -1782,19 +1963,43 @@ function setupAddSubcategoryButtons() {
             });
             
             // Gestionnaire pour le bouton d'ajout
-            subcategoryForm.querySelector('.btn-add-subcategory').addEventListener('click', function() {
-                const subcategoryName = subcategoryForm.querySelector('#newSubcategoryName').value.trim();
-                if (!subcategoryName) {
-                    alert('Veuillez saisir un nom de sous-catégorie');
-                    return;
+            addButton.addEventListener('click', validateAndAddSubcategory);
+            
+            // Gestionnaire pour la touche Enter dans les champs
+            nameInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Empêcher la soumission du formulaire
+                    if (nameInput.value.trim()) {
+                        // Si le nom est rempli, passer au montant
+                        amountInput.focus();
+                    } else {
+                        validateAndAddSubcategory();
+                    }
                 }
-                
-                // Créer la sous-catégorie
-                createSubcategoryInContainer(subcategoriesContainer, subcategoryName);
-                
-                // Supprimer le formulaire
-                subcategoryForm.remove();
             });
+            
+            amountInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Empêcher la soumission du formulaire
+                    validateAndAddSubcategory();
+                }
+            });
+            
+            // Prévenir la soumission accidentelle du formulaire principal
+            const mainForm = document.getElementById('newProjectForm');
+            if (mainForm) {
+                const originalSubmitHandler = mainForm.onsubmit;
+                mainForm.onsubmit = function(e) {
+                    // Si un formulaire d'ajout de sous-catégorie est ouvert, empêcher la soumission
+                    if (document.querySelector('.subcategory-form')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    // Sinon, continuer avec le gestionnaire d'origine
+                    return originalSubmitHandler ? originalSubmitHandler(e) : true;
+                };
+            }
         });
     });
 }
