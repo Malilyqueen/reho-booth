@@ -1033,15 +1033,7 @@ function addMainCategory() {
                     </button>
                 </div>
                 <div class="expense-lines open">
-                    <div class="expense-line">
-                        <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                        <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
-                        <div class="expense-line-actions">
-                            <button type="button" class="btn-sm btn-delete-line">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Aucune ligne par défaut - l'utilisateur ajoutera les lignes lui-même -->
                     <button type="button" class="add-line-btn">
                         <i class="fas fa-plus"></i> Ajouter une ligne
                     </button>
