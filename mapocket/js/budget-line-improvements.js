@@ -191,12 +191,9 @@ function enhanceLineForm(form) {
         // Ajouter un feedback visuel de réussite
         showSuccessFeedback(form, lineName, lineAmount);
         
-        // Nettoyer les champs pour la prochaine saisie
-        setTimeout(() => {
-            nameInput.value = '';
-            amountInput.value = '';
-            nameInput.focus();
-        }, 10);
+        // Réinitialiser le formulaire et se concentrer sur le champ de nom
+        resetFormAfterSubmission(form);
+        nameInput.focus();
         
         // Exécuter le gestionnaire d'origine si présent
         let result = true;
@@ -512,6 +509,28 @@ function showSuccessFeedback(form, name, amount) {
     }, 2500);
 }
 
+// Fonction pour réinitialiser le formulaire après soumission
+function resetFormAfterSubmission(form) {
+    // Trouver les champs du formulaire
+    const nameInput = form.querySelector('input[name="line-name"], #newLineName, [id^="newLineName"]');
+    const amountInput = form.querySelector('input[name="line-amount"], #newLineAmount, [id^="newLineAmount"]');
+    
+    // Réinitialiser les valeurs
+    if (nameInput) nameInput.value = '';
+    if (amountInput) amountInput.value = '';
+    
+    // Réinitialiser les classes
+    if (nameInput) nameInput.classList.remove('has-value', 'error-input');
+    if (amountInput) amountInput.classList.remove('has-value', 'error-input');
+    
+    // Désactiver le bouton d'ajout
+    const addButton = form.querySelector('.btn-add-line');
+    if (addButton) {
+        addButton.classList.remove('valid');
+        addButton.classList.add('invalid');
+    }
+}
+
 // Fonction pour actualiser l'affichage des lignes de dépenses
 function refreshExpenseLines() {
     console.log("Rafraîchissement des lignes de dépenses après ajout");
@@ -521,14 +540,27 @@ function refreshExpenseLines() {
         updateBudgetCalculation();
     }
     
-    // Mettre en surbrillance les lignes récemment ajoutées
-    setTimeout(() => {
-        const allExpenseContainers = document.querySelectorAll('.subcategory');
-        
-        allExpenseContainers.forEach(container => {
-            const expenseLines = container.querySelectorAll('.expense-line');
+    // Trouver la dernière ligne ajoutée dans la même sous-catégorie que le formulaire actif
+    let targetContainer = null;
+    let activeForm = document.querySelector('.expense-line-form:not(.form-disappear)');
+    
+    if (activeForm) {
+        // Trouver la sous-catégorie contenant le formulaire actif
+        targetContainer = activeForm.closest('.subcategory');
+    }
+    
+    if (!targetContainer) {
+        // Si on ne trouve pas le conteneur spécifique, utiliser une méthode alternative
+        targetContainer = document.querySelector('.subcategory:last-child');
+    }
+    
+    if (targetContainer) {
+        setTimeout(() => {
+            // Récupérer uniquement les lignes dans cette sous-catégorie spécifique
+            const expenseLines = targetContainer.querySelectorAll('.expense-line');
+            
             if (expenseLines.length > 0) {
-                // Mettre en évidence la dernière ligne ajoutée
+                // Mettre en évidence uniquement la dernière ligne de cette sous-catégorie
                 const lastLine = expenseLines[expenseLines.length - 1];
                 lastLine.classList.add('highlight-new');
                 
@@ -540,8 +572,8 @@ function refreshExpenseLines() {
                     lastLine.classList.remove('highlight-new');
                 }, 2000);
             }
-        });
-    }, 300);
+        }, 300);
+    }
 }
 
 // Fonction pour configurer l'intégration avec les modules
