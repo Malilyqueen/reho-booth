@@ -373,7 +373,7 @@ function setupBudgetCalculation() {
 }
 
 // Fonction pour mettre à jour les catégories selon le template choisi
-// MISE À JOUR: Désormais, seules les catégories principales sont suggérées, sans sous-catégories ni lignes
+// Version simplifiée pour résoudre les problèmes de catégories et noms de lignes
 function updateTemplateCategories(templateType) {
     console.log('Application des catégories par défaut pour:', templateType);
     
@@ -384,28 +384,36 @@ function updateTemplateCategories(templateType) {
     console.log('Configuration avec la devise:', currencyCode, currencySymbol);
     
     // Créer les catégories par défaut selon le type de projet
-    let defaultCategories = [];
+    let categories = [];
     
-    // Vérifier si nous avons des catégories prédéfinies pour ce type de projet
-    if (typeof DEFAULT_CATEGORIES !== 'undefined' && DEFAULT_CATEGORIES[templateType]) {
-        console.log('Utilisation des catégories par défaut pour:', templateType);
-        
-        // Copie profonde des catégories par défaut
-        defaultCategories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES[templateType]));
-        
-        // Nettoyer les tableaux de sous-catégories pour éviter tout problème
-        defaultCategories.forEach(category => {
-            // S'assurer que la propriété 'subcategories' existe et est un tableau
-            if (!category.subcategories) {
-                category.subcategories = [];
-            }
-        });
-        
-        console.log('Catégories préparées avec sous-catégories vides:', defaultCategories);
-    } else {
-        console.log('Aucune catégorie par défaut trouvée pour:', templateType);
-        // Si aucune catégorie prédéfinie, créer une catégorie vide
-        defaultCategories = [
+    try {
+        // Vérifier si nous avons des catégories prédéfinies pour ce type de projet
+        if (DEFAULT_CATEGORIES && DEFAULT_CATEGORIES[templateType]) {
+            console.log('Catégories par défaut trouvées pour:', templateType);
+            
+            // Créer une copie profonde des catégories par défaut
+            categories = DEFAULT_CATEGORIES[templateType].map(category => {
+                return {
+                    name: category.name,
+                    subcategories: []
+                };
+            });
+            
+            console.log('Catégories préparées:', categories);
+        } else {
+            console.log('Aucune catégorie par défaut trouvée pour:', templateType);
+            // Si aucune catégorie prédéfinie, créer une catégorie vide
+            categories = [
+                {
+                    name: "Nouvelle catégorie",
+                    subcategories: []
+                }
+            ];
+        }
+    } catch (error) {
+        console.error('Erreur lors de la création des catégories:', error);
+        // En cas d'erreur, créer une catégorie vide
+        categories = [
             {
                 name: "Nouvelle catégorie",
                 subcategories: []
@@ -413,10 +421,8 @@ function updateTemplateCategories(templateType) {
         ];
     }
     
-    // Mise à jour de l'interface utilisateur avec les catégories par défaut (sans sous-catégories)
-    updateCategoriesUI(defaultCategories, currencySymbol);
-    
-    // Ne pas exécuter le reste du code (contenant les templates complets avec sous-catégories et lignes)
+    // Mise à jour de l'interface utilisateur avec les catégories simplifiées
+    updateCategoriesUI(categories, currencySymbol);
     return;
     
     // Fonction utilitaire pour remplacer les symboles € dans les données de template
