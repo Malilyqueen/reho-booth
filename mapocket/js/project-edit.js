@@ -520,10 +520,16 @@ function updateTemplateCategories(templateType) {
     
     console.log('Catégories préparées:', categories);
     
-    // IMPORTANT: On utilise directement les catégories générées
-    // Nous retirons la partie qui chargeait des templates vides ou des données génériques
-    // Mise à jour de l'interface utilisateur avec les catégories
-    updateCategoriesUI(categories, currencySymbol);
+    // IMPORTANT: Permettre à l'utilisateur de créer complètement son propre budget
+    // Au lieu d'utiliser des templates préremplis, nous créons un projet VIDE
+    // Cela donne à l'utilisateur une liberté totale pour personnaliser
+    const emptyTemplate = [{
+        name: "Nouvelle catégorie",
+        subcategories: []
+    }];
+    
+    // Mise à jour de l'interface utilisateur avec une structure VIDE
+    updateCategoriesUI(emptyTemplate, currencySymbol);
     return;
     
     // NOUVEAU CODE:
