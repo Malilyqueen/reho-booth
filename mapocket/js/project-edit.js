@@ -23,6 +23,26 @@ function getProjectCurrencySymbol() {
     return currencySymbol;
 }
 
+// Fonction pour obtenir le code de la devise actuelle
+function getProjectCurrencyCode() {
+    let currencyCode = 'EUR';
+    try {
+        if (typeof getCurrencyCode === 'function') {
+            // Utiliser la fonction du helper si disponible
+            currencyCode = getCurrencyCode();
+        } else {
+            // Fallback si le helper n'est pas chargé
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (preferences.currency) {
+                currencyCode = preferences.currency;
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération du code de devise:', error);
+    }
+    return currencyCode;
+}
+
 // Fonction pour convertir une valeur monétaire en nombre
 function parseMonetaryValue(monetaryString) {
     if (!monetaryString) return 0;
@@ -112,6 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Obtenir l'ID du projet soit depuis l'URL, soit depuis localStorage
     let projectId = urlParams.get('id');
     
+    // Détection du mode et de l'ID du projet
+    console.log("Mode détecté:", editMode ? "Édition" : "Création", "Projet ID:", projectId);
+    
     if (!projectId && editMode) {
         // Si on est en mode édition mais sans ID dans l'URL, vérifier si on a un projet en cours d'édition
         const currentProject = localStorage.getItem('currentProject');
@@ -128,8 +151,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    console.log("Mode édition:", editMode, "Project ID:", projectId);
-
+    // Configurer les interactions de base communes à la création et à l'édition
+    setupTemplateSelectionEvents();
+    setupBudgetCalculation();
+    
+    // Configurer les dates (par défaut et validation)
+    setupDateFields();
+    
     if (editMode) {
         if (projectId) {
             // Activer le mode édition avec l'ID du projet
@@ -142,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } else {
         // Si nous ne sommes pas en mode édition, on est en mode création de projet
-        // Rien de spécial à faire ici, le formulaire standard sera affiché
         console.log("Mode création de projet");
         
         // S'assurer que le titre de la page est bien "NOUVEAU PROJET"
@@ -150,13 +177,522 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pageTitle) {
             pageTitle.textContent = 'NOUVEAU PROJET';
         }
+        
+        // Mise à jour du budget total avec la devise actuelle
+        const totalBudgetInput = document.getElementById('totalBudget');
+        if (totalBudgetInput) {
+            const currencySymbol = getProjectCurrencySymbol();
+            console.log("Mise à jour du budget total avec la devise:", getProjectCurrencyCode(), currencySymbol);
+            totalBudgetInput.value = `${currencySymbol} 0.00`;
+        }
     }
     
-    // Toujours configurer les boutons d'interaction
+    // Configurer les boutons d'interaction pour l'édition des éléments
     setupAddLineButtons();
     setupAddSubcategoryButtons();
     setupAddCategoryButton();
 });
+
+// Fonction pour configurer les événements de sélection de template
+function setupTemplateSelectionEvents() {
+    // Sélectionner tous les éléments de sélection de modèle
+    const templateOptions = document.querySelectorAll('.template-option');
+    
+    templateOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Désélectionner toutes les options
+            templateOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Sélectionner cette option
+            this.classList.add('selected');
+            
+            // Mettre à jour le type de projet
+            const templateType = this.getAttribute('data-template');
+            const projectTypeElement = document.querySelector('.project-type');
+            if (projectTypeElement) {
+                projectTypeElement.textContent = templateType;
+            }
+            
+            // Mettre à jour les catégories selon le template
+            updateTemplateCategories(templateType);
+        });
+    });
+}
+
+// Fonction pour configurer les champs de date
+function setupDateFields() {
+    // Date du projet
+    const projectDateInput = document.getElementById('projectDate');
+    if (projectDateInput) {
+        // Formater la date selon les préférences utilisateur
+        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        const dateFormat = userPreferences.dateFormat || 'DD/MM/YYYY';
+        
+        // Si la date n'est pas déjà définie, définir la date actuelle
+        if (!projectDateInput.value) {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            
+            if (dateFormat === 'DD/MM/YYYY') {
+                projectDateInput.value = `${day}/${month}/${year}`;
+            } else if (dateFormat === 'MM/DD/YYYY') {
+                projectDateInput.value = `${month}/${day}/${year}`;
+            } else {
+                projectDateInput.value = `${year}-${month}-${day}`;
+            }
+        }
+    }
+    
+    // Idem pour la date de fin si elle existe
+    const projectEndDateInput = document.getElementById('projectEndDate');
+    if (projectEndDateInput && !projectEndDateInput.value) {
+        // Ajouter 30 jours à la date actuelle
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 30);
+        
+        const day = String(futureDate.getDate()).padStart(2, '0');
+        const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+        const year = futureDate.getFullYear();
+        
+        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        const dateFormat = userPreferences.dateFormat || 'DD/MM/YYYY';
+        
+        if (dateFormat === 'DD/MM/YYYY') {
+            projectEndDateInput.value = `${day}/${month}/${year}`;
+        } else if (dateFormat === 'MM/DD/YYYY') {
+            projectEndDateInput.value = `${month}/${day}/${year}`;
+        } else {
+            projectEndDateInput.value = `${year}-${month}-${day}`;
+        }
+    }
+}
+
+// Fonction pour configurer le calcul de budget
+function setupBudgetCalculation() {
+    // Mettre à jour les calculs lorsque les champs sont modifiés
+    document.addEventListener('change', function(event) {
+        if (event.target.classList.contains('expense-line-amount')) {
+            updateBudgetCalculation();
+        }
+    });
+}
+
+// Fonction pour mettre à jour les catégories selon le template choisi
+function updateTemplateCategories(templateType) {
+    console.log('Mise à jour des catégories pour le template:', templateType);
+    
+    // Récupérer les préférences utilisateur pour obtenir la devise
+    let userPreferences = {
+        currency: 'EUR', // Devise par défaut
+    };
+    
+    try {
+        const savedPrefs = localStorage.getItem('userPreferences');
+        if (savedPrefs) {
+            userPreferences = JSON.parse(savedPrefs);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des préférences utilisateur:', error);
+    }
+    
+    // Obtenir le symbole de la devise
+    let currencySymbol = getProjectCurrencySymbol();
+    let currencyCode = getProjectCurrencyCode();
+    
+    console.log('Mise à jour des catégories avec la devise:', currencyCode, currencySymbol);
+    
+    // Fonction utilitaire pour remplacer les symboles € dans les données de template
+    const replaceEuroSymbol = (obj) => {
+        if (obj && typeof obj === 'object') {
+            Object.keys(obj).forEach(key => {
+                if (key === 'amount' && typeof obj[key] === 'string') {
+                    // Remplacer le symbole € par le symbole de la devise active
+                    obj[key] = obj[key].replace(/€/g, currencySymbol);
+                } else if (typeof obj[key] === 'object') {
+                    // Récursion pour les objets imbriqués
+                    replaceEuroSymbol(obj[key]);
+                } else if (Array.isArray(obj[key])) {
+                    // Récursion pour les tableaux
+                    obj[key].forEach(item => replaceEuroSymbol(item));
+                }
+            });
+        }
+    };
+    
+    // Utiliser les données de template par défaut si elles existent
+    if (typeof defaultBudgets !== 'undefined' && defaultBudgets[templateType]) {
+        console.log('Données template trouvées pour:', templateType);
+        
+        // Copie profonde pour ne pas modifier l'original
+        const categoriesData = JSON.parse(JSON.stringify(defaultBudgets[templateType].categories));
+        
+        // Remplacer les symboles € par le symbole de devise choisi
+        categoriesData.forEach(category => {
+            replaceEuroSymbol(category);
+        });
+        
+        // Mise à jour de l'interface utilisateur avec les nouvelles catégories
+        updateCategoriesUI(categoriesData, currencySymbol);
+        return;
+    }
+    
+    // Si le fichier defaultBudgets n'est pas chargé, utiliser les templates intégrés ici
+    let categoriesData = [];
+    
+    // Définir les catégories et sous-catégories en fonction du modèle choisi
+    switch(templateType) {
+        case 'Mariage':
+            categoriesData = [
+                {
+                    name: 'Lieu',
+                    subcategories: [
+                        {
+                            name: 'Location de salle',
+                            lines: [
+                                { name: 'Réservation', amount: `${currencySymbol} 3000.00` },
+                                { name: 'Décoration', amount: `${currencySymbol} 800.00` }
+                            ]
+                        },
+                        {
+                            name: 'Cérémonie',
+                            lines: [
+                                { name: 'Forfait cérémonie', amount: `${currencySymbol} 500.00` },
+                                { name: 'Fleurs', amount: `${currencySymbol} 400.00` }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Restauration',
+                    subcategories: [
+                        {
+                            name: 'Traiteur',
+                            lines: [
+                                { name: 'Menu principal', amount: `${currencySymbol} 4000.00` },
+                                { name: 'Pièce montée', amount: `${currencySymbol} 600.00` }
+                            ]
+                        },
+                        {
+                            name: 'Boissons',
+                            lines: [
+                                { name: 'Vin', amount: `${currencySymbol} 800.00` },
+                                { name: 'Champagne', amount: `${currencySymbol} 1000.00` },
+                                { name: 'Autres boissons', amount: `${currencySymbol} 300.00` }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Prestataires',
+                    subcategories: [
+                        {
+                            name: 'Musique',
+                            lines: [
+                                { name: 'DJ', amount: `${currencySymbol} 800.00` },
+                                { name: 'Musiciens cérémonie', amount: `${currencySymbol} 500.00` }
+                            ]
+                        },
+                        {
+                            name: 'Photo/Vidéo',
+                            lines: [
+                                { name: 'Photographe', amount: `${currencySymbol} 1200.00` },
+                                { name: 'Vidéaste', amount: `${currencySymbol} 1000.00` }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+            
+        case 'Anniversaire':
+            categoriesData = [
+                {
+                    name: 'Restauration',
+                    subcategories: [
+                        {
+                            name: 'Traiteur',
+                            lines: [
+                                { name: 'Menu principal', amount: `${currencySymbol} 300.00` },
+                                { name: 'Desserts', amount: `${currencySymbol} 100.00` }
+                            ]
+                        },
+                        {
+                            name: 'Boissons',
+                            lines: [
+                                { name: 'Soft drinks', amount: `${currencySymbol} 100.00` },
+                                { name: 'Alcool', amount: `${currencySymbol} 100.00` }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Animation',
+                    subcategories: [
+                        {
+                            name: 'DJ',
+                            lines: [
+                                { name: 'DJ forfait soirée', amount: `${currencySymbol} 300.00` }
+                            ]
+                        },
+                        {
+                            name: 'Jeux',
+                            lines: [
+                                { name: 'Matériel de jeux', amount: `${currencySymbol} 100.00` }
+                            ]
+                        }
+                    ]
+                }
+            ];
+            break;
+            
+        // Ajoutez d'autres modèles ici selon vos besoins
+        default:
+            // Modèle générique si aucun modèle spécifique n'est trouvé
+            categoriesData = [
+                {
+                    name: 'Catégorie 1',
+                    subcategories: [
+                        {
+                            name: 'Sous-catégorie 1',
+                            lines: [
+                                { name: 'Ligne de dépense 1', amount: `${currencySymbol} 100.00` },
+                                { name: 'Ligne de dépense 2', amount: `${currencySymbol} 200.00` }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Catégorie 2',
+                    subcategories: [
+                        {
+                            name: 'Sous-catégorie 1',
+                            lines: [
+                                { name: 'Ligne de dépense 1', amount: `${currencySymbol} 150.00` },
+                                { name: 'Ligne de dépense 2', amount: `${currencySymbol} 250.00` }
+                            ]
+                        }
+                    ]
+                }
+            ];
+    }
+    
+    // Mise à jour de l'interface utilisateur avec les nouvelles catégories
+    updateCategoriesUI(categoriesData, currencySymbol);
+}
+
+// Fonction pour mettre à jour l'interface utilisateur avec les catégories du template
+function updateCategoriesUI(categoriesData, currencySymbol) {
+    // Vider le conteneur existant
+    const categoriesContainer = document.getElementById('expenseCategories');
+    if (!categoriesContainer) return;
+    
+    categoriesContainer.innerHTML = '';
+    
+    // Créer les nouvelles catégories et sous-catégories
+    categoriesData.forEach(categoryData => {
+        // Créer la catégorie principale
+        const category = document.createElement('div');
+        category.className = 'expense-category';
+        
+        // Préparer le HTML de l'en-tête de catégorie
+        let categoryHTML = `
+            <div class="category-header">
+                <h4 class="category-name editable-field">${categoryData.name}</h4>
+                <span class="category-amount">${currencySymbol} 0.00</span>
+                <div class="category-controls">
+                    <button type="button" class="category-toggle open">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="delete-category-btn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="subcategories-container open">
+        `;
+        
+        // Ajouter les sous-catégories
+        if (categoryData.subcategories && categoryData.subcategories.length > 0) {
+            categoryData.subcategories.forEach(subcategoryData => {
+                // Ajouter l'HTML de la sous-catégorie
+                categoryHTML += `
+                    <div class="subcategory">
+                        <div class="subcategory-header">
+                            <h5 class="subcategory-name editable-field">${subcategoryData.name}</h5>
+                            <span class="subcategory-amount editable-field">${currencySymbol} 0.00</span>
+                        </div>
+                        <div class="subcategory-actions">
+                            <button type="button" class="add-expense-line-btn">
+                                <i class="fas fa-plus"></i> Ajouter ligne
+                            </button>
+                            <button type="button" class="delete-subcategory-btn">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="expense-lines">
+                `;
+                
+                // Ajouter les lignes de dépenses
+                if (subcategoryData.lines && subcategoryData.lines.length > 0) {
+                    subcategoryData.lines.forEach(line => {
+                        categoryHTML += `
+                            <div class="expense-line">
+                                <span class="expense-line-name editable-field">${line.name}</span>
+                                <span class="expense-line-amount editable-field">${line.amount}</span>
+                                <button type="button" class="delete-line-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+                
+                categoryHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        // Ajouter le footer pour pouvoir ajouter des sous-catégories
+        categoryHTML += `
+            <div class="subcategory-footer">
+                <button type="button" class="add-subcategory-btn">
+                    <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                </button>
+            </div>
+        </div>
+        `;
+        
+        // Définir le HTML de la catégorie
+        category.innerHTML = categoryHTML;
+        
+        // Ajouter la catégorie au conteneur
+        categoriesContainer.appendChild(category);
+    });
+    
+    // Ajouter le conteneur pour le bouton d'ajout de catégorie principale
+    const addCategoryContainer = document.createElement('div');
+    addCategoryContainer.className = 'add-category-container';
+    
+    const addCategoryBtn = document.createElement('button');
+    addCategoryBtn.type = 'button';
+    addCategoryBtn.id = 'addMainCategoryBtn';
+    addCategoryBtn.className = 'add-category-btn';
+    addCategoryBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter une catégorie';
+    
+    addCategoryContainer.appendChild(addCategoryBtn);
+    categoriesContainer.appendChild(addCategoryContainer);
+    
+    // Configuration des événements d'édition
+    setupEditableFields();
+    setupAddLineButtons();
+    setupAddSubcategoryButtons();
+    setupAddCategoryButton();
+    
+    // Mise à jour des calculs de budget
+    updateBudgetCalculation();
+}
+
+// Fonction pour configurer les champs éditables
+function setupEditableFields() {
+    // Rendre les noms de catégories éditables
+    document.querySelectorAll('.category-name.editable-field').forEach(field => {
+        field.setAttribute('data-original-value', field.textContent);
+        field.addEventListener('click', function() {
+            makeFieldEditable(this, 'text');
+        });
+    });
+    
+    // Rendre les noms de sous-catégories éditables
+    document.querySelectorAll('.subcategory-name.editable-field').forEach(field => {
+        field.setAttribute('data-original-value', field.textContent);
+        field.addEventListener('click', function() {
+            makeFieldEditable(this, 'text');
+        });
+    });
+    
+    // Rendre les montants de sous-catégories éditables
+    document.querySelectorAll('.subcategory-amount.editable-field').forEach(field => {
+        field.setAttribute('data-original-value', field.textContent);
+        field.addEventListener('click', function() {
+            makeFieldEditable(this, 'number');
+        });
+    });
+    
+    // Rendre les noms de lignes éditables
+    document.querySelectorAll('.expense-line-name.editable-field').forEach(field => {
+        field.setAttribute('data-original-value', field.textContent);
+        field.addEventListener('click', function() {
+            makeFieldEditable(this, 'text');
+        });
+    });
+    
+    // Rendre les montants de lignes éditables
+    document.querySelectorAll('.expense-line-amount.editable-field').forEach(field => {
+        field.setAttribute('data-original-value', field.textContent);
+        field.addEventListener('click', function() {
+            makeFieldEditable(this, 'number');
+        });
+    });
+    
+    // Configurer les boutons de suppression de lignes
+    document.querySelectorAll('.delete-line-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const lineElement = this.closest('.expense-line');
+            if (lineElement) {
+                lineElement.remove();
+                updateBudgetCalculation();
+            }
+        });
+    });
+    
+    // Configurer les boutons de suppression de sous-catégories
+    document.querySelectorAll('.delete-subcategory-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const subcategoryElement = this.closest('.subcategory');
+            if (subcategoryElement && confirm('Voulez-vous vraiment supprimer cette sous-catégorie et toutes ses lignes ?')) {
+                subcategoryElement.remove();
+                updateBudgetCalculation();
+            }
+        });
+    });
+    
+    // Configurer les boutons de suppression de catégories
+    document.querySelectorAll('.delete-category-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const categoryElement = this.closest('.expense-category');
+            if (categoryElement && confirm('Voulez-vous vraiment supprimer cette catégorie et toutes ses sous-catégories ?')) {
+                categoryElement.remove();
+                updateBudgetCalculation();
+            }
+        });
+    });
+    
+    // Configurer les boutons d'ouverture/fermeture de catégories
+    document.querySelectorAll('.category-toggle').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('open');
+            const categoryElement = this.closest('.expense-category');
+            const subcategoriesContainer = categoryElement.querySelector('.subcategories-container');
+            if (subcategoriesContainer) {
+                subcategoriesContainer.classList.toggle('open');
+            }
+            
+            // Mettre à jour l'icône
+            const icon = this.querySelector('i');
+            if (icon) {
+                if (this.classList.contains('open')) {
+                    icon.className = 'fas fa-chevron-up';
+                } else {
+                    icon.className = 'fas fa-chevron-down';
+                }
+            }
+        });
+    });
+}
 
 // Fonction pour activer le mode édition de projet
 function enableEditMode(projectId) {
