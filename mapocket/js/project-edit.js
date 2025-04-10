@@ -2,7 +2,7 @@
 
 // Fonction utilitaire pour obtenir le symbole de devise actuel
 function getProjectCurrencySymbol() {
-    let currencySymbol = '€';
+    let currencySymbol = '€'; // Valeur par défaut
     try {
         if (typeof getCurrencySymbol === 'function') {
             // Utiliser la fonction du helper si disponible
@@ -10,15 +10,33 @@ function getProjectCurrencySymbol() {
         } else {
             // Fallback si le helper n'est pas chargé
             const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            
+            // Si AVAILABLE_CURRENCIES est défini, l'utiliser
             if (preferences.currency && typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
-                if (currency) {
-                    currencySymbol = currency.symbol;
+                try {
+                    const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
+                    if (currency) {
+                        currencySymbol = currency.symbol;
+                    }
+                } catch (err) {
+                    console.warn('Erreur lors de l\'accès à AVAILABLE_CURRENCIES:', err);
                 }
             }
+            
+            // Fallbacks spécifiques pour les devises communes
+            else if (preferences.currency) {
+                if (preferences.currency === 'EUR') currencySymbol = '€';
+                else if (preferences.currency === 'USD') currencySymbol = '$';
+                else if (preferences.currency === 'GBP') currencySymbol = '£';
+                else if (preferences.currency === 'AED') currencySymbol = 'AED';
+                else if (preferences.currency === 'JPY') currencySymbol = '¥';
+            }
+            
+            console.log("Devise du projet:", preferences.currency, "Symbole:", currencySymbol);
         }
     } catch (error) {
         console.error('Erreur lors de la récupération du symbole de devise:', error);
+        // En cas d'erreur, on garde la valeur par défaut
     }
     return currencySymbol;
 }
