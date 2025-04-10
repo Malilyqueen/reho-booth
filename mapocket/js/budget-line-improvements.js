@@ -498,6 +498,11 @@ function showSuccessFeedback(form, name, amount) {
     feedback.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
     feedback.style.animation = 'fadeInOut 2.5s ease forwards';
     
+    // Rafraîchir l'affichage des lignes de dépenses et défilement vers la ligne ajoutée
+    setTimeout(() => {
+        refreshExpenseLines();
+    }, 100);
+    
     // Ajouter au formulaire
     form.appendChild(feedback);
     
@@ -505,6 +510,38 @@ function showSuccessFeedback(form, name, amount) {
     setTimeout(() => {
         feedback.remove();
     }, 2500);
+}
+
+// Fonction pour actualiser l'affichage des lignes de dépenses
+function refreshExpenseLines() {
+    console.log("Rafraîchissement des lignes de dépenses après ajout");
+    
+    // Mettre à jour le calcul du budget si la fonction existe
+    if (typeof updateBudgetCalculation === 'function') {
+        updateBudgetCalculation();
+    }
+    
+    // Mettre en surbrillance les lignes récemment ajoutées
+    setTimeout(() => {
+        const allExpenseContainers = document.querySelectorAll('.subcategory');
+        
+        allExpenseContainers.forEach(container => {
+            const expenseLines = container.querySelectorAll('.expense-line');
+            if (expenseLines.length > 0) {
+                // Mettre en évidence la dernière ligne ajoutée
+                const lastLine = expenseLines[expenseLines.length - 1];
+                lastLine.classList.add('highlight-new');
+                
+                // Défiler vers cette ligne
+                lastLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Retirer la mise en évidence après un délai
+                setTimeout(() => {
+                    lastLine.classList.remove('highlight-new');
+                }, 2000);
+            }
+        });
+    }, 300);
 }
 
 // Fonction pour configurer l'intégration avec les modules
@@ -515,6 +552,8 @@ function setupModuleIntegration() {
         function(message) {
             if (message.action === window.ModuleConnector.actions.budget.ITEM_ADDED) {
                 console.log("Élément ajouté au budget:", message.data);
+                // Rafraîchir l'affichage des lignes
+                refreshExpenseLines();
             }
         }
     );

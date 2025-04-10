@@ -394,6 +394,17 @@
     border-bottom: none;
 }
 
+.expense-line.highlight-new {
+    background-color: rgba(76, 175, 80, 0.1);
+    animation: pulseGreen 2s ease;
+}
+
+@keyframes pulseGreen {
+    0% { background-color: rgba(76, 175, 80, 0.2); }
+    50% { background-color: rgba(76, 175, 80, 0.1); }
+    100% { background-color: transparent; }
+}
+
 .expense-line-name {
     flex: 1;
     padding: 4px 0;
