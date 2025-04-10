@@ -2543,3 +2543,51 @@ function setupWishlistFeatures() {
         }, 100);
     }
 }
+
+// Fonction pour configurer l'option "Partir de zéro"
+function setupStartFromScratchOption() {
+    const checkbox = document.getElementById('startFromScratch');
+    if (!checkbox) {
+        console.log("Option 'Partir de zéro' non trouvée dans le DOM");
+        return;
+    }
+    
+    console.log("Configuration de l'option 'Partir de zéro'");
+    
+    checkbox.addEventListener('change', function() {
+        console.log("Option 'Partir de zéro' modifiée:", this.checked);
+        
+        if (this.checked) {
+            // Désélectionner tous les templates existants
+            document.querySelectorAll('.template-option.selected').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Sélectionner l'option "Partir de zéro"
+            const container = this.closest('.template-option');
+            if (container) {
+                container.classList.add('selected');
+            }
+            
+            // Appliquer un template vide
+            updateTemplateCategories('Empty');
+            
+            // Notification visuelle pour informer l'utilisateur
+            const notification = document.createElement('div');
+            notification.className = 'temporary-notification';
+            notification.style.backgroundColor = '#6f802b';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i> Mode personnalisation totale activé
+            `;
+            document.body.appendChild(notification);
+            
+            // Disparition progressive de la notification
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    });
+}
