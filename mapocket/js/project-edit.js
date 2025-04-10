@@ -643,11 +643,13 @@ function addNewSubcategory(categoryElement, subcategoryName) {
     // Obtenir le symbole de la devise actuelle
     let currencySymbol = '€';
     try {
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (userPreferences.currency) {
-            const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-            if (currency) {
-                currencySymbol = currency.symbol;
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        if (preferences.currency) {
+            if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+                const currency = AVAILABLE_CURRENCIES.find(c => c.code === preferences.currency);
+                if (currency) {
+                    currencySymbol = currency.symbol;
+                }
             }
         }
     } catch (error) {
