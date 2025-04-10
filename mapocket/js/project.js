@@ -789,15 +789,7 @@ function initializeSubcategories() {
                     </button>
                 </div>
                 <div class="expense-lines open">
-                    <div class="expense-line">
-                        <input type="text" class="form-control expense-line-name" value="Nouvelle ligne">
-                        <input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">
-                        <div class="expense-line-actions">
-                            <button type="button" class="btn-sm btn-delete-line">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Aucune ligne par défaut - l'utilisateur ajoutera les lignes lui-même -->
                     <button type="button" class="add-line-btn">
                         <i class="fas fa-plus"></i> Ajouter une ligne
                     </button>
@@ -1321,17 +1313,11 @@ const defaultBudgets = {
                 "subcategories": [
                     {
                         "name": "Traiteur",
-                        "lines": [
-                            { "name": "Menu principal", "amount": "€ 150" },
-                            { "name": "Desserts", "amount": "€ 50" }
-                        ]
+                        "lines": [] // Aucune ligne par défaut, l'utilisateur ajoutera les lignes lui-même
                     },
                     {
                         "name": "Boissons",
-                        "lines": [
-                            { "name": "Soft drinks", "amount": "€ 50" },
-                            { "name": "Alcool", "amount": "€ 50" }
-                        ]
+                        "lines": [] // Aucune ligne par défaut, l'utilisateur ajoutera les lignes lui-même
                     }
                 ]
             },
@@ -2679,6 +2665,16 @@ function updateTemplateCategories(templateType) {
         // Copie profonde pour ne pas modifier l'original
         const categoriesData = JSON.parse(JSON.stringify(defaultBudgets[templateType].categories));
         
+        // Supprimer toutes les lignes de dépenses pour laisser l'utilisateur les ajouter lui-même
+        categoriesData.forEach(category => {
+            if (category.subcategories && Array.isArray(category.subcategories)) {
+                category.subcategories.forEach(subcategory => {
+                    // Remplacer toutes les lignes par un tableau vide
+                    subcategory.lines = [];
+                });
+            }
+        });
+        
         // Remplacer les symboles € par le symbole de devise choisi
         categoriesData.forEach(category => {
             replaceEuroSymbol(category);
@@ -2911,6 +2907,16 @@ function updateTemplateCategories(templateType) {
     
     // Remplacer les symboles € par le symbole de devise choisi dans les templates du switch
     if (categoriesData.length > 0) {
+        // Supprimer toutes les lignes de dépenses pour laisser l'utilisateur les ajouter lui-même
+        categoriesData.forEach(category => {
+            if (category.subcategories && Array.isArray(category.subcategories)) {
+                category.subcategories.forEach(subcategory => {
+                    // Remplacer toutes les lignes par un tableau vide
+                    subcategory.lines = [];
+                });
+            }
+        });
+        
         // Remplacer les symboles € par le symbole de devise choisi
         categoriesData.forEach(category => {
             replaceEuroSymbol(category);
