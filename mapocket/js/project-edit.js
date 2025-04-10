@@ -376,34 +376,9 @@ function setupBudgetCalculation() {
 function updateTemplateCategories(templateType) {
     console.log('Mise à jour des catégories pour le template:', templateType);
     
-    // Ne pas écraser les lignes déjà existantes (protection contre le remplacement de "Banderolle" par "LinkedIn")
-    // Chercher les catégories et lignes existantes
-    const existingCategories = document.querySelectorAll('.expense-category');
-    const existingSubcategories = {};
-    
-    // Récupérer les sous-catégories et lignes existantes pour ne pas les écraser
-    existingCategories.forEach(category => {
-        const categoryName = category.querySelector('.category-name').textContent.trim();
-        existingSubcategories[categoryName] = {};
-        
-        const subcategories = category.querySelectorAll('.subcategory');
-        subcategories.forEach(subcategory => {
-            const subcategoryName = subcategory.querySelector('.subcategory-name').textContent.trim();
-            const lines = subcategory.querySelectorAll('.expense-line');
-            
-            // Sauvegarder les lignes existantes
-            const existingLines = [];
-            lines.forEach(line => {
-                const lineName = line.querySelector('.expense-line-name').textContent.trim();
-                const lineAmount = line.querySelector('.expense-line-amount').textContent.trim();
-                existingLines.push({ name: lineName, amount: lineAmount });
-            });
-            
-            existingSubcategories[categoryName][subcategoryName] = existingLines;
-        });
-    });
-    
-    console.log('Sous-catégories et lignes existantes (à préserver):', existingSubcategories);
+    // DÉSACTIVATION COMPLÈTE DES TEMPLATES PRÉDÉFINIS POUR LES LIGNES ET SOUS-CATÉGORIES
+    // L'utilisateur doit pouvoir créer ses propres lignes et sous-catégories librement
+    // sans que le système impose des valeurs par défaut
     
     // Récupérer les préférences utilisateur pour obtenir la devise
     let userPreferences = {
@@ -455,8 +430,16 @@ function updateTemplateCategories(templateType) {
             replaceEuroSymbol(category);
         });
         
-        // Mise à jour de l'interface utilisateur avec les nouvelles catégories
-        updateCategoriesUI(categoriesData, currencySymbol);
+        // DÉSACTIVATION DES TEMPLATES PRÉDÉFINIS
+        // Créer un projet vide pour permettre à l'utilisateur de définir librement ses propres catégories
+        const emptyCategories = [
+            {
+                name: "Nouvelle catégorie",
+                subcategories: []
+            }
+        ];
+        // Mise à jour avec un projet vide
+        updateCategoriesUI(emptyCategories, currencySymbol);
         return;
     }
     
@@ -600,8 +583,16 @@ function updateTemplateCategories(templateType) {
             ];
     }
     
-    // Mise à jour de l'interface utilisateur avec les nouvelles catégories
-    updateCategoriesUI(categoriesData, currencySymbol);
+    // DÉSACTIVATION DES TEMPLATES PRÉDÉFINIS
+    // Créer un projet vide pour permettre à l'utilisateur de définir librement ses propres catégories
+    const emptyCategories = [
+        {
+            name: "Nouvelle catégorie",
+            subcategories: []
+        }
+    ];
+    // Mise à jour avec un projet vide
+    updateCategoriesUI(emptyCategories, currencySymbol);
 }
 
 // Fonction pour mettre à jour l'interface utilisateur avec les catégories du template
