@@ -135,9 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Détection du mode et de l'ID du projet
     console.log("Mode détecté:", editMode ? "Édition" : "Création", "Projet ID:", projectId);
     
-    // Configuration de l'option "Partir de zéro"
-    setupStartFromScratchOption();
-    
     if (!projectId && editMode) {
         // Si on est en mode édition mais sans ID dans l'URL, vérifier si on a un projet en cours d'édition
         const currentProject = localStorage.getItem('currentProject');
@@ -390,36 +387,7 @@ function updateTemplateCategories(templateType) {
     // Permettre une personnalisation totale pour se démarquer d'un simple tableau Excel
     // On ne veut pas imposer de structure fixe mais offrir des modèles comme point de départ
     
-    // Vérifier si l'utilisateur veut commencer avec un projet vide
-    const startFromScratch = document.querySelector('.start-from-scratch-option') && 
-                             document.querySelector('.start-from-scratch-option').checked;
-    
-    if (startFromScratch) {
-        console.log('Utilisateur a choisi de partir de zéro');
-        // Créer une seule catégorie vide pour commencer
-        const categories = [
-            { 
-                name: "Nouvelle catégorie", 
-                subcategories: []
-            }
-        ];
-        
-        // Mise à jour de l'interface avec une structure vide
-        updateCategoriesUI(categories, currencySymbol);
-        
-        // Ajouter un message d'aide
-        const helpMsg = document.createElement('div');
-        helpMsg.className = 'customization-hint alert alert-info mt-3';
-        helpMsg.innerHTML = `<i class="fas fa-info-circle"></i> <strong>Liberté totale !</strong> 
-            Créez votre propre structure de budget en ajoutant des catégories, sous-catégories et lignes selon vos besoins.`;
-        
-        const container = document.getElementById('expenseCategories');
-        if (container && !container.querySelector('.customization-hint')) {
-            container.appendChild(helpMsg);
-        }
-        
-        return;
-    }
+    // Permettre une personnalisation totale pour se démarquer d'un simple tableau Excel
     
     // Définition des catégories basées sur le type de projet
     let categories = [];
@@ -559,21 +527,10 @@ function updateTemplateCategories(templateType) {
     console.log('Catégories préparées:', categories);
     
     // IMPORTANT: Permettre à l'utilisateur de créer complètement son propre budget
-    // Vérifier si l'utilisateur a choisi "Partir de zéro"
-    const startFromScratch = document.getElementById('startFromScratch') && 
-                           document.getElementById('startFromScratch').checked;
+    // Nous utilisons toujours la liste des catégories définies ci-dessus
     
-    // Si l'utilisateur a choisi de partir de zéro OU si nous utilisons déjà cette politique par défaut
-    console.log("Option 'Partir de zéro' sélectionnée:", startFromScratch);
-    
-    // Dans tous les cas, nous permettons la personnalisation totale
-    const emptyTemplate = [{
-        name: "Nouvelle catégorie",
-        subcategories: []
-    }];
-    
-    // Mise à jour de l'interface utilisateur avec une structure VIDE personnalisable
-    updateCategoriesUI(emptyTemplate, currencySymbol);
+    // Mise à jour de l'interface utilisateur avec les catégories préparées selon le template
+    updateCategoriesUI(categories, currencySymbol);
     
     // Afficher un message d'aide à la personnalisation
     const helpMsg = document.createElement('div');
@@ -2544,50 +2501,3 @@ function setupWishlistFeatures() {
     }
 }
 
-// Fonction pour configurer l'option "Partir de zéro"
-function setupStartFromScratchOption() {
-    const checkbox = document.getElementById('startFromScratch');
-    if (!checkbox) {
-        console.log("Option 'Partir de zéro' non trouvée dans le DOM");
-        return;
-    }
-    
-    console.log("Configuration de l'option 'Partir de zéro'");
-    
-    checkbox.addEventListener('change', function() {
-        console.log("Option 'Partir de zéro' modifiée:", this.checked);
-        
-        if (this.checked) {
-            // Désélectionner tous les templates existants
-            document.querySelectorAll('.template-option.selected').forEach(option => {
-                option.classList.remove('selected');
-            });
-            
-            // Sélectionner l'option "Partir de zéro"
-            const container = this.closest('.template-option');
-            if (container) {
-                container.classList.add('selected');
-            }
-            
-            // Appliquer un template vide
-            updateTemplateCategories('Empty');
-            
-            // Notification visuelle pour informer l'utilisateur
-            const notification = document.createElement('div');
-            notification.className = 'temporary-notification';
-            notification.style.backgroundColor = '#6f802b';
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i> Mode personnalisation totale activé
-            `;
-            document.body.appendChild(notification);
-            
-            // Disparition progressive de la notification
-            setTimeout(() => {
-                notification.classList.add('fade-out');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
-        }
-    });
-}
