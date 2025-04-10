@@ -247,25 +247,66 @@ function setupWishlistIntegration() {
     // Fonction pour ajouter une catégorie Wishlist si elle n'existe pas
     function addWishlistCategoryIfNeeded() {
         const categoriesContainer = document.getElementById('categoriesContainer');
-        const categoryExists = Array.from(categoriesContainer.querySelectorAll('.category-name'))
-            .some(elem => elem.textContent === 'Wishlist');
+        if (!categoriesContainer) {
+            console.error("Conteneur de catégories non trouvé");
+            return false;
+        }
+        
+        const categoryElements = categoriesContainer.querySelectorAll('.expense-category');
+        const categoryExists = Array.from(categoryElements)
+            .some(elem => {
+                const nameElement = elem.querySelector('.category-name');
+                return nameElement && nameElement.textContent === 'Wishlist';
+            });
         
         if (!categoryExists) {
+            // Vérifier que la fonction addNewCategory existe
+            if (typeof addNewCategory !== 'function') {
+                console.error("Fonction addNewCategory non disponible");
+                return false;
+            }
+            
+            // Ajouter la catégorie
             addNewCategory('Wishlist');
-            // Notification
+            console.log("Catégorie Wishlist ajoutée");
+            
+            // Notification visuelle
             const notification = document.createElement('div');
             notification.className = 'temporary-notification';
-            notification.innerHTML = `<i class="fas fa-plus-circle"></i> Catégorie "Wishlist" ajoutée`;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = '#f0f8ff';
+            notification.style.color = '#1d3557';
+            notification.style.padding = '10px 15px';
+            notification.style.borderRadius = '6px';
+            notification.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+            notification.style.zIndex = '9999';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '10px';
+            
+            notification.innerHTML = `
+                <i class="fas fa-plus-circle" style="color: #4caf50;"></i>
+                <span>Catégorie "Wishlist" ajoutée au budget</span>
+            `;
+            
             document.body.appendChild(notification);
             
             // Faire disparaître la notification
             setTimeout(() => {
                 notification.classList.add('fade-out');
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s ease';
                 setTimeout(() => {
                     notification.remove();
                 }, 300);
             }, 2000);
+            
+            return true;
         }
+        
+        return categoryExists;
     }
     
     // Fonction pour montrer le dialogue de sélection de catégorie
