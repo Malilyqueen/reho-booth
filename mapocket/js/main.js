@@ -2,7 +2,7 @@
 
 // Variables globales
 let isAdmin = false;
-let userPreferences = {
+window.userPreferences = window.userPreferences || {
     currency: 'EUR', // Devise par défaut
 };
 
