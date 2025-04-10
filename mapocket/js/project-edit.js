@@ -1560,8 +1560,10 @@ function createSubcategoryInContainer(container, subcategoryName, initialAmount 
         showAddExpenseLineForm(linesContainer);
     });
     
-    // Si un montant initial est fourni, créer une ligne implicite
-    if (initialAmount && parseFloat(initialAmount) > 0) {
+    // Si un montant initial est fourni et que nous sommes en train de créer une nouvelle sous-catégorie
+    // (pas en train d'ajouter une ligne à une sous-catégorie existante)
+    // Cette vérification permet d'éviter la création de lignes "Montant initial" non sollicitées
+    if (initialAmount && parseFloat(initialAmount) > 0 && !linesContainer.querySelector('.expense-line')) {
         createExpenseLine(linesContainer, "Montant initial", initialAmount);
         
         // Mettre à jour les calculs
