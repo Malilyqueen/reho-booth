@@ -375,7 +375,7 @@ function setupBudgetCalculation() {
 // Fonction pour mettre à jour les catégories selon le template choisi
 // Version entièrement réécrite pour résoudre définitivement les problèmes de catégories
 function updateTemplateCategories(templateType) {
-    console.log('Application des catégories par défaut pour:', templateType);
+    console.log('Updating template categories for:', templateType);
     
     // Obtenir le symbole de la devise
     let currencySymbol = getProjectCurrencySymbol();
@@ -383,10 +383,45 @@ function updateTemplateCategories(templateType) {
     
     console.log('Configuration avec la devise:', currencyCode, currencySymbol);
     
-    // Définition directe (hard-coded) des catégories de base selon le type de projet
+    // NOUVELLE APPROCHE:
+    // Permettre une personnalisation totale pour se démarquer d'un simple tableau Excel
+    // On ne veut pas imposer de structure fixe mais offrir des modèles comme point de départ
+    
+    // Vérifier si l'utilisateur veut commencer avec un projet vide
+    const startFromScratch = document.querySelector('.start-from-scratch-option') && 
+                             document.querySelector('.start-from-scratch-option').checked;
+    
+    if (startFromScratch) {
+        console.log('Utilisateur a choisi de partir de zéro');
+        // Créer une seule catégorie vide pour commencer
+        const categories = [
+            { 
+                name: "Nouvelle catégorie", 
+                subcategories: []
+            }
+        ];
+        
+        // Mise à jour de l'interface avec une structure vide
+        updateCategoriesUI(categories, currencySymbol);
+        
+        // Ajouter un message d'aide
+        const helpMsg = document.createElement('div');
+        helpMsg.className = 'customization-hint alert alert-info mt-3';
+        helpMsg.innerHTML = `<i class="fas fa-info-circle"></i> <strong>Liberté totale !</strong> 
+            Créez votre propre structure de budget en ajoutant des catégories, sous-catégories et lignes selon vos besoins.`;
+        
+        const container = document.getElementById('expenseCategories');
+        if (container && !container.querySelector('.customization-hint')) {
+            container.appendChild(helpMsg);
+        }
+        
+        return;
+    }
+    
+    // Définition des catégories basées sur le type de projet
     let categories = [];
     
-    // Création des catégories en fonction du type de projet
+    // Création des catégories en fonction du type de projet tout en laissant la liberté de modification
     switch(templateType) {
         case 'Mariage':
             categories = [
