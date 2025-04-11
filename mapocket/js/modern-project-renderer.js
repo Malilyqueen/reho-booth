@@ -485,60 +485,12 @@ function parseAmount(amount) {
 }
 
 /**
- * Retourne un emoji correspondant au nom de la catégorie ou sous-catégorie
+ * Fonction pour obtenir un marqueur visuel pour une catégorie ou sous-catégorie
+ * Version sans emoji pour une interface plus professionnelle
  * @param {string} name - Nom de la catégorie ou sous-catégorie
- * @returns {string} - Emoji correspondant
+ * @returns {string} - Une chaîne vide pour supprimer les emojis de l'interface
  */
 function getEmoji(name) {
-    if (!name) return '📋';
-    
-    name = name.toLowerCase();
-    
-    // Mapping des noms de catégories vers des emojis
-    const emojiMap = {
-        'restauration': '🍽️',
-        'nourriture': '🍲',
-        'repas': '🍽️',
-        'traiteur': '🥗',
-        'buffet': '🍱',
-        'boisson': '🥤',
-        'alcool': '🍷',
-        'animation': '🎭',
-        'musique': '🎵',
-        'dj': '🎧',
-        'jeux': '🎮',
-        'décoration': '🎨',
-        'lieu': '🏰',
-        'salle': '🏢',
-        'transport': '🚗',
-        'hébergement': '🏨',
-        'invitation': '✉️',
-        'cadeau': '🎁',
-        'cadeaux': '🎁',
-        'photo': '📸',
-        'photographe': '📸',
-        'vidéo': '🎥',
-        'souvenir': '📝',
-        'vêtement': '👔',
-        'tenue': '👗',
-        'mariée': '👰',
-        'marié': '🤵',
-        'beauté': '💄',
-        'coiffure': '💇',
-        'maquillage': '💋',
-        'bijoux': '💍',
-        'fleurs': '💐',
-        'imprévus': '⚠️',
-        'divers': '📌'
-    };
-    
-    // Parcourir le mapping pour trouver une correspondance
-    for (const key in emojiMap) {
-        if (name.includes(key)) {
-            return emojiMap[key];
-        }
-    }
-    
-    // Émoji par défaut si aucune correspondance n'est trouvée
-    return '📋';
+    // Retourner une chaîne vide pour ne pas afficher d'emoji
+    return "";
 }
