@@ -97,15 +97,49 @@ function collectAndSaveProjectData() {
     
     // Récupérer le projet actuel
     const project = window.currentProject;
-    if (!project) return;
+    if (!project) {
+        console.warn('Aucun projet actif à sauvegarder');
+        return;
+    }
     
     try {
-        // Sauvegarder directement le projet (les modifications sont déjà appliquées via les refs)
-        saveProjectChanges(project);
-        console.log('Projet sauvegardé avec succès');
+        // Vérifier si la fonction saveProjectChanges existe
+        if (typeof saveProjectChanges === 'function') {
+            // Sauvegarder directement le projet (les modifications sont déjà appliquées via les refs)
+            saveProjectChanges(project);
+            console.log('Projet sauvegardé avec succès');
+        } else {
+            // Implémentation de sauvegarde alternative si saveProjectChanges n'est pas disponible
+            console.log('Implémentation de saveProjectChanges non trouvée, utilisation de la méthode alternative');
+            // Récupérer les projets existants
+            let projects = [];
+            try {
+                projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+            } catch (e) {
+                console.error('Erreur lors de la lecture des projets:', e);
+                projects = [];
+            }
+            
+            // Trouver et mettre à jour le projet
+            const index = projects.findIndex(p => p.id === project.id);
+            if (index >= 0) {
+                projects[index] = project;
+                localStorage.setItem('savedProjects', JSON.stringify(projects));
+                console.log('Projet sauvegardé avec méthode alternative');
+                
+                // Afficher une notification de confirmation
+                if (typeof showNotification === 'function') {
+                    showNotification('Projet sauvegardé', 'success');
+                }
+            } else {
+                console.error('Projet non trouvé dans la liste des projets sauvegardés');
+            }
+        }
     } catch (error) {
         console.error('Erreur lors de la sauvegarde du projet:', error);
-        showNotification('Erreur lors de la sauvegarde', 'error');
+        if (typeof showNotification === 'function') {
+            showNotification('Erreur lors de la sauvegarde', 'error');
+        }
     }
 }
 
