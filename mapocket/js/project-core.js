@@ -545,35 +545,17 @@ const ProjectCore = (function() {
         
         console.log('Remplissage du formulaire avec les données du projet:', project.projectName);
         
-        // Fonction pour forcer la mise à jour des totaux
-        const forceUpdate = () => {
-            console.log("Initialisation forcée des calculs avec les données existantes...");
-            
-            // Extraire la valeur numérique de toutes les lignes
-            document.querySelectorAll('.line-amount').forEach(element => {
-                if (element.textContent) {
-                    const numericValue = extractNumericValue(element.textContent);
-                    element.dataset.value = numericValue;
-                    console.log(`Montant de ligne extrait: ${element.textContent} -> ${numericValue}`);
-                }
-            });
-            
-            // Force le calcul de tous les totaux
-            updateAllTotals(true);
-            
-            // Mettre à jour explicitement le total du projet
-            const totalBudget = document.getElementById('totalBudget');
-            if (totalBudget && project.totalBudget) {
-                totalBudget.value = project.totalBudget;
-                console.log("Budget total du projet défini:", project.totalBudget);
-            }
-        };
+        // Sauvegarder le budget total pour s'assurer qu'il ne sera pas perdu
+        const originalTotalBudget = project.totalBudget || '';
+        console.log("Budget total original:", originalTotalBudget);
         
-        // Force la mise à jour deux fois pour s'assurer que tout est bien calculé
-        setTimeout(forceUpdate, 500);
-        setTimeout(forceUpdate, 1000);
+        // Champs de base - Remplir d'abord le totalBudget pour éviter qu'il soit remplacé par des calculs
+        if (document.getElementById('totalBudget')) {
+            document.getElementById('totalBudget').value = originalTotalBudget;
+            console.log("Budget total défini immédiatement:", originalTotalBudget);
+        }
         
-        // Champs de base
+        // Remplir les autres champs de base
         if (document.getElementById('projectName')) {
             document.getElementById('projectName').value = project.projectName || '';
         }
@@ -584,10 +566,6 @@ const ProjectCore = (function() {
         
         if (document.getElementById('projectEndDate')) {
             document.getElementById('projectEndDate').value = project.projectEndDate || '';
-        }
-        
-        if (document.getElementById('totalBudget')) {
-            document.getElementById('totalBudget').value = project.totalBudget || '';
         }
         
         if (document.getElementById('projectStatus')) {
@@ -614,6 +592,48 @@ const ProjectCore = (function() {
         if (project.createWishlist) {
             fillWishlistData(project);
         }
+        
+        // Fonction pour forcer la mise à jour des totaux
+        const forceUpdate = () => {
+            console.log("Initialisation forcée des calculs avec les données existantes...");
+            
+            // Extraire la valeur numérique de toutes les lignes
+            document.querySelectorAll('.line-amount').forEach(element => {
+                if (element.textContent) {
+                    const numericValue = extractNumericValue(element.textContent);
+                    element.dataset.value = numericValue;
+                    console.log(`Montant de ligne extrait: ${element.textContent} -> ${numericValue}`);
+                }
+            });
+            
+            // Force le calcul de tous les totaux
+            updateAllTotals(true);
+            
+            // TRÈS IMPORTANT: S'assurer que le budget total n'est pas perdu après les calculs
+            const totalBudget = document.getElementById('totalBudget');
+            if (totalBudget) {
+                // Vérifier si le budget total a été remis à zéro ou vidé par les calculs
+                if (!totalBudget.value || totalBudget.value === '0' || totalBudget.value === '€ 0,00' || totalBudget.value === '0,00') {
+                    // Si oui, restaurer le budget original
+                    totalBudget.value = originalTotalBudget;
+                    console.log("Budget total restauré:", originalTotalBudget);
+                }
+            }
+        };
+        
+        // Force la mise à jour deux fois pour s'assurer que tout est bien calculé
+        // Et que le budget total original est préservé
+        setTimeout(forceUpdate, 500);
+        setTimeout(forceUpdate, 1000);
+        setTimeout(() => {
+            // Troisième vérification pour s'assurer que le budget total est correct
+            const totalBudget = document.getElementById('totalBudget');
+            if (totalBudget && (!totalBudget.value || totalBudget.value === '0' || 
+                totalBudget.value === '€ 0,00' || totalBudget.value === '0,00')) {
+                totalBudget.value = originalTotalBudget;
+                console.log("Budget total restauré (vérification finale):", originalTotalBudget);
+            }
+        }, 1500);
         
         return true;
     }
