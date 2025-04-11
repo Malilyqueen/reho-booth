@@ -370,7 +370,9 @@ function updateProjectUI(project) {
 // Fonction pour mettre à jour les statistiques budgétaires
 function updateBudgetStats(project) {
     // Calculer le budget initial
-    const initialBudget = parseFloat(project.totalBudget?.replace(/[^0-9.]/g, '') || 0);
+    const initialBudget = typeof project.totalBudget === 'string' ? 
+        parseFloat(project.totalBudget.replace(/[^0-9.,]/g, '').replace(',', '.')) : 
+        parseFloat(project.totalBudget || 0);
     
     // Calculer le budget utilisé (somme des dépenses réelles)
     let usedBudget = 0;
