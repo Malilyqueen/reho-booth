@@ -5,11 +5,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation du système de suppression de sous-catégories...');
     
-    // S'assurer que les boutons de suppression fonctionnent bien
-    initCategoryDeletionButtons();
-    
-    // Surveiller les changements dans le DOM pour les nouveaux boutons
-    setupCategoryDeletionObserver();
+    // Attendre un court instant pour s'assurer que tous les autres scripts sont chargés
+    setTimeout(function() {
+        // S'assurer que les boutons de suppression fonctionnent bien
+        initCategoryDeletionButtons();
+        
+        // Surveiller les changements dans le DOM pour les nouveaux boutons
+        setupCategoryDeletionObserver();
+        
+        // Rendre toutes les sous-catégories éditables par défaut s'il n'y a pas de lignes
+        makeSubcategoriesEditableByDefault();
+    }, 500);
 });
 
 // Initialisation des boutons de suppression existants
@@ -117,20 +123,60 @@ function enhancedDeleteLine(lineElement, subcategoryElement) {
     }
 }
 
+// Fonction pour rendre toutes les sous-catégories éditables par défaut si elles n'ont pas de lignes
+function makeSubcategoriesEditableByDefault() {
+    document.querySelectorAll('.subcategory').forEach(subcategory => {
+        const lines = subcategory.querySelectorAll('.expense-line');
+        const subcategoryAmountEl = subcategory.querySelector('.subcategory-amount');
+        
+        if (lines.length === 0 && subcategoryAmountEl) {
+            makeElementEditable(subcategoryAmountEl);
+            
+            // S'assurer que les boutons de suppression sont fonctionnels
+            const deleteBtn = subcategory.querySelector('.delete-subcategory-btn');
+            if (deleteBtn) {
+                deleteBtn.style.opacity = '1';
+                deleteBtn.style.pointerEvents = 'auto';
+            }
+        }
+    });
+    
+    // Vérifier aussi les catégories
+    document.querySelectorAll('.expense-category').forEach(category => {
+        const subcategories = category.querySelectorAll('.subcategory');
+        const categoryAmountEl = category.querySelector('.category-amount');
+        
+        if (subcategories.length === 0 && categoryAmountEl) {
+            makeElementEditable(categoryAmountEl);
+        }
+    });
+}
+
 // Fonction utilitaire pour rendre un élément modifiable
 function makeElementEditable(element) {
     if (!element) return;
     
+    // Nettoyer les attributs
     element.removeAttribute('data-has-lines');
     element.removeAttribute('data-has-subcategories');
     element.removeAttribute('data-calculated');
+    
+    // Rendre modifiable
     element.contentEditable = 'true';
+    
+    // Appliquer des styles clairs pour indiquer que c'est modifiable
     element.style.backgroundColor = '';
     element.style.fontStyle = 'normal';
     element.style.cursor = 'text';
     element.style.border = '1px dashed #ccc';
+    element.style.pointerEvents = 'auto';
     
     // Supprimer l'indicateur automatique s'il existe
+    if (element.textContent.includes('🔄')) {
+        element.textContent = element.textContent.replace(' 🔄', '');
+    }
+    
+    // Supprimer l'indicateur automatique s'il existe en tant qu'élément
     const indicator = element.querySelector('.auto-indicator');
     if (indicator) {
         indicator.remove();
