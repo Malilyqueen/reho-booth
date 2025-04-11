@@ -140,47 +140,60 @@ const ProjectCore = (function() {
      * @returns {Object|null} Le projet mis à jour ou null en cas d'erreur
      */
     function updateProject(projectId, updatedData) {
+        console.log('🔄 MISE À JOUR DU PROJET', projectId);
+        console.log('Données reçues:', updatedData);
+        
         if (!projectId || !updatedData) {
-            console.error('ID de projet ou données de mise à jour manquants');
+            console.error('⚠️ ID ou données du projet manquants');
             return null;
         }
         
-        // Récupérer tous les projets
-        const projects = getAllProjects();
-        
-        // Trouver l'index du projet à mettre à jour
-        const projectIndex = projects.findIndex(project => project.id === projectId);
-        
-        if (projectIndex === -1) {
-            console.error('Projet non trouvé:', projectId);
-            return null;
-        }
-        
-        // Conserver l'ID et la date de création originaux
-        const originalId = projects[projectIndex].id;
-        const originalCreatedAt = projects[projectIndex].createdAt;
-        
-        // Mettre à jour le projet
-        const updatedProject = {
-            ...updatedData,
-            id: originalId,
-            createdAt: originalCreatedAt
-        };
-        
-        // Valider et corriger la structure si nécessaire
-        if (!validateProjectStructure(updatedProject)) {
-            updatedProject = fixProjectStructure(updatedProject);
-        }
-        
-        // Mettre à jour le projet dans le tableau
-        projects[projectIndex] = updatedProject;
-        
-        // Sauvegarder tous les projets
-        if (saveAllProjects(projects)) {
-            console.log('Projet mis à jour avec succès:', updatedProject.projectName);
+        try {
+            // Récupérer tous les projets
+            const projects = getAllProjects();
+            console.log('Projets existants trouvés:', projects.length);
+            
+            // Trouver l'index du projet à mettre à jour
+            const projectIndex = projects.findIndex(project => project.id === projectId);
+            console.log('Index du projet à mettre à jour:', projectIndex);
+            
+            if (projectIndex === -1) {
+                console.error('⚠️ Projet non trouvé:', projectId);
+                return null;
+            }
+            
+            // Récupérer l'ancien projet
+            const oldProject = projects[projectIndex];
+            console.log('Projet original:', oldProject.projectName);
+            
+            // IMPORTANT: On utilise les données d'origine comme base et on les met à jour
+            // au lieu de partir des nouvelles données et de rajouter l'ID et createdAt
+            const updatedProject = {
+                ...oldProject,           // D'abord toutes les données existantes
+                projectName: updatedData.projectName || oldProject.projectName,
+                projectDate: updatedData.projectDate || oldProject.projectDate,
+                projectEndDate: updatedData.projectEndDate || oldProject.projectEndDate,
+                totalBudget: updatedData.totalBudget || oldProject.totalBudget,
+                template: updatedData.template || oldProject.template,
+                projectStatus: updatedData.projectStatus || oldProject.projectStatus,
+                categories: updatedData.categories || oldProject.categories,
+                // Pas besoin de forcer l'ID et createdAt puisqu'ils sont déjà dans oldProject
+            };
+            
+            console.log('⭐ Projet après mise à jour:', updatedProject.projectName);
+            
+            // Mettre à jour la liste des projets avec ce projet spécifique
+            projects[projectIndex] = updatedProject;
+            
+            // Sauvegarder les projets avec un message indiquant que c'est une mise à jour
+            console.log('Mise à jour du projet existant avec ID:', projectId);
+            localStorage.setItem('mapocket_projects', JSON.stringify(projects));
+            console.log('Projet sauvegardé avec succès. Total projets:', projects.length);
+            
+            // Retourner le projet mis à jour
             return updatedProject;
-        } else {
-            console.error('Erreur lors de la mise à jour du projet');
+        } catch (error) {
+            console.error('❌ Erreur lors de la mise à jour du projet:', error);
             return null;
         }
     }
@@ -1118,8 +1131,10 @@ const ProjectCore = (function() {
                 
                 // Collecter les données du formulaire
                 const formData = collectFormData();
+                console.log('🔍 DONNÉES FORMULAIRE COLLECTÉES:', formData);
+                console.log('🔄 ID DU PROJET À METTRE À JOUR:', projectId);
                 
-                // Mettre à jour le projet
+                // Mettre à jour le projet en fournissant l'ID du projet existant
                 const updatedProject = updateProject(projectId, formData);
                 
                 if (updatedProject) {
