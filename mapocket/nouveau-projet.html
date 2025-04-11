@@ -164,6 +164,13 @@
                     <div class="template-selection">
                         <h3>Sélectionnez un modèle</h3>
                         
+                        <!-- Option pour partir de zéro -->
+                        <div class="scratch-option">
+                            <input type="checkbox" id="startFromScratch" name="startFromScratch">
+                            <label for="startFromScratch">Créer un budget entièrement personnalisé</label>
+                            <input type="hidden" id="template" name="template" value="Anniversaire">
+                        </div>
+                        
                         <div class="template-accordion">
                             <!-- Catégorie: Vie personnelle -->
                             <div class="accordion-item">
@@ -259,10 +266,8 @@
                                 <div class="accordion-content" id="personnalise-content">
                                     <div class="template-options">
                                         <div class="template-option" data-template="Personnalisé">Personnalisé</div>
-                                        <div class="template-option start-from-scratch-container" data-template="Empty">
+                                        <div class="template-option" data-template="Empty">
                                             <span>Partir de zéro</span>
-                                            <input type="checkbox" id="startFromScratch" class="start-from-scratch-option">
-                                            <label for="startFromScratch">Créer un budget entièrement personnalisé</label>
                                         </div>
                                     </div>
                                 </div>
@@ -377,6 +382,7 @@
     <script src="js/projectData.js"></script>
     <script src="js/budgetCalculator.js"></script>
     <script src="js/formManager.js"></script>
+    <script src="js/project-form-handler.js"></script>
     
     <!-- Système simplifié et robuste pour le chargement et le calcul des projets -->
     <script src="js/updateTemplateCategoriesUI.js"></script>
