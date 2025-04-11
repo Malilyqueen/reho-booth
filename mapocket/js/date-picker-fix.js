@@ -1,72 +1,76 @@
-// Solution robuste pour les problèmes de datepicker dans tous les navigateurs
+// Solution légère pour améliorer les sélecteurs de date sans interférer avec l'existant
 document.addEventListener('DOMContentLoaded', function() {
-    // S'assurer que flatpickr est chargé
-    if (typeof flatpickr === 'undefined') {
-        console.error("Flatpickr n'est pas chargé, chargement dynamique...");
-        
-        // Créer un lien pour charger le CSS de flatpickr
-        const flatpickrCss = document.createElement('link');
-        flatpickrCss.rel = 'stylesheet';
-        flatpickrCss.href = 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css';
-        document.head.appendChild(flatpickrCss);
-        
-        // Créer un script pour charger flatpickr
-        const flatpickrScript = document.createElement('script');
-        flatpickrScript.src = 'https://cdn.jsdelivr.net/npm/flatpickr';
-        flatpickrScript.onload = initializeDatePickers;
-        document.head.appendChild(flatpickrScript);
-        
-        // Créer un script pour charger la localisation française
-        const flatpickrLocaleScript = document.createElement('script');
-        flatpickrLocaleScript.src = 'https://npmcdn.com/flatpickr/dist/l10n/fr.js';
-        document.head.appendChild(flatpickrLocaleScript);
+    // Vérifier que le document est prêt et que flatpickr est disponible
+    if (typeof flatpickr !== 'undefined') {
+        console.log("Flatpickr disponible, initialisation des calendriers...");
+        initializeDatePickers();
     } else {
-        // Initialiser les datepickers
-        setTimeout(initializeDatePickers, 500);
+        console.log("Flatpickr sera initialisé lors de son chargement");
+        // Surveiller le chargement de flatpickr
+        let checkCounter = 0;
+        const checkInterval = setInterval(function() {
+            if (typeof flatpickr !== 'undefined') {
+                clearInterval(checkInterval);
+                initializeDatePickers();
+            } else if (checkCounter > 10) {
+                clearInterval(checkInterval);
+                console.warn("Flatpickr n'a pas pu être chargé, utilisation du sélecteur de date natif");
+            }
+            checkCounter++;
+        }, 500);
     }
 });
 
-// Fonction pour initialiser les datepickers
+// Fonction pour initialiser les sélecteurs de date de manière non intrusive
 function initializeDatePickers() {
-    console.log("Initialisation des pickers de date...");
+    console.log("Initialisation des sélecteurs de date...");
     
-    // Configuration simple pour les datepickers
+    // Configuration minimale pour les sélecteurs de date
     const config = {
         dateFormat: "d/m/Y",
-        altInput: true,
-        altFormat: "d/m/Y",
         allowInput: true,
         locale: "fr",
-        disableMobile: true,
-        monthSelectorType: "static"
+        time_24hr: true,
+        disableMobile: false // Permettre le sélecteur natif sur mobile
     };
     
-    // Sélectionner tous les champs de date et leur appliquer flatpickr
-    const dateInputs = document.querySelectorAll('input[type="text"][id$="Date"]');
-    dateInputs.forEach(input => {
-        if (input && !input._flatpickr) {
-            try {
-                const instance = flatpickr(input, config);
-                console.log(`Date picker initialisé pour ${input.id}`);
-                
-                // S'assurer que le champ a une valeur par défaut si vide
-                if (!input.value || input.value.trim() === '') {
-                    const today = new Date();
-                    instance.setDate(today);
+    // N'initialiser que les champs de date qui n'ont pas déjà un calendar natif fonctionnel
+    // Ceci est une solution de secours uniquement pour les navigateurs problématiques
+    if (navigator.userAgent.indexOf("Chrome") > -1) {
+        console.log("Chrome détecté, vérification des calendriers natifs...");
+        
+        const dateInputs = document.querySelectorAll('input[type="date"], input[type="text"][id$="Date"]');
+        dateInputs.forEach(input => {
+            // Ne pas réinitialiser les dates déjà définies
+            if (input && !input._flatpickr && input.type !== "date") {
+                try {
+                    // Transformation minimale pour ne pas perturber l'existant
+                    flatpickr(input, config);
+                    console.log(`Calendrier amélioré initialisé pour ${input.id || 'champ sans id'}`);
+                } catch (error) {
+                    console.warn(`Le calendrier natif sera utilisé pour ${input.id || 'champ sans id'}`);
                 }
-            } catch (error) {
-                console.error(`Erreur lors de l'initialisation du date picker pour ${input.id}:`, error);
             }
-        }
-    });
+        });
+    } else {
+        console.log("Navigateur non-Chrome, calendriers natifs conservés");
+    }
 }
 
-// Fonction pour réinitialiser un datepicker spécifique
+// Fonction pour définir une date spécifique dans un sélecteur
 function resetDatePicker(inputId, date) {
+    if (!inputId || !date) return;
+    
     const input = document.getElementById(inputId);
-    if (input && input._flatpickr) {
-        input._flatpickr.setDate(date);
-    } else if (input) {
+    if (!input) return;
+    
+    if (input._flatpickr) {
+        try {
+            input._flatpickr.setDate(date);
+        } catch (error) {
+            input.value = date;
+        }
+    } else {
         input.value = date;
     }
 }

@@ -1,84 +1,167 @@
-// Solution pour le calcul et l'affichage corrects du budget total
+// Utilitaire pour calculer les totaux de budget
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser l'observation des changements de montant
-    initializeBudgetTracking();
+    // Initialiser seulement si nous sommes sur une page avec un budget
+    if (document.getElementById('totalBudget') || document.querySelector('.expense-category')) {
+        console.log("Page de budget détectée, initialisation du calcul...");
+        setupBudgetCalculations();
+    }
 });
 
-// Fonction pour initialiser le suivi du budget
-function initializeBudgetTracking() {
-    // Observer les changements dans le budget total
-    const totalBudgetInput = document.getElementById('totalBudget');
-    if (totalBudgetInput) {
-        totalBudgetInput.addEventListener('change', calculateAndDisplayTotalBudget);
-        totalBudgetInput.addEventListener('input', calculateAndDisplayTotalBudget);
-        totalBudgetInput.addEventListener('blur', calculateAndDisplayTotalBudget);
-    }
+// Fonction pour configurer les calculs de budget en préservant l'édition
+function setupBudgetCalculations() {
+    // Mise en place des écouteurs d'événements pour les champs de montant
+    document.addEventListener('change', function(event) {
+        if (isAmountField(event.target) || 
+            event.target.classList.contains('expense-line-name') ||
+            event.target.classList.contains('subcategory-name') ||
+            event.target.classList.contains('category-name')) {
+            
+            // Déclencher un recalcul après modification d'une valeur
+            setTimeout(recalculateAllAmounts, 300);
+        }
+    });
     
-    // Observer les clics sur le document pour capturer les modifications de catégories
+    // Observer les modifications directement sur les champs modifiables
+    document.addEventListener('input', function(event) {
+        if (isAmountField(event.target)) {
+            // Mettre à jour les montants pendant la saisie
+            setTimeout(recalculateAllAmounts, 500);
+        }
+    });
+    
+    // Écouter les événements de clic sur les boutons d'ajout/suppression
     document.addEventListener('click', function(event) {
-        // Si nous cliquons sur un élément de montant ou un bouton d'ajout/suppression
-        if (event.target.classList.contains('expense-line-amount') ||
-            event.target.classList.contains('subcategory-amount') ||
-            event.target.classList.contains('category-amount') ||
-            event.target.classList.contains('add-subcategory-btn') ||
+        if (event.target.classList.contains('add-subcategory-btn') ||
             event.target.classList.contains('add-expense-line-btn') ||
+            event.target.classList.contains('add-category-btn') ||
             event.target.classList.contains('delete-category-btn') ||
             event.target.classList.contains('delete-subcategory-btn') ||
             event.target.classList.contains('delete-line-btn')) {
             
-            // Recalculer après un court délai
-            setTimeout(calculateAndDisplayTotalBudget, 300);
+            // Petit délai pour laisser le DOM se mettre à jour
+            setTimeout(recalculateAllAmounts, 300);
         }
     });
     
-    // Calculer le total initial
-    setTimeout(calculateAndDisplayTotalBudget, 500);
+    // Calculer les totaux au chargement de la page
+    setTimeout(recalculateAllAmounts, 800);
+}
+
+// Vérifier si un élément est un champ de montant
+function isAmountField(element) {
+    return element && (
+        element.classList.contains('expense-line-amount') ||
+        element.classList.contains('subcategory-amount') ||
+        element.classList.contains('category-amount') ||
+        element.id === 'totalBudget'
+    );
+}
+
+// Fonction principale pour recalculer tous les montants
+function recalculateAllAmounts() {
+    console.log("Recalcul des montants...");
+    
+    // Récupérer le symbole de devise
+    const currencySymbol = getCurrencySymbol();
+    
+    // 1. Recalculer les montants de sous-catégories à partir des lignes
+    document.querySelectorAll('.subcategory').forEach(subcategory => {
+        const lines = subcategory.querySelectorAll('.expense-line');
+        let subcategoryTotal = 0;
+        
+        lines.forEach(line => {
+            const amountInput = line.querySelector('.expense-line-amount');
+            if (amountInput) {
+                const amount = parseMonetaryValue(amountInput.value);
+                subcategoryTotal += amount;
+            }
+        });
+        
+        // Mettre à jour le montant de la sous-catégorie (sans écraser la valeur si en cours d'édition)
+        const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
+        if (subcategoryAmount && !subcategoryAmount.matches(':focus')) {
+            subcategoryAmount.textContent = formatMoney(subcategoryTotal, currencySymbol);
+        }
+    });
+    
+    // 2. Recalculer les montants de catégories à partir des sous-catégories
+    document.querySelectorAll('.expense-category').forEach(category => {
+        const subcategories = category.querySelectorAll('.subcategory');
+        let categoryTotal = 0;
+        
+        subcategories.forEach(subcategory => {
+            const amountElement = subcategory.querySelector('.subcategory-amount');
+            if (amountElement) {
+                const amount = parseMonetaryValue(amountElement.textContent);
+                categoryTotal += amount;
+            }
+        });
+        
+        // Mettre à jour le montant de la catégorie (sans écraser la valeur si en cours d'édition)
+        const categoryAmount = category.querySelector('.category-amount');
+        if (categoryAmount && !categoryAmount.matches(':focus')) {
+            categoryAmount.textContent = formatMoney(categoryTotal, currencySymbol);
+        }
+    });
+    
+    // 3. Recalculer le budget total à partir des catégories
+    calculateAndDisplayTotalBudget();
 }
 
 // Fonction pour calculer et afficher le budget total
 function calculateAndDisplayTotalBudget() {
-    console.log("Calcul et affichage du budget total");
-    
     try {
-        // Trouver l'élément qui affiche le total du budget
-        const totalBudgetDisplay = document.querySelector('.total-budget-amount');
-        if (!totalBudgetDisplay) {
-            console.warn("Élément d'affichage du total du budget non trouvé");
-            return;
-        }
-        
-        // Obtenir le symbole de devise actuel
-        let currencySymbol = getCurrencySymbol();
+        // Obtenir le symbole de devise
+        const currencySymbol = getCurrencySymbol();
         
         // Calculer le total à partir des catégories
         let total = 0;
         const categoryAmounts = document.querySelectorAll('.category-amount');
         categoryAmounts.forEach(element => {
-            const amountText = element.textContent;
-            if (amountText) {
-                // Extraire la partie numérique
-                const match = amountText.match(/[\d.,]+/);
-                if (match) {
-                    // Remplacer les virgules par des points pour la conversion
-                    const amountValue = parseFloat(match[0].replace(',', '.')) || 0;
-                    total += amountValue;
-                }
-            }
+            const amount = parseMonetaryValue(element.textContent);
+            total += amount;
         });
         
-        // Mettre à jour l'affichage du total
-        totalBudgetDisplay.textContent = `${currencySymbol} ${total.toFixed(2).replace('.', ',')}`;
+        // Mettre à jour l'affichage du total si présent
+        const totalBudgetDisplay = document.querySelector('.total-budget-amount');
+        if (totalBudgetDisplay) {
+            totalBudgetDisplay.textContent = formatMoney(total, currencySymbol);
+        }
         
-        // Mettre à jour également le champ d'entrée du budget total si présent
+        // Mettre à jour le champ de saisie s'il n'est pas en cours d'édition
         const totalBudgetInput = document.getElementById('totalBudget');
-        if (totalBudgetInput) {
-            totalBudgetInput.value = `${currencySymbol} ${total.toFixed(2).replace('.', ',')}`;
+        if (totalBudgetInput && !totalBudgetInput.matches(':focus')) {
+            // Préserver la valeur que l'utilisateur est en train de saisir
+            totalBudgetInput.value = formatMoney(total, currencySymbol);
         }
         
         console.log("Budget total calculé:", total);
     } catch (error) {
         console.error("Erreur lors du calcul du budget total:", error);
     }
+}
+
+// Fonction pour analyser une valeur monétaire
+function parseMonetaryValue(value) {
+    if (!value) return 0;
+    
+    try {
+        // Extraire uniquement les chiffres et le séparateur décimal
+        const numericValue = value.toString().replace(/[^0-9,\.]/g, '');
+        
+        // Gérer les formats européens (virgule comme séparateur décimal)
+        const normalizedValue = numericValue.replace(',', '.');
+        
+        return parseFloat(normalizedValue) || 0;
+    } catch (error) {
+        console.error("Erreur lors de l'analyse de la valeur monétaire:", value, error);
+        return 0;
+    }
+}
+
+// Fonction pour formater un montant monétaire
+function formatMoney(amount, currencySymbol = '€') {
+    return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
 }
 
 // Fonction pour obtenir le symbole de devise actuel
@@ -93,7 +176,19 @@ function getCurrencySymbol() {
             }
         }
         
-        // Sinon, essayer de récupérer depuis les préférences utilisateur
+        // Vérifier si des champs de montant existent déjà avec un symbole
+        const amountElements = document.querySelectorAll('.category-amount, .subcategory-amount');
+        for (let i = 0; i < amountElements.length; i++) {
+            const text = amountElements[i].textContent;
+            if (text) {
+                const match = text.match(/^([^\d]+)/);
+                if (match && match[1]) {
+                    return match[1].trim();
+                }
+            }
+        }
+        
+        // Sinon, récupérer depuis les préférences utilisateur
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
         if (preferences.currency) {
             if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -103,7 +198,7 @@ function getCurrencySymbol() {
                 }
             }
             
-            // Correspondances de base pour les devises courantes
+            // Correspondances pour les devises courantes
             const symbols = {
                 'EUR': '€',
                 'USD': '$',
