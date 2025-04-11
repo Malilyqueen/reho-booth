@@ -176,15 +176,37 @@ function updateTotals() {
                 return;
             }
             
-            // LOGIQUE PRÉCISE: Si des lignes existent, calculer automatiquement et rendre le champ non modifiable
+            // LOGIQUE PRÉCISE: 
+            // Si des lignes existent ET qu'il s'agit de vraies lignes avec du contenu (pas vides),
+            // alors calculer automatiquement et rendre le champ non modifiable
+            let hasRealLines = false;
+            let validLines = [];
+            
+            // Vérifier si nous avons des lignes réelles (pas vides ou par défaut)
             if (lines.length > 0) {
-                let total = 0;
                 lines.forEach(line => {
-                    const lineAmountEl = line.querySelector('.expense-line-amount');
-                    if (lineAmountEl) {
-                        const amount = parseAmount(lineAmountEl.textContent || lineAmountEl.value || '0');
-                        total += amount;
+                    const nameEl = line.querySelector('.expense-line-name');
+                    const amountLineEl = line.querySelector('.expense-line-amount');
+                    
+                    // Une ligne est considérée comme réelle si elle a un nom et un montant non vides
+                    if (nameEl && amountLineEl) {
+                        const name = nameEl.textContent.trim();
+                        const amount = parseAmount(amountLineEl.textContent || amountLineEl.value || '0');
+                        
+                        // Vérifier que le nom existe et n'est pas par défaut, et que le montant n'est pas 0
+                        if (name && name !== '' && name !== 'Ligne' && name !== 'default' && amount > 0) {
+                            hasRealLines = true;
+                            validLines.push({name, amount});
+                        }
                     }
+                });
+            }
+            
+            // Si nous avons de vraies lignes avec du contenu, calculer automatiquement
+            if (hasRealLines && validLines.length > 0) {
+                let total = 0;
+                validLines.forEach(line => {
+                    total += line.amount;
                 });
                 
                 // Mise à jour du montant de la sous-catégorie (en lecture seule)
@@ -213,7 +235,7 @@ function updateTotals() {
                     amountEl.appendChild(indicator);
                 }
             } 
-            // LOGIQUE PRÉCISE: Si AUCUNE ligne n'existe, laisser l'utilisateur saisir librement
+            // LOGIQUE PRÉCISE: Si AUCUNE ligne réelle n'existe, laisser l'utilisateur saisir librement
             else {
                 amountEl.removeAttribute('data-has-lines');
                 amountEl.removeAttribute('data-calculated');
@@ -244,15 +266,36 @@ function updateTotals() {
                 return;
             }
             
-            // LOGIQUE PRÉCISE: Si des sous-catégories existent, calculer automatiquement et rendre non modifiable
+            // LOGIQUE PRÉCISE: Si des sous-catégories existent ET ont des montants valides,
+            // alors on calcule automatiquement
+            let hasRealSubcategories = false;
+            let validSubcats = [];
+            
+            // Vérifier si nous avons des sous-catégories réelles (pas vides)
             if (subcategories.length > 0) {
-                let total = 0;
                 subcategories.forEach(subcategory => {
+                    const nameEl = subcategory.querySelector('.subcategory-name');
                     const subcatAmountEl = subcategory.querySelector('.subcategory-amount');
-                    if (subcatAmountEl) {
-                        const amount = parseAmount(subcatAmountEl.textContent || '0');
-                        total += amount;
+                    
+                    if (nameEl && subcatAmountEl) {
+                        const name = nameEl.textContent.trim();
+                        const amount = parseAmount(subcatAmountEl.textContent || subcatAmountEl.value || '0');
+                        
+                        // Une sous-catégorie est considérée comme réelle si elle a un nom non vide 
+                        // et un montant non nul
+                        if (name && name !== '' && amount > 0) {
+                            hasRealSubcategories = true;
+                            validSubcats.push({name, amount});
+                        }
                     }
+                });
+            }
+            
+            // Si nous avons de vraies sous-catégories, calculer automatiquement
+            if (hasRealSubcategories && validSubcats.length > 0) {
+                let total = 0;
+                validSubcats.forEach(subcat => {
+                    total += subcat.amount;
                 });
                 
                 // Mise à jour du montant de la catégorie (en lecture seule)
@@ -281,7 +324,8 @@ function updateTotals() {
                     amountEl.appendChild(indicator);
                 }
             } 
-            // LOGIQUE PRÉCISE: Si AUCUNE sous-catégorie n'existe, laisser l'utilisateur saisir librement
+            // LOGIQUE PRÉCISE: Si AUCUNE sous-catégorie réelle n'existe, 
+            // laisser l'utilisateur saisir librement
             else {
                 amountEl.removeAttribute('data-has-subcategories');
                 amountEl.removeAttribute('data-calculated');
