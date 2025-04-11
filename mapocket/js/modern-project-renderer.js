@@ -27,15 +27,33 @@ function initializeInterface() {
         const projectId = urlParams.get('id');
 
         if (!projectId) {
-            showNotification("Aucun ID de projet spécifié", "error");
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
-            return;
+            // Si pas d'ID dans l'URL, essayer de récupérer le dernier projet actif depuis localStorage
+            const lastActiveProject = localStorage.getItem('lastActiveProject');
+            
+            if (lastActiveProject) {
+                // Si un projet actif est trouvé, l'utiliser
+                console.log("Pas d'ID dans l'URL, utilisation du dernier projet actif:", lastActiveProject);
+                loadProjectData(lastActiveProject);
+                
+                // Mettre à jour l'URL avec l'ID du projet pour les prochaines visites
+                const newUrl = window.location.pathname + '?id=' + encodeURIComponent(lastActiveProject);
+                window.history.pushState({ path: newUrl }, '', newUrl);
+            } else {
+                // Si aucun projet actif n'est trouvé, afficher un message et rediriger
+                showNotification("Aucun projet actif trouvé", "error");
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 5000); // Augmentation du délai à 5 secondes pour laisser le temps de lire le message
+                return;
+            }
+        } else {
+            // Si un ID est spécifié dans l'URL, l'utiliser
+            console.log("ID de projet trouvé dans l'URL:", projectId);
+            loadProjectData(projectId);
+            
+            // Sauvegarder cet ID comme dernier projet actif
+            localStorage.setItem('lastActiveProject', projectId);
         }
-
-        // Récupérer les données du projet
-        loadProjectData(projectId);
 
         // Initialiser les écouteurs d'événements
         initializeEventListeners();

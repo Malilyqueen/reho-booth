@@ -1308,9 +1308,12 @@
             saveProjectChanges();
           }
           
-          // Rediriger vers l'interface moderne
+          // Sauvegarder l'ID du projet actif
+          localStorage.setItem('lastActiveProject', currentProject.id);
+          
+          // Rediriger vers l'interface moderne avec l'ID du projet
           localStorage.setItem('useModernInterface', 'true');
-          window.location.href = 'projet-vue-modern.html';
+          window.location.href = 'projet-vue-modern.html?id=' + currentProject.id;
         }
       });
     });
