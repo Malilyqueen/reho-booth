@@ -317,6 +317,128 @@ function loadProjectDetails(projectId) {
     console.log('Projet chargé:', project.projectName);
 }
 
+// Fonction pour charger les dépenses réelles d'un projet
+function loadRealExpenses(projectId) {
+    console.log('Chargement des dépenses réelles pour le projet:', projectId);
+    
+    // Récupérer le conteneur des dépenses
+    const expensesContainer = document.getElementById('real-expenses-container');
+    if (!expensesContainer) {
+        console.warn('Conteneur de dépenses réelles non trouvé');
+        return;
+    }
+    
+    // Vider le conteneur
+    expensesContainer.innerHTML = '';
+    
+    // Récupérer les dépenses du projet
+    try {
+        // Récupérer les dépenses depuis localStorage
+        const projectExpensesData = localStorage.getItem(`project_${projectId}_expenses`);
+        
+        if (!projectExpensesData) {
+            expensesContainer.innerHTML = '<p class="empty-message">Aucune dépense enregistrée pour ce projet.</p>';
+            return;
+        }
+        
+        const expenses = JSON.parse(projectExpensesData);
+        
+        if (!Array.isArray(expenses) || expenses.length === 0) {
+            expensesContainer.innerHTML = '<p class="empty-message">Aucune dépense enregistrée pour ce projet.</p>';
+            return;
+        }
+        
+        // Récupérer les préférences utilisateur pour le format de devise
+        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        const currency = userPreferences.currency || 'EUR';
+        let currencySymbol = '€';
+        
+        // Si AVAILABLE_CURRENCIES est défini, utiliser le symbole correspondant
+        if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
+            const currencyObj = AVAILABLE_CURRENCIES.find(c => c.code === currency);
+            if (currencyObj) {
+                currencySymbol = currencyObj.symbol;
+            }
+        }
+        
+        // Créer un tableau pour afficher les dépenses
+        const table = document.createElement('table');
+        table.className = 'expense-table';
+        
+        // Créer l'entête du tableau
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Date</th>
+                <th>Catégorie</th>
+                <th>Description</th>
+                <th>Montant</th>
+                <th>Actions</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        
+        // Créer le corps du tableau
+        const tbody = document.createElement('tbody');
+        
+        // Ajouter chaque dépense au tableau
+        expenses.forEach((expense, index) => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', expense.id);
+            
+            // Formater la date
+            let formattedDate = 'Non définie';
+            if (expense.date) {
+                try {
+                    const expenseDate = new Date(expense.date);
+                    formattedDate = expenseDate.toLocaleDateString('fr-FR');
+                } catch (e) {
+                    console.error('Erreur de formatage de date pour la dépense:', e);
+                    formattedDate = expense.date;
+                }
+            }
+            
+            // Créer les cellules
+            row.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${expense.category || 'Non catégorisé'}</td>
+                <td>${expense.description || 'Sans description'}</td>
+                <td class="amount">${currencySymbol} ${parseFloat(expense.amount).toFixed(2)}</td>
+                <td class="actions">
+                    <button type="button" class="btn-edit-expense" title="Modifier"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn-delete-expense" title="Supprimer"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            
+            // Ajouter la ligne au tableau
+            tbody.appendChild(row);
+            
+            // Ajouter les gestionnaires d'événements pour les boutons
+            const editBtn = row.querySelector('.btn-edit-expense');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    editRealExpense(expense.id);
+                });
+            }
+            
+            const deleteBtn = row.querySelector('.btn-delete-expense');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteRealExpense(expense.id);
+                });
+            }
+        });
+        
+        table.appendChild(tbody);
+        expensesContainer.appendChild(table);
+        
+        console.log('Dépenses réelles chargées:', expenses.length);
+    } catch (error) {
+        console.error('Erreur lors du chargement des dépenses réelles:', error);
+        expensesContainer.innerHTML = '<p class="error-message">Une erreur est survenue lors du chargement des dépenses.</p>';
+    }
+}
+
 // Fonction pour mettre à jour l'interface avec les données du projet
 function updateProjectUI(project) {
     // Titre et type
