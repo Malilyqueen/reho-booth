@@ -337,6 +337,12 @@ input[type="date"]:focus {
     display: none;
 }
 
+/* Style pour les titres par défaut des sous-catégories */
+.subcategory-name.default-title {
+    color: #6c757d;
+    font-style: italic;
+}
+
 /* Responsive design pour petit écran */
 @media (max-width: 768px) {
     .expense-line {

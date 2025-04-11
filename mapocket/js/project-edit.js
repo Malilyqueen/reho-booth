@@ -630,7 +630,26 @@ function createSubcategoryElement(subcategory) {
     
     const subcategoryName = document.createElement('h4');
     subcategoryName.className = 'subcategory-name editable-field';
-    subcategoryName.textContent = subcategory.name;
+    
+    // Si le nom de sous-catégorie est vide, ajouter un titre par défaut modifiable
+    if (!subcategory.name || subcategory.name.trim() === '') {
+        // Obtenir le nom de la catégorie parente pour suggérer un titre pertinent
+        const parentCategory = subcategoryElement.closest('.expense-category');
+        let categoryName = '';
+        if (parentCategory) {
+            const categoryNameElement = parentCategory.querySelector('.category-name');
+            if (categoryNameElement) {
+                categoryName = categoryNameElement.textContent;
+            }
+        }
+        
+        // Définir un titre par défaut modifiable basé sur la catégorie parente
+        subcategoryName.textContent = 'Nouvelle sous-catégorie';
+        subcategoryName.classList.add('default-title');
+    } else {
+        subcategoryName.textContent = subcategory.name;
+    }
+    
     subcategoryName.setAttribute('data-original-value', subcategory.name);
     // Ajouter le gestionnaire d'événement pour l'édition
     subcategoryName.addEventListener('click', function() {
