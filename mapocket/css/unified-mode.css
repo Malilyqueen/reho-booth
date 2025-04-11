@@ -1,97 +1,214 @@
-/* Styles pour le mode unifié - vue avec édition directe */
-
-.unified-mode .info-bar.unified-mode-info {
-    background-color: #e3f2fd;
-    border-left: 4px solid #1976d2;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    color: #0d47a1;
-    font-size: 14px;
-}
-
-.unified-mode .info-bar.unified-mode-info i {
-    margin-right: 8px;
-}
-
-.unified-mode .expense-line-name,
-.unified-mode .expense-line-amount {
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-}
-
-.unified-mode .expense-line-name:focus,
-.unified-mode .expense-line-amount:focus {
-    background-color: #fff;
-    border: 1px solid #4caf50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.25);
-}
-
-.unified-mode .expense-line-name.editable,
-.unified-mode .expense-line-amount.editable {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.unified-mode .expense-line-name.editable:hover,
-.unified-mode .expense-line-amount.editable:hover {
-    background-color: #f5f5f5;
-    border-color: #bdbdbd;
-}
-
-.unified-mode .btn-delete-line {
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-}
-
-.unified-mode .expense-line:hover .btn-delete-line {
-    opacity: 1;
-}
-
-.unified-mode .save-notification {
-    background-color: #e8f5e9;
-    border-radius: 4px;
-    padding: 8px 12px;
-    margin-top: 15px;
-}
-
-.unified-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    width: 100%;
-}
-
-.unified-controls .btn {
-    flex: 1;
-    margin: 0 8px;
-}
-
-.unified-controls .btn:first-child {
-    margin-left: 0;
-}
-
-.unified-controls .btn:last-child {
-    margin-right: 0;
-}
-
-.unified-controls .btn-primary {
-    background-color: #4caf50;
-}
-
-.unified-controls .btn-secondary {
-    background-color: #f5f5f5;
+/* Styles communs */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f7fa;
     color: #333;
 }
 
-/* Mode mobile */
+/* Style pour l'interface classique */
+body:not(.modern-interface) {
+    background-color: #f5f7fa;
+}
+
+/* Style pour l'interface moderne */
+body.modern-interface {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f4f5f7 0%, #eaecee 100%);
+    min-height: 100vh;
+}
+
+/* Style pour les onglets */
+.tab-btn, .modern-tab-btn {
+    cursor: pointer;
+    position: relative;
+}
+
+.tab-btn.active-tab, .modern-tab-btn.active-tab {
+    color: #4F46E5;
+    border-bottom: 2px solid #4F46E5;
+    font-weight: 500;
+}
+
+.tab-content, .modern-tab-content {
+    display: none;
+}
+
+.tab-content.active, .modern-tab-content.active {
+    display: block;
+}
+
+/* Style pour les cartes dans l'interface moderne */
+.modern-interface .card {
+    background-color: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+/* Style pour les boutons de l'interface moderne */
+.modern-interface button {
+    transition: all 0.2s ease;
+}
+
+.modern-interface button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour les notifications */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+}
+
+.notification.success {
+    background-color: #10B981;
+}
+
+.notification.error {
+    background-color: #EF4444;
+}
+
+.notification.warning {
+    background-color: #F59E0B;
+}
+
+.notification.info {
+    background-color: #3B82F6;
+}
+
+.notification.visible {
+    opacity: 1;
+}
+
+/* Style pour les modales */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #9CA3AF;
+}
+
+.close-modal:hover {
+    color: #1F2937;
+}
+
+/* Style pour les formulaires */
+input, select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Style pour les boutons flottants */
+.float-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    padding: 15px;
+    background-color: #4F46E5;
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.float-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour la barre de progression */
+.progressBar-bg {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #E5E7EB;
+    overflow: hidden;
+}
+
+.progressBar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Couleurs pour la barre de progression */
+.progressBar-fill.green {
+    background-color: #10B981;
+}
+
+.progressBar-fill.yellow {
+    background-color: #F59E0B;
+}
+
+.progressBar-fill.red {
+    background-color: #EF4444;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .unified-controls {
+    .max-w-7xl, .max-w-5xl {
+        width: 100%;
+        padding: 0 15px;
+    }
+    
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .flex-col-mobile {
         flex-direction: column;
     }
     
-    .unified-controls .btn {
-        margin: 5px 0;
+    .gap-4-mobile {
+        gap: 1rem;
     }
 }

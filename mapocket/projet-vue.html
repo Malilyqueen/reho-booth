@@ -6,10 +6,16 @@
     <title>Vue Projet - MaPocket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-mode.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+        }
+        /* Style pour l'interface moderne qui utilise Inter */
+        body.modern-interface {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f5f7 0%, #eaecee 100%);
         }
         .modal {
             display: none;
@@ -319,17 +325,441 @@
     <script src="js/project-detail.js"></script>
     <script src="js/editable-project.js"></script>
     <script src="js/inline-edit-project.js"></script>
+    
+    <!-- CONTENEUR INTERFACE MODERNE -->
+    <div id="modern-interface-container" class="hidden">
+        <div class="max-w-5xl mx-auto p-6">
+            <!-- HEADER -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h1 id="modern-projectTitle" class="text-3xl font-bold text-gray-900">Chargement...</h1>
+                    <p class="text-sm text-gray-500 mt-1"><span id="modern-projectType">-</span> • <span class="font-medium">Budget initial : <span id="modern-initialBudget">-</span></span></p>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button class="modern-btn-edit-project bg-blue-600 text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition-colors"><i class="fas fa-edit mr-2"></i>Modifier</button>
+                    <button id="modern-completeProjectBtn" class="bg-green-500 text-white px-4 py-2 rounded-full shadow hover:bg-green-600 transition-colors"><i class="fas fa-check mr-2"></i>Terminer</button>
+                    <button id="modern-archiveProjectBtn" class="bg-gray-400 text-white px-4 py-2 rounded-full shadow hover:bg-gray-500 transition-colors"><i class="fas fa-archive mr-2"></i>Archiver</button>
+                    <button id="modern-switchInterfaceBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-full shadow hover:bg-indigo-600 transition-colors"><i class="fas fa-exchange-alt mr-2"></i>Interface classique</button>
+                </div>
+            </div>
+
+            <!-- BUDGET STATUS -->
+            <div class="card mb-6 bg-white p-6 rounded-2xl shadow-md">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i>Date</p>
+                        <p id="modern-projectDate" class="font-semibold text-sm">--/--/----</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400"><i class="fas fa-wallet mr-1"></i>Budget initial</p>
+                        <p id="modern-initialBudgetCard" class="font-semibold text-sm">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400"><i class="fas fa-chart-line mr-1"></i>Utilisé</p>
+                        <p id="modern-usedBudget" class="font-semibold text-sm">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400"><i class="fas fa-exchange-alt mr-1"></i>Écart</p>
+                        <p id="modern-budgetGap" class="font-semibold text-green-600 text-sm">-</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>Progression</span>
+                        <span id="modern-budgetPercentage">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="modern-progressBar" class="bg-green-500 rounded-full h-2" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <span id="modern-projectStatus" class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">En cours</span>
+                </div>
+            </div>
+            
+            <!-- ONGLETS -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <button class="modern-tab-btn active-tab px-4 py-2 border-b-2 border-blue-500 font-medium text-blue-600" data-tab="budget">Postes de dépenses</button>
+                <button class="modern-tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="real-tracking">Dépenses réelles</button>
+                <button class="modern-tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="attachments">Justificatifs</button>
+                <button class="modern-tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="comments">Commentaires</button>
+            </div>
+
+            <!-- CONTENU DES ONGLETS -->
+            <div class="modern-tab-content active" id="modern-budget-tab">
+                <!-- POSTES DE DÉPENSES -->
+                <div id="modern-categoryList" class="space-y-6">
+                    <!-- Les catégories seront générées ici dynamiquement -->
+                    <p class="text-center py-8 text-gray-500">Chargement des catégories...</p>
+                </div>
+            </div>
+
+            <div class="modern-tab-content" id="modern-real-tracking-tab">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Dépenses réelles</h3>
+                    <button id="modern-btnAddRealExpense" class="modern-btn-add-real-expense bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Ajouter une dépense
+                    </button>
+                </div>
+                <div id="modern-real-expenses-container" class="space-y-4">
+                    <!-- Les dépenses seront générées ici dynamiquement -->
+                    <p class="text-center py-8 text-gray-500">Aucune dépense réelle enregistrée</p>
+                </div>
+            </div>
+
+            <div class="modern-tab-content" id="modern-attachments-tab">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Justificatifs</h3>
+                    <button id="modern-btnAddAttachment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Ajouter un justificatif
+                    </button>
+                </div>
+                <div id="modern-attachments-container" class="space-y-4">
+                    <!-- Les pièces jointes seront générées ici dynamiquement -->
+                    <p class="text-center py-8 text-gray-500">Aucun justificatif enregistré</p>
+                </div>
+            </div>
+
+            <div class="modern-tab-content" id="modern-comments-tab">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Commentaires</h3>
+                    <button id="modern-btnAddComment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Ajouter un commentaire
+                    </button>
+                </div>
+                <div id="modern-comments-container" class="space-y-4">
+                    <!-- Les commentaires seront générées ici dynamiquement -->
+                    <p class="text-center py-8 text-gray-500">Aucun commentaire enregistré</p>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="mt-16 text-center text-xs text-gray-400">
+                © 2025 MaPocket — Gestion budgétaire intuitive et élégante
+            </div>
+        </div>
+
+        <!-- TEMPLATE POUR UNE CATÉGORIE - MODERNE -->
+        <template id="modern-category-template">
+            <div class="category card bg-white p-6 rounded-2xl shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 category-title flex items-center">
+                        <span class="category-emoji mr-2"></span>
+                        <span class="category-name"></span>
+                    </h2>
+                    <span class="text-sm font-medium text-gray-500">Total : <span class="category-amount"></span></span>
+                </div>
+                <div class="subcategories-container space-y-4">
+                    <!-- Sous-catégories générées ici -->
+                </div>
+            </div>
+        </template>
+
+        <!-- TEMPLATE POUR UNE SOUS-CATÉGORIE - MODERNE -->
+        <template id="modern-subcategory-template">
+            <div class="subcategory">
+                <div class="flex justify-between items-center text-sm">
+                    <h3 class="font-medium subcategory-title flex items-center">
+                        <span class="subcategory-emoji mr-2"></span>
+                        <span class="subcategory-name"></span>
+                    </h3>
+                    <span class="text-gray-500 subcategory-amount"></span>
+                </div>
+                <ul class="expense-lines ml-5 mt-2 text-sm text-gray-700 list-disc space-y-1">
+                    <!-- Lignes de dépenses générées ici -->
+                </ul>
+            </div>
+        </template>
+
+        <!-- TEMPLATE POUR UNE LIGNE DE DÉPENSE - MODERNE -->
+        <template id="modern-expense-line-template">
+            <li class="expense-line flex justify-between">
+                <span class="expense-name"></span>
+                <span class="expense-amount ml-4 text-gray-600"></span>
+            </li>
+        </template>
+    </div>
+
     <script>
-        // Bouton pour basculer vers l'interface simple
+        // Initialisation des variables globales pour contrôler l'interface
+        let isModernInterface = false;
+        const classicInterfaceContainer = document.querySelector('.max-w-7xl');
+        const modernInterfaceContainer = document.getElementById('modern-interface-container');
+        
+        // Fonction pour basculer entre les interfaces
+        function toggleInterface() {
+            isModernInterface = !isModernInterface;
+            
+            if (isModernInterface) {
+                // Passer à l'interface moderne
+                document.body.classList.add('modern-interface');
+                classicInterfaceContainer.classList.add('hidden');
+                modernInterfaceContainer.classList.remove('hidden');
+                localStorage.setItem('useModernInterface', 'true');
+                
+                // Charger les données dans l'interface moderne
+                initializeModernInterface();
+            } else {
+                // Passer à l'interface classique
+                document.body.classList.remove('modern-interface');
+                classicInterfaceContainer.classList.remove('hidden');
+                modernInterfaceContainer.classList.add('hidden');
+                localStorage.setItem('useModernInterface', 'false');
+                
+                // S'assurer que les données sont chargées dans l'interface classique
+                // (normalement déjà fait au chargement de la page)
+            }
+        }
+        
+        // Fonction pour initialiser l'interface moderne
+        function initializeModernInterface() {
+            // Cette fonction va réutiliser les données du projet déjà chargées
+            if (currentProject) {
+                // Prendre les données du projet courant et les afficher dans l'interface moderne
+                document.getElementById('modern-projectTitle').textContent = currentProject.projectName || "Projet sans nom";
+                document.getElementById('modern-projectType').textContent = currentProject.template || "Projet";
+                document.getElementById('modern-initialBudget').textContent = formatCurrency(currentProject.totalBudget || 0);
+                document.getElementById('modern-initialBudgetCard').textContent = formatCurrency(currentProject.totalBudget || 0);
+                document.getElementById('modern-projectDate').textContent = currentProject.projectDate || "--/--/----";
+                
+                // Calculer et afficher le budget utilisé
+                const usedBudget = calculateTotalUsedBudget();
+                document.getElementById('modern-usedBudget').textContent = formatCurrency(usedBudget);
+                
+                // Calculer et afficher l'écart budgétaire
+                const budgetGap = (parseFloat(currentProject.totalBudget) || 0) - usedBudget;
+                const budgetGapElement = document.getElementById('modern-budgetGap');
+                budgetGapElement.textContent = formatCurrency(budgetGap);
+                
+                // Changer la couleur selon si positif ou négatif
+                if (budgetGap < 0) {
+                    budgetGapElement.classList.remove('text-green-600');
+                    budgetGapElement.classList.add('text-red-600');
+                } else {
+                    budgetGapElement.classList.remove('text-red-600');
+                    budgetGapElement.classList.add('text-green-600');
+                }
+                
+                // Mettre à jour la barre de progression
+                updateModernProgressBar(usedBudget);
+                
+                // Mise à jour du statut du projet
+                updateModernProjectStatus();
+                
+                // Afficher les catégories et sous-catégories
+                renderModernCategories();
+                
+                // Initialiser les écouteurs d'événements pour l'interface moderne
+                initializeModernEventListeners();
+            } else {
+                showNotification("Aucun projet chargé", "error");
+            }
+        }
+        
+        // Mettre à jour la barre de progression dans l'interface moderne
+        function updateModernProgressBar(usedBudget) {
+            const initialBudget = parseFloat(currentProject.totalBudget) || 0;
+            let percentage = 0;
+            
+            if (initialBudget > 0) {
+                percentage = Math.min(Math.round((usedBudget / initialBudget) * 100), 100);
+            }
+            
+            document.getElementById('modern-budgetPercentage').textContent = percentage + '%';
+            document.getElementById('modern-progressBar').style.width = percentage + '%';
+            
+            // Changer la couleur selon le pourcentage
+            const progressBar = document.getElementById('modern-progressBar');
+            if (percentage > 90) {
+                progressBar.className = 'bg-red-500 rounded-full h-2';
+            } else if (percentage > 75) {
+                progressBar.className = 'bg-yellow-500 rounded-full h-2';
+            } else {
+                progressBar.className = 'bg-green-500 rounded-full h-2';
+            }
+        }
+        
+        // Mettre à jour le statut du projet dans l'interface moderne
+        function updateModernProjectStatus() {
+            const statusElement = document.getElementById('modern-projectStatus');
+            switch(currentProject.projectStatus) {
+                case 'completed':
+                    statusElement.textContent = 'Terminé';
+                    statusElement.className = 'px-2 py-1 text-xs rounded-full bg-green-100 text-green-800';
+                    break;
+                case 'archived':
+                    statusElement.textContent = 'Archivé';
+                    statusElement.className = 'px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800';
+                    break;
+                case 'inProgress':
+                default:
+                    statusElement.textContent = 'En cours';
+                    statusElement.className = 'px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800';
+                    break;
+            }
+        }
+        
+        // Afficher les catégories et sous-catégories dans l'interface moderne
+        function renderModernCategories() {
+            const categoryListElement = document.getElementById('modern-categoryList');
+            categoryListElement.innerHTML = ''; // Vider le conteneur
+            
+            if (!currentProject || !currentProject.categories || currentProject.categories.length === 0) {
+                categoryListElement.innerHTML = '<p class="text-center py-8 text-gray-500">Aucune catégorie trouvée</p>';
+                return;
+            }
+            
+            // Récupérer le template de catégorie
+            const categoryTemplate = document.getElementById('modern-category-template');
+            const subcategoryTemplate = document.getElementById('modern-subcategory-template');
+            const expenseLineTemplate = document.getElementById('modern-expense-line-template');
+            
+            // Pour chaque catégorie
+            currentProject.categories.forEach(category => {
+                if (!category.name) return; // Ignorer les catégories sans nom
+                
+                // Cloner le template
+                const categoryElement = categoryTemplate.content.cloneNode(true);
+                
+                // Remplir les données de la catégorie
+                const categoryName = categoryElement.querySelector('.category-name');
+                const categoryAmount = categoryElement.querySelector('.category-amount');
+                const categoryEmoji = categoryElement.querySelector('.category-emoji');
+                
+                categoryName.textContent = category.name;
+                categoryAmount.textContent = formatCurrency(parseAmount(category.amount));
+                
+                // Ajouter un emoji par défaut si aucun n'est défini
+                const emoji = getEmoji(category.name);
+                categoryEmoji.textContent = emoji;
+                
+                // Pour chaque sous-catégorie
+                const subcategoriesContainer = categoryElement.querySelector('.subcategories-container');
+                
+                if (category.subcategories && category.subcategories.length > 0) {
+                    category.subcategories.forEach(subcategory => {
+                        if (!subcategory.name) return; // Ignorer les sous-catégories sans nom
+                        
+                        // Cloner le template de sous-catégorie
+                        const subcategoryElement = subcategoryTemplate.content.cloneNode(true);
+                        
+                        // Remplir les données de la sous-catégorie
+                        const subcategoryName = subcategoryElement.querySelector('.subcategory-name');
+                        const subcategoryAmount = subcategoryElement.querySelector('.subcategory-amount');
+                        const subcategoryEmoji = subcategoryElement.querySelector('.subcategory-emoji');
+                        
+                        subcategoryName.textContent = subcategory.name;
+                        subcategoryAmount.textContent = formatCurrency(parseAmount(subcategory.amount));
+                        
+                        // Ajouter un emoji par défaut si aucun n'est défini
+                        const subEmoji = getEmoji(subcategory.name);
+                        subcategoryEmoji.textContent = subEmoji;
+                        
+                        // Pour chaque ligne de dépense
+                        const expenseLines = subcategoryElement.querySelector('.expense-lines');
+                        
+                        if (subcategory.lines && subcategory.lines.length > 0) {
+                            subcategory.lines.forEach(line => {
+                                if (!line.name) return; // Ignorer les lignes sans nom
+                                
+                                // Cloner le template de ligne
+                                const lineElement = expenseLineTemplate.content.cloneNode(true);
+                                
+                                // Remplir les données de la ligne
+                                const lineName = lineElement.querySelector('.expense-name');
+                                const lineAmount = lineElement.querySelector('.expense-amount');
+                                
+                                lineName.textContent = line.name;
+                                lineAmount.textContent = formatCurrency(parseAmount(line.amount));
+                                
+                                // Ajouter la ligne au DOM
+                                expenseLines.appendChild(lineElement);
+                            });
+                        } else {
+                            // Aucune ligne
+                            expenseLines.innerHTML = '<li class="text-gray-400 italic">Aucune dépense</li>';
+                        }
+                        
+                        // Ajouter la sous-catégorie au DOM
+                        subcategoriesContainer.appendChild(subcategoryElement);
+                    });
+                } else {
+                    // Aucune sous-catégorie
+                    subcategoriesContainer.innerHTML = '<p class="text-gray-400 italic">Aucune sous-catégorie</p>';
+                }
+                
+                // Ajouter la catégorie au DOM
+                categoryListElement.appendChild(categoryElement);
+            });
+        }
+        
+        // Initialiser les écouteurs d'événements pour l'interface moderne
+        function initializeModernEventListeners() {
+            // Gestion des onglets moderne
+            const modernTabs = document.querySelectorAll('.modern-tab-btn');
+            
+            modernTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Supprimer la classe active de tous les onglets
+                    modernTabs.forEach(t => {
+                        t.classList.remove('active-tab');
+                        t.classList.add('text-gray-500');
+                        t.classList.remove('border-blue-500', 'text-blue-600', 'font-medium');
+                    });
+                    
+                    // Ajouter la classe active à l'onglet cliqué
+                    this.classList.add('active-tab');
+                    this.classList.remove('text-gray-500');
+                    this.classList.add('border-blue-500', 'text-blue-600', 'font-medium');
+                    
+                    // Masquer tous les contenus d'onglets
+                    document.querySelectorAll('.modern-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Afficher le contenu correspondant à l'onglet
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById('modern-' + tabId + '-tab').classList.add('active');
+                });
+            });
+            
+            // Bouton pour revenir à l'interface classique
+            document.getElementById('modern-switchInterfaceBtn').addEventListener('click', function() {
+                toggleInterface(); // Basculer vers l'interface classique
+            });
+            
+            // Bouton pour marquer le projet comme terminé
+            document.getElementById('modern-completeProjectBtn').addEventListener('click', function() {
+                completeProject();
+                updateModernProjectStatus();
+            });
+            
+            // Bouton pour archiver le projet
+            document.getElementById('modern-archiveProjectBtn').addEventListener('click', function() {
+                archiveProject();
+                updateModernProjectStatus();
+            });
+            
+            // Bouton pour modifier le projet
+            document.querySelector('.modern-btn-edit-project').addEventListener('click', function() {
+                toggleEditMode();
+            });
+        }
+        
+        // Bouton pour basculer vers l'interface moderne (dans l'interface classique)
         document.getElementById('switchInterfaceBtn').addEventListener('click', function() {
-            // Redirection vers l'interface simple
-            localStorage.removeItem('useClassicInterface'); // S'assurer que le flag est supprimé
-            window.location.href = 'projet-vue-simple.html';
+            toggleInterface();
         });
 
-        // Script de gestion des onglets (tabs)
+        // Script de gestion des onglets (tabs) pour l'interface classique
         document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des onglets
+            // Charger les préférences d'interface au chargement
+            const preferModernInterface = localStorage.getItem('useModernInterface') === 'true';
+            if (preferModernInterface) {
+                toggleInterface(); // Basculer vers l'interface moderne au chargement
+            }
+            
+            // Gestion des onglets classiques
             const tabs = document.querySelectorAll('.tab-btn');
             
             tabs.forEach(tab => {

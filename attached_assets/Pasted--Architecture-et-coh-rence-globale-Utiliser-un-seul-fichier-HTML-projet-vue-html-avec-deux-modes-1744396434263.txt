@@ -1,0 +1,50 @@
+. Architecture et cohérence globale
+Utiliser un seul fichier HTML (projet-vue.html), avec deux modes d’affichage : classique et moderne, activés via le bouton "Changer d’interface".
+
+Ne jamais recréer un projet dans nouveau-projet.html lors de la modification. On travaille exclusivement sur un projet existant (id dans l’URL).
+
+🔗 2. Connexion aux données
+Charger dynamiquement le projet existant depuis localStorage via son id, comme déjà fait dans la version classique.
+
+Reprendre toutes les catégories, sous-catégories et lignes avec leurs montants et noms, sans recréer de lignes fictives.
+
+🧮 3. Fonction de calcul en cascade (budget)
+Implémenter la logique Ligne ➝ Sous-catégorie ➝ Catégorie ➝ Budget total, pour chaque niveau.
+
+Le champ budget total du projet est recalculé automatiquement selon la somme des catégories.
+
+L’utilisateur peut entrer un montant directement dans une catégorie ou sous-catégorie, même sans ligne.
+
+💡 4. Améliorations UX attendues
+Supprimer toute ligne par défaut non vide.
+
+Tous les champs (montants, intitulés) doivent être modifiables en temps réel.
+
+Le design doit être responsive, lisible et fluide sur tous navigateurs modernes (Safari, Chrome, Firefox, Edge).
+
+Corriger la fermeture automatique de l'interface moderne après 10 secondes (bug critique).
+
+💾 5. Sauvegarde & persistance
+Lors de l'édition, aucune donnée ne doit être réinitialisée.
+
+Le bouton Modifier, Archiver, Terminer doivent fonctionner sans perte de données.
+
+Ajouter un bouton “💾 Sauvegarder” dans l'interface moderne si possible (ou auto-save clair avec confirmation visuelle).
+
+🧾 6. Fonctionnalités à réintégrer dans l’interface moderne
+Depuis la version classique :
+
+Onglet Dépenses réelles (pour suivre le montant réellement payé).
+
+Justificatifs : possibilité d’ajouter un fichier (photo, PDF).
+
+Commentaires par section ou global.
+
+Progression du budget (barre de pourcentage calculée en fonction du “réel” vs “prévu”).
+
+✨ BONUS (facultatif pour V1)
+Intégration de devise unique (pas de mélange entre € / AED / R$).
+
+Ajouter un mode impression propre pour transformer le projet en “fiche PDF” claire.
+
+👉 Prochaine étape : Merci d’intégrer cette structure dans projet-vue.html sans toucher à nouveau-projet.html. On veut éditer un projet existant, pas créer un doublon.
