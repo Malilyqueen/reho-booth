@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaPocket - Fiche Projet Moderne</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .card {
+      @apply bg-white p-6 rounded-2xl shadow-md;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#f4f5f7] to-[#eaecee] text-gray-800 min-h-screen">
+  <div class="max-w-5xl mx-auto p-6">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div>
+        <h1 id="projectTitle" class="text-3xl font-bold text-gray-900">Chargement...</h1>
+        <p class="text-sm text-gray-500 mt-1"><span id="projectType">-</span> • <span class="font-medium">Budget initial : <span id="initialBudget">-</span></span></p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <button class="btn-edit-project bg-blue-600 text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition-colors"><i class="fas fa-edit mr-2"></i>Modifier</button>
+        <button id="completeProjectBtn" class="bg-green-500 text-white px-4 py-2 rounded-full shadow hover:bg-green-600 transition-colors"><i class="fas fa-check mr-2"></i>Terminer</button>
+        <button id="archiveProjectBtn" class="bg-gray-400 text-white px-4 py-2 rounded-full shadow hover:bg-gray-500 transition-colors"><i class="fas fa-archive mr-2"></i>Archiver</button>
+        <button id="switchInterfaceBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-full shadow hover:bg-indigo-600 transition-colors"><i class="fas fa-exchange-alt mr-2"></i>Interface classique</button>
+      </div>
+    </div>
+
+    <!-- BUDGET STATUS -->
+    <div class="card mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i>Date</p>
+          <p id="projectDate" class="font-semibold text-sm">--/--/----</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400"><i class="fas fa-wallet mr-1"></i>Budget initial</p>
+          <p id="initialBudgetCard" class="font-semibold text-sm">-</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400"><i class="fas fa-chart-line mr-1"></i>Utilisé</p>
+          <p id="usedBudget" class="font-semibold text-sm">-</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400"><i class="fas fa-exchange-alt mr-1"></i>Écart</p>
+          <p id="budgetGap" class="font-semibold text-green-600 text-sm">-</p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="flex justify-between text-xs text-gray-500 mb-1">
+          <span>Progression</span>
+          <span id="budgetPercentage">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div id="progressBar" class="bg-green-500 rounded-full h-2" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="mt-4 flex justify-end">
+        <span id="projectStatus" class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">En cours</span>
+      </div>
+    </div>
+    
+    <!-- ONGLETS -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button class="tab-btn active-tab px-4 py-2 border-b-2 border-blue-500 font-medium text-blue-600" data-tab="budget">Postes de dépenses</button>
+      <button class="tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="real-tracking">Dépenses réelles</button>
+      <button class="tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="attachments">Justificatifs</button>
+      <button class="tab-btn px-4 py-2 text-gray-500 hover:text-gray-700" data-tab="comments">Commentaires</button>
+    </div>
+
+    <!-- CONTENU DES ONGLETS -->
+    <div class="tab-content active" id="budget-tab">
+      <!-- POSTES DE DÉPENSES -->
+      <div id="categoryList" class="space-y-6">
+        <!-- Les catégories seront générées ici dynamiquement -->
+        <p class="text-center py-8 text-gray-500">Chargement des catégories...</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="real-tracking-tab">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold">Dépenses réelles</h3>
+        <button id="btnAddRealExpense" class="btn-add-real-expense bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+          <i class="fas fa-plus mr-2"></i>Ajouter une dépense
+        </button>
+      </div>
+      <div id="real-expenses-container" class="space-y-4">
+        <!-- Les dépenses seront générées ici dynamiquement -->
+        <p class="text-center py-8 text-gray-500">Aucune dépense réelle enregistrée</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="attachments-tab">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold">Justificatifs</h3>
+        <button id="btnAddAttachment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+          <i class="fas fa-plus mr-2"></i>Ajouter un justificatif
+        </button>
+      </div>
+      <div id="attachments-container" class="space-y-4">
+        <!-- Les pièces jointes seront générées ici dynamiquement -->
+        <p class="text-center py-8 text-gray-500">Aucun justificatif enregistré</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="comments-tab">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold">Commentaires</h3>
+        <button id="btnAddComment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+          <i class="fas fa-plus mr-2"></i>Ajouter un commentaire
+        </button>
+      </div>
+      <div id="comments-container" class="space-y-4">
+        <!-- Les commentaires seront générées ici dynamiquement -->
+        <p class="text-center py-8 text-gray-500">Aucun commentaire enregistré</p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="mt-16 text-center text-xs text-gray-400">
+      © 2025 MaPocket — Gestion budgétaire intuitive et élégante
+    </div>
+  </div>
+
+  <!-- TEMPLATE POUR UNE CATÉGORIE -->
+  <template id="category-template">
+    <div class="category card">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 category-title flex items-center">
+          <span class="category-emoji mr-2"></span>
+          <span class="category-name"></span>
+        </h2>
+        <span class="text-sm font-medium text-gray-500">Total : <span class="category-amount"></span></span>
+      </div>
+      <div class="subcategories-container space-y-4">
+        <!-- Sous-catégories générées ici -->
+      </div>
+    </div>
+  </template>
+
+  <!-- TEMPLATE POUR UNE SOUS-CATÉGORIE -->
+  <template id="subcategory-template">
+    <div class="subcategory">
+      <div class="flex justify-between items-center text-sm">
+        <h3 class="font-medium subcategory-title flex items-center">
+          <span class="subcategory-emoji mr-2"></span>
+          <span class="subcategory-name"></span>
+        </h3>
+        <span class="text-gray-500 subcategory-amount"></span>
+      </div>
+      <ul class="expense-lines ml-5 mt-2 text-sm text-gray-700 list-disc space-y-1">
+        <!-- Lignes de dépenses générées ici -->
+      </ul>
+    </div>
+  </template>
+
+  <!-- TEMPLATE POUR UNE LIGNE DE DÉPENSE -->
+  <template id="expense-line-template">
+    <li class="expense-line flex justify-between">
+      <span class="expense-name"></span>
+      <span class="expense-amount ml-4 text-gray-600"></span>
+    </li>
+  </template>
+
+  <!-- Modales pour les différentes actions -->
+  <div id="realExpenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Ajouter une dépense réelle</h2>
+        <button class="close-modal text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="real-expense-form" class="space-y-4">
+        <div>
+          <label for="expenseDate" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <input type="date" id="expenseDate" required class="w-full p-2 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+          <select id="expenseCategory" required class="w-full p-2 border border-gray-300 rounded-md">
+            <!-- Les catégories seront générées ici dynamiquement -->
+          </select>
+        </div>
+        <div>
+          <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Montant</label>
+          <input type="number" id="expenseAmount" step="0.01" min="0" required class="w-full p-2 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label for="expenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="expenseDescription" rows="3" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" id="cancelExpenseBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="attachmentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Ajouter un justificatif</h2>
+        <button class="close-modal text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="attachment-form" class="space-y-4">
+        <div>
+          <label for="attachmentName" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+          <input type="text" id="attachmentName" required class="w-full p-2 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label for="attachmentFile" class="block text-sm font-medium text-gray-700 mb-1">Fichier</label>
+          <input type="file" id="attachmentFile" required class="w-full p-2 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label for="attachmentDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="attachmentDescription" rows="3" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" id="cancelAttachmentBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="commentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Ajouter un commentaire</h2>
+        <button class="close-modal text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="comment-form" class="space-y-4">
+        <div>
+          <label for="commentAuthor" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+          <input type="text" id="commentAuthor" required class="w-full p-2 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label for="commentContent" class="block text-sm font-medium text-gray-700 mb-1">Commentaire</label>
+          <textarea id="commentContent" rows="5" required class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" id="cancelCommentBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/currencies.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/budget-type-fix.js"></script>
+  <script src="js/modern-project-renderer.js"></script>
+  <script src="js/project-detail.js"></script>
+  <script src="js/editable-project.js"></script>
+  <script src="js/inline-edit-project.js"></script>
+  <script>
+    // Bouton pour basculer vers l'interface simple
+    document.getElementById('switchInterfaceBtn').addEventListener('click', function() {
+      // Redirection vers l'interface simple
+      window.location.href = 'projet-vue-simple.html';
+    });
+
+    // Script de gestion des onglets (tabs)
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gestion des onglets
+      const tabs = document.querySelectorAll('.tab-btn');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Supprimer la classe active de tous les onglets
+          tabs.forEach(t => {
+            t.classList.remove('active-tab');
+            t.classList.add('text-gray-500');
+            t.classList.remove('border-blue-500', 'text-blue-600', 'font-medium');
+          });
+          
+          // Ajouter la classe active à l'onglet cliqué
+          this.classList.add('active-tab');
+          this.classList.remove('text-gray-500');
+          this.classList.add('border-blue-500', 'text-blue-600', 'font-medium');
+          
+          // Masquer tous les contenus d'onglets
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          
+          // Afficher le contenu correspondant à l'onglet
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(tabId + '-tab').classList.add('active');
+        });
+      });
+
+      // Gestion des modales
+      document.querySelectorAll('.close-modal').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+          const modal = this.closest('[id$="Modal"]');
+          if (modal) {
+            modal.classList.add('hidden');
+          }
+        });
+      });
+
+      // Ouverture des modales
+      document.getElementById('btnAddRealExpense').addEventListener('click', function() {
+        document.getElementById('realExpenseModal').classList.remove('hidden');
+      });
+
+      document.getElementById('btnAddAttachment').addEventListener('click', function() {
+        document.getElementById('attachmentModal').classList.remove('hidden');
+      });
+
+      document.getElementById('btnAddComment').addEventListener('click', function() {
+        document.getElementById('commentModal').classList.remove('hidden');
+      });
+
+      // Fermeture des modales avec les boutons d'annulation
+      document.getElementById('cancelExpenseBtn').addEventListener('click', function() {
+        document.getElementById('realExpenseModal').classList.add('hidden');
+      });
+
+      document.getElementById('cancelAttachmentBtn').addEventListener('click', function() {
+        document.getElementById('attachmentModal').classList.add('hidden');
+      });
+
+      document.getElementById('cancelCommentBtn').addEventListener('click', function() {
+        document.getElementById('commentModal').classList.add('hidden');
+      });
+    });
+
+    // Style pour les onglets actifs/inactifs
+    document.head.insertAdjacentHTML('beforeend', `
+      <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn { border-bottom-width: 0; }
+        .tab-btn.active-tab { border-bottom-width: 2px; }
+      </style>
+    `);
+  </script>
+</body>
+</html>

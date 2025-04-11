@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaPocket - Fiche Projet Moderne</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .card {
+      @apply bg-white p-6 rounded-2xl shadow-md;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#f4f5f7] to-[#eaecee] text-gray-800 min-h-screen">
+  <div class="max-w-5xl mx-auto p-6">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">🎉 Anniversaire de Malala</h1>
+        <p class="text-sm text-gray-500 mt-1">Événementiel • <span class="font-medium">Budget initial : AED 300</span></p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-full shadow hover:bg-blue-700">✏️ Modifier</button>
+        <button class="bg-green-500 text-white px-4 py-2 rounded-full shadow hover:bg-green-600">✅ Terminer</button>
+        <button class="bg-gray-400 text-white px-4 py-2 rounded-full shadow hover:bg-gray-500">🗂️ Archiver</button>
+      </div>
+    </div>
+
+    <!-- BUDGET STATUS -->
+    <div class="card mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs text-gray-400">📅 Date</p>
+          <p class="font-semibold text-sm">16/06/2025</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">💰 Budget initial</p>
+          <p class="font-semibold text-sm">AED 300,00</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">📉 Utilisé</p>
+          <p class="font-semibold text-sm">AED 0,00</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">📈 Écart</p>
+          <p class="font-semibold text-green-600 text-sm">AED 300,00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSTES DE DÉPENSES -->
+    <div class="space-y-6">
+      <div class="card">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">🍽️ Restauration</h2>
+          <span class="text-sm font-medium text-gray-500">Total : AED 300,00</span>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between items-center text-sm">
+              <h3 class="font-medium">🥗 Traiteur</h3>
+              <span class="text-gray-500">AED 200,00</span>
+            </div>
+            <ul class="ml-5 mt-2 text-sm text-gray-700 list-disc space-y-1">
+              <li>Menu principal – AED 150</li>
+              <li>Desserts – AED 50</li>
+            </ul>
+          </div>
+          <div>
+            <div class="flex justify-between items-center text-sm">
+              <h3 class="font-medium">🥤 Boissons</h3>
+              <span class="text-gray-500">AED 100,00</span>
+            </div>
+            <ul class="ml-5 mt-2 text-sm text-gray-700 list-disc space-y-1">
+              <li>Soft drinks – AED 50</li>
+              <li>Alcool – AED 50</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 text-center text-xs text-gray-400">
+      © 2025 MaPocket — Gestion budgétaire intuitive et élégante
+    </footer>
+
+  </div>
+</body>
+</html>
