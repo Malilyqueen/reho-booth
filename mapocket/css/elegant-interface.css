@@ -13,6 +13,7 @@
     --primary-color: #2f4058; /* Nouvelle couleur bleue demandée */
     --primary-hover: #253445; /* Version plus foncée pour hover */
     --secondary-color: #6C757D;
+    --title-color: #457b9d; /* Nuance plus claire pour les titres */
     --success-color: #28a745;
     --danger-color: #dc3545;
     --warning-color: #ffc107;
@@ -203,6 +204,7 @@ tr:hover {
     margin: 0;
     display: flex;
     align-items: center;
+    color: var(--title-color); /* Utilisation de la couleur de titre */
 }
 
 /* Éliminer les emojis des catégories */
@@ -367,6 +369,11 @@ body, input, button, select, textarea {
 /* Suppression de tous les emojis dans les en-têtes */
 h1, h2, h3, h4, h5, h6, .section-title, button, .btn, .option-label, .template-option {
     font-family: var(--font-family);
+}
+
+/* Titres avec nuance de couleur plus claire */
+h1, h2, h3, .section-title {
+    color: var(--title-color);
 }
 
 .section-title::before, .template-option::before,
