@@ -457,108 +457,14 @@ function generateExpenseLinesHTML(lines) {
 }
 
 /**
- * Obtient un emoji pour une catégorie ou sous-catégorie donnée
+ * Fonction pour obtenir un marqueur visuel pour une catégorie ou sous-catégorie
+ * Version sans emoji pour une interface plus professionnelle
  * @param {string} name - Nom de la catégorie ou sous-catégorie
- * @returns {string} - Un emoji approprié
+ * @returns {string} - Une chaîne vide pour supprimer les emojis de l'interface
  */
 function getEmoji(name) {
-    const emojiMap = {
-        // Catégories générales
-        "Restauration": "🍽️",
-        "Ambiance & Animation": "🎵",
-        "Logistique": "🚚",
-        "Cadeaux": "🎁",
-        "Lieu": "🏢",
-        "Communication": "📣",
-        "Personnel": "👥",
-        "Services": "🛎️",
-        "Tenues": "👗",
-        "Déco & Ambiance": "🎊",
-        "Animation": "🎭",
-        "Cérémonie": "💒",
-        "Réception": "🎉",
-        "Papeterie": "📝",
-        "Formation": "📚",
-        "Marketing": "📈",
-        "Produit": "📦",
-        "Événement de lancement": "🚀",
-        "Logement": "🏠",
-        "Alimentation": "🍎",
-        "Transport": "🚗",
-        "Santé": "⚕️",
-        "Loisirs": "🎮",
-        "Épargne": "💰",
-        
-        // Sous-catégories
-        "Traiteur": "🍴",
-        "Gâteau": "🎂",
-        "Boissons": "🥂",
-        "DJ / Musique": "🎧",
-        "Décoration": "🎈",
-        "Animations": "🎪",
-        "Location salle": "🏛️",
-        "Transport": "🚌",
-        "Invitations": "💌",
-        "Cadeaux invités": "🎀",
-        "Cadeau principal": "🎁",
-        "Lieu": "🏛️",
-        "Officiant": "👨‍⚖️",
-        "Décoration cérémoniale": "💐",
-        "Robe": "👰",
-        "Costume": "🤵",
-        "Accessoires": "👑",
-        "Coiffure & Maquillage": "💇",
-        "Photographe": "📸",
-        "Vidéaste": "🎥",
-        "Animation": "🎮",
-        "Faire-part": "✉️",
-        "Menu": "📜",
-        "Plan de table": "🗺️",
-        "Hébergement": "🏨",
-        "Buffet": "🍱",
-        "Jeux": "🎯",
-        "Cadeaux parents/bébé": "👶",
-        "Configuration": "⚙️",
-        "Service": "👨‍🍳",
-        "Activités team building": "🧩",
-        "Animations spéciales": "🎬",
-        "Prix": "🏆",
-        "Tenue principale": "👔",
-        "Musique": "🎻",
-        "Souvenirs": "🖼️",
-        "RP & Presse": "📰",
-        "Marketing digital": "💻",
-        "Supports imprimés": "🖨️",
-        "Technique": "🔌",
-        "Échantillons": "🧪",
-        "Démonstration": "🔍",
-        "Packaging": "📦",
-        "Formateur": "👨‍🏫",
-        "Supports": "📊",
-        "Certification": "📜",
-        "Équipement": "🔧",
-        "Inscription": "📝",
-        "Assistants": "👨‍💼",
-        "Administration": "📋",
-        "Loyer/Prêt": "🏦",
-        "Charges": "📑",
-        "Entretien": "🧹",
-        "Courses": "🛒",
-        "Restaurants": "🍝",
-        "Carburant": "⛽",
-        "Transports en commun": "🚇",
-        "Entretien véhicule": "🔧",
-        "Assurances": "📋",
-        "Médicaments": "💊",
-        "Consultations": "👨‍⚕️",
-        "Sorties": "🎟️",
-        "Abonnements": "📱",
-        "Shopping": "🛍️",
-        "Épargne régulière": "💵",
-        "Investissements": "📊"
-    };
-    
-    return emojiMap[name] || "📌"; // Emoji par défaut si aucune correspondance
+    // Retourner une chaîne vide pour ne pas afficher d'emoji
+    return "";
 }
 
 // Initialisation du module
