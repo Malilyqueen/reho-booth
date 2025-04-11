@@ -88,14 +88,43 @@ document.addEventListener('DOMContentLoaded', function() {
     function recalculateAllAmounts() {
         console.log('Recalcul complet des montants...');
         
-        // Forcer le bon symbole monétaire dans le budget total
+        // Vérifier si les montants sont vides alors qu'ils devraient être remplis
+        const categoryAmounts = document.querySelectorAll('.category-amount');
+        const subcategoryAmounts = document.querySelectorAll('.subcategory-amount');
+        const lineAmounts = document.querySelectorAll('.line-amount');
+        
+        console.log('Analyse des montants existants:');
+        console.log(`- Catégories: ${categoryAmounts.length} éléments`);
+        console.log(`- Sous-catégories: ${subcategoryAmounts.length} éléments`);
+        console.log(`- Lignes: ${lineAmounts.length} éléments`);
+        
+        // Vérifier et corriger le budget total si nécessaire
         const totalBudgetElement = document.getElementById('totalBudget');
         if (totalBudgetElement) {
             const currentValue = totalBudgetElement.textContent;
-            if (!currentValue.includes('AED')) {
+            console.log(`Budget total actuel: "${currentValue}"`);
+            
+            // Extraire la valeur numérique
+            const numericValue = extractNumberFromString(currentValue);
+            if (numericValue <= 0) {
+                // Si le budget est à zéro ou vide, essayer de récupérer la valeur originale
+                if (totalBudgetElement.getAttribute('data-original-value')) {
+                    const originalValue = totalBudgetElement.getAttribute('data-original-value');
+                    console.log(`Restauration du budget original: ${originalValue}`);
+                    totalBudgetElement.textContent = originalValue;
+                }
+            }
+            
+            // S'assurer que le budget total a la bonne devise
+            if (!currentValue.includes('AED') && numericValue > 0) {
                 console.log('Correction de la devise dans le budget total');
-                const numericValue = extractNumberFromString(currentValue);
                 totalBudgetElement.textContent = `AED ${numericValue.toFixed(2)}`.replace('.', ',');
+            }
+            
+            // Sauvegarder la valeur originale pour pouvoir la restaurer plus tard
+            if (!totalBudgetElement.getAttribute('data-original-value') && currentValue) {
+                totalBudgetElement.setAttribute('data-original-value', currentValue);
+                console.log(`Budget original sauvegardé: ${currentValue}`);
             }
         }
         
@@ -104,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 2. Ensuite calculer les montants des catégories à partir des sous-catégories
         document.querySelectorAll('.expense-category').forEach(calculateCategoryAmount);
+        
+        // 3. Afficher un rapport
+        console.log('Recalcul terminé!');
     }
     
     function calculateSubcategoryAmount(subcategory) {
@@ -217,8 +249,39 @@ document.addEventListener('DOMContentLoaded', function() {
         return isNaN(value) ? 0 : value;
     }
     
-    // Formater un nombre en AED
+    // Formater un nombre avec la devise appropriée
     function formatAED(amount) {
+        // D'abord, préserver la devise d'origine des données
+        const budgetElement = document.getElementById('totalBudget');
+        if (budgetElement && budgetElement.textContent.includes("AED")) {
+            return `AED ${amount.toFixed(2).replace('.', ',')}`;
+        }
+        
+        // Ensuite, essayer d'utiliser la fonction de l'application pour récupérer la devise utilisateur
+        if (typeof getCurrencySymbol === 'function') {
+            const symbol = getCurrencySymbol();
+            return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
+        }
+        
+        // Vérifier si les préférences utilisateur sont disponibles
+        if (window.userPreferences && window.userPreferences.currency) {
+            // Obtenir le symbole de la devise
+            let currencySymbol = "AED";
+            
+            if (window.userPreferences.currency === "EUR") {
+                currencySymbol = "€";
+            } else if (window.userPreferences.currency === "USD") {
+                currencySymbol = "$";
+            } else if (window.userPreferences.currency === "MAD") {
+                currencySymbol = "DH";
+            } else if (window.userPreferences.currency === "AED") {
+                currencySymbol = "AED";
+            }
+            
+            return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
+        }
+        
+        // Par défaut, conserver AED pour assurer la compatibilité avec les données existantes
         return `AED ${amount.toFixed(2).replace('.', ',')}`;
     }
 });
