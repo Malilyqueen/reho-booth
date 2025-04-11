@@ -7,6 +7,8 @@
     // Constantes et variables globales du module
     const MODULE_NAME = 'ProjectManager';
     const DEBUG = true;
+    let domReadyChecks = 0;
+    const MAX_DOM_READY_CHECKS = 20; // Maximum de tentatives d'attente
     
     // Initialisation au chargement du DOM
     document.addEventListener('DOMContentLoaded', initialize);
@@ -27,27 +29,63 @@
             
             // Attendre que le DOM soit complètement chargé
             window.addEventListener('load', function() {
-                // Utiliser requestAnimationFrame pour s'assurer que le DOM est prêt
-                requestAnimationFrame(function() {
+                // Vérifier que tous les composants nécessaires sont prêts AVANT de charger le projet
+                waitForDOMElements([
+                    '#categoriesContainer', 
+                    '.expense-category', 
+                    '.subcategory', 
+                    '#totalBudget'
+                ], function() {
+                    // Une fois que les éléments sont prêts, charger et afficher le projet
+                    log('DOM prêt, démarrage du chargement du projet');
                     loadAndRenderProject(projectId);
                 });
             });
-            
-            // Configurer l'observateur pour les modifications
-            setupMutationObserver();
         } else {
             log('Pas en mode édition ou ID projet manquant');
         }
     }
     
     /**
-     * Charge et affiche un projet complet
+     * Attend que les éléments DOM spécifiés soient disponibles
+     * @param {Array} selectors - Liste des sélecteurs à vérifier
+     * @param {Function} callback - Fonction à appeler une fois que tous sont disponibles
+     */
+    function waitForDOMElements(selectors, callback) {
+        domReadyChecks++;
+        
+        // Vérifier si tous les sélecteurs ont trouvé des éléments
+        const allFound = selectors.every(selector => {
+            const elements = document.querySelectorAll(selector);
+            return elements && elements.length > 0;
+        });
+        
+        if (allFound) {
+            log('Tous les éléments DOM requis sont prêts');
+            callback();
+            return;
+        }
+        
+        // Si pas trouvé mais toujours dans les limites des tentatives
+        if (domReadyChecks < MAX_DOM_READY_CHECKS) {
+            log(`Attente des éléments DOM (tentative ${domReadyChecks}/${MAX_DOM_READY_CHECKS})...`);
+            
+            // Attendre un peu et réessayer
+            setTimeout(() => waitForDOMElements(selectors, callback), 250);
+        } else {
+            log('Timeout pour la recherche des éléments DOM. Certains éléments peuvent manquer.', 'warn');
+            callback(); // Essayer quand même d'exécuter le callback
+        }
+    }
+    
+    /**
+     * Fonction centrale qui gère tout le cycle de vie d'un projet
      * @param {string} projectId - L'ID du projet à charger
      */
     function loadAndRenderProject(projectId) {
-        log(`Chargement et rendu du projet ID: ${projectId}`);
+        log(`Début du processus complet de chargement et rendu du projet ID: ${projectId}`);
         
-        // Récupérer les données du projet
+        // Étape 1: Charger les données depuis le localStorage
         const project = getProjectFromStorage(projectId);
         if (!project) {
             log('Projet introuvable dans le stockage local', 'error');
@@ -56,21 +94,70 @@
         
         log(`Projet trouvé: ${project.projectName}`);
         
-        // Injecter les données dans le DOM
-        renderProject(project, function() {
-            // Callback appelé une fois le rendu terminé
-            log('Rendu du projet terminé, démarrage du calcul des montants');
-            
-            // Exécuter dans le prochain cycle pour s'assurer que le DOM est à jour
-            setTimeout(function() {
-                recalculateAllAmounts();
+        // Étape 2: Injecter les données dans le DOM et attendre que tout soit prêt
+        updateProjectState(project);
+    }
+    
+    /**
+     * Fonction centrale qui gère la mise à jour complète de l'état du projet
+     * Centralise le chargement, l'affichage et le calcul dans une seule fonction
+     * @param {Object} project - Le projet à traiter
+     */
+    function updateProjectState(project) {
+        log(`Mise à jour complète de l'état du projet: ${project.projectName}`);
+        
+        // 1. Vérifier que les conteneurs essentiels existent
+        if (!document.getElementById('categoriesContainer')) {
+            log('Conteneur de catégories non trouvé, impossible de mettre à jour le projet', 'error');
+            return;
+        }
+        
+        // 2. Remplir le budget total
+        const totalBudgetElement = document.getElementById('totalBudget');
+        if (totalBudgetElement && project.totalBudget) {
+            log(`Définition du budget total initial: ${project.totalBudget}`);
+            totalBudgetElement.textContent = project.totalBudget;
+        }
+        
+        // 3. Remplir le DOM avec les données du projet
+        if (project.categories && project.categories.length > 0) {
+            // Rendre les catégories avec un callback qui s'exécute une fois terminé
+            fillCategories(project.categories, function() {
+                log('Catégories remplies, attachement des écouteurs d\'événements');
                 
-                // Attacher les écouteurs d'événements après l'initialisation
-                attachEventListeners();
-                
-                log('Initialisation complète du projet');
-            }, 0);
-        });
+                // 4. Recalculer tous les montants une fois le DOM prêt
+                requestAnimationFrame(function() {
+                    // Vérifier une dernière fois que tout est bien rendu
+                    const categoryAmounts = document.querySelectorAll('.category-amount');
+                    const subcategoryAmounts = document.querySelectorAll('.subcategory-amount');
+                    
+                    if (categoryAmounts.length > 0 && subcategoryAmounts.length > 0) {
+                        log('DOM prêt pour le recalcul final');
+                        
+                        // Recalculer tous les montants
+                        recalculateAllAmounts();
+                        
+                        // 5. Attacher les écouteurs d'événements
+                        attachEventListeners();
+                        
+                        // 6. Configurer la détection des changements DOM
+                        setupMutationObserver();
+                        
+                        log('Projet complètement initialisé et prêt à l'utilisation');
+                    } else {
+                        log('Le DOM n\'est pas complètement prêt, nouvelle tentative...', 'warn');
+                        // Réessayer après un court délai
+                        setTimeout(function() {
+                            recalculateAllAmounts();
+                            attachEventListeners();
+                            setupMutationObserver();
+                        }, 250);
+                    }
+                });
+            });
+        } else {
+            log('Pas de catégories à remplir dans le projet', 'warn');
+        }
     }
     
     /**
@@ -412,6 +499,8 @@
      * @returns {string} La chaîne formatée
      */
     function formatCurrency(amount) {
+        log(`Formatage du montant: ${amount}`);
+        
         // 1. Préserver la devise du budget total
         const totalBudgetElement = document.getElementById('totalBudget');
         if (totalBudgetElement) {
@@ -420,6 +509,7 @@
             const currencyMatch = totalBudgetText.match(/^([^\d]+)/);
             if (currencyMatch && currencyMatch[1]) {
                 const symbol = currencyMatch[1].trim();
+                log(`Utilisation du symbole de devise du budget total: "${symbol}"`);
                 return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
             }
         }
@@ -427,6 +517,7 @@
         // 2. Utiliser la fonction de l'application pour la devise
         if (typeof getCurrencySymbol === 'function') {
             const symbol = getCurrencySymbol();
+            log(`Utilisation du symbole de l'application: "${symbol}"`);
             return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
         }
         
@@ -441,10 +532,12 @@
                 case "AED": symbol = "AED"; break;
             }
             
+            log(`Utilisation du symbole des préférences utilisateur: "${symbol}" (${window.userPreferences.currency})`);
             return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
         }
         
         // 4. Conserver AED par défaut
+        log('Aucune préférence trouvée, utilisation du symbole par défaut: "AED"');
         return `AED ${amount.toFixed(2).replace('.', ',')}`;
     }
     
