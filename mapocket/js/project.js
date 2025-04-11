@@ -54,11 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Vérifier si on est en mode visualisation ou édition
     const urlParams = new URLSearchParams(window.location.search);
-    const viewMode = urlParams.get('view') === 'true' || localStorage.getItem('viewMode') === 'true';
+    const viewMode = urlParams.get('view') === 'true' || urlParams.get('mode') === 'view' || localStorage.getItem('viewMode') === 'true';
     const editMode = urlParams.get('edit') === 'true';
     const projectId = urlParams.get('id');
     
-    console.log("Mode détecté:", editMode ? "Édition" : viewMode ? "Visualisation" : "Création", "Projet ID:", projectId);
+    // Mode unifié - On conserve l'édition directe des lignes tout en adaptant l'interface selon le contexte
+    const unifiedMode = urlParams.get('mode') === 'view';
+    
+    console.log("Mode détecté:", editMode ? "Édition" : viewMode ? "Visualisation" : "Création", 
+               "Mode unifié:", unifiedMode ? "Oui" : "Non", 
+               "Projet ID:", projectId);
     
     // Initialiser le formulaire de nouveau projet
     initializeProjectForm();
@@ -72,8 +77,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les interactions avec les catégories et sous-catégories de dépenses
     initializeExpenseCategories();
     
-    if (viewMode) {
-        console.log('Mode visualisation activé');
+    if (unifiedMode) {
+        console.log('Mode unifié activé - Edition directe avec interface simplifiée');
+        // On active la sauvegarde automatique même en mode visualisation unifiée
+        initializeAutoSave();
+        // Appliquer un mode de visualisation avec édition directe des lignes
+        enableUnifiedMode(projectId);
+    } else if (viewMode && !unifiedMode) {
+        console.log('Mode visualisation standard activé');
         enableViewMode();
     } else if (editMode) {
         console.log('Mode édition activé');
@@ -2978,6 +2989,98 @@ function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
 }
 
 // Fonction pour activer le mode de visualisation (lecture seule)
+/**
+ * Fonction pour activer le mode unifié avec édition directe des lignes
+ * Ce mode permet de visualiser le projet tout en permettant l'édition 
+ * directe des lignes de budget pour plus de flexibilité
+ */
+function enableUnifiedMode(projectId) {
+    console.log('Activation du mode unifié avec édition directe');
+    
+    // Modifier le titre de la page
+    const pageTitle = document.querySelector('.page-header h2');
+    if (pageTitle) {
+        pageTitle.textContent = 'Détails du projet - Édition directe';
+    }
+    
+    // Désactiver les champs principaux mais garder actifs les champs de montant et de nom de lignes
+    const mainInputs = document.querySelectorAll('#projectName, #projectDate, #projectEndDate, #projectStatus, #linkToWallet, #createWishlist, #totalBudget, select:not(.expense-line-name)');
+    mainInputs.forEach(input => {
+        input.setAttribute('disabled', 'disabled');
+        input.classList.add('readonly');
+    });
+    
+    // Masquer les boutons d'action au niveau supérieur mais conserver ceux des lignes
+    const mainActionButtons = document.querySelectorAll('#addMainCategoryBtn, .btn-delete:not(.btn-delete-line)');
+    mainActionButtons.forEach(button => {
+        button.style.display = 'none';
+    });
+    
+    // Masquer la section des modèles si visible
+    const templatesSection = document.querySelector('.templates-section');
+    if (templatesSection) {
+        templatesSection.style.display = 'none';
+    }
+    
+    // S'assurer que les inputs de lignes sont éditables et visibles
+    const expenseLineInputs = document.querySelectorAll('.expense-line-name, .expense-line-amount');
+    expenseLineInputs.forEach(input => {
+        input.removeAttribute('disabled');
+        input.classList.remove('readonly');
+        input.classList.add('editable');
+    });
+    
+    // Ajouter des classes spéciales pour le mode unifié
+    document.body.classList.add('unified-mode');
+    
+    // Ajouter un message informatif sur l'édition directe possible
+    const infoBar = document.createElement('div');
+    infoBar.className = 'info-bar unified-mode-info';
+    infoBar.innerHTML = '<i class="fas fa-info-circle"></i> Mode édition directe activé : vous pouvez modifier les lignes de dépenses.';
+    const projectContainer = document.querySelector('.project-container');
+    if (projectContainer) {
+        projectContainer.insertBefore(infoBar, projectContainer.firstChild);
+    }
+    
+    // Adapter les contrôles de navigation
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'unified-controls';
+    controlsContainer.innerHTML = `
+        <button type="button" class="btn btn-secondary return-btn">
+            <i class="fas fa-arrow-left"></i> Retour
+        </button>
+        <button type="button" class="btn btn-primary edit-full-btn">
+            <i class="fas fa-edit"></i> Mode édition complète
+        </button>
+    `;
+    
+    // Remplacer le bouton de soumission
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+        const submitContainer = submitButton.parentElement;
+        submitButton.remove();
+        if (submitContainer) {
+            submitContainer.appendChild(controlsContainer);
+            
+            // Initialiser le bouton de retour
+            const returnBtn = controlsContainer.querySelector('.return-btn');
+            if (returnBtn) {
+                returnBtn.addEventListener('click', function() {
+                    window.location.href = 'index.html';
+                });
+            }
+            
+            // Initialiser le bouton d'édition complète
+            const editFullBtn = controlsContainer.querySelector('.edit-full-btn');
+            if (editFullBtn) {
+                editFullBtn.addEventListener('click', function() {
+                    window.location.href = 'nouveau-projet.html?edit=true&id=' + projectId;
+                });
+            }
+        }
+    }
+}
+
 function enableViewMode() {
     console.log('Activation du mode visualisation');
     
