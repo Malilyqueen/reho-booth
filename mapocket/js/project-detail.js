@@ -283,12 +283,17 @@ function loadProjectDetails(projectId) {
             
             console.log('Chargement des catégories:', project.categories.length);
             
-            // Récupérer le conteneur des catégories
-            const categoriesContainer = document.getElementById('categoriesContainer');
+            // Récupérer le conteneur des catégories (essayer les deux IDs possibles)
+            let categoriesContainer = document.getElementById('categoriesContainer');
             if (!categoriesContainer) {
-                console.error('Conteneur de catégories non trouvé');
-                return;
+                // Essayer l'autre ID possible
+                categoriesContainer = document.getElementById('categoryList');
+                if (!categoriesContainer) {
+                    console.error('Conteneur de catégories non trouvé');
+                    return;
+                }
             }
+            console.log('Conteneur de catégories trouvé:', categoriesContainer.id);
             
             // Vider le conteneur
             categoriesContainer.innerHTML = '';
@@ -752,6 +757,7 @@ function loadRealExpenses(projectId) {
 
 // Fonction pour mettre à jour l'interface avec les données du projet
 function updateProjectUI(project) {
+
     // Titre et type
     document.getElementById('projectTitle').textContent = project.projectName;
     document.getElementById('projectType').textContent = project.template || 'Personnalisé';
