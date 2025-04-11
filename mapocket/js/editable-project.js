@@ -4,6 +4,18 @@
  * Élimine le besoin d'un écran séparé de modification
  */
 
+// Activer l'édition directe dans la vue projet
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initialisation du mode édition directe des lignes...');
+    
+    // Remplacer la fonction loadCategories standard par notre version éditable
+    // Cette fonction sera appelée par project-detail.js
+    initializeEditableCategories();
+    
+    // Ajouter un bouton pour basculer entre mode vue et édition directe
+    addToggleEditButton();
+});
+
 // Fonction pour recalculer tous les montants du projet (cascade)
 function recalculateProjectAmounts() {
     console.log('Recalcul des montants du projet...');
@@ -431,6 +443,60 @@ function initializeEditableCategories() {
     // Si un projet est déjà chargé, refaire le rendu avec notre nouvelle version
     if (window.currentProject) {
         window.loadCategories(window.currentProject);
+    }
+}
+
+// Fonction pour ajouter un bouton permettant de basculer entre le mode édition et le mode vue
+function addToggleEditButton() {
+    console.log('Ajout du bouton pour basculer en mode édition...');
+    
+    // Rechercher un endroit approprié pour ajouter le bouton
+    const projectHeader = document.querySelector('.project-header');
+    const actionsContainer = document.querySelector('.project-actions');
+    
+    if (!projectHeader && !actionsContainer) {
+        console.error('Impossible de trouver un conteneur pour le bouton d\'édition');
+        return;
+    }
+    
+    // Créer le bouton
+    const toggleEditButton = document.createElement('button');
+    toggleEditButton.id = 'toggleEditMode';
+    toggleEditButton.className = 'btn btn-primary edit-mode-toggle';
+    toggleEditButton.innerHTML = '<i class="fas fa-edit"></i> Mode édition';
+    
+    // Style du bouton
+    toggleEditButton.style.marginLeft = '10px';
+    
+    // Ajouter l'événement de basculement
+    toggleEditButton.addEventListener('click', function() {
+        const isEditMode = this.classList.contains('active');
+        
+        if (isEditMode) {
+            // Désactiver le mode édition
+            this.classList.remove('active');
+            this.innerHTML = '<i class="fas fa-edit"></i> Mode édition';
+            document.body.classList.remove('edit-mode');
+            
+            // Recalculer et sauvegarder avant de quitter le mode édition
+            recalculateProjectAmounts();
+            collectAndSaveProjectData();
+        } else {
+            // Activer le mode édition
+            this.classList.add('active');
+            this.innerHTML = '<i class="fas fa-check"></i> Terminer l\'édition';
+            document.body.classList.add('edit-mode');
+            
+            // Rendre les éléments éditables
+            makeElementsEditable();
+        }
+    });
+    
+    // Ajouter le bouton à l'interface
+    if (actionsContainer) {
+        actionsContainer.appendChild(toggleEditButton);
+    } else if (projectHeader) {
+        projectHeader.appendChild(toggleEditButton);
     }
 }
 
