@@ -4,6 +4,18 @@
  * dans la page projet-vue.html sans redirection vers une autre page.
  */
 
+// Fonction utilitaire pour limiter les appels trop fréquents (anti-rebond)
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation de l\'édition directe dans projet-vue.html...');
     
@@ -203,7 +215,7 @@ function setupEditEventHandlers() {
             
             if (lineElement && confirm('Voulez-vous vraiment supprimer cette ligne ?')) {
                 lineElement.remove();
-                recalculateAmounts();
+                recalculateAllAmounts();
                 saveProjectChanges();
             }
         }
@@ -284,7 +296,7 @@ function disableEditMode() {
     });
     
     // Sauvegarder les changements une dernière fois
-    recalculateAmounts();
+    recalculateAllAmounts();
     saveProjectChanges();
 }
 
@@ -329,7 +341,9 @@ function makeAmountEditable(element) {
     
     // Gestionnaire pour recalculer les montants et sauvegarder
     input.addEventListener('input', function() {
-        recalculateAmounts();
+        recalculateAllAmounts();
+        // Sauvegarde automatique à chaque changement de montant
+        debounce(saveProjectChanges, 300)();
     });
     
     input.addEventListener('change', function() {
@@ -369,7 +383,9 @@ function addNewExpenseLine(subcategoryElement, beforeElement) {
     
     // Gestionnaires pour recalculer et sauvegarder
     amountInput.addEventListener('input', function() {
-        recalculateAmounts();
+        recalculateAllAmounts();
+        // Sauvegarde automatique à chaque changement de montant
+        debounce(saveProjectChanges, 300)();
     });
     
     amountInput.addEventListener('change', function() {
@@ -390,7 +406,7 @@ function addNewExpenseLine(subcategoryElement, beforeElement) {
     subcategoryElement.insertBefore(newLine, beforeElement);
     
     // Recalculer les montants et sauvegarder
-    recalculateAmounts();
+    recalculateAllAmounts();
     saveProjectChanges();
     
     // Donner le focus au champ de nom
@@ -431,59 +447,72 @@ function addNewSubcategory(categoryElement, beforeElement) {
 
 /**
  * Recalcule tous les montants (lignes → sous-catégories → catégories → total)
+ * Version améliorée selon les spécifications fournies
  */
-function recalculateAmounts() {
-    console.log('Recalcul des montants en cascade...');
-    
-    let totalBudget = 0;
-    
-    // Pour chaque catégorie
-    document.querySelectorAll('.expense-category').forEach(category => {
-        let categoryTotal = 0;
+function recalculateAllAmounts() {
+  console.log("🔄 Recalcul en cascade lancé");
+
+  let projectTotal = 0;
+
+  // Pour chaque catégorie
+  document.querySelectorAll(".expense-category").forEach(categoryEl => {
+    let categoryTotal = 0;
+
+    const subcategories = categoryEl.querySelectorAll(".subcategory, .expense-subcategory");
+    subcategories.forEach(subEl => {
+      let subTotal = 0;
+
+      const lines = subEl.querySelectorAll(".expense-line");
+      lines.forEach(lineEl => {
+        // Chercher l'élément de montant (peut être un input en mode édition ou un span en mode lecture)
+        const amountEl = lineEl.querySelector(".line-amount, .expense-line-amount");
+        let amount = 0;
         
-        // Pour chaque sous-catégorie dans cette catégorie
-        category.querySelectorAll('.expense-subcategory, .subcategory').forEach(subcategory => {
-            let subcategoryTotal = 0;
-            
-            // Pour chaque ligne dans cette sous-catégorie
-            subcategory.querySelectorAll('.expense-line-amount, .line-amount').forEach(amountElement => {
-                // Récupérer la valeur (différent selon qu'il s'agit d'un champ input ou d'un span)
-                let value = 0;
-                if (amountElement.tagName === 'INPUT') {
-                    value = parseFloat(amountElement.value) || 0;
-                } else {
-                    value = parseFloat(amountElement.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-                }
-                
-                subcategoryTotal += value;
-            });
-            
-            // Mettre à jour le montant de la sous-catégorie
-            const subcategoryAmountElement = subcategory.querySelector('.subcategory-amount');
-            if (subcategoryAmountElement) {
-                subcategoryAmountElement.textContent = formatCurrency(subcategoryTotal);
-            }
-            
-            categoryTotal += subcategoryTotal;
-        });
-        
-        // Mettre à jour le montant de la catégorie
-        const categoryAmountElement = category.querySelector('.category-amount');
-        if (categoryAmountElement) {
-            categoryAmountElement.textContent = formatCurrency(categoryTotal);
+        if (amountEl) {
+          if (amountEl.tagName === 'INPUT') {
+            // Mode édition - lire la valeur du champ input
+            amount = parseFloat(amountEl.value || 0);
+          } else {
+            // Mode lecture - extraire la valeur numérique du texte
+            amount = parseFloat(amountEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+          }
+          subTotal += amount;
         }
-        
-        totalBudget += categoryTotal;
+      });
+
+      // Mettre à jour le montant affiché dans la sous-catégorie
+      const subAmountEl = subEl.querySelector(".subcategory-amount");
+      if (subAmountEl) {
+        subAmountEl.textContent = formatCurrency(subTotal);
+      }
+
+      categoryTotal += subTotal;
     });
-    
-    // Mettre à jour le budget total du projet
-    const totalBudgetElement = document.getElementById('totalBudget') || 
-                               document.querySelector('.budget-total-amount');
-    if (totalBudgetElement) {
-        totalBudgetElement.textContent = formatCurrency(totalBudget);
+
+    // Mettre à jour le montant affiché dans la catégorie
+    const catAmountEl = categoryEl.querySelector(".category-amount");
+    if (catAmountEl) {
+      catAmountEl.textContent = formatCurrency(categoryTotal);
     }
-    
-    console.log('Nouveau total du budget:', formatCurrency(totalBudget));
+
+    projectTotal += categoryTotal;
+  });
+
+  // Mettre à jour le budget total du projet
+  const totalBudgetEl = document.getElementById("totalBudget") || 
+                        document.querySelector('.budget-total-amount');
+  if (totalBudgetEl) {
+    totalBudgetEl.textContent = formatCurrency(projectTotal);
+  }
+
+  console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
+  
+  return projectTotal; // Retourner le total pour utilisation éventuelle ailleurs
+}
+
+// Conserver l'ancienne fonction pour compatibilité
+function recalculateAmounts() {
+  return recalculateAllAmounts();
 }
 
 /**
