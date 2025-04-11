@@ -105,38 +105,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Fonction pour initialiser les date pickers
 function initializeDatePickers() {
-    // Configuration commune pour tous les pickers de date
-    const datePickerConfig = {
-        dateFormat: "d/m/Y",
-        locale: "fr",
-        allowInput: true,
-        disableMobile: true,  // Désactiver la version mobile pour une meilleure compatibilité
-        monthSelectorType: "static",  // Pour une meilleure compatibilité avec tous les navigateurs
-        time_24hr: true  // Format 24h pour la France
-    };
+    console.log("Initialisation des calendriers...");
     
-    // Initialiser le datepicker principal avec flatpickr
-    const projectDateInput = document.getElementById('projectDate');
-    if (projectDateInput) {
-        flatpickr(projectDateInput, datePickerConfig);
-        console.log("Date picker principal initialisé");
-        
-        // S'assurer que le champ a toujours une valeur par défaut (aujourd'hui si vide)
-        if (!projectDateInput.value || projectDateInput.value.trim() === '') {
-            const today = new Date();
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            projectDateInput.value = `${day}/${month}/${year}`;
+    // Attendre que le DOM soit complètement chargé
+    setTimeout(() => {
+        try {
+            // Configuration simple et robuste pour tous les navigateurs
+            const datePickerConfig = {
+                dateFormat: "d/m/Y",
+                locale: "fr",
+                allowInput: true
+            };
+            
+            // Initialiser le datepicker principal
+            const projectDateInput = document.getElementById('projectDate');
+            if (projectDateInput) {
+                if (typeof flatpickr === 'function') {
+                    flatpickr(projectDateInput, datePickerConfig);
+                    console.log("Date picker principal initialisé avec succès");
+                    
+                    // Aujourd'hui par défaut si vide
+                    if (!projectDateInput.value || projectDateInput.value.trim() === '') {
+                        const today = new Date();
+                        const day = String(today.getDate()).padStart(2, '0');
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const year = today.getFullYear();
+                        projectDateInput.value = `${day}/${month}/${year}`;
+                    }
+                } else {
+                    console.error("La bibliothèque flatpickr n'est pas disponible");
+                }
+            } else {
+                console.warn("Élément projectDate non trouvé dans le DOM");
+            }
+            
+            // Initialiser le datepicker de fin
+            const projectEndDateInput = document.getElementById('projectEndDate');
+            if (projectEndDateInput && typeof flatpickr === 'function') {
+                flatpickr(projectEndDateInput, datePickerConfig);
+                console.log("Date picker de fin initialisé avec succès");
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'initialisation des calendriers:", error);
         }
-    }
-    
-    // Initialiser le datepicker de date de fin si présent
-    const projectEndDateInput = document.getElementById('projectEndDate');
-    if (projectEndDateInput) {
-        flatpickr(projectEndDateInput, datePickerConfig);
-        console.log("Date picker de fin initialisé");
-    }
+    }, 500); // Délai pour s'assurer que tout est chargé
 }
 
 // Fonction pour ajouter un bouton "Enregistrer les modifications"
@@ -285,12 +297,19 @@ function showNotification(message, type = 'info') {
 
 // Fonction pour activer le mode édition de projet
 function enableEditMode(projectId) {
-    console.log("Activation du mode édition pour le projet:", projectId);
+    console.log("Mode édition activé pour le projet:", projectId);
     
     // Charger le projet existant depuis localStorage
     let savedProjects = [];
     try {
-        savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        const savedProjectsStr = localStorage.getItem('savedProjects');
+        if (savedProjectsStr) {
+            savedProjects = JSON.parse(savedProjectsStr);
+            if (!Array.isArray(savedProjects)) {
+                console.error('savedProjects n\'est pas un tableau, mais:', typeof savedProjects);
+                savedProjects = [];
+            }
+        }
     } catch (error) {
         console.error('Erreur lors du chargement des projets sauvegardés:', error);
         return;
@@ -300,82 +319,136 @@ function enableEditMode(projectId) {
     const projectToEdit = savedProjects.find(project => project.id === projectId);
     if (!projectToEdit) {
         console.error('Projet non trouvé avec ID:', projectId);
-        console.log('Projets disponibles:', savedProjects);
+        console.log('Projets disponibles:', savedProjects.map(p => p.id));
+        showNotification('Projet non trouvé. Veuillez réessayer.', 'error');
         return;
     }
     
+    // Stocker une copie complète du projet pour référence
+    localStorage.setItem('currentEditingProject', JSON.stringify(projectToEdit));
     console.log('Projet à modifier:', projectToEdit);
     
-    // Changer le titre de la page
+    // Mise à jour visuelle - Titre de la page
     const pageTitle = document.querySelector('.page-title');
     if (pageTitle) {
-        console.log("Changement du titre de la page en 'MODIFIER PROJET'");
         pageTitle.textContent = 'MODIFIER PROJET';
-        pageTitle.style.color = '#2979ff'; // Mettre en bleu pour renforcer la visibilité
+        pageTitle.style.color = '#2979ff';
+        pageTitle.style.fontWeight = 'bold';
     }
     
-    // Changer le type de projet si défini
-    const projectType = document.querySelector('.project-type');
-    if (projectType && projectToEdit.template) {
-        projectType.textContent = projectToEdit.template;
+    // Changer le type de projet si défini et sélectionner le bon modèle dans l'accordéon
+    if (projectToEdit.template) {
+        // Type du projet
+        const projectType = document.querySelector('.project-type');
+        if (projectType) {
+            projectType.textContent = projectToEdit.template;
+        }
         
-        // Sélectionner également le bon modèle dans l'accordéon
+        // Trouver l'option de modèle correspondante
         const templateOption = document.querySelector(`.template-option[data-template="${projectToEdit.template}"]`);
         if (templateOption) {
-            // Désélectionner tout autre option précédemment sélectionnée
+            // Désélectionner les autres options
             document.querySelectorAll('.template-option.selected').forEach(option => {
                 option.classList.remove('selected');
             });
             
-            // Sélectionner cette option
+            // Sélectionner cette option et ouvrir sa section
             templateOption.classList.add('selected');
             
-            // Ouvrir l'accordéon parent
+            // Ouvrir le panneau d'accordéon parent
             const accordionContent = templateOption.closest('.accordion-content');
             if (accordionContent) {
+                // Fermer tous les autres panneaux d'accordéon d'abord
+                document.querySelectorAll('.accordion-content').forEach(content => {
+                    if (content !== accordionContent) {
+                        content.style.display = 'none';
+                        const header = content.previousElementSibling;
+                        if (header) header.classList.remove('active');
+                    }
+                });
+                
+                // Ouvrir ce panneau
                 accordionContent.style.display = 'block';
                 const accordionHeader = accordionContent.previousElementSibling;
                 if (accordionHeader) {
                     accordionHeader.classList.add('active');
-                    accordionHeader.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    const icon = accordionHeader.querySelector('i');
+                    if (icon) icon.className = 'fas fa-chevron-up';
                 }
             }
         }
     }
     
-    // Charger les données du projet dans le formulaire
+    // REMPLIR LES CHAMPS DU FORMULAIRE
+    // Nom du projet
     const projectNameInput = document.getElementById('projectName');
     if (projectNameInput && projectToEdit.projectName) {
         projectNameInput.value = projectToEdit.projectName;
     }
     
+    // Date du projet
     const projectDateInput = document.getElementById('projectDate');
     if (projectDateInput && projectToEdit.projectDate) {
         projectDateInput.value = projectToEdit.projectDate;
+        
+        // Réinitialiser le flatpickr si nécessaire
+        if (typeof flatpickr === 'function' && projectDateInput._flatpickr) {
+            projectDateInput._flatpickr.setDate(projectToEdit.projectDate, true);
+        }
     }
     
+    // Budget total
     const totalBudgetInput = document.getElementById('totalBudget');
     if (totalBudgetInput && projectToEdit.totalBudget) {
         totalBudgetInput.value = projectToEdit.totalBudget;
     }
     
-    // Mettre à jour les champs supplémentaires s'ils existent
+    // Date de fin
     const projectEndDateInput = document.getElementById('projectEndDate');
-    if (projectEndDateInput && projectToEdit.projectEndDate) {
-        projectEndDateInput.value = projectToEdit.projectEndDate;
+    if (projectEndDateInput) {
+        if (projectToEdit.projectEndDate) {
+            projectEndDateInput.value = projectToEdit.projectEndDate;
+            
+            // Réinitialiser le flatpickr si nécessaire
+            if (typeof flatpickr === 'function' && projectEndDateInput._flatpickr) {
+                projectEndDateInput._flatpickr.setDate(projectToEdit.projectEndDate, true);
+            }
+        } else {
+            projectEndDateInput.value = '';
+        }
     }
     
+    // Statut du projet
     const projectStatusSelect = document.getElementById('projectStatus');
-    if (projectStatusSelect && projectToEdit.status) {
-        projectStatusSelect.value = projectToEdit.status;
+    if (projectStatusSelect) {
+        if (projectToEdit.projectStatus) {
+            projectStatusSelect.value = projectToEdit.projectStatus;
+        } else if (projectToEdit.status) {
+            // Pour compatibilité avec l'ancien format
+            projectStatusSelect.value = projectToEdit.status;
+        }
     }
     
+    // Option de lien au portefeuille
     const linkToWalletCheckbox = document.getElementById('linkToWallet');
     if (linkToWalletCheckbox && projectToEdit.linkToWallet !== undefined) {
         linkToWalletCheckbox.checked = projectToEdit.linkToWallet;
     }
     
-    // Modifier l'apparence du formulaire pour le mode édition
+    // Option de création de liste de souhaits
+    const createWishlistCheckbox = document.getElementById('createWishlist');
+    if (createWishlistCheckbox && projectToEdit.createWishlist !== undefined) {
+        createWishlistCheckbox.checked = projectToEdit.createWishlist;
+        
+        // Afficher ou masquer les options de liste de souhaits
+        const wishlistOptions = document.getElementById('wishlistOptions');
+        if (wishlistOptions) {
+            wishlistOptions.style.display = projectToEdit.createWishlist ? 'block' : 'none';
+        }
+    }
+    
+    // INTERFACE EN MODE ÉDITION
+    // Ajouter une classe pour le mode édition
     const formContainer = document.querySelector('.project-form-container');
     if (formContainer) {
         formContainer.classList.add('edit-mode');
@@ -384,23 +457,48 @@ function enableEditMode(projectId) {
     // Ajouter un message indiquant qu'on est en mode édition
     const formHeader = document.querySelector('.form-header');
     if (formHeader) {
-        // Vérifier si la notice existe déjà
-        let editModeNotice = formHeader.querySelector('.edit-mode-notice');
-        if (!editModeNotice) {
-            editModeNotice = document.createElement('div');
-            editModeNotice.className = 'edit-mode-notice';
-            editModeNotice.innerHTML = '<i class="fas fa-pencil-alt"></i> Mode Édition';
-            formHeader.appendChild(editModeNotice);
+        // Supprimer toute notice précédente
+        const oldNotice = formHeader.querySelector('.edit-mode-notice');
+        if (oldNotice) {
+            oldNotice.remove();
         }
+        
+        // Ajouter la nouvelle notice
+        const editModeNotice = document.createElement('div');
+        editModeNotice.className = 'edit-mode-notice';
+        editModeNotice.innerHTML = '<i class="fas fa-pencil-alt"></i> Mode Édition';
+        editModeNotice.style.backgroundColor = '#2979ff';
+        editModeNotice.style.color = 'white';
+        editModeNotice.style.padding = '5px 10px';
+        editModeNotice.style.borderRadius = '5px';
+        editModeNotice.style.marginBottom = '10px';
+        editModeNotice.style.display = 'inline-block';
+        formHeader.appendChild(editModeNotice);
     }
     
-    // Préparer les boutons de l'interface en mode édition
+    // Configurer les boutons spécifiques au mode édition
     setupEditModeButtons(projectId, projectToEdit);
     
-    // Charger les catégories et sous-catégories du projet
+    // Charger et afficher les catégories du projet
     if (projectToEdit.categories && projectToEdit.categories.length > 0) {
+        console.log('Chargement des catégories du projet:', projectToEdit.categories);
         loadProjectCategories(projectToEdit.categories);
+        
+        // Mettre à jour le total affiché
+        setTimeout(() => {
+            updateTotalBudgetDisplay();
+        }, 300);
+    } else {
+        console.warn('Aucune catégorie trouvée dans le projet');
     }
+    
+    // Initialiser les datepickers après avoir rempli les champs
+    setTimeout(() => {
+        initializeDatePickers();
+    }, 300);
+    
+    // Notification de succès
+    showNotification('Projet chargé avec succès pour modification', 'info');
 }
 
 // Fonction pour configurer les boutons en mode édition
@@ -624,6 +722,11 @@ function loadProjectCategories(categories) {
     
     // Initialiser le calcul du budget
     initializeBudgetCalculation();
+    
+    // Mettre à jour l'affichage du budget total
+    setTimeout(() => {
+        calculateAndDisplayTotalBudget();
+    }, 300);
 }
 
 // Fonction pour créer un élément de sous-catégorie
