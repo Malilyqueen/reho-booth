@@ -366,7 +366,7 @@
                     <button class="modern-btn-edit-project bg-blue-600 text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition-colors"><i class="fas fa-edit mr-2"></i>Modifier</button>
                     <button id="modern-completeProjectBtn" class="bg-green-500 text-white px-4 py-2 rounded-full shadow hover:bg-green-600 transition-colors"><i class="fas fa-check mr-2"></i>Terminer</button>
                     <button id="modern-archiveProjectBtn" class="bg-gray-400 text-white px-4 py-2 rounded-full shadow hover:bg-gray-500 transition-colors"><i class="fas fa-archive mr-2"></i>Archiver</button>
-                    <button id="modern-switchInterfaceBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-full shadow hover:bg-indigo-600 transition-colors"><i class="fas fa-exchange-alt mr-2"></i>Interface classique</button>
+                    <button id="refreshProjectBtn" class="bg-indigo-500 text-white px-4 py-2 rounded-full shadow hover:bg-indigo-600 transition-colors"><i class="fas fa-sync-alt mr-2"></i>Rafraîchir</button>
                 </div>
             </div>
 
@@ -525,27 +525,18 @@
         
         // Fonction pour basculer entre les interfaces
         function toggleInterface() {
-            isModernInterface = !isModernInterface;
+            // Interface unique et épurée - toujours en mode classique avec style élégant
+            isModernInterface = false;
             
-            if (isModernInterface) {
-                // Passer à l'interface moderne
-                document.body.classList.add('modern-interface');
-                classicInterfaceContainer.classList.add('hidden');
-                modernInterfaceContainer.classList.remove('hidden');
-                localStorage.setItem('useModernInterface', 'true');
-                
-                // Charger les données dans l'interface moderne
-                initializeModernInterface();
-            } else {
-                // Passer à l'interface classique
-                document.body.classList.remove('modern-interface');
-                classicInterfaceContainer.classList.remove('hidden');
-                modernInterfaceContainer.classList.add('hidden');
-                localStorage.setItem('useModernInterface', 'false');
-                
-                // S'assurer que les données sont chargées dans l'interface classique
-                // (normalement déjà fait au chargement de la page)
-            }
+            // Toujours utiliser l'interface classique mais avec les styles élégants
+            document.body.classList.remove('modern-interface');
+            classicInterfaceContainer.classList.remove('hidden');
+            modernInterfaceContainer.classList.add('hidden');
+            localStorage.setItem('useModernInterface', 'false');
+            
+            // S'assurer que les données sont chargées dans l'interface classique
+            // (normalement déjà fait au chargement de la page)
+        }
         }
         
         // Fonction pour initialiser l'interface moderne
@@ -760,9 +751,11 @@
                 });
             });
             
-            // Bouton pour revenir à l'interface classique
-            document.getElementById('modern-switchInterfaceBtn').addEventListener('click', function() {
-                toggleInterface(); // Basculer vers l'interface classique
+            // Bouton pour rafraîchir les données du projet
+            document.getElementById('refreshProjectBtn').addEventListener('click', function() {
+                // Recharger les données du projet depuis le localStorage
+                loadProject(currentProject.id);
+                showNotification("Projet rafraîchi", "success");
             });
             
             // Bouton pour marquer le projet comme terminé
@@ -783,18 +776,12 @@
             });
         }
         
-        // Bouton pour basculer vers l'interface moderne (dans l'interface classique)
-        document.getElementById('switchInterfaceBtn').addEventListener('click', function() {
-            toggleInterface();
-        });
+        // Nous n'utilisons plus le bouton de basculement d'interface - interface unique
 
-        // Script de gestion des onglets (tabs) pour l'interface classique
+        // Script de gestion des onglets (tabs) pour l'interface unique
         document.addEventListener('DOMContentLoaded', function() {
-            // Charger les préférences d'interface au chargement
-            const preferModernInterface = localStorage.getItem('useModernInterface') === 'true';
-            if (preferModernInterface) {
-                toggleInterface(); // Basculer vers l'interface moderne au chargement
-            }
+            // Toujours utiliser l'interface classique avec style élégant
+            localStorage.setItem('useModernInterface', 'false');
             
             // Gestion des onglets classiques
             const tabs = document.querySelectorAll('.tab-btn');
