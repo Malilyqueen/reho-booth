@@ -1,0 +1,63 @@
+Nous travaillons actuellement sur la page mapocket/nouveau-projet.html, qui sert à créer un nouveau projet budgétaire dans MaPocket. Il est crucial de ne pas confondre cette page avec d'autres (comme projet-vue.html). Les bugs et incohérences actuelles viennent souvent d’un mauvais ciblage ou d’une logique appliquée à la mauvaise page.
+
+✅ Objectifs attendus sur nouveau-projet.html
+Suggestions de postes de dépenses adaptées au modèle choisi
+
+Ex : Anniversaire → DJ, Gâteau, Traiteur
+
+Ex : Lancement de produit → Communication, Presse, Démo
+
+Ces suggestions doivent être insérées en tant qu’éléments modifiables ou supprimables.
+
+Suppression possible de toute sous-catégorie, même suggérée
+
+Aucune sous-catégorie ne doit être figée.
+
+L’utilisateur doit pouvoir partir d’un projet vide si souhaité.
+
+Comptabilisation correcte du budget
+
+Le champ Budget total (saisi par l’utilisateur) doit être une donnée distincte.
+
+Les dépenses saisies (catégories, sous-catégories, lignes) doivent être automatiquement additionnées via une logique de calcul en cascade :
+
+bash
+Copier
+Modifier
+Ligne ➜ Sous-catégorie ➜ Catégorie ➜ Total projet
+Synchronisation des données
+
+Tout ce qui est saisi dans nouveau-projet.html doit être fidèlement réutilisé dans projet-vue.html, sans transformation ou injection de nouvelles lignes par défaut.
+
+Pas de suggestions auto-ajoutées lors du basculement entre pages.
+
+Budget initial dans projet-vue.html
+
+Le champ "Budget initial" affiché dans la page projet doit correspondre au total des dépenses prévues lors de la création du projet.
+
+Ce champ doit être calculé automatiquement et stocké au moment de la sauvegarde (dans savedProjects) puis réinjecté.
+
+Comportement de l’interface
+
+Tous les boutons doivent être clairs, non dupliqués.
+
+L’interface ne doit pas se fermer automatiquement (bug constaté).
+
+Tous les éléments interactifs (+ Ajouter une ligne, Modifier, Supprimer) doivent fonctionner dans tous les navigateurs, sans bugs de clic ou de disparition de données.
+
+L’interface doit être responsive et fluide sur ordinateur comme mobile.
+
+🛠 Exemple de fonction à ajouter :
+js
+Copier
+Modifier
+function getSuggestionsByTemplate(type) {
+  const templates = {
+    "Lancement de produit": ["Communication", "Presse", "Événement de lancement", "Échantillons"],
+    "Anniversaire": ["Traiteur", "DJ", "Décoration", "Gâteau"],
+    "Mariage": ["Lieu", "Robe", "DJ", "Catering"],
+    "Formation professionnelle": ["Salle", "Formateur", "Supports", "Communication"],
+  };
+  return templates[type] || [];
+}
+👉 Cette fonction doit être utilisée lors de la génération du formulaire de projet, mais jamais dans la vue projet.
