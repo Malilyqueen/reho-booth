@@ -1119,13 +1119,12 @@ function viewProject(projectId) {
         
         // Sauvegarder le projet à visualiser dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToView));
+        localStorage.setItem('projectInEditing', projectId);
         
-        // Utiliser simplement projet-vue.html comme page simple et fiable
-        localStorage.setItem('viewProjectId', projectId);
-        
-        // Rediriger vers la page simplifiée
-        console.log('Redirection vers nouvelle page de projet:', projectId);
-        window.location.href = 'projet-vue.html';
+        // Utiliser directement la page d'édition avec un paramètre de mode 'view'
+        // Cela permettra de conserver toutes les fonctionnalités d'édition directe
+        console.log('Redirection vers page de projet unifiée:', projectId);
+        window.location.href = 'nouveau-projet.html?mode=view&id=' + projectId;
     } else {
         console.error('Projet non trouvé avec ID:', projectId);
         showNotification('Projet non trouvé');
