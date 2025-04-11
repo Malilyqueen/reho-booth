@@ -1,0 +1,83 @@
+ Voici le code propre et stable à intégrer pour corriger TOUT ça :
+📦 load-project.js
+js
+Copier
+Modifier
+function loadAndRenderProject(projectId) {
+  const savedProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+  const project = savedProjects.find(p => p.id === projectId);
+
+  if (!project) {
+    console.error("Aucun projet trouvé pour cet ID");
+    return;
+  }
+
+  console.log("Chargement du projet :", project.projectName);
+  renderProjectData(project);
+}
+🧩 renderProjectData.js
+js
+Copier
+Modifier
+function renderProjectData(project) {
+  const container = document.getElementById("projectContainer");
+  container.innerHTML = ""; // Nettoyage du DOM actuel
+
+  project.categories.forEach((category, i) => {
+    const categoryEl = createCategoryElement(category, i);
+    container.appendChild(categoryEl);
+  });
+
+  // Attendre que tout soit affiché avant de recalculer
+  setTimeout(() => {
+    recalculateAllAmounts();
+  }, 0);
+}
+🧠 recalculateAllAmounts.js
+js
+Copier
+Modifier
+function recalculateAllAmounts() {
+  let total = 0;
+
+  document.querySelectorAll(".expense-category").forEach(catEl => {
+    let catTotal = 0;
+
+    catEl.querySelectorAll(".subcategory").forEach(subcatEl => {
+      let subTotal = 0;
+      subcatEl.querySelectorAll(".expense-line").forEach(lineEl => {
+        const input = lineEl.querySelector(".line-amount");
+        const amount = parseFloat(input?.value || 0);
+        subTotal += amount;
+      });
+
+      const subDisplay = subcatEl.querySelector(".subcategory-amount");
+      if (subDisplay) {
+        subDisplay.textContent = formatCurrency(subTotal);
+      }
+
+      catTotal += subTotal;
+    });
+
+    const catDisplay = catEl.querySelector(".category-amount");
+    if (catDisplay) {
+      catDisplay.textContent = formatCurrency(catTotal);
+    }
+
+    total += catTotal;
+  });
+
+  const totalDisplay = document.getElementById("totalBudget");
+  if (totalDisplay) {
+    totalDisplay.textContent = formatCurrency(total);
+  }
+
+  console.log("💸 Recalcul terminé. Budget total : ", total);
+}
+🔁 formatCurrency.js
+js
+Copier
+Modifier
+function formatCurrency(amount) {
+  return `€ ${amount.toFixed(2).replace(".", ",")}`;
+}
