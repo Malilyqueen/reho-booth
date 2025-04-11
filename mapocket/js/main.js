@@ -618,13 +618,17 @@ window.userPreferences = window.userPreferences || {
         row.classList.add('project-row');
         
         // Calculer le budget total et les dépenses
-        const budgetTotal = parseFloat(project.totalBudget?.replace(/[^0-9.]/g, '') || 0);
+        const budgetTotal = typeof project.totalBudget === 'string' ? 
+                        parseFloat(project.totalBudget.replace(/[^0-9.,]/g, '').replace(',', '.')) : 
+                        parseFloat(project.totalBudget || 0);
         
         // Calculer les dépenses totales en additionnant toutes les catégories
         let depensesTotal = 0;
         if (project.categories && Array.isArray(project.categories)) {
             project.categories.forEach(category => {
-                const categoryAmount = parseFloat(category.amount?.replace(/[^0-9.]/g, '') || 0);
+                const categoryAmount = typeof category.amount === 'string' ? 
+                        parseFloat(category.amount.replace(/[^0-9.,]/g, '').replace(',', '.')) : 
+                        parseFloat(category.amount || 0);
                 depensesTotal += categoryAmount;
             });
         }
@@ -938,7 +942,9 @@ window.userPreferences = window.userPreferences || {
     // Calculer le budget global
     let totalBudget = 0;
     projects.forEach(project => {
-        const budget = parseFloat(project.totalBudget?.replace(/[^0-9.]/g, '') || 0);
+        const budget = typeof project.totalBudget === 'string' ? 
+                parseFloat(project.totalBudget.replace(/[^0-9.,]/g, '').replace(',', '.')) : 
+                parseFloat(project.totalBudget || 0);
         totalBudget += budget;
     });
     
