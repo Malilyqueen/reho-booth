@@ -1115,12 +1115,20 @@ function viewProject(projectId) {
     const projectToView = projects.find(p => p.id === projectId);
     
     if (projectToView) {
+        console.log('Projet trouvé pour visualisation:', projectToView.projectName);
+        
         // Sauvegarder le projet à visualiser dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToView));
         
+        // Construire l'URL correctement avec les paramètres
+        const url = new URL('projet.html', window.location.href);
+        url.searchParams.append('id', projectId);
+        
         // Rediriger vers la nouvelle page de détail de projet
-        window.location.href = 'projet.html?id=' + projectId;
+        console.log('Redirection vers:', url.toString());
+        window.location.href = url.toString();
     } else {
+        console.error('Projet non trouvé avec ID:', projectId);
         showNotification('Projet non trouvé');
     }
 }
