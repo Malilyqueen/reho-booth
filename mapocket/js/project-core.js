@@ -464,11 +464,33 @@ const ProjectCore = (function() {
         
         console.log('Remplissage du formulaire avec les données du projet:', project.projectName);
         
-        // Force la mise à jour des totaux après un court délai pour laisser le DOM se mettre à jour
-        setTimeout(() => {
+        // Fonction pour forcer la mise à jour des totaux
+        const forceUpdate = () => {
             console.log("Initialisation forcée des calculs avec les données existantes...");
+            
+            // Extraire la valeur numérique de toutes les lignes
+            document.querySelectorAll('.line-amount').forEach(element => {
+                if (element.textContent) {
+                    const numericValue = extractNumericValue(element.textContent);
+                    element.dataset.value = numericValue;
+                    console.log(`Montant de ligne extrait: ${element.textContent} -> ${numericValue}`);
+                }
+            });
+            
+            // Force le calcul de tous les totaux
             updateAllTotals(true);
-        }, 500);
+            
+            // Mettre à jour explicitement le total du projet
+            const totalBudget = document.getElementById('totalBudget');
+            if (totalBudget && project.totalBudget) {
+                totalBudget.value = project.totalBudget;
+                console.log("Budget total du projet défini:", project.totalBudget);
+            }
+        };
+        
+        // Force la mise à jour deux fois pour s'assurer que tout est bien calculé
+        setTimeout(forceUpdate, 500);
+        setTimeout(forceUpdate, 1000);
         
         // Champs de base
         if (document.getElementById('projectName')) {
@@ -1017,6 +1039,8 @@ const ProjectCore = (function() {
         if (submitButton) {
             submitButton.textContent = 'Créer le projet';
             submitButton.classList.remove('btn-success');
+            // S'assurer que le bouton est visible
+            submitButton.style.display = 'inline-block';
         }
         
         // Intercepter la soumission du formulaire
@@ -1080,6 +1104,14 @@ const ProjectCore = (function() {
         if (submitButton) {
             submitButton.textContent = 'Enregistrer les modifications';
             submitButton.classList.add('btn-success');
+            // S'assurer que le bouton est visible avec un style plus accentué
+            submitButton.style.display = 'inline-block';
+            submitButton.style.backgroundColor = '#28a745';
+            submitButton.style.borderColor = '#28a745';
+            submitButton.style.color = 'white';
+            submitButton.style.fontWeight = 'bold';
+            submitButton.style.padding = '10px 20px';
+            submitButton.style.fontSize = '16px';
         }
         
         // Remplir le formulaire
