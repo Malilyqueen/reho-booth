@@ -317,6 +317,301 @@ function loadProjectDetails(projectId) {
     console.log('Projet chargé:', project.projectName);
 }
 
+// Fonction pour charger les pièces jointes d'un projet
+function loadAttachments(projectId) {
+    console.log('Chargement des pièces jointes pour le projet:', projectId);
+    
+    // Récupérer le conteneur des pièces jointes
+    const attachmentsContainer = document.getElementById('attachments-container');
+    if (!attachmentsContainer) {
+        console.warn('Conteneur de pièces jointes non trouvé');
+        return;
+    }
+    
+    // Vider le conteneur
+    attachmentsContainer.innerHTML = '';
+    
+    // Récupérer les pièces jointes du projet
+    try {
+        // Récupérer les pièces jointes depuis localStorage
+        const projectAttachmentsData = localStorage.getItem(`project_${projectId}_attachments`);
+        
+        if (!projectAttachmentsData) {
+            attachmentsContainer.innerHTML = '<p class="empty-message">Aucune pièce jointe pour ce projet.</p>';
+            return;
+        }
+        
+        const attachments = JSON.parse(projectAttachmentsData);
+        
+        if (!Array.isArray(attachments) || attachments.length === 0) {
+            attachmentsContainer.innerHTML = '<p class="empty-message">Aucune pièce jointe pour ce projet.</p>';
+            return;
+        }
+        
+        // Créer la galerie de pièces jointes
+        const gallery = document.createElement('div');
+        gallery.className = 'attachments-gallery';
+        
+        // Ajouter chaque pièce jointe à la galerie
+        attachments.forEach((attachment, index) => {
+            const attachmentCard = document.createElement('div');
+            attachmentCard.className = 'attachment-card';
+            attachmentCard.setAttribute('data-id', attachment.id);
+            
+            // Déterminer le type d'icône à afficher selon le type de fichier
+            let iconClass = 'fa-file';
+            const fileType = attachment.type || 'unknown';
+            
+            if (fileType.includes('image')) {
+                iconClass = 'fa-file-image';
+            } else if (fileType.includes('pdf')) {
+                iconClass = 'fa-file-pdf';
+            } else if (fileType.includes('word') || fileType.includes('document')) {
+                iconClass = 'fa-file-word';
+            } else if (fileType.includes('excel') || fileType.includes('sheet')) {
+                iconClass = 'fa-file-excel';
+            }
+            
+            // Construire la carte de pièce jointe
+            attachmentCard.innerHTML = `
+                <div class="attachment-icon">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="attachment-info">
+                    <h4>${attachment.name || 'Fichier sans nom'}</h4>
+                    <p>${attachment.description || 'Sans description'}</p>
+                    <small>${new Date(attachment.date).toLocaleDateString('fr-FR')}</small>
+                </div>
+                <div class="attachment-actions">
+                    <button type="button" class="btn-view-attachment" title="Voir"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="btn-delete-attachment" title="Supprimer"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            // Ajouter la carte à la galerie
+            gallery.appendChild(attachmentCard);
+            
+            // Ajouter des gestionnaires d'événements pour les boutons
+            const viewBtn = attachmentCard.querySelector('.btn-view-attachment');
+            if (viewBtn) {
+                viewBtn.addEventListener('click', function() {
+                    viewAttachment(attachment.id);
+                });
+            }
+            
+            const deleteBtn = attachmentCard.querySelector('.btn-delete-attachment');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteAttachment(attachment.id);
+                });
+            }
+        });
+        
+        // Ajouter la galerie au conteneur
+        attachmentsContainer.appendChild(gallery);
+        
+        console.log('Pièces jointes chargées:', attachments.length);
+    } catch (error) {
+        console.error('Erreur lors du chargement des pièces jointes:', error);
+        attachmentsContainer.innerHTML = '<p class="error-message">Une erreur est survenue lors du chargement des pièces jointes.</p>';
+    }
+}
+
+// Fonction pour charger les commentaires d'un projet
+function loadComments(projectId) {
+    console.log('Chargement des commentaires pour le projet:', projectId);
+    
+    // Récupérer le conteneur des commentaires
+    const commentsContainer = document.getElementById('comments-container');
+    if (!commentsContainer) {
+        console.warn('Conteneur de commentaires non trouvé');
+        return;
+    }
+    
+    // Vider le conteneur
+    commentsContainer.innerHTML = '';
+    
+    // Récupérer les commentaires du projet
+    try {
+        // Récupérer les commentaires depuis localStorage
+        const projectCommentsData = localStorage.getItem(`project_${projectId}_comments`);
+        
+        if (!projectCommentsData) {
+            commentsContainer.innerHTML = '<p class="empty-message">Aucun commentaire sur ce projet.</p>';
+            return;
+        }
+        
+        const comments = JSON.parse(projectCommentsData);
+        
+        if (!Array.isArray(comments) || comments.length === 0) {
+            commentsContainer.innerHTML = '<p class="empty-message">Aucun commentaire sur ce projet.</p>';
+            return;
+        }
+        
+        // Créer la liste de commentaires
+        const commentsList = document.createElement('div');
+        commentsList.className = 'comments-list';
+        
+        // Ajouter chaque commentaire à la liste
+        comments.forEach((comment, index) => {
+            const commentItem = document.createElement('div');
+            commentItem.className = 'comment-item';
+            commentItem.setAttribute('data-id', comment.id);
+            
+            // Formater la date
+            let formattedDate = 'Date inconnue';
+            if (comment.date) {
+                try {
+                    const commentDate = new Date(comment.date);
+                    formattedDate = commentDate.toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } catch (e) {
+                    console.error('Erreur de formatage de date pour le commentaire:', e);
+                    formattedDate = comment.date;
+                }
+            }
+            
+            // Construire l'élément de commentaire
+            commentItem.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author">${comment.author || 'Anonyme'}</span>
+                    <span class="comment-date">${formattedDate}</span>
+                </div>
+                <div class="comment-content">
+                    <p>${comment.content || ''}</p>
+                </div>
+                <div class="comment-actions">
+                    <button type="button" class="btn-edit-comment" title="Modifier"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="btn-delete-comment" title="Supprimer"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            // Ajouter le commentaire à la liste
+            commentsList.appendChild(commentItem);
+            
+            // Ajouter des gestionnaires d'événements pour les boutons
+            const editBtn = commentItem.querySelector('.btn-edit-comment');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    editComment(comment.id);
+                });
+            }
+            
+            const deleteBtn = commentItem.querySelector('.btn-delete-comment');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteComment(comment.id);
+                });
+            }
+        });
+        
+        // Ajouter la liste au conteneur
+        commentsContainer.appendChild(commentsList);
+        
+        console.log('Commentaires chargés:', comments.length);
+    } catch (error) {
+        console.error('Erreur lors du chargement des commentaires:', error);
+        commentsContainer.innerHTML = '<p class="error-message">Une erreur est survenue lors du chargement des commentaires.</p>';
+    }
+}
+
+// Fonction pour charger les collaborateurs d'un projet
+function loadProjectCollaborators() {
+    console.log('Chargement des collaborateurs du projet');
+    
+    // Récupérer le conteneur des collaborateurs
+    const collaboratorsContainer = document.getElementById('collaborators-container');
+    if (!collaboratorsContainer) {
+        console.warn('Conteneur de collaborateurs non trouvé');
+        return;
+    }
+    
+    // Vider le conteneur
+    collaboratorsContainer.innerHTML = '';
+    
+    // Dans cette version simplifiée, on affiche juste un message
+    collaboratorsContainer.innerHTML = '<p class="empty-message">Aucun collaborateur sur ce projet.</p>';
+    
+    // Note: Dans une version plus avancée, cette fonction récupérerait les collaborateurs depuis une API ou localStorage
+}
+
+// Fonction pour vérifier si un projet est lié à un portefeuille
+function checkWalletLink(project) {
+    // Vérifier si le projet est lié à un portefeuille
+    const isLinked = project.linkToWallet === true;
+    
+    // Récupérer le bouton de liaison au portefeuille
+    const linkWalletBtn = document.getElementById('btn-link-wallet');
+    if (!linkWalletBtn) {
+        console.warn('Bouton de liaison au portefeuille non trouvé');
+        return;
+    }
+    
+    // Mettre à jour l'état du bouton
+    if (isLinked) {
+        linkWalletBtn.textContent = 'Délier du portefeuille';
+        linkWalletBtn.classList.add('linked');
+    } else {
+        linkWalletBtn.textContent = 'Lier au portefeuille';
+        linkWalletBtn.classList.remove('linked');
+    }
+    
+    // Ajouter un gestionnaire d'événement
+    linkWalletBtn.addEventListener('click', function() {
+        toggleWalletLink(project);
+    });
+}
+
+// Fonction pour activer/désactiver la liaison au portefeuille
+function toggleWalletLink(project) {
+    // Inverser l'état de liaison
+    project.linkToWallet = !project.linkToWallet;
+    
+    // Mettre à jour l'interface
+    const linkWalletBtn = document.getElementById('btn-link-wallet');
+    if (linkWalletBtn) {
+        if (project.linkToWallet) {
+            linkWalletBtn.textContent = 'Délier du portefeuille';
+            linkWalletBtn.classList.add('linked');
+            
+            // Mettre à jour les données du portefeuille
+            let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
+            if (!walletData.linkedProjects) walletData.linkedProjects = [];
+            
+            // Ajouter l'ID du projet s'il n'est pas déjà présent
+            if (!walletData.linkedProjects.includes(project.id)) {
+                walletData.linkedProjects.push(project.id);
+                localStorage.setItem('walletData', JSON.stringify(walletData));
+                console.log('Projet lié au portefeuille:', project.id);
+            }
+            
+            showNotification('Projet lié au portefeuille');
+        } else {
+            linkWalletBtn.textContent = 'Lier au portefeuille';
+            linkWalletBtn.classList.remove('linked');
+            
+            // Mettre à jour les données du portefeuille
+            let walletData = JSON.parse(localStorage.getItem('walletData') || '{"linkedProjects":[]}');
+            if (!walletData.linkedProjects) walletData.linkedProjects = [];
+            
+            // Retirer l'ID du projet s'il est présent
+            walletData.linkedProjects = walletData.linkedProjects.filter(id => id !== project.id);
+            localStorage.setItem('walletData', JSON.stringify(walletData));
+            console.log('Projet délié du portefeuille:', project.id);
+            
+            showNotification('Projet délié du portefeuille');
+        }
+    }
+    
+    // Sauvegarder les modifications
+    saveProjectChanges(project);
+}
+
 // Fonction pour charger les dépenses réelles d'un projet
 function loadRealExpenses(projectId) {
     console.log('Chargement des dépenses réelles pour le projet:', projectId);
