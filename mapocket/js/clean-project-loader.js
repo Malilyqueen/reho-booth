@@ -402,7 +402,8 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteButton.addEventListener('click', function() {
                 if (confirm('Voulez-vous vraiment supprimer cette catégorie et toutes ses sous-catégories ?')) {
                     categoryElement.remove();
-                    recalculateAllAmounts();
+                    recalculateProjectAmounts();
+                    collectAndSaveProjectData();
                 }
             });
         }
@@ -419,7 +420,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         lines: []
                     };
                     renderSubcategory(subcategoriesContainer, subcategory);
-                    recalculateAllAmounts();
+                    recalculateProjectAmounts();
+                    collectAndSaveProjectData();
                 }
             });
         }
@@ -429,7 +431,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (nameElement) {
             nameElement.addEventListener('blur', function() {
                 categoryElement.setAttribute('data-category', this.textContent);
-                recalculateAllAmounts();
+                recalculateProjectAmounts();
+                collectAndSaveProjectData();
             });
         }
     }
@@ -445,7 +448,8 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteButton.addEventListener('click', function() {
                 if (confirm('Voulez-vous vraiment supprimer cette sous-catégorie et toutes ses lignes ?')) {
                     subcategoryElement.remove();
-                    recalculateAllAmounts();
+                    recalculateProjectAmounts();
+                    collectAndSaveProjectData();
                 }
             });
         }
@@ -461,7 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         amount: 0
                     };
                     renderExpenseLine(linesContainer, line);
-                    recalculateAllAmounts();
+                    recalculateProjectAmounts();
+                    collectAndSaveProjectData();
                 }
             });
         }
@@ -543,11 +548,38 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             // Utiliser notre fonction de recalcul interne
             recalculateProjectAmounts();
-            console.log('✅ Recalcul final effectué');
+            // Sauvegarder une première fois les données
+            collectAndSaveProjectData();
+            console.log('✅ Recalcul final effectué et données sauvegardées');
         }, 200);
         
         // Désactiver tout autre système de chargement
         disableConflictingSystems();
+        
+        // Initialiser le bouton de sauvegarde si présent
+        const saveButton = document.getElementById('saveProject');
+        if (saveButton) {
+            saveButton.addEventListener('click', function() {
+                // Recalculer avant sauvegarde pour s'assurer d'avoir les dernières valeurs
+                recalculateProjectAmounts();
+                // Sauvegarder le projet
+                const projectData = collectAndSaveProjectData();
+                console.log('💾 Projet sauvegardé manuellement:', projectData.projectName);
+                
+                // Feedback visuel
+                alert('Projet sauvegardé avec succès !');
+                
+                // Si l'URL indique que nous sommes en mode édition, rediriger vers l'accueil
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('id')) {
+                    // Rediriger vers l'accueil avec un délai pour permettre à l'alerte d'être vue
+                    setTimeout(function() {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            });
+            console.log('✅ Bouton de sauvegarde initialisé');
+        }
     }
     
     /**
@@ -632,13 +664,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Créer un objet pour contenir toutes les données
         const projectData = {
-            projectName: document.getElementById('projectName')?.value,
-            projectDate: document.getElementById('projectDate')?.value,
-            projectEndDate: document.getElementById('projectEndDate')?.value,
-            totalBudget: document.getElementById('totalBudget')?.value,
-            template: document.getElementById('templateSelector')?.value,
-            linkToWallet: document.getElementById('linkToWallet')?.checked,
-            linkToWishlist: document.getElementById('linkToWishlist')?.checked,
+            projectName: document.getElementById('projectName')?.value || 'Projet sans nom',
+            projectDate: document.getElementById('projectDate')?.value || new Date().toISOString().split('T')[0],
+            projectEndDate: document.getElementById('projectEndDate')?.value || '',
+            totalBudget: extractNumericValue(document.getElementById('totalBudget')?.value || 0),
+            template: document.getElementById('templateSelector')?.value || 'custom',
+            linkToWallet: document.getElementById('linkToWallet')?.checked || false,
+            linkToWishlist: document.getElementById('linkToWishlist')?.checked || false,
             categories: []
         };
         
