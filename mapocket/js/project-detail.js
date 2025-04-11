@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser la page
     initProjectDetailPage();
     
+    // Initialiser les onglets
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.dataset.tab;
+            switchTab(tabId);
+        });
+    });
+    
     // Ajouter les écouteurs d'événements seulement s'ils existent
     
     // Retour au tableau de bord
@@ -156,20 +164,28 @@ function switchTab(tabId) {
     });
     
     // Activer l'onglet sélectionné
-    document.getElementById(tabId).classList.add('active');
+    document.getElementById(`${tabId}-tab`).classList.add('active');
     document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
     
     console.log(`Onglet actif : ${tabId}`);
 }
 
 function initProjectDetailPage() {
-    // Récupérer l'ID du projet depuis l'URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('id');
+    // Récupérer l'ID du projet depuis localStorage (nouvelle méthode)
+    const projectId = localStorage.getItem('viewProjectId');
     
+    // Compatibilité avec l'ancienne méthode (URL)
     if (!projectId) {
-        showNotification('Aucun projet spécifié', 'error');
-        return;
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlProjectId = urlParams.get('id');
+        
+        if (!urlProjectId) {
+            showNotification('Aucun projet spécifié', 'error');
+            return;
+        }
+        
+        // Si on a trouvé l'ID dans l'URL, on l'utilise
+        localStorage.setItem('viewProjectId', urlProjectId);
     }
     
     // Initialiser les modales et les événements

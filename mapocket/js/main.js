@@ -1120,13 +1120,12 @@ function viewProject(projectId) {
         // Sauvegarder le projet à visualiser dans le localStorage
         localStorage.setItem('currentProject', JSON.stringify(projectToView));
         
-        // Construire l'URL correctement avec les paramètres
-        const url = new URL('projet.html', window.location.href);
-        url.searchParams.append('id', projectId);
+        // Utiliser simplement projet-vue.html comme page simple et fiable
+        localStorage.setItem('viewProjectId', projectId);
         
-        // Rediriger vers la nouvelle page de détail de projet
-        console.log('Redirection vers:', url.toString());
-        window.location.href = url.toString();
+        // Rediriger vers la page simplifiée
+        console.log('Redirection vers nouvelle page de projet:', projectId);
+        window.location.href = 'projet-vue.html';
     } else {
         console.error('Projet non trouvé avec ID:', projectId);
         showNotification('Projet non trouvé');

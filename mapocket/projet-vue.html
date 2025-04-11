@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Projet - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/currency.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            <span class="menu-text">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            <span class="menu-text">Mes Projets</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            <span class="menu-text">Mon Portefeuille</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            <span class="menu-text">Objectifs & Défis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="wishlist.html">
+                            <i class="fas fa-gift"></i>
+                            <span class="menu-text">Liste de souhaits</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-bottom">
+                <button id="darkModeToggle" class="btn-icon">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="helpBtn" class="btn-icon">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <div class="user-menu">
+                    <img src="assets/avatar.png" alt="Avatar utilisateur" class="user-avatar">
+                    <span class="user-name">Utilisateur</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="project-detail-container">
+                <header class="project-header">
+                    <div class="back-button">
+                        <a href="index.html" id="btn-back-to-dashboard">
+                            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+                        </a>
+                    </div>
+                    <div class="project-title">
+                        <h1 id="projectTitle">Chargement du projet...</h1>
+                        <span id="projectType" class="project-type">Type de projet</span>
+                        <span id="projectStatus" class="project-status">En cours</span>
+                    </div>
+                    <div class="project-actions">
+                        <button id="btn-edit-project" class="btn btn-primary btn-edit-project">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button id="btn-complete-project" class="btn btn-success btn-complete-project">
+                            <i class="fas fa-check"></i> Marquer comme terminé
+                        </button>
+                        <button id="btn-archive-project" class="btn btn-secondary btn-archive-project">
+                            <i class="fas fa-archive"></i> Archiver
+                        </button>
+                    </div>
+                </header>
+
+                <div class="project-summary">
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar"></i>
+                            <h3>Date</h3>
+                        </div>
+                        <div class="card-body">
+                            <span id="projectDate">--/--/----</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <h3>Budget initial</h3>
+                        </div>
+                        <div class="card-body">
+                            <span id="initialBudget">0.00 €</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <i class="fas fa-receipt"></i>
+                            <h3>Budget utilisé</h3>
+                        </div>
+                        <div class="card-body">
+                            <span id="usedBudget">0.00 €</span>
+                        </div>
+                    </div>
+                    <div class="summary-card" id="budgetGapCard">
+                        <div class="card-header">
+                            <i class="fas fa-balance-scale"></i>
+                            <h3>Écart budgétaire</h3>
+                        </div>
+                        <div class="card-body">
+                            <span id="budgetGap">0.00 €</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie"></i>
+                            <h3>Utilisation</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span id="budgetPercentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-tabs">
+                    <div class="tabs-header">
+                        <button class="tab-btn active" data-tab="categories">Catégories</button>
+                        <button class="tab-btn" data-tab="real-tracking">Dépenses réelles</button>
+                        <button class="tab-btn" data-tab="attachments">Justificatifs</button>
+                        <button class="tab-btn" data-tab="comments">Commentaires</button>
+                    </div>
+
+                    <div class="tab-content active" id="categories-tab">
+                        <div class="category-list" id="categoryList">
+                            <!-- Les catégories seront générées ici dynamiquement -->
+                            <p class="loading">Chargement des catégories...</p>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="real-tracking-tab">
+                        <div class="tracking-header">
+                            <h3>Dépenses réelles</h3>
+                            <button id="btnAddRealExpense" class="btn btn-primary btn-add-real-expense">
+                                <i class="fas fa-plus"></i> Ajouter une dépense
+                            </button>
+                        </div>
+                        
+                        <!-- Conteneur pour les dépenses réelles -->
+                        <div id="real-expenses-container">
+                            <!-- Les dépenses seront générées ici dynamiquement -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="attachments-tab">
+                        <div class="attachments-header">
+                            <h3>Justificatifs</h3>
+                            <button id="btnAddAttachment" class="btn btn-primary btn-add-attachment">
+                                <i class="fas fa-plus"></i> Ajouter un justificatif
+                            </button>
+                        </div>
+                        
+                        <!-- Conteneur pour les pièces jointes -->
+                        <div id="attachments-container">
+                            <!-- Les pièces jointes seront générées ici dynamiquement -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="comments-tab">
+                        <div class="comments-header">
+                            <h3>Commentaires</h3>
+                            <button id="btnAddComment" class="btn btn-primary btn-add-comment">
+                                <i class="fas fa-plus"></i> Ajouter un commentaire
+                            </button>
+                        </div>
+                        
+                        <!-- Conteneur pour les commentaires -->
+                        <div id="comments-container">
+                            <!-- Les commentaires seront générés ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modales pour les différentes actions -->
+    <div id="realExpenseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Ajouter une dépense réelle</h2>
+            <form id="real-expense-form">
+                <div class="form-group">
+                    <label for="expenseDate">Date</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseCategory">Catégorie</label>
+                    <select id="expenseCategory" required>
+                        <!-- Les catégories seront générées ici dynamiquement -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount">Montant</label>
+                    <input type="number" id="expenseAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDescription">Description</label>
+                    <textarea id="expenseDescription" rows="3"></textarea>
+                </div>
+                <div class="form-footer">
+                    <button type="button" class="btn btn-cancel" id="cancelExpenseBtn">Annuler</button>
+                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="attachmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Ajouter un justificatif</h2>
+            <form id="attachment-form">
+                <div class="form-group">
+                    <label for="attachmentName">Nom</label>
+                    <input type="text" id="attachmentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="attachmentFile">Fichier</label>
+                    <input type="file" id="attachmentFile" required>
+                </div>
+                <div class="form-group">
+                    <label for="attachmentDescription">Description</label>
+                    <textarea id="attachmentDescription" rows="3"></textarea>
+                </div>
+                <div class="form-footer">
+                    <button type="button" class="btn btn-cancel" id="cancelAttachmentBtn">Annuler</button>
+                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Ajouter un commentaire</h2>
+            <form id="comment-form">
+                <div class="form-group">
+                    <label for="commentAuthor">Votre nom</label>
+                    <input type="text" id="commentAuthor" required>
+                </div>
+                <div class="form-group">
+                    <label for="commentContent">Commentaire</label>
+                    <textarea id="commentContent" rows="5" required></textarea>
+                </div>
+                <div class="form-footer">
+                    <button type="button" class="btn btn-cancel" id="cancelCommentBtn">Annuler</button>
+                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/currencies.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/budget-type-fix.js"></script>
+    <script src="js/project-detail.js"></script>
+</body>
+</html>
