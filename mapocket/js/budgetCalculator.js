@@ -322,4 +322,12 @@ const BudgetCalculator = (function() {
 // Auto-initialisation du module
 document.addEventListener('DOMContentLoaded', function() {
     BudgetCalculator.initialize();
+    console.log('✅ Module BudgetCalculator initialisé avec succès - Version modulaire');
+    
+    // Remplacer la fonction globale recalculateAllAmounts par la méthode du module
+    // pour maintenir la compatibilité avec le code existant
+    window.recalculateAllAmounts = function() {
+        console.log('🔄 Appel à recalculateAllAmounts redirigé vers BudgetCalculator');
+        return BudgetCalculator.recalculateAllAmounts();
+    };
 });

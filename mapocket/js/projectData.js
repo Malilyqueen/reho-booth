@@ -320,5 +320,33 @@ const ProjectData = (function() {
 
 // Auto-initialisation du module
 document.addEventListener('DOMContentLoaded', function() {
-    ProjectData.initialize();
+    const result = ProjectData.initialize();
+    console.log('✅ Module ProjectData initialisé avec succès - Version modulaire', result);
+    
+    // Remplacer les fonctions globales par les méthodes du module
+    // pour maintenir la compatibilité avec le code existant
+    window.getProjects = function() {
+        console.log('🔄 Appel à getProjects redirigé vers ProjectData');
+        return ProjectData.getProjects();
+    };
+    
+    window.getProjectById = function(projectId) {
+        console.log('🔄 Appel à getProjectById redirigé vers ProjectData');
+        return ProjectData.getProjectById(projectId);
+    };
+    
+    window.saveProject = function(projectData) {
+        console.log('🔄 Appel à saveProject redirigé vers ProjectData');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        
+        if (projectId) {
+            // Mise à jour d'un projet existant
+            return ProjectData.updateProject(projectId, projectData);
+        } else {
+            // Création d'un nouveau projet
+            return ProjectData.createProject(projectData);
+        }
+    };
 });

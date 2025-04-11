@@ -1010,5 +1010,37 @@ const FormManager = (function() {
 
 // Auto-initialisation du module
 document.addEventListener('DOMContentLoaded', function() {
-    FormManager.initialize();
+    const result = FormManager.initialize();
+    console.log('✅ Module FormManager initialisé avec succès - Version modulaire', result);
+    
+    // Ajouter des fonctions globales pour maintenir la compatibilité avec le code existant
+    window.addCategory = function() {
+        console.log('🔄 Appel à addCategory redirigé vers FormManager');
+        return FormManager.createCategory();
+    };
+    
+    window.addSubcategory = function(categoryElement) {
+        console.log('🔄 Appel à addSubcategory redirigé vers FormManager');
+        return FormManager.createSubcategory(categoryElement);
+    };
+    
+    window.addExpenseLine = function(subcategoryElement) {
+        console.log('🔄 Appel à addExpenseLine redirigé vers FormManager');
+        return FormManager.createLine(subcategoryElement);
+    };
+    
+    window.deleteCategory = function(categoryElement) {
+        console.log('🔄 Appel à deleteCategory redirigé vers FormManager');
+        return FormManager.deleteCategory(categoryElement);
+    };
+    
+    window.deleteSubcategory = function(subcategoryElement) {
+        console.log('🔄 Appel à deleteSubcategory redirigé vers FormManager');
+        return FormManager.deleteSubcategory(subcategoryElement);
+    };
+    
+    window.deleteLine = function(lineElement) {
+        console.log('🔄 Appel à deleteLine redirigé vers FormManager');
+        return FormManager.deleteLine(lineElement);
+    };
 });
