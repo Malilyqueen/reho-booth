@@ -24,8 +24,15 @@ function setupBudgetCalculations() {
     // Observer les modifications directement sur les champs modifiables
     document.addEventListener('input', function(event) {
         if (isAmountField(event.target)) {
-            // Mettre à jour les montants pendant la saisie
-            setTimeout(recalculateAllAmounts, 500);
+            // Mettre à jour les montants pendant la saisie, mais sans perturber l'édition
+            // Utiliser un délai pour éviter les calculs trop fréquents qui pourraient gêner
+            clearTimeout(window._recalcTimer);
+            window._recalcTimer = setTimeout(function() {
+                // Vérifier que l'élément n'est pas en cours d'édition active
+                if (!event.target.matches(':focus')) {
+                    recalculateAllAmounts();
+                }
+            }, 800);
         }
     });
     

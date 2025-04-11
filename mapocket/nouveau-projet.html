@@ -91,7 +91,7 @@
                 <h2 class="page-title">NOUVEAU PROJET</h2>
                 <h1 class="project-type">Anniversaire</h1>
 
-                <form id="newProjectForm" class="project-form">
+                <form id="newProjectForm" class="project-form" onsubmit="event.preventDefault(); return false;">
                     <div class="form-group">
                         <label for="projectName">Nom du projet</label>
                         <input type="text" id="projectName" name="projectName" value="Anniversaire de Manon" class="form-control">
@@ -351,6 +351,7 @@
     <script src="js/category-suggestions.js"></script>
     
     <!-- Solutions pour les problèmes -->
+    <script src="js/form-protection.js"></script>
     <script src="js/date-picker-fix.js"></script>
     <script src="js/edit-mode-fix.js"></script>
     <script src="js/budget-calculator.js"></script>

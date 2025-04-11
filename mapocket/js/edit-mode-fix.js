@@ -2,6 +2,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Initialisation des améliorations du mode d'édition...");
     
+    // CORRECTION CRITIQUE: Empêcher les soumissions de formulaire involontaires
+    // qui causent des redirections non voulues
+    preventUnwantedSubmissions();
+    
     // Vérifier si la page est en mode édition
     const urlParams = new URLSearchParams(window.location.search);
     const editMode = urlParams.get('edit') === 'true';
@@ -17,6 +21,77 @@ document.addEventListener('DOMContentLoaded', function() {
         enhanceSaveButton(projectId);
     }
 });
+
+// Fonction pour empêcher les soumissions de formulaire non désirées
+function preventUnwantedSubmissions() {
+    // 1. Intercepter tous les formulaires pour empêcher leur soumission automatique
+    document.querySelectorAll('form').forEach(form => {
+        // Désactiver la soumission automatique par Enter
+        form.addEventListener('submit', function(event) {
+            // Bloquer toutes les soumissions de formulaire
+            event.preventDefault();
+            event.stopPropagation();
+            console.log("Soumission de formulaire bloquée - utilisez les boutons dédiés");
+            return false;
+        }, true);
+        
+        // Arrêter la propagation des touches Enter dans les champs de saisie
+        form.querySelectorAll('input, textarea, [contenteditable]').forEach(input => {
+            input.addEventListener('keydown', function(event) {
+                // Bloquer la touche Entrée dans les champs
+                if (event.key === 'Enter' || event.keyCode === 13) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    // Optionnel : se déplacer au champ suivant
+                    // const nextInput = getNextInput(this);
+                    // if (nextInput) nextInput.focus();
+                    return false;
+                }
+            }, true);
+        });
+    });
+    
+    // 2. Empêcher les clics non intentionnels
+    document.addEventListener('dblclick', function(event) {
+        // Bloquer les doubles clics sur les champs modifiables
+        if (event.target.classList && (
+            event.target.classList.contains('editable-field') ||
+            event.target.classList.contains('expense-line-name') ||
+            event.target.classList.contains('expense-line-amount') ||
+            event.target.classList.contains('subcategory-name') ||
+            event.target.classList.contains('subcategory-amount') ||
+            event.target.classList.contains('category-name') ||
+            event.target.classList.contains('category-amount')
+        )) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log("Double-clic bloqué sur élément:", event.target);
+            return false;
+        }
+    }, true);
+    
+    // 3. Sécuriser les liens qui pourraient causer une navigation involontaire
+    document.querySelectorAll('a').forEach(link => {
+        // Pour les liens dans le formulaire d'édition
+        if (link.closest('form') || link.closest('.project-form-container')) {
+            link.addEventListener('click', function(event) {
+                // Vérifier si c'est un lien interne ou de navigation
+                const href = link.getAttribute('href');
+                if (href && (href.startsWith('#') || href === 'javascript:void(0)')) {
+                    // Ok pour ces liens contrôlés
+                    return true;
+                }
+                
+                // Demander confirmation pour les autres liens
+                if (!confirm('Vous êtes sur le point de quitter le formulaire. Les modifications non sauvegardées seront perdues. Continuer ?')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+            });
+        }
+    });
+}
 
 // Mettre en évidence le mode édition pour une meilleure compréhension utilisateur
 function highlightEditMode() {
@@ -99,10 +174,9 @@ function saveProjectChanges(projectId) {
         // 4. Afficher une notification de succès
         showSaveConfirmation();
         
-        // 5. Rediriger vers la liste des projets après un court délai
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
+        // 5. Rediriger UNIQUEMENT si le bouton de sauvegarde a été cliqué explicitement
+        // La redirection est désactivée pour éviter les problèmes de navigation intempestive
+        // Si le bouton "Enregistrer" est cliqué, l'utilisateur sera informé mais restera sur la page
     } catch (error) {
         console.error("Erreur lors de la sauvegarde:", error);
         showErrorNotification();
