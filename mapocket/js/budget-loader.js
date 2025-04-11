@@ -293,6 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Par défaut, utiliser l'euro
-        return `€ ${amount.toFixed(2).replace('.', ',')}`;
+        return `AED ${amount.toFixed(2).replace('.', ',')}`;
     }
 });

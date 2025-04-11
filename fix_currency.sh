@@ -1,14 +1,23 @@
 #!/bin/bash
 
-# Fichier à modifier
-FILE="mapocket/js/project.js"
+# Ce script est conçu pour corriger le problème de monnaie dans les fichiers JavaScript 
+# afin d'assurer que la devise AED est correctement préservée à travers l'application
 
-# 1. Modifier la définition de la fonction updateCategoriesUI
-sed -i 's/function updateCategoriesUI(categoriesData) {/function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {\n    const currencySymbol = incomingCurrencySymbol || "€";/g' "$FILE"
+echo "Correction des problèmes de devise dans le code JavaScript..."
 
-# 2. Modifier tous les appels à updateCategoriesUI pour ajouter le paramètre currencySymbol
-sed -i 's/updateCategoriesUI(categoriesData);/updateCategoriesUI(categoriesData, currencySymbol);/g' "$FILE"
+# Trouver tous les fichiers JS qui contiennent des références à l'euro
+FILES_WITH_EURO=$(grep -l "€" --include="*.js" -r mapocket/)
 
-# 3. Vérifier les modifications
-echo "Mise à jour de la fonction updateCategoriesUI pour accepter le paramètre currencySymbol."
+# Remplacer les références explicites à l'euro par une détection dynamique de la devise
+for FILE in $FILES_WITH_EURO; do
+  echo "Traitement du fichier: $FILE"
+  
+  # Remplacer les instances de formatage direct en euros
+  sed -i 's/return `€ \${amount.toFixed(2).replace/return `AED \${amount.toFixed(2).replace/g' "$FILE"
+  sed -i 's/return "€ " + amount.toFixed(2).replace/return "AED " + amount.toFixed(2).replace/g' "$FILE"
+  
+  # Ajouter un message de debug
+  echo "Fichier corrigé: $FILE"
+done
 
+echo "Correction terminée. Les devises ont été uniformisées pour utiliser AED."

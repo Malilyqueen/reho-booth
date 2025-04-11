@@ -220,13 +220,36 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Formater un nombre en devise
     function formatCurrency(amount) {
-        // Vérifier si la fonction getCurrencySymbol est disponible
+        // Capturer le symbole actuel depuis le budget total pour assurer la cohérence
+        const totalBudgetElement = document.getElementById('totalBudget');
+        if (totalBudgetElement) {
+            const totalBudgetText = totalBudgetElement.textContent || '';
+            // Extraire le symbole de devise du texte du budget total
+            const currencySymbolMatch = totalBudgetText.match(/^([^\d]+)/);
+            if (currencySymbolMatch && currencySymbolMatch[1]) {
+                const symbol = currencySymbolMatch[1].trim();
+                return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
+            }
+        }
+        
+        // Si la fonction getCurrencySymbol est disponible, l'utiliser comme seconde option
         if (typeof getCurrencySymbol === 'function') {
             const symbol = getCurrencySymbol();
             return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
         }
         
-        // Par défaut, utiliser l'euro
-        return `€ ${amount.toFixed(2).replace('.', ',')}`;
+        // Tenter de trouver le symbole AED dans les montants existants
+        const anyAmount = document.querySelector('.category-amount, .subcategory-amount, .line-amount');
+        if (anyAmount) {
+            const anyAmountText = anyAmount.textContent || '';
+            const anySymbolMatch = anyAmountText.match(/^([^\d]+)/);
+            if (anySymbolMatch && anySymbolMatch[1]) {
+                const symbol = anySymbolMatch[1].trim();
+                return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
+            }
+        }
+        
+        // Si tout échoue, préserver "AED" qui est la devise dans vos données
+        return `AED ${amount.toFixed(2).replace('.', ',')}`;
     }
 });
