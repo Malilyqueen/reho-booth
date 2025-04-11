@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser le datepicker sans perturbation
     initBasicDatepicker();
     
-    // Initialiser les calculs simples de budget
-    initSimpleBudgetCalc();
+    // Configurer le système de calcul en cascade intelligent
+    setupCascadeEvents();
 });
 
 // Fonction pour rendre les champs modifiables
@@ -157,7 +157,7 @@ function initSimpleBudgetCalc() {
     });
 }
 
-// Fonction pour mettre à jour les totaux selon la logique en cascade
+// Fonction pour mettre à jour les totaux selon la logique en cascade précise
 function updateTotals() {
     console.log("Mise à jour des totaux selon la logique en cascade...");
     
@@ -166,17 +166,17 @@ function updateTotals() {
         const activeElement = document.activeElement;
         const currencySymbol = getCurrencyFromPage() || '€';
         
-        // 1. Calculer les totaux des sous-catégories (seulement s'il y a des lignes)
+        // 1. Calculer les totaux des sous-catégories (SEULEMENT si des lignes existent)
         document.querySelectorAll('.subcategory').forEach(subcategory => {
             const lines = subcategory.querySelectorAll('.expense-line');
             const amountEl = subcategory.querySelector('.subcategory-amount');
             
-            // Ne rien faire si c'est en cours d'édition
-            if (amountEl === activeElement) {
+            // Ne pas calculer si en cours d'édition ou si l'élément n'existe pas
+            if (!amountEl || amountEl === activeElement) {
                 return;
             }
             
-            // Si des lignes existent, calculer automatiquement le total
+            // LOGIQUE PRÉCISE: Si des lignes existent, calculer automatiquement et rendre le champ non modifiable
             if (lines.length > 0) {
                 let total = 0;
                 lines.forEach(line => {
@@ -188,44 +188,63 @@ function updateTotals() {
                 });
                 
                 // Mise à jour du montant de la sous-catégorie (en lecture seule)
-                if (amountEl) {
-                    amountEl.textContent = formatMoney(total, currencySymbol);
-                    
-                    // Rendre en lecture seule si des lignes existent
-                    amountEl.setAttribute('data-has-lines', 'true');
-                    amountEl.style.backgroundColor = '#f5f5f5';
-                    amountEl.style.fontStyle = 'italic';
-                    
-                    // Ajouter un indicateur visuel
-                    if (!amountEl.getAttribute('title')) {
-                        amountEl.setAttribute('title', 'Calculé automatiquement à partir des lignes');
-                    }
+                amountEl.textContent = formatMoney(total, currencySymbol);
+                
+                // Indiquer clairement que ce champ est calculé automatiquement
+                amountEl.setAttribute('data-has-lines', 'true');
+                amountEl.setAttribute('data-calculated', 'true');
+                amountEl.contentEditable = 'false'; // Explicitement non modifiable
+                amountEl.style.backgroundColor = '#f5f5f5';
+                amountEl.style.fontStyle = 'italic';
+                amountEl.style.cursor = 'not-allowed';
+                amountEl.style.border = '1px dashed #ccc';
+                
+                // Ajouter info-bulle
+                amountEl.setAttribute('title', 'Montant calculé automatiquement à partir des lignes');
+                
+                // Ajouter un indicateur visuel
+                if (!amountEl.querySelector('.auto-indicator')) {
+                    const indicator = document.createElement('small');
+                    indicator.className = 'auto-indicator';
+                    indicator.textContent = ' 🔄';
+                    indicator.style.fontSize = '80%';
+                    indicator.style.color = '#6c757d';
+                    indicator.title = 'Calculé automatiquement';
+                    amountEl.appendChild(indicator);
                 }
             } 
-            // Sinon, laisser l'utilisateur éditer librement
-            else if (amountEl) {
+            // LOGIQUE PRÉCISE: Si AUCUNE ligne n'existe, laisser l'utilisateur saisir librement
+            else {
                 amountEl.removeAttribute('data-has-lines');
+                amountEl.removeAttribute('data-calculated');
+                amountEl.contentEditable = 'true'; // Explicitement modifiable
                 amountEl.style.backgroundColor = '';
                 amountEl.style.fontStyle = 'normal';
+                amountEl.style.cursor = 'text';
+                amountEl.style.border = '1px dashed #ccc';
                 
-                // Laisser l'utilisateur modifier le montant
-                if (!amountEl.getAttribute('title') || amountEl.getAttribute('title').includes('automatiquement')) {
-                    amountEl.setAttribute('title', 'Montant modifiable');
+                // Supprimer l'indicateur automatique s'il existe
+                const indicator = amountEl.querySelector('.auto-indicator');
+                if (indicator) {
+                    indicator.remove();
                 }
+                
+                // Info-bulle
+                amountEl.setAttribute('title', 'Montant modifiable directement');
             }
         });
         
-        // 2. Calculer les totaux des catégories (seulement s'il y a des sous-catégories)
+        // 2. Calculer les totaux des catégories (SEULEMENT si des sous-catégories existent)
         document.querySelectorAll('.expense-category').forEach(category => {
             const subcategories = category.querySelectorAll('.subcategory');
             const amountEl = category.querySelector('.category-amount');
             
-            // Ne rien faire si c'est en cours d'édition
-            if (amountEl === activeElement) {
+            // Ne pas calculer si en cours d'édition ou si l'élément n'existe pas
+            if (!amountEl || amountEl === activeElement) {
                 return;
             }
             
-            // Si des sous-catégories existent, calculer automatiquement le total
+            // LOGIQUE PRÉCISE: Si des sous-catégories existent, calculer automatiquement et rendre non modifiable
             if (subcategories.length > 0) {
                 let total = 0;
                 subcategories.forEach(subcategory => {
@@ -237,30 +256,49 @@ function updateTotals() {
                 });
                 
                 // Mise à jour du montant de la catégorie (en lecture seule)
-                if (amountEl) {
-                    amountEl.textContent = formatMoney(total, currencySymbol);
-                    
-                    // Rendre en lecture seule si des sous-catégories existent
-                    amountEl.setAttribute('data-has-subcategories', 'true');
-                    amountEl.style.backgroundColor = '#f5f5f5';
-                    amountEl.style.fontStyle = 'italic';
-                    
-                    // Ajouter un indicateur visuel
-                    if (!amountEl.getAttribute('title')) {
-                        amountEl.setAttribute('title', 'Calculé automatiquement à partir des sous-catégories');
-                    }
+                amountEl.textContent = formatMoney(total, currencySymbol);
+                
+                // Indiquer clairement que ce champ est calculé automatiquement
+                amountEl.setAttribute('data-has-subcategories', 'true');
+                amountEl.setAttribute('data-calculated', 'true');
+                amountEl.contentEditable = 'false'; // Explicitement non modifiable
+                amountEl.style.backgroundColor = '#f5f5f5';
+                amountEl.style.fontStyle = 'italic';
+                amountEl.style.cursor = 'not-allowed';
+                amountEl.style.border = '1px dashed #ccc';
+                
+                // Ajouter info-bulle
+                amountEl.setAttribute('title', 'Montant calculé automatiquement à partir des sous-catégories');
+                
+                // Ajouter un indicateur visuel
+                if (!amountEl.querySelector('.auto-indicator')) {
+                    const indicator = document.createElement('small');
+                    indicator.className = 'auto-indicator';
+                    indicator.textContent = ' 🔄';
+                    indicator.style.fontSize = '80%';
+                    indicator.style.color = '#6c757d';
+                    indicator.title = 'Calculé automatiquement';
+                    amountEl.appendChild(indicator);
                 }
             } 
-            // Sinon, laisser l'utilisateur éditer librement
-            else if (amountEl) {
+            // LOGIQUE PRÉCISE: Si AUCUNE sous-catégorie n'existe, laisser l'utilisateur saisir librement
+            else {
                 amountEl.removeAttribute('data-has-subcategories');
+                amountEl.removeAttribute('data-calculated');
+                amountEl.contentEditable = 'true'; // Explicitement modifiable
                 amountEl.style.backgroundColor = '';
                 amountEl.style.fontStyle = 'normal';
+                amountEl.style.cursor = 'text';
+                amountEl.style.border = '1px dashed #ccc';
                 
-                // Laisser l'utilisateur modifier le montant
-                if (!amountEl.getAttribute('title') || amountEl.getAttribute('title').includes('automatiquement')) {
-                    amountEl.setAttribute('title', 'Montant modifiable');
+                // Supprimer l'indicateur automatique s'il existe
+                const indicator = amountEl.querySelector('.auto-indicator');
+                if (indicator) {
+                    indicator.remove();
                 }
+                
+                // Info-bulle
+                amountEl.setAttribute('title', 'Montant modifiable directement');
             }
         });
         
@@ -281,10 +319,79 @@ function updateTotals() {
             if (totalInput && totalInput !== activeElement) {
                 totalInput.value = formatMoney(grandTotal, currencySymbol);
             }
+            
+            // Indiquer clairement que le budget total est calculé
+            if (!totalBudgetDisplay.querySelector('.auto-indicator')) {
+                const indicator = document.createElement('small');
+                indicator.className = 'auto-indicator';
+                indicator.textContent = ' 🔄';
+                indicator.style.fontSize = '80%';
+                indicator.style.color = '#6c757d';
+                indicator.title = 'Calculé automatiquement';
+                totalBudgetDisplay.appendChild(indicator);
+            }
         }
     } catch (err) {
         console.error("Erreur lors de la mise à jour des totaux:", err);
     }
+}
+
+// Configurer les événements pour surveiller les modifications et actualiser les totaux
+function setupCascadeEvents() {
+    console.log("Configuration des événements pour la cascade des calculs");
+
+    // 1. Observer les suppressions d'éléments
+    document.addEventListener('click', function(e) {
+        // Attraper les clics sur les boutons de suppression
+        if (e.target.classList.contains('delete-category-btn') || 
+            e.target.classList.contains('delete-subcategory-btn') || 
+            e.target.classList.contains('delete-line-btn')) {
+            
+            console.log("Suppression détectée, mise à jour des totaux...");
+            setTimeout(updateTotals, 300); // Laisser le temps au DOM de se mettre à jour
+        }
+    });
+
+    // 2. Observer les ajouts d'éléments
+    document.addEventListener('click', function(e) {
+        // Attraper les clics sur les boutons d'ajout
+        if (e.target.classList.contains('add-category-btn') || 
+            e.target.classList.contains('add-subcategory-btn') || 
+            e.target.classList.contains('add-expense-line-btn')) {
+            
+            console.log("Ajout détecté, mise à jour des totaux...");
+            setTimeout(updateTotals, 300); // Laisser le temps au DOM de se mettre à jour
+        }
+    });
+
+    // 3. Observer les modifications de valeurs
+    document.addEventListener('input', function(e) {
+        // Vérifier si l'élément modifié est un montant
+        if (e.target.classList.contains('expense-line-amount') || 
+            e.target.classList.contains('subcategory-amount') || 
+            e.target.classList.contains('category-amount') ||
+            e.target.id === 'totalBudget') {
+            
+            console.log("Modification de montant détectée, mise à jour des totaux...");
+            setTimeout(updateTotals, 300);
+        }
+    });
+
+    // 4. Observer la fin de modification (pour s'assurer que les totaux sont mis à jour)
+    document.addEventListener('blur', function(e) {
+        // Vérifier si l'élément qui perd le focus est un montant
+        if (e.target.classList.contains('expense-line-amount') || 
+            e.target.classList.contains('subcategory-amount') || 
+            e.target.classList.contains('category-amount') ||
+            e.target.id === 'totalBudget') {
+            
+            console.log("Fin d'édition d'un montant, mise à jour des totaux...");
+            setTimeout(updateTotals, 300);
+        }
+    });
+
+    // Exécuter une première fois
+    setTimeout(updateTotals, 500);
 }
 
 // Fonction pour obtenir le symbole de devise de n'importe quel élément de la page
