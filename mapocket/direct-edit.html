@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modification de Projet - MaPocket</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/budget-line-styles.css">
+    <link rel="stylesheet" href="css/budget-calculation-styles.css">
+    <link rel="stylesheet" href="css/wishlist-integration.css">
+    <link rel="stylesheet" href="css/editable-fields.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="MaPocket Logo">
+                <h1>MaPocket</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li>
+                        <a href="index.html">
+                            <i class="fas fa-home"></i>
+                            <span class="menu-text">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.html#projects-list">
+                            <i class="fas fa-folder"></i>
+                            <span class="menu-text">Mes Projets</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="nouveau-projet.html">
+                            <i class="fas fa-plus-circle"></i>
+                            <span class="menu-text">Créer un projet</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="portefeuille.html">
+                            <i class="fas fa-wallet"></i>
+                            <span class="menu-text">Mon Portefeuille</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="objectifs.html">
+                            <i class="fas fa-bullseye"></i>
+                            <span class="menu-text">Mes Objectifs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="liste-souhaits.html">
+                            <i class="fas fa-gift"></i>
+                            <span class="menu-text">Liste de souhaits</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-preferences">
+                    <button id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                        <span class="pref-text">Thème</span>
+                    </button>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <i class="fas fa-globe"></i>
+                            <span class="pref-text">Langue</span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#" data-lang="fr">Français</a>
+                            <a href="#" data-lang="en">English</a>
+                            <a href="#" data-lang="es">Español</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <i class="fas fa-coins"></i>
+                            <span class="pref-text">Devise</span>
+                        </button>
+                        <div class="dropdown-content" id="currencyDropdown">
+                            <a href="#" data-currency="EUR">EUR (€)</a>
+                            <a href="#" data-currency="USD">USD ($)</a>
+                            <a href="#" data-currency="GBP">GBP (£)</a>
+                            <a href="#" data-currency="MAD">MAD (DH)</a>
+                            <a href="#" data-currency="AED">AED</a>
+                            <a href="#" data-currency="JPY">JPY (¥)</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="logout">
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span class="pref-text">Paramètres</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher dans MaPocket...">
+                </div>
+                <div class="user-menu">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="assets/profile-pic.jpg" alt="Profil">
+                        <span>Sophie Martin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <section class="content-area">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h1 style="color: #007bff;"><i class="fas fa-edit"></i> MODIFICATION DE PROJET</h1>
+                        <div class="breadcrumb">
+                            <a href="index.html">Accueil</a> &gt; <a href="index.html#projects-list">Projets</a> &gt; <span class="current-page">Modifier Projet</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card new-project">
+                    <div class="card-header">
+                        <h2 class="project-type" id="templateType">Type de projet</h2>
+                    </div>
+                    
+                    <form class="project-form" id="projectForm">
+                        <div class="form-group">
+                            <label for="projectName">Nom du projet</label>
+                            <input type="text" id="projectName" name="projectName" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="projectDate">Date de début</label>
+                                <input type="text" id="projectDate" name="projectDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="projectEndDate">Date de fin (optionnelle)</label>
+                                <input type="text" id="projectEndDate" name="projectEndDate">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="totalBudget">Budget total</label>
+                                <input type="text" id="totalBudget" name="totalBudget">
+                            </div>
+                            <div class="form-group">
+                                <label for="projectStatus">Statut</label>
+                                <select id="projectStatus" name="projectStatus">
+                                    <option value="planning">Planification</option>
+                                    <option value="inProgress" selected>En cours</option>
+                                    <option value="completed">Terminé</option>
+                                    <option value="paused">En pause</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="linkToWallet" name="linkToWallet">
+                                <span class="checkbox-text">Lier au portefeuille</span>
+                            </label>
+                            <p class="hint">Les dépenses de ce projet affecteront automatiquement votre solde portefeuille.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <h3>Modèle de budget</h3>
+                            <div class="template-selector">
+                                <div class="accordion">
+                                    <div class="accordion-header active">
+                                        <h4>Événements</h4>
+                                        <i class="fas fa-chevron-up"></i>
+                                    </div>
+                                    <div class="accordion-content" style="display: block;">
+                                        <div class="template-grid">
+                                            <div class="template-option" data-template="Anniversaire">
+                                                <img src="assets/categories/anniversaire.svg" alt="Anniversaire">
+                                                <span>Anniversaire</span>
+                                            </div>
+                                            <div class="template-option" data-template="Mariage">
+                                                <img src="assets/categories/mariage.svg" alt="Mariage">
+                                                <span>Mariage</span>
+                                            </div>
+                                            <div class="template-option" data-template="Baby shower">
+                                                <img src="assets/categories/babyshower.svg" alt="Baby shower">
+                                                <span>Baby shower</span>
+                                            </div>
+                                            <div class="template-option" data-template="Fête d'entreprise">
+                                                <img src="assets/categories/fete.svg" alt="Fête d'entreprise">
+                                                <span>Fête d'entreprise</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion">
+                                    <div class="accordion-header">
+                                        <h4>Projets</h4>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="accordion-content">
+                                        <div class="template-grid">
+                                            <div class="template-option" data-template="Rénovation">
+                                                <img src="assets/categories/renovation.svg" alt="Rénovation">
+                                                <span>Rénovation</span>
+                                            </div>
+                                            <div class="template-option" data-template="Déménagement">
+                                                <img src="assets/categories/demenagement.svg" alt="Déménagement">
+                                                <span>Déménagement</span>
+                                            </div>
+                                            <div class="template-option" data-template="Projet auto">
+                                                <img src="assets/categories/auto.svg" alt="Projet auto">
+                                                <span>Projet auto</span>
+                                            </div>
+                                            <div class="template-option" data-template="Lancement de produit">
+                                                <img src="assets/categories/lancement.svg" alt="Lancement de produit">
+                                                <span>Lancement de produit</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion">
+                                    <div class="accordion-header">
+                                        <h4>Finances</h4>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="accordion-content">
+                                        <div class="template-grid">
+                                            <div class="template-option" data-template="Épargne mensuelle">
+                                                <img src="assets/categories/epargne.svg" alt="Épargne mensuelle">
+                                                <span>Épargne mensuelle</span>
+                                            </div>
+                                            <div class="template-option" data-template="Investissement">
+                                                <img src="assets/categories/investissement.svg" alt="Investissement">
+                                                <span>Investissement</span>
+                                            </div>
+                                            <div class="template-option" data-template="Budget familial">
+                                                <img src="assets/categories/famille.svg" alt="Budget familial">
+                                                <span>Budget familial</span>
+                                            </div>
+                                            <div class="template-option" data-template="Remboursement">
+                                                <img src="assets/categories/remboursement.svg" alt="Remboursement">
+                                                <span>Remboursement</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <h3>Budget détaillé</h3>
+                            <div id="categoriesContainer" class="categories-container">
+                                <!-- Contiendra les catégories de dépenses -->
+                            </div>
+                            <button type="button" id="addCategoryBtn" class="btn-primary add-category">
+                                <i class="fas fa-plus"></i> Ajouter une catégorie
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="createWishlist" name="createWishlist">
+                                <span class="checkbox-text">Créer une liste de souhaits liée à ce projet</span>
+                            </label>
+                        </div>
+                        
+                        <div id="wishlistOptions" class="wishlist-options hidden">
+                            <div class="form-group">
+                                <label for="wishlistRecipientType">Pour qui est cette liste ?</label>
+                                <select id="wishlistRecipientType" name="wishlistRecipientType">
+                                    <option value="myself">Pour moi</option>
+                                    <option value="other">Pour quelqu'un d'autre</option>
+                                </select>
+                            </div>
+                            
+                            <div id="recipientNameContainer" class="form-group hidden">
+                                <label for="wishlistRecipientName">Nom du destinataire</label>
+                                <input type="text" id="wishlistRecipientName" name="wishlistRecipientName">
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" id="cancelBtn" onclick="window.history.back();" class="btn-secondary">Annuler</button>
+                            <button type="submit" class="btn-primary" style="background-color: #28a745; border-color: #28a745;">Enregistrer les modifications</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts de base -->
+    <script src="../default_categories.js"></script>
+    <script src="js/localStorageQuota.js"></script>
+    <script src="js/preferences.js"></script>
+    <script src="js/userPreferences.js"></script>
+    <script src="js/userPreferences-patch.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/currency-utils.js"></script>
+    <script src="js/currency-provider.js"></script>
+    <script src="js/projet-direct-edit.js"></script>
+    
+    <!-- Scripts spécifiques à l'édition -->
+    <script src="js/editable-fields.js"></script>
+    <script src="js/category-editor.js"></script>
+    
+    <!-- Ajouter flatpickr depuis CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+</body>
+</html>
