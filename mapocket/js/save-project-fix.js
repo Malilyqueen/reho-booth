@@ -2,15 +2,6 @@
 // Se concentre uniquement sur la sauvegarde et n'interfère pas avec l'édition.
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Ajouter un gestionnaire de clics sur le bouton de sauvegarde
-    const saveBtn = document.querySelector('#saveProjectBtn, button[type="submit"]');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            saveProject();
-        });
-    }
-    
     // Si nous sommes en mode édition (avec un ID dans l'URL)
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
@@ -25,8 +16,109 @@ document.addEventListener('DOMContentLoaded', function() {
             pageTitle.textContent = 'MODIFIER PROJET';
             pageTitle.style.color = '#2979ff';
         }
+        
+        // CORRECTION: Ajouter un bouton clair pour enregistrer les modifications
+        addSaveButton(projectId);
     }
+    
+    // Gérer les boutons de sauvegarde existants
+    const saveBtn = document.querySelector('#saveProjectBtn, button[type="submit"]');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            saveProject();
+        });
+    }
+    
+    // CORRECTION: Supprimer les lignes par défaut vides ou non modifiables
+    setTimeout(removeEmptyDefaultLines, 500);
 });
+
+// Fonction pour supprimer les lignes par défaut non désirées
+function removeEmptyDefaultLines() {
+    console.log("Suppression des lignes par défaut vides...");
+    
+    // Chercher toutes les lignes de dépense
+    document.querySelectorAll('.expense-line').forEach(function(line) {
+        const nameEl = line.querySelector('.expense-line-name');
+        const amountEl = line.querySelector('.expense-line-amount');
+        
+        // Vérifier si la ligne est vide ou contient juste des valeurs par défaut
+        if (nameEl && amountEl) {
+            const name = nameEl.textContent.trim();
+            const amount = amountEl.textContent.trim();
+            
+            // Si le nom est vide ou contient un texte générique par défaut
+            if (!name || name === '' || 
+                name.includes('Ligne') || name.includes('ligne') || 
+                name.includes('default') || name.includes('Default')) {
+                
+                // Supprimer cette ligne non désirée
+                console.log("Suppression d'une ligne vide ou par défaut:", name);
+                line.remove();
+            }
+        }
+    });
+}
+
+// Fonction pour ajouter un bouton de sauvegarde clair
+function addSaveButton(projectId) {
+    console.log("Ajout du bouton de sauvegarde pour l'édition...");
+    
+    // Vérifier si un bouton de sauvegarde existe déjà
+    if (document.getElementById('saveChangesBtn')) {
+        return; // Ne pas dupliquer le bouton
+    }
+    
+    // Créer un conteneur pour le bouton en bas du formulaire s'il n'existe pas déjà
+    let formActions = document.querySelector('.form-actions');
+    if (!formActions) {
+        // Créer un nouveau conteneur pour le bouton
+        formActions = document.createElement('div');
+        formActions.className = 'form-actions';
+        formActions.style.marginTop = '30px';
+        formActions.style.textAlign = 'center';
+        formActions.style.padding = '20px 0';
+        
+        // Trouver un bon endroit pour insérer le bouton
+        const form = document.querySelector('form');
+        if (form) {
+            form.appendChild(formActions);
+        } else {
+            // Alternative: ajouter à la fin de la page
+            const content = document.querySelector('.content');
+            if (content) {
+                content.appendChild(formActions);
+            } else {
+                document.body.appendChild(formActions);
+            }
+        }
+    }
+    
+    // Créer le bouton d'enregistrement
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveChangesBtn';
+    saveButton.className = 'btn-primary btn-save';
+    saveButton.type = 'button';
+    saveButton.innerHTML = '<i class="fas fa-save"></i> ✅ Enregistrer les modifications';
+    saveButton.style.backgroundColor = '#4CAF50'; // Vert
+    saveButton.style.color = 'white';
+    saveButton.style.padding = '12px 24px';
+    saveButton.style.fontSize = '16px';
+    saveButton.style.border = 'none';
+    saveButton.style.borderRadius = '4px';
+    saveButton.style.cursor = 'pointer';
+    saveButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    saveButton.style.margin = '0 10px';
+    
+    // Ajouter l'événement de sauvegarde
+    saveButton.addEventListener('click', function() {
+        saveProject();
+    });
+    
+    // Ajouter le bouton au conteneur
+    formActions.appendChild(saveButton);
+}
 
 // Fonction pour sauvegarder un projet (nouveau ou modifié)
 function saveProject() {

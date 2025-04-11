@@ -52,8 +52,62 @@ function makeFieldsEditable() {
     
     // 3. Spécifiquement pour les noms et montants des catégories/sous-catégories
     document.querySelectorAll('.category-name, .subcategory-name, .expense-line-name, .category-amount, .subcategory-amount, .expense-line-amount').forEach(el => {
+        // Rendre explicitement éditable
         el.contentEditable = true;
+        
+        // Ajouter un style pour indiquer clairement qu'ils sont modifiables
+        // Seulement si ce n'est pas déjà fait
+        if (!el.classList.contains('editable-highlighted')) {
+            el.classList.add('editable-highlighted');
+            el.style.border = '1px dashed #ccc';
+            el.style.padding = '2px 5px';
+            el.style.borderRadius = '3px';
+            el.style.minWidth = '50px';
+            el.style.display = 'inline-block';
+            
+            // Au survol
+            el.addEventListener('mouseover', function() {
+                this.style.backgroundColor = '#f9f9f9';
+                this.style.cursor = 'pointer';
+            });
+            
+            el.addEventListener('mouseout', function() {
+                this.style.backgroundColor = '';
+            });
+            
+            // Au focus
+            el.addEventListener('focus', function() {
+                this.style.border = '1px solid #4CAF50';
+                this.style.boxShadow = '0 0 3px rgba(76, 175, 80, 0.5)';
+                this.style.backgroundColor = '#f9f9f9';
+            });
+            
+            el.addEventListener('blur', function() {
+                this.style.border = '1px dashed #ccc';
+                this.style.boxShadow = 'none';
+                this.style.backgroundColor = '';
+            });
+        }
     });
+    
+    // 4. Ajouter une légende d'aide si elle n'existe pas déjà
+    if (!document.querySelector('.edit-help-notice')) {
+        const formContainer = document.querySelector('form') || document.querySelector('.content');
+        if (formContainer) {
+            const helpNotice = document.createElement('div');
+            helpNotice.className = 'edit-help-notice';
+            helpNotice.innerHTML = '<i class="fas fa-info-circle"></i> Cliquez sur les champs encadrés pour les modifier.';
+            helpNotice.style.backgroundColor = '#e3f2fd';
+            helpNotice.style.color = '#0d47a1';
+            helpNotice.style.padding = '8px 15px';
+            helpNotice.style.borderRadius = '4px';
+            helpNotice.style.margin = '15px 0';
+            helpNotice.style.fontSize = '14px';
+            
+            // Insérer au début du formulaire
+            formContainer.insertBefore(helpNotice, formContainer.firstChild);
+        }
+    }
 }
 
 // Initialiser le datepicker de manière simple
