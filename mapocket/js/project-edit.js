@@ -105,29 +105,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Fonction pour initialiser les date pickers
 function initializeDatePickers() {
+    // Configuration commune pour tous les pickers de date
+    const datePickerConfig = {
+        dateFormat: "d/m/Y",
+        locale: "fr",
+        allowInput: true,
+        disableMobile: true,  // Désactiver la version mobile pour une meilleure compatibilité
+        monthSelectorType: "static",  // Pour une meilleure compatibilité avec tous les navigateurs
+        time_24hr: true  // Format 24h pour la France
+    };
+    
     // Initialiser le datepicker principal avec flatpickr
     const projectDateInput = document.getElementById('projectDate');
     if (projectDateInput) {
-        flatpickr(projectDateInput, {
-            dateFormat: "d/m/Y",
-            locale: "fr",
-            allowInput: true,
-            disableMobile: false
-        });
-        
+        flatpickr(projectDateInput, datePickerConfig);
         console.log("Date picker principal initialisé");
+        
+        // S'assurer que le champ a toujours une valeur par défaut (aujourd'hui si vide)
+        if (!projectDateInput.value || projectDateInput.value.trim() === '') {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            projectDateInput.value = `${day}/${month}/${year}`;
+        }
     }
     
     // Initialiser le datepicker de date de fin si présent
     const projectEndDateInput = document.getElementById('projectEndDate');
     if (projectEndDateInput) {
-        flatpickr(projectEndDateInput, {
-            dateFormat: "d/m/Y",
-            locale: "fr",
-            allowInput: true,
-            disableMobile: false
-        });
-        
+        flatpickr(projectEndDateInput, datePickerConfig);
         console.log("Date picker de fin initialisé");
     }
 }
@@ -1597,6 +1604,36 @@ function setupAddCategoryButton() {
 
 // Fonction pour mettre à jour un projet existant
 function updateExistingProject(formData, originalProject, projectId, shouldRedirect) {
+    // S'assurer que toutes les propriétés importantes sont préservées
+    formData.id = projectId;
+    formData.createdAt = originalProject.createdAt || new Date().toISOString();
+    
+    // Préserver les statistiques de suivi si elles existent
+    if (originalProject.budgetTracking) {
+        formData.budgetTracking = originalProject.budgetTracking;
+        // Mettre à jour le budget total dans le suivi
+        if (formData.budgetTracking) {
+            // Extraire la valeur numérique du budget total
+            let numericBudget = 0;
+            if (formData.totalBudget) {
+                const match = formData.totalBudget.match(/[\d,.]+/);
+                if (match) {
+                    // Remplacer les virgules par des points pour la conversion
+                    numericBudget = parseFloat(match[0].replace(',', '.')) || 0;
+                }
+            }
+            formData.budgetTracking.totalBudget = formData.totalBudget;
+        }
+    } else {
+        // Initialiser le suivi du budget si non existant
+        formData.budgetTracking = {
+            totalBudget: formData.totalBudget,
+            totalSpent: 0,
+            totalWishlistPurchased: 0,
+            percentageUsed: 0
+        };
+    }
+    
     // Charger les projets existants
     let savedProjects = [];
     try {
@@ -1610,32 +1647,42 @@ function updateExistingProject(formData, originalProject, projectId, shouldRedir
         savedProjects = [];
     }
     
-    // Remplacer le projet existant par le projet mis à jour
-    const updatedProjects = savedProjects.map(project => {
-        if (project.id === projectId) {
-            console.log('Mise à jour du projet:', formData);
-            return formData;
-        }
-        return project;
-    });
+    // Vérifier si le projet existe déjà
+    const projectExists = savedProjects.some(project => project.id === projectId);
     
-    try {
+    if (projectExists) {
+        // Remplacer le projet existant par le projet mis à jour
+        const updatedProjects = savedProjects.map(project => {
+            if (project.id === projectId) {
+                console.log('Mise à jour du projet:', formData);
+                return formData;
+            }
+            return project;
+        });
+        
         // Sauvegarder la liste mise à jour
         localStorage.setItem('savedProjects', JSON.stringify(updatedProjects));
         console.log('Projet mis à jour avec succès. Total projets:', updatedProjects.length);
-        
+    } else {
+        // Ajouter le projet s'il n'existe pas
+        savedProjects.push(formData);
+        localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
+        console.log('Nouveau projet ajouté. Total projets:', savedProjects.length);
+    }
+    
+    try {
         // Afficher une notification de succès
-        if (window.showNotification) {
+        if (typeof showNotification === 'function') {
             if (shouldRedirect) {
-                window.showNotification('Projet mis à jour avec succès!', 'success');
+                showNotification('Projet mis à jour avec succès!', 'success');
             } else {
-                window.showNotification('Modifications enregistrées!', 'success');
+                showNotification('Modifications enregistrées avec succès!', 'success');
             }
         } else {
             if (shouldRedirect) {
                 alert('Projet mis à jour avec succès!');
             } else {
-                alert('Modifications enregistrées!');
+                alert('Modifications enregistrées avec succès!');
             }
         }
         
