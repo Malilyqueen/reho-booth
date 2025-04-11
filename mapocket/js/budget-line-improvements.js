@@ -292,7 +292,7 @@ function improveFormVisuals(form, nameInput, amountInput, addButton) {
             feedback.style.borderRadius = '6px';
             feedback.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
             
-            let currencySymbol = '€';
+            let currencySymbol = 'AED';
             if (typeof getProjectCurrencySymbol === 'function') {
                 currencySymbol = getProjectCurrencySymbol();
             }
@@ -468,7 +468,7 @@ function showSuccessFeedback(form, name, amount) {
     feedback.className = 'line-success-feedback';
     
     // Récupérer le symbole de la devise si disponible
-    let currencySymbol = '€';
+    let currencySymbol = 'AED';
     if (typeof getProjectCurrencySymbol === 'function') {
         currencySymbol = getProjectCurrencySymbol();
     }

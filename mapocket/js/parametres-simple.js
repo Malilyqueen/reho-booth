@@ -718,7 +718,7 @@ function convertAllProjects(toCurrency) {
             } else {
                 // Essayer de détecter la devise à partir du budget total
                 if (project.totalBudget) {
-                    if (project.totalBudget.includes('€')) fromCurrency = 'EUR';
+                    if (project.totalBudget.includes('AED')) fromCurrency = 'EUR';
                     else if (project.totalBudget.includes('$')) fromCurrency = 'USD';
                     // Les autres devises peuvent être détectées similairement
                 }
@@ -810,7 +810,7 @@ function convertAllProjects(toCurrency) {
             // Déterminer la devise actuelle
             let fromCurrency = 'EUR';
             if (wallet.currency === '$') fromCurrency = 'USD';
-            else if (wallet.currency === '€') fromCurrency = 'EUR';
+            else if (wallet.currency === 'AED') fromCurrency = 'EUR';
             
             // Vérifier si la conversion est nécessaire
             if (fromCurrency === toCurrency) {

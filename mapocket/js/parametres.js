@@ -479,7 +479,7 @@ function convertAllProjectsAndWallets(fromCurrency, toCurrency) {
 
 /**
  * Fonction utilitaire pour extraire la valeur numérique d'une chaîne de devise formatée
- * @param {string} monetaryString - Chaîne formatée (ex: "€ 123,45" ou "$100.00")
+ * @param {string} monetaryString - Chaîne formatée (ex: "AED 123,45" ou "$100.00")
  * @returns {number} - Valeur numérique
  */
 function parseMonetaryValue(monetaryString) {
@@ -529,7 +529,7 @@ function convertAllCurrencies(fromCurrency, toCurrency) {
  */
 function convertProjectsCurrency(projects, conversionRate, fromCurrency, toCurrency) {
     const currencySymbols = {
-        'EUR': '€',
+        'EUR': 'AED',
         'USD': '$'
     };
     
@@ -618,7 +618,7 @@ function convertWalletsCurrency(wallets, conversionRate, fromCurrency, toCurrenc
         }
         
         // Mettre à jour le symbole de la devise
-        wallet.currency = toCurrency === 'EUR' ? '€' : '$';
+        wallet.currency = toCurrency === 'EUR' ? 'AED' : '$';
         
         // Convertir l'historique des transactions si présent
         if (wallet.transactions && Array.isArray(wallet.transactions)) {

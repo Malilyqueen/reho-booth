@@ -417,7 +417,7 @@ function applyCurrency() {
 // Obtenir le symbole de devise
 function getCurrencySymbol(currency) {
     const symbols = {
-        'EUR': '€',
+        'EUR': 'AED',
         'USD': '$',
         'GBP': '£',
         'JPY': '¥',

@@ -243,7 +243,7 @@ function generateInvoiceEvents(events) {
                     `Facture émise: ${invoice.number}`,
                     invoice.issueDate,
                     'invoice',
-                    `Facture émise pour ${invoice.client?.name || 'client'}: ${invoice.amount || '0'} €`,
+                    `Facture émise pour ${invoice.client?.name || 'client'}: ${invoice.amount || '0'} AED`,
                     'done',
                     invoice.id
                 ));
@@ -259,7 +259,7 @@ function generateInvoiceEvents(events) {
                     `À régler avant le: ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`,
                     invoice.dueDate,
                     'invoice',
-                    `Échéance de la facture ${invoice.number} pour ${invoice.client?.name || 'client'}: ${invoice.amount || '0'} €`,
+                    `Échéance de la facture ${invoice.number} pour ${invoice.client?.name || 'client'}: ${invoice.amount || '0'} AED`,
                     status,
                     invoice.id
                 ));
@@ -283,7 +283,7 @@ function generateQuoteEvents(events) {
                     `Devis envoyé: ${quote.number}`,
                     quote.sentDate,
                     'quote',
-                    `Devis envoyé à ${quote.client?.name || 'client'}: ${quote.amount || '0'} €`,
+                    `Devis envoyé à ${quote.client?.name || 'client'}: ${quote.amount || '0'} AED`,
                     'done',
                     quote.id
                 ));
@@ -345,7 +345,7 @@ function generateIncomeEvents(events) {
                     `${income.name || 'Revenu récurrent'}`,
                     income.nextPaymentDate,
                     'income',
-                    `${income.name || 'Revenu récurrent'} prévu le ${new Date(income.nextPaymentDate).toLocaleDateString('fr-FR')} - +${income.amount || '0'} €`,
+                    `${income.name || 'Revenu récurrent'} prévu le ${new Date(income.nextPaymentDate).toLocaleDateString('fr-FR')} - +${income.amount || '0'} AED`,
                     'pending',
                     income.id
                 ));

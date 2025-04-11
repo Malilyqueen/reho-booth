@@ -265,7 +265,7 @@ const ModuleStandardizer = (function() {
     function formatCurrency(amount) {
         const currencySymbol = typeof getProjectCurrencySymbol === 'function' 
             ? getProjectCurrencySymbol() 
-            : '€';
+            : 'AED';
             
         return `${currencySymbol} ${parseFloat(amount).toFixed(2)}`;
     }

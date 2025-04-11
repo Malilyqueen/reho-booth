@@ -2,7 +2,7 @@
 
 // Fonction utilitaire pour obtenir le symbole de devise actuel
 function getProjectCurrencySymbol() {
-    let currencySymbol = '€'; // Valeur par défaut
+    let currencySymbol = 'AED'; // Valeur par défaut
     try {
         if (typeof getCurrencySymbol === 'function') {
             // Utiliser la fonction du helper si disponible
@@ -25,7 +25,7 @@ function getProjectCurrencySymbol() {
             
             // Fallbacks spécifiques pour les devises communes
             else if (preferences.currency) {
-                if (preferences.currency === 'EUR') currencySymbol = '€';
+                if (preferences.currency === 'EUR') currencySymbol = 'AED';
                 else if (preferences.currency === 'USD') currencySymbol = '$';
                 else if (preferences.currency === 'GBP') currencySymbol = '£';
                 else if (preferences.currency === 'AED') currencySymbol = 'AED';
@@ -928,7 +928,7 @@ function addNewCategory(categoryName) {
     if (!categoriesContainer) return;
     
     // Obtenir le symbole de la devise actuelle
-    let currencySymbol = '€';
+    let currencySymbol = 'AED';
     try {
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
         if (preferences.currency) {
@@ -1022,7 +1022,7 @@ function addNewSubcategory(categoryElement, subcategoryName) {
     if (!subcategoriesContainer) return;
     
     // Obtenir le symbole de la devise actuelle
-    let currencySymbol = '€';
+    let currencySymbol = 'AED';
     try {
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
         if (preferences.currency) {

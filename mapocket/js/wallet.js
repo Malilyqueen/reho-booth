@@ -159,7 +159,7 @@ function populateLinkedProjectsTable(projects) {
     document.querySelector('.empty-linked-projects-message').style.display = 'none';
     
     projects.forEach(project => {
-        // Extraction du budget sans le symbole €
+        // Extraction du budget sans le symbole AED
         const budgetText = project.totalBudget;
         
         const row = document.createElement('tr');
@@ -294,7 +294,7 @@ function updateBalances() {
     linkedProjectIds.forEach(projectId => {
         const project = projects.find(p => p.id === projectId);
         if (project) {
-            const budget = parseFloat(project.totalBudget.replace('€', '').trim());
+            const budget = parseFloat(project.totalBudget.replace('AED', '').trim());
             forecastedBalance -= budget;
         }
     });
@@ -559,7 +559,7 @@ function formatDate(date) {
 
 // Fonction pour formater un montant en devise
 function formatCurrency(amount) {
-    return `€ ${parseFloat(amount).toFixed(2)}`;
+    return `AED ${parseFloat(amount).toFixed(2)}`;
 }
 
 // Fonction pour afficher une notification

@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getUserCurrencySymbol() {
         // Récupérer les préférences utilisateur
         const userPrefs = localStorage.getItem('userPreferences');
-        if (!userPrefs) return '€'; // Valeur par défaut
+        if (!userPrefs) return 'AED'; // Valeur par défaut
         
         try {
             const prefs = JSON.parse(userPrefs);
@@ -228,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const currencies = window.currencies || {};
             const currency = currencies[currencyCode] || {};
             
-            return currency.symbol || '€';
+            return currency.symbol || 'AED';
         } catch (e) {
             console.error('Erreur lors de la récupération du symbole de devise:', e);
-            return '€';
+            return 'AED';
         }
     }
 

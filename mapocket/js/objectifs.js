@@ -443,12 +443,12 @@ function startSuggestedChallenge(template) {
             case 'grocery':
                 challenge = new SpendingChallenge(
                     Date.now().toString(),
-                    'Budget Courses = 50€ cette semaine',
+                    'Budget Courses = 50AED cette semaine',
                     'limit-spend',
                     50,
                     'groceries',
                     'week',
-                    'Limiter les dépenses en courses à 50€ sur 7 jours'
+                    'Limiter les dépenses en courses à 50AED sur 7 jours'
                 );
                 break;
                 
@@ -671,7 +671,7 @@ function updateGoalAmount(goalId) {
         }
         
         // Demander le montant à ajouter
-        const amount = prompt('Montant à ajouter à votre épargne (€) :');
+        const amount = prompt('Montant à ajouter à votre épargne (AED) :');
         
         if (amount === null) return; // Annulation
         
@@ -923,7 +923,7 @@ function addChallengeExpense(challengeId) {
         }
         
         // Demander le montant de la dépense
-        const amount = prompt('Montant de la dépense (€) :');
+        const amount = prompt('Montant de la dépense (AED) :');
         
         if (amount === null) return; // Annulation
         

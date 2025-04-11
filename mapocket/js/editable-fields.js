@@ -138,7 +138,7 @@ function makeFieldEditable(element, type = 'text') {
                     } else {
                         // Dernier recours: récupérer depuis les préférences
                         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-                        if (preferences.currency === 'EUR') currencySymbol = '€';
+                        if (preferences.currency === 'EUR') currencySymbol = 'AED';
                         else if (preferences.currency === 'USD') currencySymbol = '$';
                         else if (preferences.currency === 'GBP') currencySymbol = '£';
                         else if (preferences.currency === 'MAD') currencySymbol = 'DH';
@@ -153,7 +153,7 @@ function makeFieldEditable(element, type = 'text') {
             } catch (error) {
                 console.error('Erreur lors du formatage du montant:', error);
                 // Fallback en cas d'erreur
-                newValue = `${newValue} €`;
+                newValue = `${newValue} AED`;
             }
         }
         

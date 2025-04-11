@@ -8,7 +8,7 @@ const AVAILABLE_CURRENCIES = [
     {
         code: "EUR",
         name: "Euro",
-        symbol: "€",
+        symbol: "AED",
         countries: "Union Européenne",
         default: true
     },

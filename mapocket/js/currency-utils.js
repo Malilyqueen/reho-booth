@@ -19,7 +19,7 @@ function getCurrencySymbol() {
             }
             
             // Fallback pour les devises courantes
-            if (userPrefs.currency === 'EUR') return '€';
+            if (userPrefs.currency === 'EUR') return 'AED';
             if (userPrefs.currency === 'USD') return '$';
             if (userPrefs.currency === 'GBP') return '£';
             if (userPrefs.currency === 'MAD') return 'DH';
@@ -29,7 +29,7 @@ function getCurrencySymbol() {
     }
     
     // Valeur par défaut en cas d'échec
-    return '€';
+    return 'AED';
 }
 
 // Fonction pour formater un montant avec le symbole de devise

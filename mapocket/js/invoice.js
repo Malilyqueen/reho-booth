@@ -753,7 +753,7 @@ function generateInvoiceHTML(invoiceData) {
             
             <div class="invoice-footer">
                 <div class="legal-mentions">
-                    <p>En cas de retard de paiement, des pénalités seront exigibles sans qu'un rappel soit nécessaire (taux d'intérêt légal en vigueur). Une indemnité forfaitaire de 40€ pour frais de recouvrement sera due.</p>
+                    <p>En cas de retard de paiement, des pénalités seront exigibles sans qu'un rappel soit nécessaire (taux d'intérêt légal en vigueur). Une indemnité forfaitaire de 40AED pour frais de recouvrement sera due.</p>
                     <p>TVA non applicable, art. 293 B du CGI.</p>
                     <p>Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM).</p>
                 </div>

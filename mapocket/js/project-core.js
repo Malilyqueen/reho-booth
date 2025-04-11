@@ -613,7 +613,7 @@ const ProjectCore = (function() {
             const totalBudget = document.getElementById('totalBudget');
             if (totalBudget) {
                 // Vérifier si le budget total a été remis à zéro ou vidé par les calculs
-                if (!totalBudget.value || totalBudget.value === '0' || totalBudget.value === '€ 0,00' || totalBudget.value === '0,00') {
+                if (!totalBudget.value || totalBudget.value === '0' || totalBudget.value === 'AED 0,00' || totalBudget.value === '0,00') {
                     // Si oui, restaurer le budget original
                     totalBudget.value = originalTotalBudget;
                     console.log("Budget total restauré:", originalTotalBudget);
@@ -629,7 +629,7 @@ const ProjectCore = (function() {
             // Troisième vérification pour s'assurer que le budget total est correct
             const totalBudget = document.getElementById('totalBudget');
             if (totalBudget && (!totalBudget.value || totalBudget.value === '0' || 
-                totalBudget.value === '€ 0,00' || totalBudget.value === '0,00')) {
+                totalBudget.value === 'AED 0,00' || totalBudget.value === '0,00')) {
                 totalBudget.value = originalTotalBudget;
                 console.log("Budget total restauré (vérification finale):", originalTotalBudget);
             }

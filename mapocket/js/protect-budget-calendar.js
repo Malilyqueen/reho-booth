@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const budgetField = document.getElementById('totalBudget');
         if (budgetField && budgetField.value && 
             budgetField.value !== '0' && 
-            budgetField.value !== '€ 0,00' && 
+            budgetField.value !== 'AED 0,00' && 
             budgetField.value !== '0,00') {
             
             storedBudget = budgetField.value;
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (budgetField && storedBudget) {
             // Vérifier si le budget a été réinitialisé
             if (!budgetField.value || budgetField.value === '0' || 
-                budgetField.value === '€ 0,00' || budgetField.value === '0,00') {
+                budgetField.value === 'AED 0,00' || budgetField.value === '0,00') {
                 
                 budgetField.value = storedBudget;
                 console.log('Budget restauré après interaction avec le calendrier:', storedBudget);
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const budgetField = document.getElementById('totalBudget');
         if (budgetField && storedBudget) {
             if (!budgetField.value || budgetField.value === '0' || 
-                budgetField.value === '€ 0,00' || budgetField.value === '0,00') {
+                budgetField.value === 'AED 0,00' || budgetField.value === '0,00') {
                 
                 // Restaurer immédiatement
                 budgetField.value = storedBudget;

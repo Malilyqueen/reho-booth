@@ -244,7 +244,7 @@ function getProjectCurrencySymbol() {
     // Sinon, essayer d'obtenir à partir des préférences utilisateur
     try {
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (preferences.currency === 'EUR') return '€';
+        if (preferences.currency === 'EUR') return 'AED';
         else if (preferences.currency === 'USD') return '$';
         else if (preferences.currency === 'GBP') return '£';
         else if (preferences.currency === 'MAD') return 'DH';
@@ -253,5 +253,5 @@ function getProjectCurrencySymbol() {
     }
     
     // Valeur par défaut
-    return '€';
+    return 'AED';
 }

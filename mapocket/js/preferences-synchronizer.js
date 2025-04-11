@@ -56,7 +56,7 @@
         // Fallback - utiliser des symboles classiques
         switch (currencyCode) {
             case 'USD': return '$';
-            case 'EUR': return '€';
+            case 'EUR': return 'AED';
             case 'GBP': return '£';
             case 'JPY': return '¥';
             case 'CNY': return '¥';

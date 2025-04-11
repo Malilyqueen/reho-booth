@@ -56,30 +56,30 @@ function insertExampleCategories() {
     }
     
     // Ajouter l'exemple de Publicité
-    const publiciteCategory = createExampleCategory('Publicité', '€ 2 500,00');
+    const publiciteCategory = createExampleCategory('Publicité', 'AED 2 500,00');
     categoriesContainer.appendChild(publiciteCategory);
     
     // Ajouter la sous-catégorie Facebook
-    const facebookSubcategory = createExampleSubcategory('Facebook', '€ 1 500,00');
+    const facebookSubcategory = createExampleSubcategory('Facebook', 'AED 1 500,00');
     const subcategoriesContainer = publiciteCategory.querySelector('.subcategories-container');
     subcategoriesContainer.appendChild(facebookSubcategory);
     
     // Ajouter une ligne de retargeting
-    const retargetingLine = createExampleLine('Retargeting', '€ 500,00');
+    const retargetingLine = createExampleLine('Retargeting', 'AED 500,00');
     const linesContainer = facebookSubcategory.querySelector('.expense-lines');
     linesContainer.appendChild(retargetingLine);
     
     // Ajouter une autre ligne pour Facebook
-    const acquisitionLine = createExampleLine('Acquisition', '€ 1 000,00');
+    const acquisitionLine = createExampleLine('Acquisition', 'AED 1 000,00');
     linesContainer.appendChild(acquisitionLine);
     
     // Ajouter une autre sous-catégorie (LinkedIn)
-    const linkedinSubcategory = createExampleSubcategory('LinkedIn', '€ 1 000,00');
+    const linkedinSubcategory = createExampleSubcategory('LinkedIn', 'AED 1 000,00');
     subcategoriesContainer.appendChild(linkedinSubcategory);
     
     // Ajouter des lignes pour LinkedIn
-    const sponsoredLine = createExampleLine('Messages sponsorisés', '€ 600,00');
-    const inMailLine = createExampleLine('InMail', '€ 400,00');
+    const sponsoredLine = createExampleLine('Messages sponsorisés', 'AED 600,00');
+    const inMailLine = createExampleLine('InMail', 'AED 400,00');
     linkedinSubcategory.querySelector('.expense-lines').appendChild(sponsoredLine);
     linkedinSubcategory.querySelector('.expense-lines').appendChild(inMailLine);
     

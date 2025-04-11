@@ -164,7 +164,7 @@ function updateTotals() {
     try {
         // Ne pas mettre à jour les champs en cours d'édition
         const activeElement = document.activeElement;
-        const currencySymbol = getCurrencyFromPage() || '€';
+        const currencySymbol = getCurrencyFromPage() || 'AED';
         
         // 1. Calculer les totaux des sous-catégories (SEULEMENT si des lignes existent)
         document.querySelectorAll('.subcategory').forEach(subcategory => {
@@ -472,7 +472,7 @@ function getCurrencyFromPage() {
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
         if (preferences.currency) {
             const symbols = {
-                'EUR': '€',
+                'EUR': 'AED',
                 'USD': '$',
                 'GBP': '£',
                 'JPY': '¥',
@@ -486,15 +486,15 @@ function getCurrencyFromPage() {
     }
     
     // Valeur par défaut
-    return '€';
+    return 'AED';
 }
 
 // Formater un montant monétaire
-function formatMoney(amount, currencySymbol = '€') {
+function formatMoney(amount, currencySymbol = 'AED') {
     return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
 }
 
-// Extraire le montant numérique d'une chaîne (ex: "€ 123,45" -> 123.45)
+// Extraire le montant numérique d'une chaîne (ex: "AED 123,45" -> 123.45)
 function parseAmount(value) {
     if (!value) return 0;
     
@@ -507,14 +507,14 @@ function parseAmount(value) {
     return parseFloat(normalizedValue) || 0;
 }
 
-// Extraire le symbole de devise d'une chaîne (ex: "€ 123,45" -> "€")
+// Extraire le symbole de devise d'une chaîne (ex: "AED 123,45" -> "AED")
 function getCurrencySymbol(value) {
-    if (!value) return '€';
+    if (!value) return 'AED';
     
     const match = value.toString().match(/^([^\d]+)/);
     if (match && match[1]) {
         return match[1].trim();
     }
     
-    return '€';
+    return 'AED';
 }

@@ -65,8 +65,8 @@ function createProfessionalRecap(container, project) {
     const financialSummary = document.createElement('div');
     financialSummary.className = 'financial-summary';
     
-    // Extraire le symbole de devise (€, $, etc.)
-    const currencySymbol = extractCurrencySymbol(project.totalBudget) || '€';
+    // Extraire le symbole de devise (AED, $, etc.)
+    const currencySymbol = extractCurrencySymbol(project.totalBudget) || 'AED';
     
     // Budget total en format numérique pour les calculs
     const totalBudget = parseMonetaryValue(project.totalBudget);
@@ -372,15 +372,15 @@ function createCategoryElement(category, currencySymbol) {
 }
 
 // Formater un montant monétaire
-function formatMoney(amount, currencySymbol = '€') {
+function formatMoney(amount, currencySymbol = 'AED') {
     return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
 }
 
 // Extraire le symbole de devise d'une chaîne monétaire
 function extractCurrencySymbol(monetaryString) {
-    if (!monetaryString) return '€';
+    if (!monetaryString) return 'AED';
     const match = monetaryString.toString().match(/^([^\d]+)/);
-    return match && match[1] ? match[1].trim() : '€';
+    return match && match[1] ? match[1].trim() : 'AED';
 }
 
 // Extraire la valeur numérique d'une chaîne monétaire

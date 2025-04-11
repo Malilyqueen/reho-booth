@@ -93,7 +93,7 @@ function handleAmountChange(e) {
         
         if (!isNaN(numValue)) {
             // Formatter avec 2 décimales et symbole de devise
-            const currencySymbol = getCurrencySymbol() || '€';
+            const currencySymbol = getCurrencySymbol() || 'AED';
             element.textContent = `${currencySymbol} ${numValue.toFixed(2).replace('.', ',')}`;
         }
     }
@@ -119,7 +119,7 @@ function getCurrencySymbol() {
     }
     
     // Valeur par défaut
-    return '€';
+    return 'AED';
 }
 
 /**

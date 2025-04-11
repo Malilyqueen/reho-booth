@@ -176,7 +176,7 @@ function updateAddLineBtnWithSuggestions(button, categoryName, subcategoryName) 
             const expenseLines = button.closest('.expense-lines');
             
             // Obtenir le symbole de devise
-            const currencySymbol = getCurrencySymbol ? getCurrencySymbol() : '€';
+            const currencySymbol = getCurrencySymbol ? getCurrencySymbol() : 'AED';
             
             // Créer une nouvelle ligne avec le titre suggéré
             const newLine = document.createElement('div');

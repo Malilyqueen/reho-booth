@@ -291,7 +291,7 @@ function formatSuggestionContent(content) {
     content = content.replace(/\* /g, '• ');
     
     // Mettre en gras les montants
-    content = content.replace(/(\d+[€\$])/g, '<strong>$1</strong>');
+    content = content.replace(/(\d+[AED\$])/g, '<strong>$1</strong>');
     
     // Remplacer les sauts de ligne par des balises <br>
     content = content.replace(/\n/g, '<br>');
@@ -349,8 +349,8 @@ function initializeAIChat() {
     
     // Sample AI responses for demonstration purposes (utilisé en mode hors ligne)
     const aiResponses = {
-        "budget": "D'après l'analyse de vos dépenses actuelles, vous pourriez optimiser votre budget en réduisant les dépenses non essentielles de 15%. Cela représenterait une économie mensuelle d'environ 120€.",
-        "économiser": "Pour économiser efficacement, je vous recommande la règle des 50-30-20 : 50% pour les besoins essentiels, 30% pour les envies, et 20% pour l'épargne. Basé sur vos revenus, vous pourriez épargner environ 300€ par mois.",
+        "budget": "D'après l'analyse de vos dépenses actuelles, vous pourriez optimiser votre budget en réduisant les dépenses non essentielles de 15%. Cela représenterait une économie mensuelle d'environ 120AED.",
+        "économiser": "Pour économiser efficacement, je vous recommande la règle des 50-30-20 : 50% pour les besoins essentiels, 30% pour les envies, et 20% pour l'épargne. Basé sur vos revenus, vous pourriez épargner environ 300AED par mois.",
         "investir": "Selon votre profil et vos objectifs à long terme, des investissements à faible risque comme les fonds indiciels pourraient vous permettre de faire fructifier votre épargne avec un rendement moyen de 4-6% annuel.",
         "dépenses": "Vos principales catégories de dépenses ce mois-ci sont : Alimentation (32%), Logement (28%), Transport (15%), Loisirs (12%) et Autres (13%). Votre poste 'Loisirs' a augmenté de 20% par rapport au mois dernier.",
         "projet": "Pour votre projet de rénovation, je recommande d'ajouter une marge de sécurité de 15% au budget initial. Basé sur des projets similaires, prévoyez également 10% supplémentaires pour les imprévus.",

@@ -1,19 +1,17 @@
 #!/bin/bash
 
-# Fichier à modifier
-FILE="mapocket/js/project.js"
+# Script pour forcer le remplacement des symboles € par AED dans les fichiers JS
 
-# Créer un fichier temporaire pour les modifications
-TMP_FILE=$(mktemp)
+echo "Correction FORCÉE des problèmes de devise..."
 
-# Remplacer les références hardcodées au symbole € dans les modèles HTML
-cat "$FILE" | sed 's/<span class="subcategory-amount">€ 0<\/span>/<span class="subcategory-amount">${currencySymbol} 0<\/span>/g' \
-              | sed 's/<input type="text" class="form-control expense-line-amount" value="€ 0">/<input type="text" class="form-control expense-line-amount" value="${currencySymbol} 0">/g' > "$TMP_FILE"
+# Créer un marqueur pour indiquer que le script a été exécuté
+touch .currency_fix_applied
 
-# Copier le fichier modifié vers l'original
-cp "$TMP_FILE" "$FILE"
+# Corriger le fichier budget-calculation-fix.js spécifiquement
+sed -i 's/Budget total mis à jour: "€/Budget total mis à jour: "AED/g' mapocket/js/budget-calculation-fix.js
+sed -i 's/return `€/return `AED/g' mapocket/js/budget-calculation-fix.js
 
-# Supprimer le fichier temporaire
-rm "$TMP_FILE"
+# Trouver tous les fichiers JS et remplacer les instances d'euro
+find mapocket/js -type f -name "*.js" -exec sed -i 's/€/AED/g' {} \;
 
-echo "Mise à jour des références au symbole de devise réussie!"
+echo "Correction forcée terminée. Toutes les devises € ont été remplacées par AED."

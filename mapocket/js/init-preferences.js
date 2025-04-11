@@ -106,7 +106,7 @@ function initCurrencySelectors() {
     
     // Liste complète des devises proposées
     const currencies = [
-        {code: 'EUR', name: 'Euro (€)', symbol: '€'},
+        {code: 'EUR', name: 'Euro (AED)', symbol: 'AED'},
         {code: 'USD', name: 'Dollar américain ($)', symbol: '$'},
         {code: 'GBP', name: 'Livre sterling (£)', symbol: '£'},
         {code: 'JPY', name: 'Yen japonais (¥)', symbol: '¥'},

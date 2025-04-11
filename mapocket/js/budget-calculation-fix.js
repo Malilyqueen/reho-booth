@@ -162,48 +162,94 @@ document.addEventListener('DOMContentLoaded', function() {
     function recalculateSubcategoryTotal(subcategory) {
         const lines = subcategory.querySelectorAll('.expense-line');
         const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
+        const subcategoryName = subcategory.querySelector('.subcategory-name')?.textContent || '';
         
-        // Si nous n'avons pas de lignes ou pas de champ de montant de sous-catégorie, sortir
-        if (lines.length === 0 || !subcategoryAmount) return;
+        // Si nous n'avons pas de champ de montant de sous-catégorie, sortir
+        if (!subcategoryAmount) return;
         
-        // Calculer le total des lignes
+        // Si c'est une saisie directe et qu'il n'y a pas de lignes, préserver la valeur manuelle
+        if (lines.length === 0) {
+            console.log(`Sous-catégorie "${subcategoryName}" - pas de lignes, préservation du montant manuel`);
+            return;
+        }
+        
+        // Sinon, calculer le total des lignes
         let total = 0;
+        let hasValues = false;
+        
         lines.forEach(function(line) {
             const lineAmount = line.querySelector('.line-amount');
             if (lineAmount) {
                 const value = extractNumericValue(lineAmount.textContent);
-                total += value;
+                if (value > 0) {
+                    hasValues = true;
+                    total += value;
+                }
             }
         });
+        
+        // Si le montant manuel existait avant les lignes, le conserver
+        const existingValue = extractNumericValue(subcategoryAmount.textContent);
+        if (existingValue > 0 && !hasValues) {
+            total = existingValue;
+            console.log(`Sous-catégorie "${subcategoryName}" - préservation du montant existant: ${existingValue}`);
+        } else if (existingValue > 0 && hasValues) {
+            // Si nous avons des lignes avec valeurs, mais aussi un montant manuel, additionner les deux
+            console.log(`Sous-catégorie "${subcategoryName}" - addition: ${existingValue} + ${total}`);
+            total += existingValue;
+        }
         
         // Mettre à jour le montant de la sous-catégorie
         subcategoryAmount.textContent = formatCurrency(total);
         subcategoryAmount.dataset.value = total;
-        console.log(`Sous-catégorie "${subcategory.querySelector('.subcategory-name')?.textContent}" mise à jour, total: ${total}`);
+        console.log(`Sous-catégorie "${subcategoryName}" mise à jour, total final: ${total}`);
     }
     
     // Recalculer le total d'une catégorie
     function recalculateCategoryTotal(category) {
         const subcategories = category.querySelectorAll('.subcategory');
         const categoryAmount = category.querySelector('.category-amount');
+        const categoryName = category.querySelector('.category-name')?.textContent || '';
         
-        // Si nous n'avons pas de sous-catégories ou pas de champ de montant de catégorie, sortir
-        if (subcategories.length === 0 || !categoryAmount) return;
+        // Si nous n'avons pas de champ de montant de catégorie, sortir
+        if (!categoryAmount) return;
         
-        // Calculer le total des sous-catégories
+        // Si c'est une saisie directe et qu'il n'y a pas de sous-catégories, préserver la valeur manuelle
+        if (subcategories.length === 0) {
+            console.log(`Catégorie "${categoryName}" - pas de sous-catégories, préservation du montant manuel`);
+            return;
+        }
+        
+        // Sinon, calculer le total des sous-catégories
         let total = 0;
+        let hasValues = false;
+        
         subcategories.forEach(function(subcategory) {
             const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
             if (subcategoryAmount) {
                 const value = extractNumericValue(subcategoryAmount.textContent);
-                total += value;
+                if (value > 0) {
+                    hasValues = true;
+                    total += value;
+                }
             }
         });
         
-        // Mettre à jour le montant de la catégorie
+        // Si le montant manuel existait avant les sous-catégories, l'ajouter au total
+        const existingValue = extractNumericValue(categoryAmount.textContent);
+        if (existingValue > 0 && !hasValues) {
+            total = existingValue;
+            console.log(`Catégorie "${categoryName}" - préservation du montant existant: ${existingValue}`);
+        } else if (existingValue > 0 && hasValues) {
+            // Si nous avons des sous-catégories avec valeurs, mais aussi un montant manuel, additionner les deux
+            console.log(`Catégorie "${categoryName}" - addition: ${existingValue} + ${total}`);
+            total += existingValue;
+        }
+        
+        // Mettre à jour le montant de la catégorie avec le nouveau total
         categoryAmount.textContent = formatCurrency(total);
         categoryAmount.dataset.value = total;
-        console.log(`Catégorie "${category.querySelector('.category-name')?.textContent}" mise à jour, total: ${total}`);
+        console.log(`Catégorie "${categoryName}" mise à jour, total final: ${total}`);
     }
     
     // Extraire la valeur numérique d'une chaîne

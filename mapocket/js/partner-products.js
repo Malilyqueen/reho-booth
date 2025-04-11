@@ -39,12 +39,12 @@ const SAMPLE_PRODUCTS = [
     },
     {
         id: 'p003',
-        name: 'Carte cadeau Amazon 50€',
+        name: 'Carte cadeau Amazon 50AED',
         price: 50.00,
         category: 'giftcards',
         image: 'images/products/carte-cadeau-amazon.jpg',
         link: 'https://www.amazon.fr/dp/B01FIS88SY',
-        description: 'Carte cadeau Amazon d\'une valeur de 50€, valable 10 ans.'
+        description: 'Carte cadeau Amazon d\'une valeur de 50AED, valable 10 ans.'
     },
     {
         id: 'p004',

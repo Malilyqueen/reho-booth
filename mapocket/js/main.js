@@ -162,7 +162,7 @@ function updateCurrencyDisplays() {
 function updateCurrencyDisplay() {
     // Trouver la devise sélectionnée
     const currencyCode = userPreferences.currency || 'EUR';
-    let currencySymbol = '€'; // Symbole par défaut
+    let currencySymbol = 'AED'; // Symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -219,7 +219,7 @@ window.getCurrencySymbol = function(currencyCode) {
     // Fallback - utiliser des symboles classiques en fonction du code de devise
     switch (currencyCode) {
         case 'USD': return '$';
-        case 'EUR': return '€';
+        case 'EUR': return 'AED';
         case 'GBP': return '£';
         case 'JPY': return '¥';
         case 'CNY': return '¥';
@@ -300,7 +300,7 @@ window.userPreferences = window.userPreferences || {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Euro comme symbole par défaut
+    let currencySymbol = 'AED'; // Euro comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -554,7 +554,7 @@ window.userPreferences = window.userPreferences || {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Euro comme symbole par défaut
+    let currencySymbol = 'AED'; // Euro comme symbole par défaut
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
@@ -900,7 +900,7 @@ window.userPreferences = window.userPreferences || {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -1129,7 +1129,7 @@ window.userPreferences = window.userPreferences || {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof AVAILABLE_CURRENCIES !== 'undefined') {

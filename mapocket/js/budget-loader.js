@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function preserveOriginalBudget() {
         const totalBudgetInput = document.getElementById('totalBudget');
         if (totalBudgetInput && totalBudgetInput.value && totalBudgetInput.value !== '0' && 
-            totalBudgetInput.value !== '€ 0,00' && totalBudgetInput.value !== '0,00') {
+            totalBudgetInput.value !== 'AED 0,00' && totalBudgetInput.value !== '0,00') {
             originalTotalBudget = totalBudgetInput.value;
             console.log(`Budget total d'origine sauvegardé: ${originalTotalBudget}`);
         } else {
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const totalBudgetInput = document.getElementById('totalBudget');
                                 if (totalBudgetInput && originalTotalBudget &&
                                     (!totalBudgetInput.value || totalBudgetInput.value === '0' || 
-                                    totalBudgetInput.value === '€ 0,00' || totalBudgetInput.value === '0,00')) {
+                                    totalBudgetInput.value === 'AED 0,00' || totalBudgetInput.value === '0,00')) {
                                     totalBudgetInput.value = originalTotalBudget;
                                     console.log(`Budget restauré après recalcul: ${originalTotalBudget}`);
                                 }
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // PRIORITÉ #1: Si nous avons un budget d'origine qui a été sauvegardé, l'utiliser TOUJOURS
             if (originalTotalBudget && originalTotalBudget !== '0' && 
-                originalTotalBudget !== '€ 0,00' && originalTotalBudget !== '0,00') {
+                originalTotalBudget !== 'AED 0,00' && originalTotalBudget !== '0,00') {
                 if (totalBudgetInput.value !== originalTotalBudget) {
                     totalBudgetInput.value = originalTotalBudget;
                     console.log(`RESTAURATION du budget total original: ${originalTotalBudget}`);
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // PRIORITÉ #2: Si nous n'avons pas de budget d'origine, mais que l'utilisateur a défini un budget manuellement
             else if (totalBudgetInput.value && totalBudgetInput.value !== '0' && 
-                     totalBudgetInput.value !== '€ 0,00' && totalBudgetInput.value !== '0,00') {
+                     totalBudgetInput.value !== 'AED 0,00' && totalBudgetInput.value !== '0,00') {
                 console.log(`Conservation du budget défini manuellement: ${totalBudgetInput.value}`);
                 // Mémoriser ce budget comme le nouveau budget d'origine
                 originalTotalBudget = totalBudgetInput.value;
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Extrait la valeur numérique d'une chaîne représentant un montant
-     * @param {string} amountStr - La chaîne contenant le montant (ex: "€ 1 234,56" ou "USD 500")
+     * @param {string} amountStr - La chaîne contenant le montant (ex: "AED 1 234,56" ou "USD 500")
      * @returns {number} - La valeur numérique extraite
      */
     function extractNumericValue(amountStr) {
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Formate un nombre en devise selon les préférences de l'utilisateur
      * @param {number} amount - Le montant à formater
-     * @returns {string} - Chaîne formatée (ex: "€ 1 234,56")
+     * @returns {string} - Chaîne formatée (ex: "AED 1 234,56")
      */
     function formatCurrency(amount) {
         // Vérifier si la fonction getCurrencySymbol est disponible (définie dans currencies.js)

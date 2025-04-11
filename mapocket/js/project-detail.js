@@ -361,7 +361,7 @@ function updateProjectUI(project) {
     }
     
     // Budget initial
-    document.getElementById('initialBudget').textContent = project.totalBudget || '€ 0';
+    document.getElementById('initialBudget').textContent = project.totalBudget || 'AED 0';
     
     // Budget utilisé et écart (à calculer)
     updateBudgetStats(project);
@@ -619,7 +619,7 @@ function formatCurrency(amount) {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
     if (typeof window.getCurrencySymbol === 'function') {

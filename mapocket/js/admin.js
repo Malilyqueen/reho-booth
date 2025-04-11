@@ -159,7 +159,7 @@ const simulatedActivities = [
         userId: 1,
         userName: 'Sophie Martin',
         date: '2025-04-06',
-        details: 'A créé un nouveau projet : "Rénovation cuisine" avec un budget de €8200'
+        details: 'A créé un nouveau projet : "Rénovation cuisine" avec un budget de AED8200'
     },
     {
         id: 3,
@@ -183,7 +183,7 @@ const simulatedActivities = [
         userId: 4,
         userName: 'Pierre Moreau',
         date: '2025-04-02',
-        details: 'A créé un nouveau projet : "Événement d\'entreprise" avec un budget de €5400'
+        details: 'A créé un nouveau projet : "Événement d\'entreprise" avec un budget de AED5400'
     }
 ];
 

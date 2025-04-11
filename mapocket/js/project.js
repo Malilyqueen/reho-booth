@@ -224,7 +224,7 @@ function getProjectData() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -341,7 +341,7 @@ function initializeProjectForm() {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -546,7 +546,7 @@ function restoreProjectData(data) {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -1269,13 +1269,13 @@ const defaultBudgets = {
                     {
                         "name": "DJ",
                         "lines": [
-                            { "name": "DJ forfait soirée", "amount": "€ 150" }
+                            { "name": "DJ forfait soirée", "amount": "AED 150" }
                         ]
                     },
                     {
                         "name": "Jeux",
                         "lines": [
-                            { "name": "Matériel de jeux enfants", "amount": "€ 50" }
+                            { "name": "Matériel de jeux enfants", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1286,8 +1286,8 @@ const defaultBudgets = {
                     {
                         "name": "Salle",
                         "lines": [
-                            { "name": "Ballons", "amount": "€ 30" },
-                            { "name": "Banderoles", "amount": "€ 20" }
+                            { "name": "Ballons", "amount": "AED 30" },
+                            { "name": "Banderoles", "amount": "AED 20" }
                         ]
                     }
                 ]
@@ -1302,7 +1302,7 @@ const defaultBudgets = {
                     {
                         "name": "Location",
                         "lines": [
-                            { "name": "Location salle", "amount": "€ 800" }
+                            { "name": "Location salle", "amount": "AED 800" }
                         ]
                     }
                 ]
@@ -1313,14 +1313,14 @@ const defaultBudgets = {
                     {
                         "name": "Repas",
                         "lines": [
-                            { "name": "Cocktail", "amount": "€ 600" },
-                            { "name": "Dîner", "amount": "€ 1200" }
+                            { "name": "Cocktail", "amount": "AED 600" },
+                            { "name": "Dîner", "amount": "AED 1200" }
                         ]
                     },
                     {
                         "name": "Dessert",
                         "lines": [
-                            { "name": "Gâteau", "amount": "€ 200" }
+                            { "name": "Gâteau", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -1331,8 +1331,8 @@ const defaultBudgets = {
                     {
                         "name": "Musique",
                         "lines": [
-                            { "name": "DJ", "amount": "€ 500" },
-                            { "name": "Groupe", "amount": "€ 300" }
+                            { "name": "DJ", "amount": "AED 500" },
+                            { "name": "Groupe", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -1343,8 +1343,8 @@ const defaultBudgets = {
                     {
                         "name": "Vêtements",
                         "lines": [
-                            { "name": "Robe", "amount": "€ 1000" },
-                            { "name": "Costume", "amount": "€ 600" }
+                            { "name": "Robe", "amount": "AED 1000" },
+                            { "name": "Costume", "amount": "AED 600" }
                         ]
                     }
                 ]
@@ -1359,15 +1359,15 @@ const defaultBudgets = {
                     {
                         "name": "Buffet",
                         "lines": [
-                            { "name": "Amuse-bouches", "amount": "€ 80" },
-                            { "name": "Desserts thématiques", "amount": "€ 60" }
+                            { "name": "Amuse-bouches", "amount": "AED 80" },
+                            { "name": "Desserts thématiques", "amount": "AED 60" }
                         ]
                     },
                     {
                         "name": "Boissons",
                         "lines": [
-                            { "name": "Jus et sodas", "amount": "€ 40" },
-                            { "name": "Champagne sans alcool", "amount": "€ 30" }
+                            { "name": "Jus et sodas", "amount": "AED 40" },
+                            { "name": "Champagne sans alcool", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -1378,9 +1378,9 @@ const defaultBudgets = {
                     {
                         "name": "Salle",
                         "lines": [
-                            { "name": "Ballons", "amount": "€ 25" },
-                            { "name": "Banderoles", "amount": "€ 15" },
-                            { "name": "Accessoires thématiques", "amount": "€ 35" }
+                            { "name": "Ballons", "amount": "AED 25" },
+                            { "name": "Banderoles", "amount": "AED 15" },
+                            { "name": "Accessoires thématiques", "amount": "AED 35" }
                         ]
                     }
                 ]
@@ -1391,8 +1391,8 @@ const defaultBudgets = {
                     {
                         "name": "Jeux",
                         "lines": [
-                            { "name": "Matériel pour jeux", "amount": "€ 40" },
-                            { "name": "Petits cadeaux", "amount": "€ 50" }
+                            { "name": "Matériel pour jeux", "amount": "AED 40" },
+                            { "name": "Petits cadeaux", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1407,8 +1407,8 @@ const defaultBudgets = {
                     {
                         "name": "Location",
                         "lines": [
-                            { "name": "Salle réception", "amount": "€ 1200" },
-                            { "name": "Équipement audiovisuel", "amount": "€ 300" }
+                            { "name": "Salle réception", "amount": "AED 1200" },
+                            { "name": "Équipement audiovisuel", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -1419,9 +1419,9 @@ const defaultBudgets = {
                     {
                         "name": "Service traiteur",
                         "lines": [
-                            { "name": "Cocktail dînatoire", "amount": "€ 2000" },
-                            { "name": "Boissons", "amount": "€ 800" },
-                            { "name": "Personnel de service", "amount": "€ 500" }
+                            { "name": "Cocktail dînatoire", "amount": "AED 2000" },
+                            { "name": "Boissons", "amount": "AED 800" },
+                            { "name": "Personnel de service", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -1432,8 +1432,8 @@ const defaultBudgets = {
                     {
                         "name": "Divertissement",
                         "lines": [
-                            { "name": "DJ/Musique", "amount": "€ 600" },
-                            { "name": "Animations thématiques", "amount": "€ 800" }
+                            { "name": "DJ/Musique", "amount": "AED 600" },
+                            { "name": "Animations thématiques", "amount": "AED 800" }
                         ]
                     }
                 ]
@@ -1444,8 +1444,8 @@ const defaultBudgets = {
                     {
                         "name": "Promotion",
                         "lines": [
-                            { "name": "Invitations", "amount": "€ 150" },
-                            { "name": "Signalétique", "amount": "€ 200" }
+                            { "name": "Invitations", "amount": "AED 150" },
+                            { "name": "Signalétique", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -1460,8 +1460,8 @@ const defaultBudgets = {
                     {
                         "name": "Cérémonie",
                         "lines": [
-                            { "name": "Don/Location", "amount": "€ 300" },
-                            { "name": "Décoration", "amount": "€ 150" }
+                            { "name": "Don/Location", "amount": "AED 300" },
+                            { "name": "Décoration", "amount": "AED 150" }
                         ]
                     }
                 ]
@@ -1472,14 +1472,14 @@ const defaultBudgets = {
                     {
                         "name": "Salle",
                         "lines": [
-                            { "name": "Location espace", "amount": "€ 600" }
+                            { "name": "Location espace", "amount": "AED 600" }
                         ]
                     },
                     {
                         "name": "Traiteur",
                         "lines": [
-                            { "name": "Repas", "amount": "€ 1000" },
-                            { "name": "Boissons", "amount": "€ 300" }
+                            { "name": "Repas", "amount": "AED 1000" },
+                            { "name": "Boissons", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -1490,8 +1490,8 @@ const defaultBudgets = {
                     {
                         "name": "Vêtements cérémonie",
                         "lines": [
-                            { "name": "Tenue principale", "amount": "€ 350" },
-                            { "name": "Accessoires", "amount": "€ 100" }
+                            { "name": "Tenue principale", "amount": "AED 350" },
+                            { "name": "Accessoires", "amount": "AED 100" }
                         ]
                     }
                 ]
@@ -1502,8 +1502,8 @@ const defaultBudgets = {
                     {
                         "name": "Cadeaux",
                         "lines": [
-                            { "name": "Livrets/Images", "amount": "€ 200" },
-                            { "name": "Petits présents", "amount": "€ 250" }
+                            { "name": "Livrets/Images", "amount": "AED 200" },
+                            { "name": "Petits présents", "amount": "AED 250" }
                         ]
                     }
                 ]
@@ -1520,16 +1520,16 @@ const defaultBudgets = {
                     {
                         "name": "Charges fixes",
                         "lines": [
-                            { "name": "Loyer/Crédit", "amount": "€ 850" },
-                            { "name": "Charges", "amount": "€ 120" }
+                            { "name": "Loyer/Crédit", "amount": "AED 850" },
+                            { "name": "Charges", "amount": "AED 120" }
                         ]
                     },
                     {
                         "name": "Factures",
                         "lines": [
-                            { "name": "Électricité", "amount": "€ 75" },
-                            { "name": "Internet", "amount": "€ 35" },
-                            { "name": "Eau", "amount": "€ 40" }
+                            { "name": "Électricité", "amount": "AED 75" },
+                            { "name": "Internet", "amount": "AED 35" },
+                            { "name": "Eau", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1540,14 +1540,14 @@ const defaultBudgets = {
                     {
                         "name": "Courses",
                         "lines": [
-                            { "name": "Supermarché", "amount": "€ 300" },
-                            { "name": "Marché", "amount": "€ 100" }
+                            { "name": "Supermarché", "amount": "AED 300" },
+                            { "name": "Marché", "amount": "AED 100" }
                         ]
                     },
                     {
                         "name": "Restaurants",
                         "lines": [
-                            { "name": "Sorties", "amount": "€ 120" }
+                            { "name": "Sorties", "amount": "AED 120" }
                         ]
                     }
                 ]
@@ -1558,14 +1558,14 @@ const defaultBudgets = {
                     {
                         "name": "Véhicule",
                         "lines": [
-                            { "name": "Carburant", "amount": "€ 120" },
-                            { "name": "Assurance", "amount": "€ 50" }
+                            { "name": "Carburant", "amount": "AED 120" },
+                            { "name": "Assurance", "amount": "AED 50" }
                         ]
                     },
                     {
                         "name": "Transports publics",
                         "lines": [
-                            { "name": "Abonnement", "amount": "€ 60" }
+                            { "name": "Abonnement", "amount": "AED 60" }
                         ]
                     }
                 ]
@@ -1576,8 +1576,8 @@ const defaultBudgets = {
                     {
                         "name": "Divertissement",
                         "lines": [
-                            { "name": "Sorties", "amount": "€ 80" },
-                            { "name": "Abonnements", "amount": "€ 30" }
+                            { "name": "Sorties", "amount": "AED 80" },
+                            { "name": "Abonnements", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -1592,22 +1592,22 @@ const defaultBudgets = {
                     {
                         "name": "Courses alimentaires",
                         "lines": [
-                            { "name": "Courses semaine 1", "amount": "€ 120" },
-                            { "name": "Courses semaine 2", "amount": "€ 100" }
+                            { "name": "Courses semaine 1", "amount": "AED 120" },
+                            { "name": "Courses semaine 2", "amount": "AED 100" }
                         ]
                     },
                     {
                         "name": "Factures",
                         "lines": [
-                            { "name": "Électricité", "amount": "€ 85" },
-                            { "name": "Internet", "amount": "€ 45" }
+                            { "name": "Électricité", "amount": "AED 85" },
+                            { "name": "Internet", "amount": "AED 45" }
                         ]
                     },
                     {
                         "name": "Entretien",
                         "lines": [
-                            { "name": "Produits ménagers", "amount": "€ 30" },
-                            { "name": "Réparations", "amount": "€ 50" }
+                            { "name": "Produits ménagers", "amount": "AED 30" },
+                            { "name": "Réparations", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1618,15 +1618,15 @@ const defaultBudgets = {
                     {
                         "name": "École",
                         "lines": [
-                            { "name": "Fournitures", "amount": "€ 40" },
-                            { "name": "Cantine", "amount": "€ 85" }
+                            { "name": "Fournitures", "amount": "AED 40" },
+                            { "name": "Cantine", "amount": "AED 85" }
                         ]
                     },
                     {
                         "name": "Loisirs",
                         "lines": [
-                            { "name": "Activités sportives", "amount": "€ 60" },
-                            { "name": "Sorties", "amount": "€ 40" }
+                            { "name": "Activités sportives", "amount": "AED 60" },
+                            { "name": "Sorties", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1641,16 +1641,16 @@ const defaultBudgets = {
                     {
                         "name": "Mensualités",
                         "lines": [
-                            { "name": "Loyer/Crédit", "amount": "€ 850" },
-                            { "name": "Charges", "amount": "€ 120" }
+                            { "name": "Loyer/Crédit", "amount": "AED 850" },
+                            { "name": "Charges", "amount": "AED 120" }
                         ]
                     },
                     {
                         "name": "Factures",
                         "lines": [
-                            { "name": "Électricité", "amount": "€ 75" },
-                            { "name": "Eau", "amount": "€ 45" },
-                            { "name": "Internet/TV", "amount": "€ 40" }
+                            { "name": "Électricité", "amount": "AED 75" },
+                            { "name": "Eau", "amount": "AED 45" },
+                            { "name": "Internet/TV", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1661,15 +1661,15 @@ const defaultBudgets = {
                     {
                         "name": "Réparations",
                         "lines": [
-                            { "name": "Petits travaux", "amount": "€ 100" },
-                            { "name": "Matériel", "amount": "€ 75" }
+                            { "name": "Petits travaux", "amount": "AED 100" },
+                            { "name": "Matériel", "amount": "AED 75" }
                         ]
                     },
                     {
                         "name": "Jardinage",
                         "lines": [
-                            { "name": "Plantes", "amount": "€ 40" },
-                            { "name": "Outils", "amount": "€ 50" }
+                            { "name": "Plantes", "amount": "AED 40" },
+                            { "name": "Outils", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1684,15 +1684,15 @@ const defaultBudgets = {
                     {
                         "name": "Courses hebdomadaires",
                         "lines": [
-                            { "name": "Supermarché", "amount": "€ 150" },
-                            { "name": "Marché", "amount": "€ 50" }
+                            { "name": "Supermarché", "amount": "AED 150" },
+                            { "name": "Marché", "amount": "AED 50" }
                         ]
                     },
                     {
                         "name": "Extras",
                         "lines": [
-                            { "name": "Repas restaurant", "amount": "€ 80" },
-                            { "name": "Livraisons", "amount": "€ 40" }
+                            { "name": "Repas restaurant", "amount": "AED 80" },
+                            { "name": "Livraisons", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1703,15 +1703,15 @@ const defaultBudgets = {
                     {
                         "name": "Scolarité",
                         "lines": [
-                            { "name": "Frais scolaires", "amount": "€ 100" },
-                            { "name": "Fournitures", "amount": "€ 70" }
+                            { "name": "Frais scolaires", "amount": "AED 100" },
+                            { "name": "Fournitures", "amount": "AED 70" }
                         ]
                     },
                     {
                         "name": "Activités extrascolaires",
                         "lines": [
-                            { "name": "Sport", "amount": "€ 120" },
-                            { "name": "Musique", "amount": "€ 90" }
+                            { "name": "Sport", "amount": "AED 120" },
+                            { "name": "Musique", "amount": "AED 90" }
                         ]
                     }
                 ]
@@ -1722,15 +1722,15 @@ const defaultBudgets = {
                     {
                         "name": "Consultations",
                         "lines": [
-                            { "name": "Médecin", "amount": "€ 50" },
-                            { "name": "Spécialistes", "amount": "€ 100" }
+                            { "name": "Médecin", "amount": "AED 50" },
+                            { "name": "Spécialistes", "amount": "AED 100" }
                         ]
                     },
                     {
                         "name": "Pharmacie",
                         "lines": [
-                            { "name": "Médicaments", "amount": "€ 60" },
-                            { "name": "Produits santé", "amount": "€ 40" }
+                            { "name": "Médicaments", "amount": "AED 60" },
+                            { "name": "Produits santé", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1745,15 +1745,15 @@ const defaultBudgets = {
                     {
                         "name": "Déménageurs",
                         "lines": [
-                            { "name": "Entreprise", "amount": "€ 800" },
-                            { "name": "Pourboires", "amount": "€ 50" }
+                            { "name": "Entreprise", "amount": "AED 800" },
+                            { "name": "Pourboires", "amount": "AED 50" }
                         ]
                     },
                     {
                         "name": "Location",
                         "lines": [
-                            { "name": "Camion", "amount": "€ 150" },
-                            { "name": "Carburant", "amount": "€ 60" }
+                            { "name": "Camion", "amount": "AED 150" },
+                            { "name": "Carburant", "amount": "AED 60" }
                         ]
                     }
                 ]
@@ -1764,9 +1764,9 @@ const defaultBudgets = {
                     {
                         "name": "Matériel",
                         "lines": [
-                            { "name": "Cartons", "amount": "€ 80" },
-                            { "name": "Protections", "amount": "€ 40" },
-                            { "name": "Scotch/étiquettes", "amount": "€ 30" }
+                            { "name": "Cartons", "amount": "AED 80" },
+                            { "name": "Protections", "amount": "AED 40" },
+                            { "name": "Scotch/étiquettes", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -1777,16 +1777,16 @@ const defaultBudgets = {
                     {
                         "name": "Ancien logement",
                         "lines": [
-                            { "name": "Nettoyage", "amount": "€ 150" },
-                            { "name": "Réparations", "amount": "€ 100" }
+                            { "name": "Nettoyage", "amount": "AED 150" },
+                            { "name": "Réparations", "amount": "AED 100" }
                         ]
                     },
                     {
                         "name": "Nouveau logement",
                         "lines": [
-                            { "name": "Caution", "amount": "€ 1000" },
-                            { "name": "Frais d'agence", "amount": "€ 500" },
-                            { "name": "Premier loyer", "amount": "€ 800" }
+                            { "name": "Caution", "amount": "AED 1000" },
+                            { "name": "Frais d'agence", "amount": "AED 500" },
+                            { "name": "Premier loyer", "amount": "AED 800" }
                         ]
                     }
                 ]
@@ -1801,16 +1801,16 @@ const defaultBudgets = {
                     {
                         "name": "Matériel scolaire",
                         "lines": [
-                            { "name": "Cahiers/classeurs", "amount": "€ 40" },
-                            { "name": "Stylos/crayons", "amount": "€ 25" },
-                            { "name": "Autres fournitures", "amount": "€ 35" }
+                            { "name": "Cahiers/classeurs", "amount": "AED 40" },
+                            { "name": "Stylos/crayons", "amount": "AED 25" },
+                            { "name": "Autres fournitures", "amount": "AED 35" }
                         ]
                     },
                     {
                         "name": "Manuels",
                         "lines": [
-                            { "name": "Livres", "amount": "€ 80" },
-                            { "name": "Cahiers d'exercices", "amount": "€ 30" }
+                            { "name": "Livres", "amount": "AED 80" },
+                            { "name": "Cahiers d'exercices", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -1821,15 +1821,15 @@ const defaultBudgets = {
                     {
                         "name": "Tenues",
                         "lines": [
-                            { "name": "Vêtements quotidiens", "amount": "€ 150" },
-                            { "name": "Chaussures", "amount": "€ 70" }
+                            { "name": "Vêtements quotidiens", "amount": "AED 150" },
+                            { "name": "Chaussures", "amount": "AED 70" }
                         ]
                     },
                     {
                         "name": "Sport",
                         "lines": [
-                            { "name": "Tenue de sport", "amount": "€ 50" },
-                            { "name": "Chaussures de sport", "amount": "€ 60" }
+                            { "name": "Tenue de sport", "amount": "AED 50" },
+                            { "name": "Chaussures de sport", "amount": "AED 60" }
                         ]
                     }
                 ]
@@ -1840,8 +1840,8 @@ const defaultBudgets = {
                     {
                         "name": "Informatique",
                         "lines": [
-                            { "name": "Calculatrice", "amount": "€ 60" },
-                            { "name": "Accessoires", "amount": "€ 40" }
+                            { "name": "Calculatrice", "amount": "AED 60" },
+                            { "name": "Accessoires", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1856,16 +1856,16 @@ const defaultBudgets = {
                     {
                         "name": "Famille",
                         "lines": [
-                            { "name": "Parents", "amount": "€ 150" },
-                            { "name": "Enfants", "amount": "€ 200" },
-                            { "name": "Autres membres", "amount": "€ 150" }
+                            { "name": "Parents", "amount": "AED 150" },
+                            { "name": "Enfants", "amount": "AED 200" },
+                            { "name": "Autres membres", "amount": "AED 150" }
                         ]
                     },
                     {
                         "name": "Amis",
                         "lines": [
-                            { "name": "Amis proches", "amount": "€ 120" },
-                            { "name": "Collègues", "amount": "€ 50" }
+                            { "name": "Amis proches", "amount": "AED 120" },
+                            { "name": "Collègues", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1876,9 +1876,9 @@ const defaultBudgets = {
                     {
                         "name": "Dîner",
                         "lines": [
-                            { "name": "Nourriture", "amount": "€ 150" },
-                            { "name": "Boissons", "amount": "€ 70" },
-                            { "name": "Desserts", "amount": "€ 40" }
+                            { "name": "Nourriture", "amount": "AED 150" },
+                            { "name": "Boissons", "amount": "AED 70" },
+                            { "name": "Desserts", "amount": "AED 40" }
                         ]
                     }
                 ]
@@ -1889,9 +1889,9 @@ const defaultBudgets = {
                     {
                         "name": "Maison",
                         "lines": [
-                            { "name": "Sapin/Ornements", "amount": "€ 80" },
-                            { "name": "Lumières", "amount": "€ 40" },
-                            { "name": "Table", "amount": "€ 30" }
+                            { "name": "Sapin/Ornements", "amount": "AED 80" },
+                            { "name": "Lumières", "amount": "AED 40" },
+                            { "name": "Table", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -1906,15 +1906,15 @@ const defaultBudgets = {
                     {
                         "name": "Aller-retour",
                         "lines": [
-                            { "name": "Avion/Train", "amount": "€ 400" },
-                            { "name": "Transferts locaux", "amount": "€ 60" }
+                            { "name": "Avion/Train", "amount": "AED 400" },
+                            { "name": "Transferts locaux", "amount": "AED 60" }
                         ]
                     },
                     {
                         "name": "Sur place",
                         "lines": [
-                            { "name": "Location véhicule", "amount": "€ 200" },
-                            { "name": "Transport public", "amount": "€ 50" }
+                            { "name": "Location véhicule", "amount": "AED 200" },
+                            { "name": "Transport public", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1925,7 +1925,7 @@ const defaultBudgets = {
                     {
                         "name": "Logement",
                         "lines": [
-                            { "name": "Hôtel/Airbnb", "amount": "€ 600" }
+                            { "name": "Hôtel/Airbnb", "amount": "AED 600" }
                         ]
                     }
                 ]
@@ -1936,8 +1936,8 @@ const defaultBudgets = {
                     {
                         "name": "Repas",
                         "lines": [
-                            { "name": "Restaurants", "amount": "€ 400" },
-                            { "name": "Courses", "amount": "€ 150" }
+                            { "name": "Restaurants", "amount": "AED 400" },
+                            { "name": "Courses", "amount": "AED 150" }
                         ]
                     }
                 ]
@@ -1948,9 +1948,9 @@ const defaultBudgets = {
                     {
                         "name": "Loisirs",
                         "lines": [
-                            { "name": "Visites", "amount": "€ 200" },
-                            { "name": "Excursions", "amount": "€ 150" },
-                            { "name": "Souvenirs", "amount": "€ 100" }
+                            { "name": "Visites", "amount": "AED 200" },
+                            { "name": "Excursions", "amount": "AED 150" },
+                            { "name": "Souvenirs", "amount": "AED 100" }
                         ]
                     }
                 ]
@@ -1967,9 +1967,9 @@ const defaultBudgets = {
                     {
                         "name": "Marketing",
                         "lines": [
-                            { "name": "Visuels", "amount": "€ 150" },
-                            { "name": "Réseaux sociaux", "amount": "€ 100" },
-                            { "name": "Flyers", "amount": "€ 50" }
+                            { "name": "Visuels", "amount": "AED 150" },
+                            { "name": "Réseaux sociaux", "amount": "AED 100" },
+                            { "name": "Flyers", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -1980,8 +1980,8 @@ const defaultBudgets = {
                     {
                         "name": "Production",
                         "lines": [
-                            { "name": "Prototype", "amount": "€ 800" },
-                            { "name": "Packaging", "amount": "€ 400" }
+                            { "name": "Prototype", "amount": "AED 800" },
+                            { "name": "Packaging", "amount": "AED 400" }
                         ]
                     }
                 ]
@@ -1992,9 +1992,9 @@ const defaultBudgets = {
                     {
                         "name": "Organisation",
                         "lines": [
-                            { "name": "Lieu", "amount": "€ 500" },
-                            { "name": "Traiteur", "amount": "€ 300" },
-                            { "name": "Communication", "amount": "€ 200" }
+                            { "name": "Lieu", "amount": "AED 500" },
+                            { "name": "Traiteur", "amount": "AED 300" },
+                            { "name": "Communication", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2009,8 +2009,8 @@ const defaultBudgets = {
                     {
                         "name": "Design",
                         "lines": [
-                            { "name": "Maquettes", "amount": "€ 500" },
-                            { "name": "UX/UI", "amount": "€ 700" }
+                            { "name": "Maquettes", "amount": "AED 500" },
+                            { "name": "UX/UI", "amount": "AED 700" }
                         ]
                     }
                 ]
@@ -2021,15 +2021,15 @@ const defaultBudgets = {
                     {
                         "name": "Front-end",
                         "lines": [
-                            { "name": "Intégration", "amount": "€ 800" },
-                            { "name": "Responsive", "amount": "€ 400" }
+                            { "name": "Intégration", "amount": "AED 800" },
+                            { "name": "Responsive", "amount": "AED 400" }
                         ]
                     },
                     {
                         "name": "Back-end",
                         "lines": [
-                            { "name": "Base de données", "amount": "€ 600" },
-                            { "name": "Fonctionnalités", "amount": "€ 1000" }
+                            { "name": "Base de données", "amount": "AED 600" },
+                            { "name": "Fonctionnalités", "amount": "AED 1000" }
                         ]
                     }
                 ]
@@ -2040,15 +2040,15 @@ const defaultBudgets = {
                     {
                         "name": "Médias",
                         "lines": [
-                            { "name": "Photos", "amount": "€ 300" },
-                            { "name": "Vidéos", "amount": "€ 400" }
+                            { "name": "Photos", "amount": "AED 300" },
+                            { "name": "Vidéos", "amount": "AED 400" }
                         ]
                     },
                     {
                         "name": "Textes",
                         "lines": [
-                            { "name": "Rédaction", "amount": "€ 500" },
-                            { "name": "Traduction", "amount": "€ 300" }
+                            { "name": "Rédaction", "amount": "AED 500" },
+                            { "name": "Traduction", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -2059,9 +2059,9 @@ const defaultBudgets = {
                     {
                         "name": "Services",
                         "lines": [
-                            { "name": "Nom de domaine", "amount": "€ 15" },
-                            { "name": "Hébergement annuel", "amount": "€ 120" },
-                            { "name": "SSL", "amount": "€ 50" }
+                            { "name": "Nom de domaine", "amount": "AED 15" },
+                            { "name": "Hébergement annuel", "amount": "AED 120" },
+                            { "name": "SSL", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -2076,16 +2076,16 @@ const defaultBudgets = {
                     {
                         "name": "Digitale",
                         "lines": [
-                            { "name": "Google Ads", "amount": "€ 500" },
-                            { "name": "Facebook/Instagram", "amount": "€ 400" },
-                            { "name": "Bannière Web", "amount": "€ 300" }
+                            { "name": "Google Ads", "amount": "AED 500" },
+                            { "name": "Facebook/Instagram", "amount": "AED 400" },
+                            { "name": "Bannière Web", "amount": "AED 300" }
                         ]
                     },
                     {
                         "name": "Traditionnelle",
                         "lines": [
-                            { "name": "Presse", "amount": "€ 600" },
-                            { "name": "Affichage", "amount": "€ 1000" }
+                            { "name": "Presse", "amount": "AED 600" },
+                            { "name": "Affichage", "amount": "AED 1000" }
                         ]
                     }
                 ]
@@ -2096,9 +2096,9 @@ const defaultBudgets = {
                     {
                         "name": "Création",
                         "lines": [
-                            { "name": "Design", "amount": "€ 700" },
-                            { "name": "Vidéo", "amount": "€ 900" },
-                            { "name": "Rédaction", "amount": "€ 500" }
+                            { "name": "Design", "amount": "AED 700" },
+                            { "name": "Vidéo", "amount": "AED 900" },
+                            { "name": "Rédaction", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -2109,8 +2109,8 @@ const defaultBudgets = {
                     {
                         "name": "Présence",
                         "lines": [
-                            { "name": "Stand salon", "amount": "€ 1500" },
-                            { "name": "Matériel promotionnel", "amount": "€ 300" }
+                            { "name": "Stand salon", "amount": "AED 1500" },
+                            { "name": "Matériel promotionnel", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -2121,8 +2121,8 @@ const defaultBudgets = {
                     {
                         "name": "Mesure",
                         "lines": [
-                            { "name": "Outils analytics", "amount": "€ 200" },
-                            { "name": "Études d'impact", "amount": "€ 600" }
+                            { "name": "Outils analytics", "amount": "AED 200" },
+                            { "name": "Études d'impact", "amount": "AED 600" }
                         ]
                     }
                 ]
@@ -2137,15 +2137,15 @@ const defaultBudgets = {
                     {
                         "name": "Organisme",
                         "lines": [
-                            { "name": "Inscription", "amount": "€ 1200" },
-                            { "name": "Certification", "amount": "€ 300" }
+                            { "name": "Inscription", "amount": "AED 1200" },
+                            { "name": "Certification", "amount": "AED 300" }
                         ]
                     },
                     {
                         "name": "Matériel",
                         "lines": [
-                            { "name": "Supports", "amount": "€ 100" },
-                            { "name": "Logiciels", "amount": "€ 200" }
+                            { "name": "Supports", "amount": "AED 100" },
+                            { "name": "Logiciels", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2156,15 +2156,15 @@ const defaultBudgets = {
                     {
                         "name": "Transport",
                         "lines": [
-                            { "name": "Train/Avion", "amount": "€ 250" },
-                            { "name": "Local", "amount": "€ 100" }
+                            { "name": "Train/Avion", "amount": "AED 250" },
+                            { "name": "Local", "amount": "AED 100" }
                         ]
                     },
                     {
                         "name": "Hébergement",
                         "lines": [
-                            { "name": "Hôtel", "amount": "€ 400" },
-                            { "name": "Repas", "amount": "€ 200" }
+                            { "name": "Hôtel", "amount": "AED 400" },
+                            { "name": "Repas", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2179,15 +2179,15 @@ const defaultBudgets = {
                     {
                         "name": "Création",
                         "lines": [
-                            { "name": "Frais juridiques", "amount": "€ 800" },
-                            { "name": "Immatriculation", "amount": "€ 200" }
+                            { "name": "Frais juridiques", "amount": "AED 800" },
+                            { "name": "Immatriculation", "amount": "AED 200" }
                         ]
                     },
                     {
                         "name": "Assurances",
                         "lines": [
-                            { "name": "RC Pro", "amount": "€ 500" },
-                            { "name": "Multirisque", "amount": "€ 400" }
+                            { "name": "RC Pro", "amount": "AED 500" },
+                            { "name": "Multirisque", "amount": "AED 400" }
                         ]
                     }
                 ]
@@ -2198,16 +2198,16 @@ const defaultBudgets = {
                     {
                         "name": "Matériel",
                         "lines": [
-                            { "name": "Informatique", "amount": "€ 2000" },
-                            { "name": "Mobilier", "amount": "€ 1500" }
+                            { "name": "Informatique", "amount": "AED 2000" },
+                            { "name": "Mobilier", "amount": "AED 1500" }
                         ]
                     },
                     {
                         "name": "Local",
                         "lines": [
-                            { "name": "Dépôt garantie", "amount": "€ 2000" },
-                            { "name": "Loyer", "amount": "€ 1000" },
-                            { "name": "Aménagement", "amount": "€ 3000" }
+                            { "name": "Dépôt garantie", "amount": "AED 2000" },
+                            { "name": "Loyer", "amount": "AED 1000" },
+                            { "name": "Aménagement", "amount": "AED 3000" }
                         ]
                     }
                 ]
@@ -2218,9 +2218,9 @@ const defaultBudgets = {
                     {
                         "name": "Communication",
                         "lines": [
-                            { "name": "Site web", "amount": "€ 1500" },
-                            { "name": "Identité visuelle", "amount": "€ 800" },
-                            { "name": "PLV", "amount": "€ 500" }
+                            { "name": "Site web", "amount": "AED 1500" },
+                            { "name": "Identité visuelle", "amount": "AED 800" },
+                            { "name": "PLV", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -2231,8 +2231,8 @@ const defaultBudgets = {
                     {
                         "name": "Fond de roulement",
                         "lines": [
-                            { "name": "Stock initial", "amount": "€ 5000" },
-                            { "name": "Charges courantes", "amount": "€ 3000" }
+                            { "name": "Stock initial", "amount": "AED 5000" },
+                            { "name": "Charges courantes", "amount": "AED 3000" }
                         ]
                     }
                 ]
@@ -2249,8 +2249,8 @@ const defaultBudgets = {
                     {
                         "name": "Sécurité",
                         "lines": [
-                            { "name": "Épargne de précaution", "amount": "€ 200" },
-                            { "name": "Projets < 2 ans", "amount": "€ 100" }
+                            { "name": "Épargne de précaution", "amount": "AED 200" },
+                            { "name": "Projets < 2 ans", "amount": "AED 100" }
                         ]
                     }
                 ]
@@ -2261,8 +2261,8 @@ const defaultBudgets = {
                     {
                         "name": "Projets",
                         "lines": [
-                            { "name": "Achat immobilier", "amount": "€ 300" },
-                            { "name": "Autres projets", "amount": "€ 100" }
+                            { "name": "Achat immobilier", "amount": "AED 300" },
+                            { "name": "Autres projets", "amount": "AED 100" }
                         ]
                     }
                 ]
@@ -2273,8 +2273,8 @@ const defaultBudgets = {
                     {
                         "name": "Retraite",
                         "lines": [
-                            { "name": "PER", "amount": "€ 150" },
-                            { "name": "Assurance-vie", "amount": "€ 100" }
+                            { "name": "PER", "amount": "AED 150" },
+                            { "name": "Assurance-vie", "amount": "AED 100" }
                         ]
                     }
                 ]
@@ -2289,8 +2289,8 @@ const defaultBudgets = {
                     {
                         "name": "Crédits à taux élevé",
                         "lines": [
-                            { "name": "Crédit à la consommation", "amount": "€ 300" },
-                            { "name": "Découvert", "amount": "€ 150" }
+                            { "name": "Crédit à la consommation", "amount": "AED 300" },
+                            { "name": "Découvert", "amount": "AED 150" }
                         ]
                     }
                 ]
@@ -2301,8 +2301,8 @@ const defaultBudgets = {
                     {
                         "name": "Hypothèques",
                         "lines": [
-                            { "name": "Prêt principal", "amount": "€ 800" },
-                            { "name": "Prêt secondaire", "amount": "€ 200" }
+                            { "name": "Prêt principal", "amount": "AED 800" },
+                            { "name": "Prêt secondaire", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2313,8 +2313,8 @@ const defaultBudgets = {
                     {
                         "name": "Prêts personnels",
                         "lines": [
-                            { "name": "Famille/Amis", "amount": "€ 100" },
-                            { "name": "Autres", "amount": "€ 50" }
+                            { "name": "Famille/Amis", "amount": "AED 100" },
+                            { "name": "Autres", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -2329,8 +2329,8 @@ const defaultBudgets = {
                     {
                         "name": "Principal",
                         "lines": [
-                            { "name": "Achat bien", "amount": "€ 5000" },
-                            { "name": "Accessoires", "amount": "€ 500" }
+                            { "name": "Achat bien", "amount": "AED 5000" },
+                            { "name": "Accessoires", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -2341,15 +2341,15 @@ const defaultBudgets = {
                     {
                         "name": "Taxes & Assurances",
                         "lines": [
-                            { "name": "TVA/Taxes", "amount": "€ 1000" },
-                            { "name": "Assurance", "amount": "€ 300" }
+                            { "name": "TVA/Taxes", "amount": "AED 1000" },
+                            { "name": "Assurance", "amount": "AED 300" }
                         ]
                     },
                     {
                         "name": "Installation",
                         "lines": [
-                            { "name": "Livraison", "amount": "€ 200" },
-                            { "name": "Mise en service", "amount": "€ 150" }
+                            { "name": "Livraison", "amount": "AED 200" },
+                            { "name": "Mise en service", "amount": "AED 150" }
                         ]
                     }
                 ]
@@ -2366,8 +2366,8 @@ const defaultBudgets = {
                     {
                         "name": "Membres",
                         "lines": [
-                            { "name": "Apports mensuels", "amount": "€ 1000" },
-                            { "name": "Apports exceptionnels", "amount": "€ 500" }
+                            { "name": "Apports mensuels", "amount": "AED 1000" },
+                            { "name": "Apports exceptionnels", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -2378,8 +2378,8 @@ const defaultBudgets = {
                     {
                         "name": "Frais",
                         "lines": [
-                            { "name": "Frais bancaires", "amount": "€ 50" },
-                            { "name": "Administration", "amount": "€ 30" }
+                            { "name": "Frais bancaires", "amount": "AED 50" },
+                            { "name": "Administration", "amount": "AED 30" }
                         ]
                     }
                 ]
@@ -2390,7 +2390,7 @@ const defaultBudgets = {
                     {
                         "name": "Versements",
                         "lines": [
-                            { "name": "Distributions prévues", "amount": "€ 1200" }
+                            { "name": "Distributions prévues", "amount": "AED 1200" }
                         ]
                     }
                 ]
@@ -2405,15 +2405,15 @@ const defaultBudgets = {
                     {
                         "name": "Dons",
                         "lines": [
-                            { "name": "Dons particuliers", "amount": "€ 3000" },
-                            { "name": "Dons entreprises", "amount": "€ 2000" }
+                            { "name": "Dons particuliers", "amount": "AED 3000" },
+                            { "name": "Dons entreprises", "amount": "AED 2000" }
                         ]
                     },
                     {
                         "name": "Événements",
                         "lines": [
-                            { "name": "Gala annuel", "amount": "€ 5000" },
-                            { "name": "Ventes caritatives", "amount": "€ 1500" }
+                            { "name": "Gala annuel", "amount": "AED 5000" },
+                            { "name": "Ventes caritatives", "amount": "AED 1500" }
                         ]
                     }
                 ]
@@ -2424,9 +2424,9 @@ const defaultBudgets = {
                     {
                         "name": "Administration",
                         "lines": [
-                            { "name": "Salaires", "amount": "€ 2000" },
-                            { "name": "Loyer/Charges", "amount": "€ 800" },
-                            { "name": "Matériel", "amount": "€ 300" }
+                            { "name": "Salaires", "amount": "AED 2000" },
+                            { "name": "Loyer/Charges", "amount": "AED 800" },
+                            { "name": "Matériel", "amount": "AED 300" }
                         ]
                     }
                 ]
@@ -2437,8 +2437,8 @@ const defaultBudgets = {
                     {
                         "name": "Missions",
                         "lines": [
-                            { "name": "Projet principal", "amount": "€ 6000" },
-                            { "name": "Actions secondaires", "amount": "€ 2000" }
+                            { "name": "Projet principal", "amount": "AED 6000" },
+                            { "name": "Actions secondaires", "amount": "AED 2000" }
                         ]
                     }
                 ]
@@ -2453,8 +2453,8 @@ const defaultBudgets = {
                     {
                         "name": "Lieu",
                         "lines": [
-                            { "name": "Location salle", "amount": "€ 600" },
-                            { "name": "Équipement", "amount": "€ 200" }
+                            { "name": "Location salle", "amount": "AED 600" },
+                            { "name": "Équipement", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2465,14 +2465,14 @@ const defaultBudgets = {
                     {
                         "name": "Accueil",
                         "lines": [
-                            { "name": "Restauration", "amount": "€ 500" },
-                            { "name": "Documentation", "amount": "€ 150" }
+                            { "name": "Restauration", "amount": "AED 500" },
+                            { "name": "Documentation", "amount": "AED 150" }
                         ]
                     },
                     {
                         "name": "Déplacements",
                         "lines": [
-                            { "name": "Remboursements", "amount": "€ 400" }
+                            { "name": "Remboursements", "amount": "AED 400" }
                         ]
                     }
                 ]
@@ -2483,8 +2483,8 @@ const defaultBudgets = {
                     {
                         "name": "Supports",
                         "lines": [
-                            { "name": "Présentations", "amount": "€ 100" },
-                            { "name": "Compte-rendu", "amount": "€ 50" }
+                            { "name": "Présentations", "amount": "AED 100" },
+                            { "name": "Compte-rendu", "amount": "AED 50" }
                         ]
                     }
                 ]
@@ -2499,8 +2499,8 @@ const defaultBudgets = {
                     {
                         "name": "Participations",
                         "lines": [
-                            { "name": "Cotisations régulières", "amount": "€ 1200" },
-                            { "name": "Apports exceptionnels", "amount": "€ 500" }
+                            { "name": "Cotisations régulières", "amount": "AED 1200" },
+                            { "name": "Apports exceptionnels", "amount": "AED 500" }
                         ]
                     }
                 ]
@@ -2511,15 +2511,15 @@ const defaultBudgets = {
                     {
                         "name": "Achats communs",
                         "lines": [
-                            { "name": "Équipement", "amount": "€ 800" },
-                            { "name": "Consommables", "amount": "€ 400" }
+                            { "name": "Équipement", "amount": "AED 800" },
+                            { "name": "Consommables", "amount": "AED 400" }
                         ]
                     },
                     {
                         "name": "Services",
                         "lines": [
-                            { "name": "Abonnements", "amount": "€ 150" },
-                            { "name": "Maintenance", "amount": "€ 200" }
+                            { "name": "Abonnements", "amount": "AED 150" },
+                            { "name": "Maintenance", "amount": "AED 200" }
                         ]
                     }
                 ]
@@ -2546,7 +2546,7 @@ function updateTemplateCategories(templateType) {
     }
     
     // Obtenir le symbole de la devise
-    let currencySymbol = '€'; // Symbole par défaut (Euro)
+    let currencySymbol = 'AED'; // Symbole par défaut (Euro)
     let currencyCode = 'EUR';
     
     // Si AVAILABLE_CURRENCIES est défini (depuis currencies.js), utiliser le symbole correspondant
@@ -2560,14 +2560,14 @@ function updateTemplateCategories(templateType) {
     
     console.log('Mise à jour des catégories avec la devise:', currencyCode, currencySymbol);
     
-    // Fonction utilitaire pour remplacer les symboles € dans les données de template
+    // Fonction utilitaire pour remplacer les symboles AED dans les données de template
     const replaceEuroSymbol = (obj) => {
         if (obj && typeof obj === 'object') {
             Object.keys(obj).forEach(key => {
                 if (key === 'amount' && typeof obj[key] === 'string') {
-                    // Remplacer le symbole € par le symbole de la devise active
-                    // Utiliser une regex pour remplacer tous les symboles € dans la chaîne
-                    obj[key] = obj[key].replace(/€/g, currencySymbol);
+                    // Remplacer le symbole AED par le symbole de la devise active
+                    // Utiliser une regex pour remplacer tous les symboles AED dans la chaîne
+                    obj[key] = obj[key].replace(/AED/g, currencySymbol);
                 } else if (typeof obj[key] === 'object') {
                     replaceEuroSymbol(obj[key]);
                 }
@@ -2592,7 +2592,7 @@ function updateTemplateCategories(templateType) {
             }
         ];
         
-        // Remplacer les symboles € par le symbole de devise choisi
+        // Remplacer les symboles AED par le symbole de devise choisi
         categoriesData.forEach(category => {
             replaceEuroSymbol(category);
         });
@@ -2617,7 +2617,7 @@ function updateTemplateCategories(templateType) {
             }
         });
         
-        // Remplacer les symboles € par le symbole de devise choisi
+        // Remplacer les symboles AED par le symbole de devise choisi
         categoriesData.forEach(category => {
             replaceEuroSymbol(category);
         });
@@ -2640,22 +2640,22 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Courses alimentaires',
                             lines: [
-                                { name: 'Courses semaine 1', amount: '€ 52' },
-                                { name: 'Courses semaine 2', amount: '€ 47' }
+                                { name: 'Courses semaine 1', amount: 'AED 52' },
+                                { name: 'Courses semaine 2', amount: 'AED 47' }
                             ]
                         },
                         {
                             name: 'Factures',
                             lines: [
-                                { name: 'EDF', amount: '€ 78' },
-                                { name: 'Internet', amount: '€ 30' }
+                                { name: 'EDF', amount: 'AED 78' },
+                                { name: 'Internet', amount: 'AED 30' }
                             ]
                         },
                         {
                             name: 'Entretien',
                             lines: [
-                                { name: 'Produits ménagers', amount: '€ 25' },
-                                { name: 'Réparations', amount: '€ 40' }
+                                { name: 'Produits ménagers', amount: 'AED 25' },
+                                { name: 'Réparations', amount: 'AED 40' }
                             ]
                         }
                     ]
@@ -2666,15 +2666,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'École',
                             lines: [
-                                { name: 'Fournitures', amount: '€ 30' },
-                                { name: 'Cantine', amount: '€ 85' }
+                                { name: 'Fournitures', amount: 'AED 30' },
+                                { name: 'Cantine', amount: 'AED 85' }
                             ]
                         },
                         {
                             name: 'Loisirs',
                             lines: [
-                                { name: 'Activités sportives', amount: '€ 45' },
-                                { name: 'Sorties', amount: '€ 35' }
+                                { name: 'Activités sportives', amount: 'AED 45' },
+                                { name: 'Sorties', amount: 'AED 35' }
                             ]
                         }
                     ]
@@ -2690,16 +2690,16 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Mensualités',
                             lines: [
-                                { name: 'Loyer/Crédit', amount: '€ 850' },
-                                { name: 'Charges', amount: '€ 120' }
+                                { name: 'Loyer/Crédit', amount: 'AED 850' },
+                                { name: 'Charges', amount: 'AED 120' }
                             ]
                         },
                         {
                             name: 'Factures',
                             lines: [
-                                { name: 'Électricité', amount: '€ 75' },
-                                { name: 'Eau', amount: '€ 45' },
-                                { name: 'Internet/TV', amount: '€ 40' }
+                                { name: 'Électricité', amount: 'AED 75' },
+                                { name: 'Eau', amount: 'AED 45' },
+                                { name: 'Internet/TV', amount: 'AED 40' }
                             ]
                         }
                     ]
@@ -2710,15 +2710,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Réparations',
                             lines: [
-                                { name: 'Petits travaux', amount: '€ 100' },
-                                { name: 'Matériel', amount: '€ 75' }
+                                { name: 'Petits travaux', amount: 'AED 100' },
+                                { name: 'Matériel', amount: 'AED 75' }
                             ]
                         },
                         {
                             name: 'Jardinage',
                             lines: [
-                                { name: 'Plantes', amount: '€ 40' },
-                                { name: 'Outils', amount: '€ 50' }
+                                { name: 'Plantes', amount: 'AED 40' },
+                                { name: 'Outils', amount: 'AED 50' }
                             ]
                         }
                     ]
@@ -2734,15 +2734,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Courses hebdomadaires',
                             lines: [
-                                { name: 'Supermarché', amount: '€ 150' },
-                                { name: 'Marché', amount: '€ 50' }
+                                { name: 'Supermarché', amount: 'AED 150' },
+                                { name: 'Marché', amount: 'AED 50' }
                             ]
                         },
                         {
                             name: 'Extras',
                             lines: [
-                                { name: 'Repas restaurant', amount: '€ 80' },
-                                { name: 'Livraisons', amount: '€ 40' }
+                                { name: 'Repas restaurant', amount: 'AED 80' },
+                                { name: 'Livraisons', amount: 'AED 40' }
                             ]
                         }
                     ]
@@ -2753,15 +2753,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Scolarité',
                             lines: [
-                                { name: 'Frais scolaires', amount: '€ 100' },
-                                { name: 'Fournitures', amount: '€ 70' }
+                                { name: 'Frais scolaires', amount: 'AED 100' },
+                                { name: 'Fournitures', amount: 'AED 70' }
                             ]
                         },
                         {
                             name: 'Activités extrascolaires',
                             lines: [
-                                { name: 'Sport', amount: '€ 120' },
-                                { name: 'Musique', amount: '€ 90' }
+                                { name: 'Sport', amount: 'AED 120' },
+                                { name: 'Musique', amount: 'AED 90' }
                             ]
                         }
                     ]
@@ -2772,15 +2772,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Consultations',
                             lines: [
-                                { name: 'Médecin', amount: '€ 50' },
-                                { name: 'Spécialistes', amount: '€ 100' }
+                                { name: 'Médecin', amount: 'AED 50' },
+                                { name: 'Spécialistes', amount: 'AED 100' }
                             ]
                         },
                         {
                             name: 'Pharmacie',
                             lines: [
-                                { name: 'Médicaments', amount: '€ 60' },
-                                { name: 'Produits santé', amount: '€ 40' }
+                                { name: 'Médicaments', amount: 'AED 60' },
+                                { name: 'Produits santé', amount: 'AED 40' }
                             ]
                         }
                     ]
@@ -2797,15 +2797,15 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Traiteur',
                             lines: [
-                                { name: 'Menu principal', amount: '€ 150' },
-                                { name: 'Desserts', amount: '€ 50' }
+                                { name: 'Menu principal', amount: 'AED 150' },
+                                { name: 'Desserts', amount: 'AED 50' }
                             ]
                         },
                         {
                             name: 'Boissons',
                             lines: [
-                                { name: 'Soft drinks', amount: '€ 50' },
-                                { name: 'Alcool', amount: '€ 50' }
+                                { name: 'Soft drinks', amount: 'AED 50' },
+                                { name: 'Alcool', amount: 'AED 50' }
                             ]
                         }
                     ]
@@ -2816,13 +2816,13 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'DJ',
                             lines: [
-                                { name: 'DJ forfait soirée', amount: '€ 150' }
+                                { name: 'DJ forfait soirée', amount: 'AED 150' }
                             ]
                         },
                         {
                             name: 'Jeux',
                             lines: [
-                                { name: 'Matériel de jeux', amount: '€ 50' }
+                                { name: 'Matériel de jeux', amount: 'AED 50' }
                             ]
                         }
                     ]
@@ -2833,8 +2833,8 @@ function updateTemplateCategories(templateType) {
                         {
                             name: 'Salle',
                             lines: [
-                                { name: 'Ballons/Guirlandes', amount: '€ 60' },
-                                { name: 'Centre de table', amount: '€ 40' }
+                                { name: 'Ballons/Guirlandes', amount: 'AED 60' },
+                                { name: 'Centre de table', amount: 'AED 40' }
                             ]
                         }
                     ]
@@ -2847,7 +2847,7 @@ function updateTemplateCategories(templateType) {
             return;
     }
     
-    // Remplacer les symboles € par le symbole de devise choisi dans les templates du switch
+    // Remplacer les symboles AED par le symbole de devise choisi dans les templates du switch
     if (categoriesData.length > 0) {
         // Supprimer toutes les lignes de dépenses pour laisser l'utilisateur les ajouter lui-même
         categoriesData.forEach(category => {
@@ -2859,7 +2859,7 @@ function updateTemplateCategories(templateType) {
             }
         });
         
-        // Remplacer les symboles € par le symbole de devise choisi
+        // Remplacer les symboles AED par le symbole de devise choisi
         categoriesData.forEach(category => {
             replaceEuroSymbol(category);
         });
@@ -2870,7 +2870,7 @@ function updateTemplateCategories(templateType) {
 
 // Fonction pour mettre à jour l'UI avec les nouvelles catégories
 function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
-    const currencySymbol = incomingCurrencySymbol || "€";
+    const currencySymbol = incomingCurrencySymbol || "AED";
     console.log('Updating categories UI with data:', categoriesData);
     // Trouver le conteneur des catégories
     const expenseCategories = document.querySelector('.expense-categories');
@@ -2927,7 +2927,7 @@ function updateCategoriesUI(categoriesData, incomingCurrencySymbol) {
                         categoryHTML += `
                             <div class="expense-line">
                                 <input type="text" class="form-control expense-line-name" value="${line.name}">
-                                <input type="text" class="form-control expense-line-amount" value="${line.amount.replace(/€/g, currencySymbol)}">
+                                <input type="text" class="form-control expense-line-amount" value="${line.amount.replace(/AED/g, currencySymbol)}">
                                 <div class="expense-line-actions">
                                     <button type="button" class="btn-sm btn-delete-line">
                                         <i class="fas fa-times"></i>

@@ -5,7 +5,7 @@
 
 // Fonction pour obtenir le symbole de la devise actuelle
 function getCurrencySymbol() {
-    let currencySymbol = '€';
+    let currencySymbol = 'AED';
     try {
         const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
         if (preferences.currency) {

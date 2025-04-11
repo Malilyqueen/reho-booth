@@ -1397,13 +1397,13 @@ function showNotification(message, type = 'info') {
 /**
  * Parse une chaîne de caractères contenant une valeur monétaire
  * et retourne un nombre
- * Gère les formats français (1 234,56 €) et internationaux ($1,234.56)
+ * Gère les formats français (1 234,56 AED) et internationaux ($1,234.56)
  */
 function parseMonetaryValue(text) {
     if (!text) return 0;
     
     // Supprimer tous les symboles monétaires et espaces
-    let cleanText = text.replace(/[€$£¥]/g, '').trim();
+    let cleanText = text.replace(/[AED$£¥]/g, '').trim();
     
     // Gérer le format français (1 234,56) vs format international (1,234.56)
     if (cleanText.includes(',')) {
