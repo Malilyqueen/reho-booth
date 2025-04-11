@@ -79,7 +79,21 @@ function renderProjectData(project) {
               const lineAmountElement = lineElement.querySelector(".line-amount");
               
               if (lineNameElement) lineNameElement.textContent = line.name;
-              if (lineAmountElement) lineAmountElement.textContent = line.amount;
+              
+              // Convertir les montants textuels en valeurs numériques pour les inputs
+              if (lineAmountElement) {
+                // Si c'est un champ input, définir sa valeur
+                if (lineAmountElement.tagName === 'INPUT') {
+                  // Extraire la valeur numérique du montant texte
+                  const numericValue = extractNumberFromString(line.amount);
+                  lineAmountElement.value = numericValue;
+                  console.log(`Ligne ${line.name}: défini valeur input à ${numericValue} (de ${line.amount})`);
+                } else {
+                  // Sinon, définir le textContent
+                  lineAmountElement.textContent = line.amount;
+                  console.log(`Ligne ${line.name}: défini texte à ${line.amount}`);
+                }
+              }
             });
           }
         });
@@ -95,34 +109,62 @@ function renderProjectData(project) {
 
 function recalculateAllAmounts() {
   let total = 0;
+  console.log("💰 Démarrage du recalcul complet des montants");
 
   document.querySelectorAll(".expense-category").forEach(catEl => {
     let catTotal = 0;
+    const categoryName = catEl.querySelector(".category-name")?.textContent || "Catégorie";
+    
+    console.log(`- Calcul de la catégorie: ${categoryName}`);
 
     catEl.querySelectorAll(".subcategory").forEach(subcatEl => {
       let subTotal = 0;
+      const subcategoryName = subcatEl.querySelector(".subcategory-name")?.textContent || "Sous-catégorie";
+      
+      console.log(`  - Calcul de la sous-catégorie: ${subcategoryName}`);
+
+      // Parcourir toutes les lignes de dépenses pour cette sous-catégorie
       subcatEl.querySelectorAll(".expense-line").forEach(lineEl => {
-        const input = lineEl.querySelector(".line-amount");
-        const amount = parseFloat(input?.value || 0);
+        const lineAmount = lineEl.querySelector(".line-amount");
+        const lineName = lineEl.querySelector(".line-name")?.textContent || "Ligne";
+        let amount = 0;
+        
+        // Extraction du montant selon le type d'élément
+        if (lineAmount) {
+          if (lineAmount.tagName === 'INPUT') {
+            // Si c'est un input, utiliser sa valeur
+            amount = parseFloat(lineAmount.value) || 0;
+          } else {
+            // Sinon extraire le nombre du texte (en supprimant la devise, etc.)
+            amount = extractNumberFromString(lineAmount.textContent);
+          }
+        }
+        
         subTotal += amount;
+        console.log(`    > ${lineName}: ${amount}`);
       });
 
+      // Mettre à jour l'affichage de la sous-catégorie
       const subDisplay = subcatEl.querySelector(".subcategory-amount");
       if (subDisplay) {
         subDisplay.textContent = formatCurrency(subTotal);
+        console.log(`  => Sous-total ${subcategoryName}: ${subTotal}`);
       }
 
       catTotal += subTotal;
     });
 
+    // Mettre à jour l'affichage de la catégorie
     const catDisplay = catEl.querySelector(".category-amount");
     if (catDisplay) {
       catDisplay.textContent = formatCurrency(catTotal);
+      console.log(`=> Total ${categoryName}: ${catTotal}`);
     }
 
     total += catTotal;
   });
 
+  // Mettre à jour le budget total
   const totalDisplay = document.getElementById("totalBudget");
   if (totalDisplay) {
     totalDisplay.textContent = formatCurrency(total);
@@ -131,8 +173,30 @@ function recalculateAllAmounts() {
   console.log("💸 Recalcul terminé. Budget total : ", total);
 }
 
+function extractNumberFromString(str) {
+  if (!str) return 0;
+  
+  // Supprimer tout sauf les chiffres, points et virgules
+  const cleaned = String(str).replace(/[^\d.,]/g, '').replace(',', '.');
+  
+  // Convertir en nombre
+  const value = parseFloat(cleaned);
+  return isNaN(value) ? 0 : value;
+}
+
 function formatCurrency(amount) {
-  return `€ ${amount.toFixed(2).replace(".", ",")}`;
+  // Déterminer le symbole de devise à partir du budget total existant
+  const totalBudgetElement = document.getElementById("totalBudget");
+  let symbol = "€";
+  
+  if (totalBudgetElement && totalBudgetElement.textContent) {
+    const match = totalBudgetElement.textContent.match(/^([^\d]+)/);
+    if (match && match[1]) {
+      symbol = match[1].trim();
+    }
+  }
+  
+  return `${symbol} ${amount.toFixed(2).replace(".", ",")}`;
 }
 
 // Initialisation au chargement de la page
