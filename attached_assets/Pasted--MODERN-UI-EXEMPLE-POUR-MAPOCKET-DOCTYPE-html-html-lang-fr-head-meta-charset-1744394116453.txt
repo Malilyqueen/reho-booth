@@ -1,0 +1,89 @@
+<!-- MODERN UI EXEMPLE POUR MAPOCKET -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaPocket - Fiche Projet Moderne</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-5xl mx-auto p-6">
+
+    <!-- HEADER -->
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div>
+        <h1 class="text-3xl font-semibold text-gray-900">🎉 Anniversaire de Malala</h1>
+        <p class="text-sm text-gray-500">Type : Événementiel – Budget initial : <span class="font-medium">AED 300</span></p>
+      </div>
+      <div class="flex gap-2 mt-4 md:mt-0">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600">Modifier</button>
+        <button class="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600">Terminer</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600">Archiver</button>
+      </div>
+    </div>
+
+    <!-- BUDGET STATUS -->
+    <div class="bg-white rounded-xl p-4 shadow mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs text-gray-400">Date</p>
+          <p class="font-medium">16/06/2025</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">Budget initial</p>
+          <p class="font-medium">AED 300,00</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">Utilisé</p>
+          <p class="font-medium">AED 0,00</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">Écart</p>
+          <p class="font-medium text-green-600">AED 300,00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSTES DE DÉPENSES -->
+    <div class="space-y-6">
+      <!-- Exemple de catégorie -->
+      <div class="bg-white shadow rounded-xl p-4">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-xl font-semibold">🍽️ Restauration</h2>
+          <span class="text-sm font-medium text-gray-600">Total : AED 300,00</span>
+        </div>
+        <div class="ml-4 space-y-2">
+          <!-- Sous-catégorie -->
+          <div>
+            <div class="flex justify-between items-center">
+              <h3 class="text-md font-medium">🥗 Traiteur</h3>
+              <span class="text-sm text-gray-500">AED 200,00</span>
+            </div>
+            <ul class="ml-4 text-sm list-disc text-gray-700">
+              <li>Menu principal – AED 150</li>
+              <li>Desserts – AED 50</li>
+            </ul>
+          </div>
+          <div>
+            <div class="flex justify-between items-center">
+              <h3 class="text-md font-medium">🥤 Boissons</h3>
+              <span class="text-sm text-gray-500">AED 100,00</span>
+            </div>
+            <ul class="ml-4 text-sm list-disc text-gray-700">
+              <li>Soft drinks – AED 50</li>
+              <li>Alcool – AED 50</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER (Optional) -->
+    <div class="mt-12 text-center text-sm text-gray-400">
+      © 2025 MaPocket • Gestion budgétaire intelligente
+    </div>
+
+  </div>
+</body>
+</html>

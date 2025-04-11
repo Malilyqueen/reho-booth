@@ -4,239 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vue Projet - MaPocket</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/mobile-fixes.css">
-    <link rel="stylesheet" href="css/currency.css">
-    <link rel="stylesheet" href="css/budget-line-styles.css">
-    <link rel="stylesheet" href="css/budget-calculation-styles.css">
-    <link rel="stylesheet" href="css/editable-fields.css">
-    <link rel="stylesheet" href="css/editable-ui-fix.css">
-    <link rel="stylesheet" href="css/unified-mode.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .active-tab {
+            color: #4F46E5;
+            border-bottom: 2px solid #4F46E5;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .progressBar-bg {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #E4E4E7;
+        }
+        .progressBar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .switchInterface {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="assets/logo.svg" alt="MaPocket Logo">
-                <h1>MaPocket</h1>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li>
-                        <a href="index.html">
-                            <i class="fas fa-home"></i>
-                            <span class="menu-text">Tableau de bord</span>
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="index.html#projects-list">
-                            <i class="fas fa-folder"></i>
-                            <span class="menu-text">Mes Projets</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="portefeuille.html">
-                            <i class="fas fa-wallet"></i>
-                            <span class="menu-text">Mon Portefeuille</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="objectifs.html">
-                            <i class="fas fa-bullseye"></i>
-                            <span class="menu-text">Objectifs & Défis</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="wishlist.html">
-                            <i class="fas fa-gift"></i>
-                            <span class="menu-text">Liste de souhaits</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="sidebar-bottom">
-                <button id="darkModeToggle" class="btn-icon">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button id="helpBtn" class="btn-icon">
-                    <i class="fas fa-question-circle"></i>
-                </button>
-                <div class="user-menu">
-                    <img src="assets/avatar.png" alt="Avatar utilisateur" class="user-avatar">
-                    <span class="user-name">Utilisateur</span>
-                </div>
-            </div>
-        </aside>
-
-        <main class="content">
-            <div class="project-detail-container">
-                <header class="project-header">
-                    <div class="back-button">
-                        <a href="index.html" id="btn-back-to-dashboard">
-                            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
-                        </a>
-                    </div>
-                    <div class="project-title">
-                        <h1 id="projectTitle">Chargement du projet...</h1>
-                        <span id="projectType" class="project-type">Type de projet</span>
-                        <span id="projectStatus" class="project-status">En cours</span>
-                    </div>
-                    <div class="project-actions">
-                        <button id="btn-edit-project" class="btn btn-primary btn-edit-project">
-                            <i class="fas fa-edit"></i> Modifier
-                        </button>
-                        <button id="btn-complete-project" class="btn btn-success btn-complete-project">
-                            <i class="fas fa-check"></i> Marquer comme terminé
-                        </button>
-                        <button id="btn-archive-project" class="btn btn-secondary btn-archive-project">
-                            <i class="fas fa-archive"></i> Archiver
-                        </button>
-                    </div>
-                </header>
-
-                <div class="project-summary">
-                    <div class="summary-card">
-                        <div class="card-header">
-                            <i class="fas fa-calendar"></i>
-                            <h3>Date</h3>
-                        </div>
-                        <div class="card-body">
-                            <span id="projectDate">--/--/----</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="card-header">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <h3>Budget initial</h3>
-                        </div>
-                        <div class="card-body">
-                            <span id="initialBudget">0.00 €</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="card-header">
-                            <i class="fas fa-receipt"></i>
-                            <h3>Budget utilisé</h3>
-                        </div>
-                        <div class="card-body">
-                            <span id="usedBudget">0.00 €</span>
-                        </div>
-                    </div>
-                    <div class="summary-card" id="budgetGapCard">
-                        <div class="card-header">
-                            <i class="fas fa-balance-scale"></i>
-                            <h3>Écart budgétaire</h3>
-                        </div>
-                        <div class="card-body">
-                            <span id="budgetGap">0.00 €</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="card-header">
-                            <i class="fas fa-chart-pie"></i>
-                            <h3>Utilisation</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%"></div>
-                                </div>
-                                <span id="budgetPercentage">0%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-tabs">
-                    <div class="tabs-header">
-                        <button class="tab-btn active" data-tab="categories">Catégories</button>
-                        <button class="tab-btn" data-tab="real-tracking">Dépenses réelles</button>
-                        <button class="tab-btn" data-tab="attachments">Justificatifs</button>
-                        <button class="tab-btn" data-tab="comments">Commentaires</button>
-                    </div>
-
-                    <div class="tab-content active" id="categories-tab">
-                        <div class="category-list" id="categoryList">
-                            <!-- Les catégories seront générées ici dynamiquement -->
-                            <p class="loading">Chargement des catégories...</p>
-                        </div>
-                    </div>
-
-                    <div class="tab-content" id="real-tracking-tab">
-                        <div class="tracking-header">
-                            <h3>Dépenses réelles</h3>
-                            <button id="btnAddRealExpense" class="btn btn-primary btn-add-real-expense">
-                                <i class="fas fa-plus"></i> Ajouter une dépense
-                            </button>
-                        </div>
-                        
-                        <!-- Conteneur pour les dépenses réelles -->
-                        <div id="real-expenses-container">
-                            <!-- Les dépenses seront générées ici dynamiquement -->
-                        </div>
-                    </div>
-
-                    <div class="tab-content" id="attachments-tab">
-                        <div class="attachments-header">
-                            <h3>Justificatifs</h3>
-                            <button id="btnAddAttachment" class="btn btn-primary btn-add-attachment">
-                                <i class="fas fa-plus"></i> Ajouter un justificatif
-                            </button>
-                        </div>
-                        
-                        <!-- Conteneur pour les pièces jointes -->
-                        <div id="attachments-container">
-                            <!-- Les pièces jointes seront générées ici dynamiquement -->
-                        </div>
-                    </div>
-
-                    <div class="tab-content" id="comments-tab">
-                        <div class="comments-header">
-                            <h3>Commentaires</h3>
-                            <button id="btnAddComment" class="btn btn-primary btn-add-comment">
-                                <i class="fas fa-plus"></i> Ajouter un commentaire
-                            </button>
-                        </div>
-                        
-                        <!-- Conteneur pour les commentaires -->
-                        <div id="comments-container">
-                            <!-- Les commentaires seront générés ici dynamiquement -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Bouton pour basculer vers l'interface simple -->
+    <div class="switchInterface">
+        <button id="switchInterfaceBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-full shadow-lg">
+            <i class="fas fa-exchange-alt mr-2"></i>Interface simple
+        </button>
     </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-6">
+            <a href="index.html" id="btn-back-to-dashboard" class="text-gray-600 hover:text-gray-900">
+                <i class="fas fa-arrow-left mr-2"></i>Retour au tableau de bord
+            </a>
+            <div class="flex space-x-2">
+                <button class="btn-edit-project bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-edit mr-2"></i>Modifier
+                </button>
+                <button class="btn-complete-project bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-colors">
+                    <i class="fas fa-check mr-2"></i>Terminer
+                </button>
+                <button class="btn-archive-project bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition-colors">
+                    <i class="fas fa-archive mr-2"></i>Archiver
+                </button>
+            </div>
+        </div>
+
+        <!-- TITLE SECTION -->
+        <div class="mb-6">
+            <h1 id="projectTitle" class="text-3xl font-semibold text-gray-900 mb-1">Chargement du projet...</h1>
+            <div class="flex items-center text-sm text-gray-500">
+                <span>Type: </span>
+                <span id="projectType" class="ml-1 font-medium">--</span>
+                <span class="mx-2">•</span>
+                <span id="projectStatus" class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">En cours</span>
+            </div>
+        </div>
+
+        <!-- BUDGET STATUS -->
+        <div class="bg-white rounded-xl p-5 shadow-md mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <p class="text-xs text-gray-400">Date</p>
+                    <p id="projectDate" class="font-medium text-lg">--/--/----</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400">Budget initial</p>
+                    <p id="initialBudget" class="font-medium text-lg">0,00 €</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400">Utilisé</p>
+                    <p id="usedBudget" class="font-medium text-lg">0,00 €</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400">Écart</p>
+                    <p id="budgetGap" class="font-medium text-lg text-green-600">0,00 €</p>
+                </div>
+                <div class="md:col-span-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="text-xs text-gray-400">Progression du budget</p>
+                        <p id="budgetPercentage" class="text-xs font-medium">0%</p>
+                    </div>
+                    <div class="progressBar-bg">
+                        <div id="progressBar" class="progressBar-fill bg-green-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABS SECTION -->
+        <div class="mb-6 border-b border-gray-200">
+            <div class="flex space-x-8">
+                <button class="tab-btn active-tab py-3 px-1 font-medium" data-tab="categories">Catégories</button>
+                <button class="tab-btn py-3 px-1 font-medium text-gray-500 hover:text-gray-700" data-tab="real-tracking">Dépenses réelles</button>
+                <button class="tab-btn py-3 px-1 font-medium text-gray-500 hover:text-gray-700" data-tab="attachments">Justificatifs</button>
+                <button class="tab-btn py-3 px-1 font-medium text-gray-500 hover:text-gray-700" data-tab="comments">Commentaires</button>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT -->
+        <div class="tab-content active" id="categories-tab">
+            <div id="categoryList" class="space-y-6">
+                <!-- Les catégories seront générées ici dynamiquement -->
+                <p class="text-center py-8 text-gray-500">Chargement des catégories...</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="real-tracking-tab">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Dépenses réelles</h3>
+                <button id="btnAddRealExpense" class="btn-add-real-expense bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Ajouter une dépense
+                </button>
+            </div>
+            <div id="real-expenses-container" class="space-y-4">
+                <!-- Les dépenses seront générées ici dynamiquement -->
+                <p class="text-center py-8 text-gray-500">Aucune dépense réelle enregistrée</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="attachments-tab">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Justificatifs</h3>
+                <button id="btnAddAttachment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Ajouter un justificatif
+                </button>
+            </div>
+            <div id="attachments-container" class="space-y-4">
+                <!-- Les pièces jointes seront générées ici dynamiquement -->
+                <p class="text-center py-8 text-gray-500">Aucun justificatif enregistré</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="comments-tab">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Commentaires</h3>
+                <button id="btnAddComment" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Ajouter un commentaire
+                </button>
+            </div>
+            <div id="comments-container" class="space-y-4">
+                <!-- Les commentaires seront générés ici dynamiquement -->
+                <p class="text-center py-8 text-gray-500">Aucun commentaire enregistré</p>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="mt-12 text-center text-sm text-gray-400">
+            © 2025 MaPocket • Gestion budgétaire intelligente
+        </div>
+    </div>
+
+    <!-- TEMPLATE POUR UNE CATÉGORIE -->
+    <template id="category-template">
+        <div class="category bg-white shadow-md rounded-xl p-5 overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-xl font-semibold category-title flex items-center">
+                    <span class="category-emoji mr-2"></span>
+                    <span class="category-name"></span>
+                </h2>
+                <span class="text-sm font-medium text-gray-600 category-amount"></span>
+            </div>
+            <div class="subcategories-container ml-4 space-y-3">
+                <!-- Sous-catégories générées ici -->
+            </div>
+        </div>
+    </template>
+
+    <!-- TEMPLATE POUR UNE SOUS-CATÉGORIE -->
+    <template id="subcategory-template">
+        <div class="subcategory">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-md font-medium subcategory-title flex items-center">
+                    <span class="subcategory-emoji mr-2"></span>
+                    <span class="subcategory-name"></span>
+                </h3>
+                <span class="text-sm text-gray-500 subcategory-amount"></span>
+            </div>
+            <ul class="expense-lines ml-8 text-sm list-disc text-gray-700 space-y-1">
+                <!-- Lignes de dépenses générées ici -->
+            </ul>
+        </div>
+    </template>
+
+    <!-- TEMPLATE POUR UNE LIGNE DE DÉPENSE -->
+    <template id="expense-line-template">
+        <li class="expense-line flex justify-between">
+            <span class="expense-name"></span>
+            <span class="expense-amount ml-4 text-gray-600"></span>
+        </li>
+    </template>
 
     <!-- Modales pour les différentes actions -->
     <div id="realExpenseModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2>Ajouter une dépense réelle</h2>
-            <form id="real-expense-form">
-                <div class="form-group">
-                    <label for="expenseDate">Date</label>
-                    <input type="date" id="expenseDate" required>
+            <h2 class="text-xl font-semibold mb-4">Ajouter une dépense réelle</h2>
+            <form id="real-expense-form" class="space-y-4">
+                <div>
+                    <label for="expenseDate" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="expenseDate" required class="w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="form-group">
-                    <label for="expenseCategory">Catégorie</label>
-                    <select id="expenseCategory" required>
+                <div>
+                    <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                    <select id="expenseCategory" required class="w-full p-2 border border-gray-300 rounded-md">
                         <!-- Les catégories seront générées ici dynamiquement -->
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="expenseAmount">Montant</label>
-                    <input type="number" id="expenseAmount" step="0.01" min="0" required>
+                <div>
+                    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Montant</label>
+                    <input type="number" id="expenseAmount" step="0.01" min="0" required class="w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="form-group">
-                    <label for="expenseDescription">Description</label>
-                    <textarea id="expenseDescription" rows="3"></textarea>
+                <div>
+                    <label for="expenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="expenseDescription" rows="3" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
                 </div>
-                <div class="form-footer">
-                    <button type="button" class="btn btn-cancel" id="cancelExpenseBtn">Annuler</button>
-                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" id="cancelExpenseBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Enregistrer</button>
                 </div>
             </form>
         </div>
@@ -245,23 +269,23 @@
     <div id="attachmentModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2>Ajouter un justificatif</h2>
-            <form id="attachment-form">
-                <div class="form-group">
-                    <label for="attachmentName">Nom</label>
-                    <input type="text" id="attachmentName" required>
+            <h2 class="text-xl font-semibold mb-4">Ajouter un justificatif</h2>
+            <form id="attachment-form" class="space-y-4">
+                <div>
+                    <label for="attachmentName" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <input type="text" id="attachmentName" required class="w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="form-group">
-                    <label for="attachmentFile">Fichier</label>
-                    <input type="file" id="attachmentFile" required>
+                <div>
+                    <label for="attachmentFile" class="block text-sm font-medium text-gray-700 mb-1">Fichier</label>
+                    <input type="file" id="attachmentFile" required class="w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="form-group">
-                    <label for="attachmentDescription">Description</label>
-                    <textarea id="attachmentDescription" rows="3"></textarea>
+                <div>
+                    <label for="attachmentDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="attachmentDescription" rows="3" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
                 </div>
-                <div class="form-footer">
-                    <button type="button" class="btn btn-cancel" id="cancelAttachmentBtn">Annuler</button>
-                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" id="cancelAttachmentBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Enregistrer</button>
                 </div>
             </form>
         </div>
@@ -270,19 +294,19 @@
     <div id="commentModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2>Ajouter un commentaire</h2>
-            <form id="comment-form">
-                <div class="form-group">
-                    <label for="commentAuthor">Votre nom</label>
-                    <input type="text" id="commentAuthor" required>
+            <h2 class="text-xl font-semibold mb-4">Ajouter un commentaire</h2>
+            <form id="comment-form" class="space-y-4">
+                <div>
+                    <label for="commentAuthor" class="block text-sm font-medium text-gray-700 mb-1">Votre nom</label>
+                    <input type="text" id="commentAuthor" required class="w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="form-group">
-                    <label for="commentContent">Commentaire</label>
-                    <textarea id="commentContent" rows="5" required></textarea>
+                <div>
+                    <label for="commentContent" class="block text-sm font-medium text-gray-700 mb-1">Commentaire</label>
+                    <textarea id="commentContent" rows="5" required class="w-full p-2 border border-gray-300 rounded-md"></textarea>
                 </div>
-                <div class="form-footer">
-                    <button type="button" class="btn btn-cancel" id="cancelCommentBtn">Annuler</button>
-                    <button type="submit" class="btn btn-save">Enregistrer</button>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" id="cancelCommentBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Enregistrer</button>
                 </div>
             </form>
         </div>
@@ -291,8 +315,46 @@
     <script src="js/currencies.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/budget-type-fix.js"></script>
+    <script src="js/modern-project-renderer.js"></script>
     <script src="js/project-detail.js"></script>
     <script src="js/editable-project.js"></script>
     <script src="js/inline-edit-project.js"></script>
+    <script>
+        // Bouton pour basculer vers l'interface simple
+        document.getElementById('switchInterfaceBtn').addEventListener('click', function() {
+            // Redirection vers l'interface simple
+            localStorage.removeItem('useClassicInterface'); // S'assurer que le flag est supprimé
+            window.location.href = 'projet-vue-simple.html';
+        });
+
+        // Script de gestion des onglets (tabs)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des onglets
+            const tabs = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Supprimer la classe active de tous les onglets
+                    tabs.forEach(t => {
+                        t.classList.remove('active-tab');
+                        t.classList.add('text-gray-500');
+                    });
+                    
+                    // Ajouter la classe active à l'onglet cliqué
+                    this.classList.add('active-tab');
+                    this.classList.remove('text-gray-500');
+                    
+                    // Masquer tous les contenus d'onglets
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Afficher le contenu correspondant à l'onglet
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId + '-tab').classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
