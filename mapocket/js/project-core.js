@@ -464,6 +464,12 @@ const ProjectCore = (function() {
         
         console.log('Remplissage du formulaire avec les données du projet:', project.projectName);
         
+        // Force la mise à jour des totaux après un court délai pour laisser le DOM se mettre à jour
+        setTimeout(() => {
+            console.log("Initialisation forcée des calculs avec les données existantes...");
+            updateAllTotals(true);
+        }, 500);
+        
         // Champs de base
         if (document.getElementById('projectName')) {
             document.getElementById('projectName').value = project.projectName || '';
@@ -748,86 +754,171 @@ const ProjectCore = (function() {
     
     /**
      * Met à jour tous les totaux
+     * @param {boolean} forceUpdate Si true, force la mise à jour même pour les éléments déjà calculés
      */
-    function updateAllTotals() {
+    function updateAllTotals(forceUpdate = false) {
         console.log('Mise à jour de tous les totaux...');
+        
+        // Convertir les montants existants au format numérique (important pour l'initialisation)
+        if (forceUpdate) {
+            console.log('Conversion des montants existants...');
+            // Convertir tous les montants de ligne
+            document.querySelectorAll('.line-amount').forEach(element => {
+                const currentValue = element.textContent.trim();
+                if (currentValue && currentValue !== '0') {
+                    // Extraire la valeur numérique
+                    const numericValue = extractNumericValue(currentValue);
+                    // La reformater pour s'assurer qu'elle est correctement affichée
+                    if (numericValue > 0) {
+                        element.textContent = currentValue; // Garder le format original
+                        element.dataset.value = numericValue; // Stocker la valeur numérique
+                        console.log(`Montant de ligne converti: ${currentValue} (${numericValue})`);
+                    }
+                }
+            });
+        }
         
         // Mise à jour des montants des sous-catégories
         document.querySelectorAll('.subcategory').forEach(subcategory => {
-            updateSubcategoryTotal(subcategory);
+            updateSubcategoryTotal(subcategory, forceUpdate);
         });
         
         // Mise à jour des montants des catégories
         document.querySelectorAll('.expense-category').forEach(category => {
-            updateCategoryTotal(category);
+            updateCategoryTotal(category, forceUpdate);
         });
         
         // Mise à jour du montant total du projet
-        updateProjectTotal();
+        updateProjectTotal(forceUpdate);
     }
     
     /**
      * Met à jour le montant total d'une sous-catégorie
+     * @param {HTMLElement} subcategory Élément sous-catégorie à mettre à jour
+     * @param {boolean} forceUpdate Force la mise à jour même si déjà calculé
      */
-    function updateSubcategoryTotal(subcategory) {
+    function updateSubcategoryTotal(subcategory, forceUpdate = false) {
         const lines = subcategory.querySelectorAll('.expense-line');
         let total = 0;
         
+        // Si aucune ligne et pas de forceUpdate, conserver la valeur actuelle
+        if (lines.length === 0 && !forceUpdate) {
+            // Récupérer la valeur actuelle si elle existe
+            const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
+            if (subcategoryAmount) {
+                const currentValue = extractNumericValue(subcategoryAmount.textContent);
+                if (currentValue > 0) {
+                    return; // Conserver la valeur existante
+                }
+            }
+        }
+        
+        // Calculer le total des lignes
         lines.forEach(line => {
             const amountElement = line.querySelector('.line-amount');
             if (amountElement) {
-                total += extractNumericValue(amountElement.textContent);
+                // Utiliser la valeur numérique stockée si disponible
+                if (amountElement.dataset.value) {
+                    total += parseFloat(amountElement.dataset.value);
+                } else {
+                    const value = extractNumericValue(amountElement.textContent);
+                    amountElement.dataset.value = value; // Stocker pour utilisation future
+                    total += value;
+                }
             }
         });
         
         // Mettre à jour le montant de la sous-catégorie
         const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
-        if (subcategoryAmount && lines.length > 0) {
-            subcategoryAmount.textContent = formatCurrency(total);
-            subcategoryAmount.classList.add('calculated-amount');
+        if (subcategoryAmount) {
+            // Si forceUpdate ou si des lignes existent ou si le montant est vide
+            if (forceUpdate || lines.length > 0 || !subcategoryAmount.textContent.trim()) {
+                subcategoryAmount.textContent = formatCurrency(total);
+                subcategoryAmount.dataset.value = total;
+                subcategoryAmount.classList.add('calculated-amount');
+            }
         }
     }
     
     /**
      * Met à jour le montant total d'une catégorie
+     * @param {HTMLElement} category Élément catégorie à mettre à jour
+     * @param {boolean} forceUpdate Force la mise à jour même si déjà calculé
      */
-    function updateCategoryTotal(category) {
+    function updateCategoryTotal(category, forceUpdate = false) {
         const subcategories = category.querySelectorAll('.subcategory');
         let total = 0;
         
+        // Si aucune sous-catégorie et pas de forceUpdate, conserver la valeur actuelle
+        if (subcategories.length === 0 && !forceUpdate) {
+            // Récupérer la valeur actuelle si elle existe
+            const categoryAmount = category.querySelector('.category-amount');
+            if (categoryAmount) {
+                const currentValue = extractNumericValue(categoryAmount.textContent);
+                if (currentValue > 0) {
+                    return; // Conserver la valeur existante
+                }
+            }
+        }
+        
+        // Calculer le total des sous-catégories
         subcategories.forEach(subcategory => {
             const amountElement = subcategory.querySelector('.subcategory-amount');
             if (amountElement) {
-                total += extractNumericValue(amountElement.textContent);
+                // Utiliser la valeur numérique stockée si disponible
+                if (amountElement.dataset.value) {
+                    total += parseFloat(amountElement.dataset.value);
+                } else {
+                    const value = extractNumericValue(amountElement.textContent);
+                    amountElement.dataset.value = value; // Stocker pour utilisation future
+                    total += value;
+                }
             }
         });
         
         // Mettre à jour le montant de la catégorie
         const categoryAmount = category.querySelector('.category-amount');
-        if (categoryAmount && subcategories.length > 0) {
-            categoryAmount.textContent = formatCurrency(total);
-            categoryAmount.classList.add('calculated-amount');
+        if (categoryAmount) {
+            // Si forceUpdate ou si des sous-catégories existent ou si le montant est vide
+            if (forceUpdate || subcategories.length > 0 || !categoryAmount.textContent.trim()) {
+                categoryAmount.textContent = formatCurrency(total);
+                categoryAmount.dataset.value = total;
+                categoryAmount.classList.add('calculated-amount');
+            }
         }
     }
     
     /**
      * Met à jour le montant total du projet
+     * @param {boolean} forceUpdate Force la mise à jour même si déjà calculé
      */
-    function updateProjectTotal() {
+    function updateProjectTotal(forceUpdate = false) {
         const categories = document.querySelectorAll('.expense-category');
         let total = 0;
         
+        // Calculer le total des catégories
         categories.forEach(category => {
             const amountElement = category.querySelector('.category-amount');
             if (amountElement) {
-                total += extractNumericValue(amountElement.textContent);
+                // Utiliser la valeur numérique stockée si disponible
+                if (amountElement.dataset.value) {
+                    total += parseFloat(amountElement.dataset.value);
+                } else {
+                    const value = extractNumericValue(amountElement.textContent);
+                    amountElement.dataset.value = value; // Stocker pour utilisation future
+                    total += value;
+                }
             }
         });
         
         // Mettre à jour le montant total du projet
         const totalBudgetInput = document.getElementById('totalBudget');
-        if (totalBudgetInput && total > 0) {
-            totalBudgetInput.value = formatCurrency(total);
+        if (totalBudgetInput) {
+            // Si forceUpdate ou si le total est positif ou si le montant est vide
+            if (forceUpdate || total > 0 || !totalBudgetInput.value.trim()) {
+                totalBudgetInput.value = formatCurrency(total);
+                console.log('Budget total mis à jour:', formatCurrency(total));
+            }
         }
     }
     
