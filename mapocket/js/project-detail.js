@@ -1241,15 +1241,54 @@ function createExpenseLineElement(line) {
     const lineElement = document.createElement('div');
     lineElement.className = 'expense-line';
     
-    // Nom de la ligne
-    const lineName = document.createElement('span');
-    lineName.className = 'expense-line-name';
-    lineName.textContent = line.name;
+    // Nom de la ligne (champ éditable)
+    const lineName = document.createElement('input');
+    lineName.type = 'text';
+    lineName.className = 'expense-line-name editable';
+    lineName.value = line.name;
+    lineName.addEventListener('change', function() {
+        // Mettre à jour le nom de la ligne
+        line.name = this.value;
+        
+        // Sauvegarder les modifications
+        collectAndSaveProjectData();
+    });
     
-    // Montant de la ligne
-    const lineAmount = document.createElement('span');
-    lineAmount.className = 'expense-line-amount';
-    lineAmount.textContent = line.amount;
+    // Montant de la ligne (champ éditable)
+    const lineAmount = document.createElement('input');
+    lineAmount.type = 'text';
+    lineAmount.className = 'expense-line-amount editable';
+    lineAmount.value = line.amount.toString().replace(/[^\d.,]/g, '');
+    
+    // Formater le montant à la perte de focus
+    lineAmount.addEventListener('blur', function() {
+        // Convertir le montant en nombre
+        const amount = parseFloat(this.value.replace(/,/g, '.')) || 0;
+        
+        // Formater et mettre à jour le champ
+        this.value = amount.toFixed(2);
+        
+        // Mettre à jour le montant de la ligne
+        line.amount = amount;
+        
+        // Recalculer les totaux
+        recalculateProjectAmounts();
+        
+        // Sauvegarder les modifications
+        collectAndSaveProjectData();
+    });
+    
+    // Validation des entrées pour n'accepter que des nombres
+    lineAmount.addEventListener('input', function() {
+        this.value = this.value.replace(/[^\d.,]/g, '');
+    });
+    
+    // Recalculer quand on quitte le champ avec la touche Entrée
+    lineAmount.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            this.blur(); // Déclenche l'événement blur
+        }
+    });
     
     // Bouton pour supprimer la ligne
     const deleteLineBtn = document.createElement('button');
@@ -1260,7 +1299,10 @@ function createExpenseLineElement(line) {
             lineElement.remove();
             
             // Mettre à jour les totaux
-            updateCategoryTotals();
+            recalculateProjectAmounts();
+            
+            // Sauvegarder les modifications
+            collectAndSaveProjectData();
         }
     });
     
