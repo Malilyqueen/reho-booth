@@ -571,7 +571,15 @@ window.userPreferences = window.userPreferences || {
         console.log('Données brutes des projets:', savedProjectsData);
         projects = JSON.parse(savedProjectsData || '[]');
         
-        if (!Array.isArray(projects)) {
+        // Convertir totalBudget en chaîne pour tous les projets
+        if (Array.isArray(projects)) {
+            projects.forEach(project => {
+                if (project && project.totalBudget !== undefined && typeof project.totalBudget !== 'string') {
+                    project.totalBudget = project.totalBudget.toString();
+                    console.log(`Projet ${project.projectName}: totalBudget converti en chaîne`);
+                }
+            });
+        } else {
             console.error('Format de données incorrect pour savedProjects:', projects);
             projects = [];
         }
