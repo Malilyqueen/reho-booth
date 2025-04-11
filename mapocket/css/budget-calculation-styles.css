@@ -1,0 +1,112 @@
+/**
+ * Styles spécifiques pour le système de calcul de budget
+ * 
+ * Ces styles améliorent l'expérience utilisateur en rendant
+ * clairement visible ce qui est éditable et ce qui est calculé
+ */
+
+/* Styles pour les montants calculés automatiquement */
+[data-calculated="true"],
+.category-amount[data-calculated="true"],
+.subcategory-amount[data-calculated="true"] {
+    background-color: #f0f8ff !important;
+    font-style: italic !important;
+    cursor: default !important;
+    border: none !important;
+    position: relative;
+    padding-right: 22px; /* Espace pour l'icône */
+    box-shadow: none !important;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Styles pour les montants éditables */
+.category-amount:not([data-calculated="true"]),
+.subcategory-amount:not([data-calculated="true"]),
+.line-amount {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border: 1px dashed #ccc !important;
+    cursor: text !important;
+    padding: 2px 6px !important;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Améliorer l'apparence au survol pour les éléments éditables */
+.category-amount:not([data-calculated="true"]):hover,
+.subcategory-amount:not([data-calculated="true"]):hover,
+.line-amount:hover {
+    background-color: #ffffff !important;
+    border: 1px dashed #6f802b !important;
+    box-shadow: 0 0 3px rgba(111, 128, 43, 0.2) !important;
+}
+
+/* Améliorer l'apparence lors de l'édition */
+.category-amount:not([data-calculated="true"]):focus,
+.subcategory-amount:not([data-calculated="true"]):focus,
+.line-amount:focus {
+    outline: none !important;
+    border: 1px solid #6f802b !important;
+    box-shadow: 0 0 5px rgba(111, 128, 43, 0.3) !important;
+    background-color: #ffffff !important;
+}
+
+/* Indicateur visuel pour les montants calculés (en plus de l'emoji) */
+[data-calculated="true"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236f802b"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C10.4,22 9,21.7 7.7,21.1L2.6,22.4L3.9,17.3C3.3,16 3,14.6 3,13A9,9 0 0,1 12,4M8,13H10V11H8V13M12,13H16V11H12V13Z"/></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0.7;
+}
+
+/* Améliorer les boutons de suppression */
+.delete-subcategory-btn,
+.delete-line-btn {
+    opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.delete-subcategory-btn:hover,
+.delete-line-btn:hover {
+    opacity: 1;
+}
+
+/* Style pour indiquer qu'une catégorie/sous-catégorie est vide et prête à recevoir du contenu */
+.subcategory:empty::before,
+.expense-category:empty::before {
+    content: "Cliquez sur + pour ajouter du contenu";
+    display: block;
+    padding: 10px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Ajouter une indication visuelle sur les éléments où on peut ajouter des sous-éléments */
+.expense-category,
+.subcategory {
+    position: relative;
+}
+
+.expense-category::after,
+.subcategory::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, rgba(111, 128, 43, 0.1) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.expense-category:hover::after,
+.subcategory:hover::after {
+    opacity: 1;
+}
