@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MaPocket - Projet</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f6f9fc; }
+    h1 { color: #1a1a1a; }
+    .section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .category, .subcategory, .line { margin-bottom: 10px; }
+    .subcategory { margin-left: 20px; }
+    .line { margin-left: 40px; display: flex; gap: 10px; align-items: center; }
+    input[type="text"], input[type="number"] { padding: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    button { padding: 5px 10px; border: none; border-radius: 5px; background: #000; color: white; cursor: pointer; }
+    .total { font-weight: bold; color: #222; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1 id="projectName">Projet : Anniversaire de Malala</h1>
+  <div class="section">
+    <p><strong>Date :</strong> <span id="projectDate">16/06/2025</span></p>
+    <p><strong>Budget initial :</strong> <span id="initialBudget">AED 300,00</span></p>
+    <p><strong>Total du budget utilisé :</strong> <span id="totalBudget">AED 0,00</span></p>
+  </div>
+
+  <div class="section" id="categories">
+    <!-- Exemple de catégorie -->
+    <div class="category" data-cat-id="restauration">
+      <h3>Restauration - <span class="cat-total">AED 0,00</span></h3>
+      <div class="subcategory" data-sub-id="traiteur">
+        <h4>Traiteur - <span class="sub-total">AED 0,00</span></h4>
+        <div class="line">
+          <input type="text" placeholder="Dépense" value="DJ Soirée" class="line-label" />
+          <input type="number" value="300" class="line-amount" /> AED
+        </div>
+        <button class="add-line">+ Ajouter une ligne</button>
+      </div>
+      <button class="add-subcategory">+ Ajouter une sous-catégorie</button>
+    </div>
+  </div>
+
+  <script>
+    function format(amount) {
+      return `AED ${amount.toFixed(2).replace('.', ',')}`;
+    }
+
+    function recalculateTotals() {
+      let total = 0;
+
+      document.querySelectorAll('.category').forEach(cat => {
+        let catTotal = 0;
+        cat.querySelectorAll('.subcategory').forEach(sub => {
+          let subTotal = 0;
+          sub.querySelectorAll('.line-amount').forEach(input => {
+            const val = parseFloat(input.value) || 0;
+            subTotal += val;
+          });
+          sub.querySelector('.sub-total').textContent = format(subTotal);
+          catTotal += subTotal;
+        });
+        cat.querySelector('.cat-total').textContent = format(catTotal);
+        total += catTotal;
+      });
+
+      document.getElementById('totalBudget').textContent = format(total);
+    }
+
+    function setupEvents() {
+      document.querySelectorAll('.line-amount').forEach(input => {
+        input.addEventListener('input', recalculateTotals);
+      });
+
+      document.querySelectorAll('.add-line').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const container = btn.parentElement;
+          const line = document.createElement('div');
+          line.className = 'line';
+          line.innerHTML = `
+            <input type="text" placeholder="Dépense" class="line-label" />
+            <input type="number" value="0" class="line-amount" /> AED
+          `;
+          container.insertBefore(line, btn);
+          line.querySelector('.line-amount').addEventListener('input', recalculateTotals);
+        });
+      });
+
+      document.querySelectorAll('.add-subcategory').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sub = document.createElement('div');
+          sub.className = 'subcategory';
+          sub.innerHTML = `
+            <h4>Nouvelle sous-cat - <span class="sub-total">AED 0,00</span></h4>
+            <div class="line">
+              <input type="text" placeholder="Dépense" class="line-label" />
+              <input type="number" value="0" class="line-amount" /> AED
+            </div>
+            <button class="add-line">+ Ajouter une ligne</button>
+          `;
+          btn.before(sub);
+          setupEvents();
+          recalculateTotals();
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupEvents();
+      recalculateTotals();
+    });
+  </script>
+
+</body>
+</html>

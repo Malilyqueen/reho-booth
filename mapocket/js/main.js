@@ -1122,10 +1122,23 @@ function viewProject(projectId) {
         localStorage.setItem('projectInEditing', projectId);
         
         // Utiliser la page de visualisation de projet
-        // Stocker l'ID du projet pour le récupérer facilement dans la page projet-vue.html
+        // Stocker l'ID du projet pour le récupérer facilement dans la page de visualisation
         localStorage.setItem('viewProjectId', projectId);
         console.log('Redirection vers page de projet détaillée:', projectId);
-        window.location.href = 'projet-vue.html';
+        
+        // Vérifier si l'utilisateur préfère l'interface classique
+        const useClassicInterface = localStorage.getItem('useClassicInterface') === 'true';
+        
+        if (useClassicInterface) {
+            // Utiliser l'interface classique (originale)
+            window.location.href = 'projet-vue.html';
+        } else {
+            // Utiliser la nouvelle page simplifiée avec édition en ligne fonctionnelle
+            window.location.href = 'projet-vue-simple.html';
+        }
+        
+        // Réinitialiser le flag après avoir chargé la page
+        localStorage.removeItem('useClassicInterface');
     } else {
         console.error('Projet non trouvé avec ID:', projectId);
         showNotification('Projet non trouvé');
