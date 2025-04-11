@@ -7,12 +7,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🧹 Initialisation du système propre de chargement de projet');
 
+    // Variable globale pour stocker les données du projet en cours
+    let currentProjectData = null;
+
     // 1. Déterminer si nous sommes en mode édition et récupérer l'ID du projet si c'est le cas
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
     const isEditMode = urlParams.get('edit') === 'true';
     
     console.log(`Mode: ${isEditMode ? 'Édition' : 'Création'}, ID Projet: ${projectId || 'Nouveau'}`);
+    
+    // Initialiser les écouteurs d'événements du bouton de sauvegarde
+    initSaveButton();
     
     if (isEditMode && projectId) {
         // En mode édition, charger et afficher le projet
@@ -23,6 +29,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Charger le projet et l'afficher proprement
         cleanLoadProject(projectId);
+    }
+    
+    /**
+     * Initialise le bouton de sauvegarde du projet
+     */
+    function initSaveButton() {
+        const saveButton = document.getElementById('saveProject');
+        if (saveButton) {
+            saveButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                saveCurrentProject();
+            });
+            console.log('✅ Bouton de sauvegarde initialisé');
+        } else {
+            console.warn('⚠️ Bouton de sauvegarde non trouvé');
+        }
     }
     
     /**
@@ -325,21 +347,32 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderExpenseLine(container, line) {
         console.log(`🔸 Rendu de la ligne: ${line.name} = ${line.amount}`);
         
+        // S'assurer que l'objet ligne a les propriétés de base
+        const safeLine = {
+            name: line.name || 'Nouvelle dépense',
+            amount: extractNumericValue(line.amount)
+        };
+        
         // Créer l'élément de ligne
         const lineElement = document.createElement('div');
         lineElement.className = 'expense-line';
+        
+        // Stocker les données de la ligne dans l'élément DOM pour y accéder facilement
+        lineElement.dataset.lineName = safeLine.name;
+        lineElement.dataset.lineAmount = safeLine.amount;
         
         // Créer le champ de nom
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
         nameInput.className = 'line-name';
-        nameInput.value = line.name || 'Nouvelle dépense';
+        nameInput.value = safeLine.name;
         
         // Créer le champ de montant
         const amountInput = document.createElement('input');
         amountInput.type = 'number';
         amountInput.className = 'line-amount';
-        amountInput.value = extractNumericValue(line.amount);
+        amountInput.value = safeLine.amount;
+        amountInput.step = "0.01";
         
         // Créer le bouton de suppression
         const deleteButton = document.createElement('button');
@@ -355,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(lineElement);
         
         // Ajouter les écouteurs d'événements
-        initializeLineEvents(lineElement);
+        initializeLineEvents(lineElement, safeLine);
     }
     
     /**
@@ -438,13 +471,41 @@ document.addEventListener('DOMContentLoaded', function() {
      * Initialise les écouteurs d'événements d'une ligne
      * @param {HTMLElement} lineElement - L'élément de ligne
      */
-    function initializeLineEvents(lineElement) {
+    function initializeLineEvents(lineElement, lineData) {
+        // S'assurer que lineData existe, sinon le créer à partir des valeurs des inputs
+        if (!lineData) {
+            lineData = {
+                name: lineElement.querySelector('.line-name')?.value || '',
+                amount: parseFloat(lineElement.querySelector('.line-amount')?.value || 0)
+            };
+        }
+        
         // Écouteur pour le bouton de suppression
         const deleteButton = lineElement.querySelector('.delete-line');
         if (deleteButton) {
             deleteButton.addEventListener('click', function() {
                 lineElement.remove();
-                recalculateAllAmounts();
+                recalculateProjectAmounts();
+                // Mettre à jour les données du projet après suppression
+                collectAndSaveProjectData();
+            });
+        }
+        
+        // Écouteur pour le nom de la dépense
+        const nameInput = lineElement.querySelector('.line-name');
+        if (nameInput) {
+            nameInput.addEventListener('input', function() {
+                // Mettre à jour la valeur dans l'objet ligne (important)
+                lineData.name = this.value;
+                lineElement.dataset.lineName = this.value;
+                // Mettre à jour les données du projet après modification
+                collectAndSaveProjectData();
+            });
+            
+            nameInput.addEventListener('blur', function() {
+                lineData.name = this.value;
+                lineElement.dataset.lineName = this.value;
+                collectAndSaveProjectData();
             });
         }
         
@@ -452,10 +513,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const amountInput = lineElement.querySelector('.line-amount');
         if (amountInput) {
             amountInput.addEventListener('input', function() {
-                recalculateAllAmounts();
+                // Mettre à jour la valeur dans l'objet ligne (important)
+                const amount = parseFloat(this.value) || 0;
+                lineData.amount = amount;
+                lineElement.dataset.lineAmount = amount;
+                // Recalculer tous les montants
+                recalculateProjectAmounts();
+                // Mettre à jour les données du projet après modification
+                collectAndSaveProjectData();
             });
+            
             amountInput.addEventListener('change', function() {
-                recalculateAllAmounts();
+                const amount = parseFloat(this.value) || 0;
+                lineData.amount = amount;
+                lineElement.dataset.lineAmount = amount;
+                recalculateProjectAmounts();
+                collectAndSaveProjectData();
             });
         }
     }
@@ -467,17 +540,65 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🏁 Finalisation du rendu du projet');
         
         // Exécuter un recalcul complet
-        if (typeof recalculateAllAmounts === 'function') {
-            setTimeout(function() {
-                recalculateAllAmounts();
-                console.log('✅ Recalcul final effectué');
-            }, 200);
-        } else {
-            console.warn('⚠️ Fonction recalculateAllAmounts non disponible');
-        }
+        setTimeout(function() {
+            // Utiliser notre fonction de recalcul interne
+            recalculateProjectAmounts();
+            console.log('✅ Recalcul final effectué');
+        }, 200);
         
         // Désactiver tout autre système de chargement
         disableConflictingSystems();
+    }
+    
+    /**
+     * Recalcule tous les montants du projet en cascade
+     * Lit les montants des lignes, calcule les sous-totaux et le total
+     */
+    function recalculateProjectAmounts() {
+        console.log("🔄 Recalcul en cascade lancé");
+
+        let projectTotal = 0;
+
+        // Pour chaque catégorie
+        document.querySelectorAll(".expense-category").forEach(categoryEl => {
+            let categoryTotal = 0;
+
+            const subcategories = categoryEl.querySelectorAll(".subcategory");
+            subcategories.forEach(subEl => {
+                let subTotal = 0;
+
+                const lines = subEl.querySelectorAll(".expense-line");
+                lines.forEach(lineEl => {
+                    const amountInput = lineEl.querySelector(".line-amount");
+                    const amount = parseFloat(amountInput?.value || 0);
+                    subTotal += amount;
+                });
+
+                // Mettre à jour le montant affiché dans la sous-catégorie
+                const subAmountEl = subEl.querySelector(".subcategory-amount");
+                if (subAmountEl) {
+                    subAmountEl.textContent = formatAmount(subTotal);
+                }
+
+                categoryTotal += subTotal;
+            });
+
+            // Mettre à jour le montant affiché dans la catégorie
+            const catAmountEl = categoryEl.querySelector(".category-amount");
+            if (catAmountEl) {
+                catAmountEl.textContent = formatAmount(categoryTotal);
+            }
+
+            projectTotal += categoryTotal;
+        });
+
+        // Mettre à jour le budget total du projet
+        const totalBudgetEl = document.getElementById("totalBudget");
+        if (totalBudgetEl) {
+            totalBudgetEl.value = projectTotal;
+        }
+
+        console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
     }
     
     /**
@@ -501,6 +622,120 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(`✅ Fonction ${funcName} désactivée`);
             }
         });
+    }
+    
+    /**
+     * Collecte toutes les données du projet depuis le DOM et les sauvegarde
+     */
+    function collectAndSaveProjectData() {
+        console.log('💾 Collecte et sauvegarde des données du projet');
+        
+        // Créer un objet pour contenir toutes les données
+        const projectData = {
+            projectName: document.getElementById('projectName')?.value,
+            projectDate: document.getElementById('projectDate')?.value,
+            projectEndDate: document.getElementById('projectEndDate')?.value,
+            totalBudget: document.getElementById('totalBudget')?.value,
+            template: document.getElementById('templateSelector')?.value,
+            linkToWallet: document.getElementById('linkToWallet')?.checked,
+            linkToWishlist: document.getElementById('linkToWishlist')?.checked,
+            categories: []
+        };
+        
+        // Si nous sommes en mode édition, récupérer l'ID du projet
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        if (projectId) {
+            projectData.id = projectId;
+        } else {
+            // Générer un nouvel ID pour un nouveau projet
+            projectData.id = Date.now().toString();
+            projectData.createdAt = new Date().toISOString();
+        }
+        
+        // Collecter toutes les catégories
+        document.querySelectorAll('.expense-category').forEach(categoryEl => {
+            const categoryName = categoryEl.querySelector('.category-name')?.textContent;
+            const categoryAmount = extractNumericValue(categoryEl.querySelector('.category-amount')?.textContent);
+            
+            const category = {
+                name: categoryName,
+                amount: categoryAmount,
+                subcategories: []
+            };
+            
+            // Collecter toutes les sous-catégories de cette catégorie
+            categoryEl.querySelectorAll('.subcategory').forEach(subcategoryEl => {
+                const subcategoryName = subcategoryEl.querySelector('.subcategory-name')?.textContent;
+                const subcategoryAmount = extractNumericValue(subcategoryEl.querySelector('.subcategory-amount')?.textContent);
+                
+                const subcategory = {
+                    name: subcategoryName,
+                    amount: subcategoryAmount,
+                    lines: []
+                };
+                
+                // Collecter toutes les lignes de cette sous-catégorie
+                subcategoryEl.querySelectorAll('.expense-line').forEach(lineEl => {
+                    const lineName = lineEl.querySelector('.line-name')?.value;
+                    const lineAmount = parseFloat(lineEl.querySelector('.line-amount')?.value || 0);
+                    
+                    const line = {
+                        name: lineName,
+                        amount: lineAmount
+                    };
+                    
+                    subcategory.lines.push(line);
+                });
+                
+                category.subcategories.push(subcategory);
+            });
+            
+            projectData.categories.push(category);
+        });
+        
+        // Sauvegarder les données du projet
+        saveCurrentProject(projectData);
+        
+        return projectData;
+    }
+    
+    /**
+     * Sauvegarde un projet dans le localStorage
+     * @param {Object} projectData - Les données du projet à sauvegarder
+     */
+    function saveCurrentProject(projectData) {
+        console.log('💾 Sauvegarde du projet dans localStorage:', projectData.projectName);
+        
+        // Récupérer tous les projets existants
+        let allProjects = [];
+        try {
+            allProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+        } catch (e) {
+            console.error('Erreur lors de la lecture des projets:', e);
+            allProjects = [];
+        }
+        
+        // Vérifier si le projet existe déjà
+        const existingIndex = allProjects.findIndex(p => p.id === projectData.id);
+        
+        if (existingIndex >= 0) {
+            // Mettre à jour le projet existant
+            allProjects[existingIndex] = projectData;
+            console.log('✅ Projet mis à jour dans localStorage');
+        } else {
+            // Ajouter le nouveau projet
+            allProjects.push(projectData);
+            console.log('✅ Nouveau projet ajouté dans localStorage');
+        }
+        
+        // Sauvegarder tous les projets
+        try {
+            localStorage.setItem('savedProjects', JSON.stringify(allProjects));
+            console.log(`✅ ${allProjects.length} projets sauvegardés dans localStorage`);
+        } catch (e) {
+            console.error('Erreur lors de la sauvegarde des projets:', e);
+        }
     }
     
     /**

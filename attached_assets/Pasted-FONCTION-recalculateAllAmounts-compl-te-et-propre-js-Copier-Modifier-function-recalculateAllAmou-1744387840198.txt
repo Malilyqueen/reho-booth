@@ -1,0 +1,72 @@
+FONCTION recalculateAllAmounts() – complète et propre
+js
+Copier
+Modifier
+function recalculateAllAmounts() {
+  console.log("🔄 Recalcul en cascade lancé");
+
+  let projectTotal = 0;
+
+  // Pour chaque catégorie
+  document.querySelectorAll(".expense-category").forEach(categoryEl => {
+    let categoryTotal = 0;
+
+    const subcategories = categoryEl.querySelectorAll(".subcategory");
+    subcategories.forEach(subEl => {
+      let subTotal = 0;
+
+      const lines = subEl.querySelectorAll(".expense-line");
+      lines.forEach(lineEl => {
+        const amountInput = lineEl.querySelector(".line-amount");
+        const amount = parseFloat(amountInput?.value || 0);
+        subTotal += amount;
+      });
+
+      // Mettre à jour le montant affiché dans la sous-catégorie
+      const subAmountEl = subEl.querySelector(".subcategory-amount");
+      if (subAmountEl) {
+        subAmountEl.textContent = formatAmount(subTotal);
+      }
+
+      categoryTotal += subTotal;
+    });
+
+    // Mettre à jour le montant affiché dans la catégorie
+    const catAmountEl = categoryEl.querySelector(".category-amount");
+    if (catAmountEl) {
+      catAmountEl.textContent = formatAmount(categoryTotal);
+    }
+
+    projectTotal += categoryTotal;
+  });
+
+  // Mettre à jour le budget total du projet
+  const totalBudgetEl = document.getElementById("totalBudget");
+  if (totalBudgetEl) {
+    totalBudgetEl.textContent = formatAmount(projectTotal);
+  }
+
+  console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
+}
+🧠 Rappels importants :
+Cette fonction lit les montants dans les inputs, donc .value, pas .textContent
+
+Elle met à jour dynamiquement toutes les sommes visibles
+
+Elle fonctionne sans avoir besoin de sauvegarder les données tout de suite, mais peut être liée à un saveProject() si tu veux
+
+📦 À combiner avec :
+js
+Copier
+Modifier
+function formatAmount(amount) {
+  let currencySymbol = "€"; // Par défaut
+  if (window.PreferencesManager && typeof PreferencesManager.getCurrentCurrencySymbol === 'function') {
+    currencySymbol = PreferencesManager.getCurrentCurrencySymbol();
+  }
+  return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
+}
+Tu peux lui transmettre ça directement :
+Voici la version complète de recalculateAllAmounts() à intégrer dans ton projet.
+Elle lit toutes les lignes, met à jour les sous-totaux et le budget global.
+Merci de remplacer ta version actuelle par celle-ci, de l’appeler à chaque ajout/modification de montant, et de me prévenir dès que c’est branché.

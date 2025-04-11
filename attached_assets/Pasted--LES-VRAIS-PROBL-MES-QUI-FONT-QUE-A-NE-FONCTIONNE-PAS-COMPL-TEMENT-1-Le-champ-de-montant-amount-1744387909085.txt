@@ -1,0 +1,169 @@
+❌ LES VRAIS PROBLÈMES QUI FONT QUE ÇA NE FONCTIONNE PAS COMPLÈTEMENT
+❌ 1. Le champ de montant amount n’est jamais mis à jour dans les données
+→ Il affiche la valeur (dans l’input), mais il ne la met pas à jour dans projectData
+
+👉 Résultat :
+
+L’input change à l’écran
+
+Mais le JSON en mémoire reste vide ou inchangé
+
+Et le recalcul ne trouve rien de concret à additionner
+
+✅ Comment corriger :
+Dans initializeLineEvents(), tu dois mettre à jour line.amount sur chaque changement :
+
+js
+Copier
+Modifier
+amountInput.addEventListener('input', function () {
+  line.amount = parseFloat(this.value) || 0;
+  recalculateAllAmounts();
+});
+❌ 2. Il n’y a aucune sauvegarde du projet modifié après édition
+Même s’il modifie les montants dans le DOM :
+
+Aucun saveProject(projectData) n’est appelé
+
+Donc tout est perdu à la fermeture de la page
+
+✅ À ajouter :
+Créer une fonction de sauvegarde déclenchée soit automatiquement, soit par un bouton :
+
+js
+Copier
+Modifier
+function saveCurrentProject(projectData) {
+  const allProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+  const index = allProjects.findIndex(p => p.id === projectData.id);
+  if (index >= 0) allProjects[index] = projectData;
+  else allProjects.push(projectData);
+  localStorage.setItem("savedProjects", JSON.stringify(allProjects));
+}
+Et appeler cette fonction dans chaque blur, input, change, ou bouton de sauvegarde.
+
+❌ 3. recalculateAllAmounts() est mentionné… mais son code n’est pas fourni
+Donc :
+
+Soit la fonction est absente du fichier réel
+
+Soit elle est chargée trop tard ou dans un autre contexte (scope)
+
+Soit elle lit textContent sur des éléments qui sont en réalité des <input>, donc vide
+
+✅ À vérifier et corriger :
+La fonction doit cibler les bons inputs line-amount et lire .value, pas .textContent.
+
+❌ 4. Le budget initial (totalBudget) est injecté… mais jamais recalculé ni mis à jour visuellement
+Même avec recalculateAllAmounts(), on ne voit pas :
+
+js
+Copier
+Modifier
+document.getElementById("totalBudget").textContent = formatAmount(total);
+📌 Résumé à lui envoyer :
+Merci pour le fichier, tu as fait du bon boulot de réécriture, mais voici les points techniques qui bloquent encore :
+
+❌ 1. Les montants modifiés ne sont pas sauvegardés dans projectData
+→ Il faut lier chaque input à son objet line et mettre à jour line.amount dès qu’on tape.
+
+❌ 2. Le projet n’est jamais resauvegardé après modification
+→ Même si on modifie, rien n’est stocké dans localStorage
+
+❌ 3. recalculateAllAmounts() n’est pas visible
+→ Tu dois t’assurer qu’elle est bien déclarée dans ce script, ou chargée avant → Et qu’elle lit .value sur les inputs, pas .textContent
+
+❌ 4. Le budget total affiché en haut reste figé
+→ Il faut le recalculer dynamiquement depuis les lignes
+
+Je peux te fournir la version complète de recalculateAllAmounts() si besoin, ou tu veux essayer de la corriger ?
+
+Tu veux que je te donne tout de suite le code propre de recalculateAllAmounts() prêt à coller ?
+
+
+
+
+
+
+Vous avez dit :
+fourni la version complète stp
+
+
+ChatGPT a dit :
+Parfait Malala 👩‍💻✨
+Voici la version complète et stable de la fonction recalculateAllAmounts(), conçue pour fonctionner avec ton architecture actuelle.
+
+Elle lit toutes les lignes (.line-amount), fait la somme → vers sous-catégorie, catégorie, budget total.
+
+✅ FONCTION recalculateAllAmounts() – complète et propre
+js
+Copier
+Modifier
+function recalculateAllAmounts() {
+  console.log("🔄 Recalcul en cascade lancé");
+
+  let projectTotal = 0;
+
+  // Pour chaque catégorie
+  document.querySelectorAll(".expense-category").forEach(categoryEl => {
+    let categoryTotal = 0;
+
+    const subcategories = categoryEl.querySelectorAll(".subcategory");
+    subcategories.forEach(subEl => {
+      let subTotal = 0;
+
+      const lines = subEl.querySelectorAll(".expense-line");
+      lines.forEach(lineEl => {
+        const amountInput = lineEl.querySelector(".line-amount");
+        const amount = parseFloat(amountInput?.value || 0);
+        subTotal += amount;
+      });
+
+      // Mettre à jour le montant affiché dans la sous-catégorie
+      const subAmountEl = subEl.querySelector(".subcategory-amount");
+      if (subAmountEl) {
+        subAmountEl.textContent = formatAmount(subTotal);
+      }
+
+      categoryTotal += subTotal;
+    });
+
+    // Mettre à jour le montant affiché dans la catégorie
+    const catAmountEl = categoryEl.querySelector(".category-amount");
+    if (catAmountEl) {
+      catAmountEl.textContent = formatAmount(categoryTotal);
+    }
+
+    projectTotal += categoryTotal;
+  });
+
+  // Mettre à jour le budget total du projet
+  const totalBudgetEl = document.getElementById("totalBudget");
+  if (totalBudgetEl) {
+    totalBudgetEl.textContent = formatAmount(projectTotal);
+  }
+
+  console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
+}
+🧠 Rappels importants :
+Cette fonction lit les montants dans les inputs, donc .value, pas .textContent
+
+Elle met à jour dynamiquement toutes les sommes visibles
+
+Elle fonctionne sans avoir besoin de sauvegarder les données tout de suite, mais peut être liée à un saveProject() si tu veux
+
+📦 À combiner avec :
+js
+Copier
+Modifier
+function formatAmount(amount) {
+  let currencySymbol = "€"; // Par défaut
+  if (window.PreferencesManager && typeof PreferencesManager.getCurrentCurrencySymbol === 'function') {
+    currencySymbol = PreferencesManager.getCurrentCurrencySymbol();
+  }
+  return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
+}
+Tu peux lui transmettre ça directement :
+Voici la version complète de recalculateAllAmounts() à intégrer dans ton projet.
+Elle lit toutes les lignes, met à jour les sous-totaux et le budget global.
+Merci de remplacer ta version actuelle par celle-ci, de l’appeler à chaque ajout/modification de montant, et de me prévenir dès que c’est branché.
