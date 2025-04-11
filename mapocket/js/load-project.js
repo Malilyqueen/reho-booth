@@ -373,6 +373,8 @@ function formatCurrency(amount) {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
+  console.log("Initialisation du système de chargement de projet...");
+  
   const urlParams = new URLSearchParams(window.location.search);
   const editMode = urlParams.get('edit');
   const projectId = urlParams.get('id');
@@ -391,6 +393,70 @@ document.addEventListener('DOMContentLoaded', function() {
           el.addEventListener('blur', () => setTimeout(recalculateAllAmounts, 0));
         });
       }, 500);
+    });
+  } else {
+    // Mode création
+    console.log("Mode création détecté, initialisation du recalcul automatique");
+    
+    // Attendre que le DOM soit complètement chargé
+    window.addEventListener('load', function() {
+      // Veiller à ce que les modifications déclenchent le recalcul
+      // même en mode création
+      document.addEventListener('click', function(e) {
+        // Quand on clique sur un bouton d'ajout de ligne ou de sous-catégorie
+        if (e.target.classList.contains('add-line-btn') || 
+            e.target.closest('.add-line-btn') ||
+            e.target.classList.contains('add-subcategory-btn') || 
+            e.target.closest('.add-subcategory-btn')) {
+          setTimeout(recalculateAllAmounts, 100);
+        }
+        
+        // Quand on clique sur un bouton de suppression
+        if (e.target.classList.contains('delete-line') || 
+            e.target.closest('.delete-line') ||
+            e.target.classList.contains('delete-subcategory-btn') || 
+            e.target.closest('.delete-subcategory-btn') ||
+            e.target.classList.contains('delete-category-btn') || 
+            e.target.closest('.delete-category-btn')) {
+          setTimeout(recalculateAllAmounts, 100);
+        }
+      });
+      
+      // Observer les changements dans les montants (en mode création aussi)
+      function attachInputListeners() {
+        document.querySelectorAll('input.line-amount, .category-amount, .subcategory-amount').forEach(el => {
+          el.addEventListener('input', () => setTimeout(recalculateAllAmounts, 0));
+          el.addEventListener('blur', () => setTimeout(recalculateAllAmounts, 0));
+          el.addEventListener('change', () => setTimeout(recalculateAllAmounts, 0));
+        });
+      }
+      
+      // Attacher initialement
+      attachInputListeners();
+      
+      // Observer les ajouts au DOM pour réattacher les écouteurs
+      const observer = new MutationObserver(function(mutations) {
+        let shouldReattach = false;
+        
+        mutations.forEach(mutation => {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            shouldReattach = true;
+          }
+        });
+        
+        if (shouldReattach) {
+          attachInputListeners();
+        }
+      });
+      
+      // Observer tout le conteneur de projets
+      const container = document.getElementById('categoriesContainer') || document.getElementById('expenseCategories');
+      if (container) {
+        observer.observe(container, { childList: true, subtree: true });
+      }
+      
+      // Initialiser le recalcul au démarrage
+      setTimeout(recalculateAllAmounts, 1000);
     });
   }
 });
