@@ -143,6 +143,13 @@ const BudgetCalculator = (function() {
      * @returns {number} Le montant total de la catégorie
      */
     function _recalculateCategoryAmount(categoryElement) {
+        if (!categoryElement) {
+            console.error('❌ Élément de catégorie non fourni pour le recalcul');
+            return 0;
+        }
+        
+        console.log(`🔄 Recalcul de la catégorie: ${categoryElement.getAttribute('data-category') || 'sans nom'}`);
+        
         // Trouver toutes les sous-catégories
         const subcategories = categoryElement.querySelectorAll('.' + CSS_CLASSES.subcategory);
         let categoryTotal = 0;
@@ -157,8 +164,12 @@ const BudgetCalculator = (function() {
         const categoryAmountElement = categoryElement.querySelector('.' + CSS_CLASSES.categoryAmount);
         if (categoryAmountElement) {
             categoryAmountElement.textContent = formatAmount(categoryTotal);
+            
+            // Stocker la valeur numérique comme attribut data pour faciliter la récupération
+            categoryElement.setAttribute('data-amount', categoryTotal.toString());
         }
         
+        console.log(`✅ Montant calculé pour la catégorie: ${categoryTotal}`);
         return categoryTotal;
     }
     
@@ -169,26 +180,56 @@ const BudgetCalculator = (function() {
      * @returns {number} Le montant total de la sous-catégorie
      */
     function _recalculateSubcategoryAmount(subcategoryElement) {
+        if (!subcategoryElement) {
+            console.error('❌ Élément de sous-catégorie non fourni pour le recalcul');
+            return 0;
+        }
+        
+        const subcategoryName = subcategoryElement.querySelector('.' + CSS_CLASSES.subcategoryName)?.textContent || 'sans nom';
+        console.log(`🔄 Recalcul de la sous-catégorie: ${subcategoryName}`);
+        
         // Trouver toutes les lignes de dépense
         const expenseLines = subcategoryElement.querySelectorAll('.' + CSS_CLASSES.expenseLine);
         let subcategoryTotal = 0;
         
         // Calculer le total de chaque ligne
         expenseLines.forEach(lineElement => {
+            // Récupérer l'élément de montant
             const lineAmountElement = lineElement.querySelector('.' + CSS_CLASSES.lineAmount);
             
             if (lineAmountElement) {
                 let lineAmount = 0;
                 
-                // Si c'est un input, prendre sa valeur
+                // Si c'est un input, prendre sa valeur numérique
                 if (lineAmountElement.tagName === 'INPUT') {
                     lineAmount = parseFloat(lineAmountElement.value) || 0;
+                    console.log(`📊 Ligne (input): ${lineElement.querySelector('.' + CSS_CLASSES.lineName)?.value || 'sans nom'} = ${lineAmount}`);
                 } else {
-                    // Sinon, extraire le montant du texte
+                    // Sinon, extraire le montant du texte formaté
                     lineAmount = _extractAmountFromText(lineAmountElement.textContent);
+                    console.log(`📊 Ligne (texte): ${lineElement.querySelector('.' + CSS_CLASSES.lineName)?.textContent || 'sans nom'} = ${lineAmount}`);
                 }
                 
+                // Stocker le montant comme attribut data pour faciliter la récupération
+                lineElement.setAttribute('data-amount', lineAmount.toString());
+                
                 subcategoryTotal += lineAmount;
+            } else {
+                // Si l'élément de montant n'est pas trouvé avec le sélecteur classique, essayer des alternatives
+                const alternativeAmountElement = lineElement.querySelector('.expense-line-amount') || 
+                                               lineElement.querySelector('span:nth-child(2)');
+                
+                if (alternativeAmountElement) {
+                    const lineAmount = _extractAmountFromText(alternativeAmountElement.textContent);
+                    console.log(`📊 Ligne (alternative): montant extrait = ${lineAmount}`);
+                    
+                    // Stocker le montant comme attribut data
+                    lineElement.setAttribute('data-amount', lineAmount.toString());
+                    
+                    subcategoryTotal += lineAmount;
+                } else {
+                    console.warn(`⚠️ Aucun élément de montant trouvé pour la ligne`);
+                }
             }
         });
         
@@ -196,8 +237,12 @@ const BudgetCalculator = (function() {
         const subcategoryAmountElement = subcategoryElement.querySelector('.' + CSS_CLASSES.subcategoryAmount);
         if (subcategoryAmountElement) {
             subcategoryAmountElement.textContent = formatAmount(subcategoryTotal);
+            
+            // Stocker la valeur numérique comme attribut data pour faciliter la récupération
+            subcategoryElement.setAttribute('data-amount', subcategoryTotal.toString());
         }
         
+        console.log(`✅ Montant calculé pour la sous-catégorie ${subcategoryName}: ${subcategoryTotal}`);
         return subcategoryTotal;
     }
     

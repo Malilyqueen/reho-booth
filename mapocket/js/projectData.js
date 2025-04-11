@@ -338,15 +338,196 @@ document.addEventListener('DOMContentLoaded', function() {
     window.saveProject = function(projectData) {
         console.log('🔄 Appel à saveProject redirigé vers ProjectData');
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('id');
-        
-        if (projectId) {
-            // Mise à jour d'un projet existant
-            return ProjectData.updateProject(projectId, projectData);
-        } else {
-            // Création d'un nouveau projet
-            return ProjectData.createProject(projectData);
+        try {
+            // Vérifier si les données sont déjà un objet structuré ou si nous devons les extraire du DOM
+            const projectDataObj = typeof projectData === 'object' ? projectData : collectProjectDataFromDOM();
+            
+            console.log('📊 Données du projet à sauvegarder:', projectDataObj);
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
+            
+            let result;
+            if (projectId) {
+                // Mise à jour d'un projet existant
+                result = ProjectData.updateProject(projectId, projectDataObj);
+                if (result) {
+                    console.log('✅ Projet mis à jour avec succès:', projectId);
+                    // Afficher une notification de succès
+                    if (window.showNotification) {
+                        showNotification('Projet mis à jour avec succès !', 'success');
+                    }
+                }
+            } else {
+                // Création d'un nouveau projet
+                result = ProjectData.createProject(projectDataObj);
+                if (result) {
+                    console.log('✅ Nouveau projet créé avec succès:', result.id);
+                    // Afficher une notification de succès
+                    if (window.showNotification) {
+                        showNotification('Projet créé avec succès !', 'success');
+                    }
+                }
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('❌ Erreur lors de la sauvegarde du projet:', error);
+            // Afficher une notification d'erreur
+            if (window.showNotification) {
+                showNotification('Erreur lors de la sauvegarde du projet: ' + error.message, 'error');
+            }
+            return null;
         }
+    };
+    
+    /**
+     * Fonction pour collecter les données du projet à partir du DOM
+     * Cette fonction est utilisée par saveProject quand aucun objet de données n'est fourni
+     */
+    function collectProjectDataFromDOM() {
+        console.log('📝 Collecte des données du projet depuis le DOM');
+        
+        // Récupérer les informations de base du projet
+        const projectName = document.getElementById('projectName')?.value || 'Nouveau projet';
+        const projectDate = document.getElementById('projectDate')?.value || '';
+        const projectEndDate = document.getElementById('projectEndDate')?.value || '';
+        const totalBudget = document.getElementById('totalBudget')?.value || 0;
+        const template = document.getElementById('templateSelector')?.value || 'Personnalisé';
+        
+        // Récupérer les options supplémentaires
+        const linkToWallet = document.getElementById('linkToWallet')?.checked || false;
+        const linkToWishlist = document.getElementById('linkToWishlist')?.checked || false;
+        
+        // Extraire les catégories, sous-catégories et lignes de dépenses
+        const categories = [];
+        
+        // Récupérer toutes les catégories de dépenses
+        const categoryElements = document.querySelectorAll('.expense-category');
+        categoryElements.forEach(categoryElement => {
+            // Récupérer les informations de la catégorie
+            const categoryName = categoryElement.querySelector('.category-name')?.textContent || 
+                               categoryElement.querySelector('.category-header span:first-child')?.textContent || 
+                               'Catégorie sans nom';
+            
+            // Extraire l'icône de la catégorie si disponible
+            const categoryIcon = categoryElement.querySelector('.category-icon')?.textContent || '📊';
+            
+            // Récupérer le montant de la catégorie (il sera recalculé de toute façon)
+            const categoryAmountText = categoryElement.querySelector('.category-amount')?.textContent || '0';
+            const categoryAmount = extractAmountFromText(categoryAmountText);
+            
+            // Structure pour cette catégorie
+            const category = {
+                name: categoryName,
+                icon: categoryIcon,
+                amount: categoryAmount,
+                subcategories: []
+            };
+            
+            // Récupérer toutes les sous-catégories de cette catégorie
+            const subcategoryElements = categoryElement.querySelectorAll('.subcategory');
+            subcategoryElements.forEach(subcategoryElement => {
+                // Récupérer les informations de la sous-catégorie
+                const subcategoryName = subcategoryElement.querySelector('.subcategory-name')?.textContent || 
+                                     subcategoryElement.querySelector('.subcategory-header span:first-child')?.textContent || 
+                                     'Sous-catégorie sans nom';
+                
+                // Récupérer le montant de la sous-catégorie (il sera recalculé de toute façon)
+                const subcategoryAmountText = subcategoryElement.querySelector('.subcategory-amount')?.textContent || '0';
+                const subcategoryAmount = extractAmountFromText(subcategoryAmountText);
+                
+                // Structure pour cette sous-catégorie
+                const subcategory = {
+                    name: subcategoryName,
+                    amount: subcategoryAmount,
+                    lines: []
+                };
+                
+                // Récupérer toutes les lignes de dépense de cette sous-catégorie
+                const lineElements = subcategoryElement.querySelectorAll('.expense-line');
+                lineElements.forEach(lineElement => {
+                    // Récupérer les informations de la ligne
+                    const lineNameInput = lineElement.querySelector('.line-name');
+                    let lineName = 'Dépense sans nom';
+                    
+                    if (lineNameInput) {
+                        // Si c'est un input, prendre sa valeur
+                        lineName = lineNameInput.tagName === 'INPUT' ? 
+                            lineNameInput.value : lineNameInput.textContent;
+                    } else {
+                        // Essayer d'autres sélecteurs possibles
+                        const alternativeNameElement = lineElement.querySelector('.expense-line-name') || 
+                                                     lineElement.querySelector('span:first-child');
+                        if (alternativeNameElement) {
+                            lineName = alternativeNameElement.textContent;
+                        }
+                    }
+                    
+                    // Récupérer le montant de la ligne
+                    const lineAmountInput = lineElement.querySelector('.line-amount');
+                    let lineAmount = 0;
+                    
+                    if (lineAmountInput) {
+                        // Si c'est un input, prendre sa valeur
+                        lineAmount = lineAmountInput.tagName === 'INPUT' ? 
+                            parseFloat(lineAmountInput.value) || 0 : 
+                            extractAmountFromText(lineAmountInput.textContent);
+                    } else {
+                        // Essayer d'autres sélecteurs possibles
+                        const alternativeAmountElement = lineElement.querySelector('.expense-line-amount') || 
+                                                      lineElement.querySelector('span:nth-child(2)');
+                        if (alternativeAmountElement) {
+                            lineAmount = extractAmountFromText(alternativeAmountElement.textContent);
+                        }
+                    }
+                    
+                    // Ajouter la ligne à la sous-catégorie
+                    subcategory.lines.push({
+                        name: lineName,
+                        amount: lineAmount
+                    });
+                });
+                
+                // Ajouter la sous-catégorie à la catégorie
+                category.subcategories.push(subcategory);
+            });
+            
+            // Ajouter la catégorie à la liste
+            categories.push(category);
+        });
+        
+        // Assembler toutes les données
+        const projectData = {
+            projectName: projectName,
+            projectDate: projectDate,
+            projectEndDate: projectEndDate,
+            totalBudget: totalBudget,
+            template: template,
+            categories: categories,
+            linkToWallet: linkToWallet,
+            linkToWishlist: linkToWishlist,
+            projectStatus: 'inProgress', // Par défaut
+            
+            // Ces champs seront définis par les méthodes createProject ou updateProject
+            // id: généré ou existant
+            // createdAt: généré ou existant
+            // updatedAt: généré automatiquement
+        };
+        
+        return projectData;
+    }
+    
+    /**
+     * Fonction utilitaire pour extraire un montant d'une chaîne de texte
+     */
+    function extractAmountFromText(text) {
+        if (!text) return 0;
+        
+        // Supprimer tous les caractères non numériques sauf le point, la virgule et le signe moins
+        const cleanStr = text.replace(/[^\d.,\-]/g, '')
+                          .replace(',', '.');
+        
+        return parseFloat(cleanStr) || 0;
     };
 });

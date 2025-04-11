@@ -674,49 +674,94 @@ const FormManager = (function() {
     function _handleSaveProject() {
         console.log('💾 Sauvegarde du projet...');
         
-        // Extraire les données du formulaire
-        let projectData = {};
-        
-        // Utiliser ProjectRenderer si disponible
-        if (window.ProjectRenderer && typeof ProjectRenderer.extractProjectFromDOM === 'function') {
-            projectData = ProjectRenderer.extractProjectFromDOM();
-        } else {
-            // Fallback: extraction manuelle
-            const form = document.querySelector(DOM_SELECTORS.projectForm);
-            if (form) {
-                const formData = new FormData(form);
-                
-                // Extraire les champs de base
-                projectData = {
-                    projectName: formData.get('projectName') || '',
-                    projectDate: formData.get('projectDate') || '',
-                    projectEndDate: formData.get('projectEndDate') || '',
-                    totalBudget: formData.get('totalBudget') || 0,
-                    template: formData.get('template') || 'Personnalisé',
-                    // Les catégories seraient extraites séparément
-                    categories: _extractCategoriesFromDOM()
-                };
+        try {
+            // Recalculer tous les montants avant de sauvegarder
+            if (window.BudgetCalculator && typeof BudgetCalculator.recalculateAllAmounts === 'function') {
+                BudgetCalculator.recalculateAllAmounts();
+            } else if (typeof recalculateAllAmounts === 'function') {
+                recalculateAllAmounts();
             }
-        }
-        
-        // Sauvegarder avec ProjectData si disponible
-        if (window.ProjectData) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectId = urlParams.get('id');
             
-            if (projectId) {
-                // Mise à jour d'un projet existant
-                ProjectData.updateProject(projectId, projectData);
+            // Extraire les données du formulaire
+            let projectData = {};
+            
+            // Utiliser ProjectRenderer si disponible
+            if (window.ProjectRenderer && typeof ProjectRenderer.extractProjectFromDOM === 'function') {
+                projectData = ProjectRenderer.extractProjectFromDOM();
             } else {
-                // Création d'un nouveau projet
-                ProjectData.createProject(projectData);
+                // Utiliser la fonction collectProjectDataFromDOM si elle existe
+                if (typeof collectProjectDataFromDOM === 'function') {
+                    projectData = collectProjectDataFromDOM();
+                } else {
+                    // Fallback: extraction manuelle
+                    const form = document.querySelector(DOM_SELECTORS.projectForm);
+                    if (form) {
+                        const formData = new FormData(form);
+                        
+                        // Extraire les champs de base
+                        projectData = {
+                            projectName: formData.get('projectName') || '',
+                            projectDate: formData.get('projectDate') || '',
+                            projectEndDate: formData.get('projectEndDate') || '',
+                            totalBudget: formData.get('totalBudget') || 0,
+                            template: formData.get('template') || 'Personnalisé',
+                            // Les catégories seraient extraites séparément
+                            categories: _extractCategoriesFromDOM()
+                        };
+                    }
+                }
             }
-        } else {
-            // Fallback: sauvegarde avec la méthode existante
-            if (typeof saveProject === 'function') {
-                saveProject();
+            
+            // Sauvegarder avec ProjectData si disponible
+            if (window.ProjectData) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const projectId = urlParams.get('id');
+                
+                console.log('📊 Données du projet collectées:', projectData);
+                
+                if (projectId) {
+                    // Mise à jour d'un projet existant
+                    const result = ProjectData.updateProject(projectId, projectData);
+                    if (result) {
+                        console.log('✅ Projet mis à jour avec succès:', projectId);
+                        if (window.showNotification) {
+                            showNotification('Projet mis à jour avec succès !', 'success');
+                        }
+                    } else {
+                        throw new Error('Échec de la mise à jour du projet');
+                    }
+                } else {
+                    // Création d'un nouveau projet
+                    const result = ProjectData.createProject(projectData);
+                    if (result) {
+                        console.log('✅ Nouveau projet créé avec succès:', result.id);
+                        if (window.showNotification) {
+                            showNotification('Projet créé avec succès !', 'success');
+                        }
+                        
+                        // Rediriger vers la page du projet
+                        setTimeout(() => {
+                            window.location.href = `projet.html?id=${result.id}`;
+                        }, 1000);
+                    } else {
+                        throw new Error('Échec de la création du projet');
+                    }
+                }
             } else {
-                console.warn('⚠️ Aucune fonction de sauvegarde trouvée');
+                // Fallback: sauvegarde avec la méthode existante
+                if (typeof saveProject === 'function') {
+                    saveProject(projectData);
+                } else {
+                    console.warn('⚠️ Aucune fonction de sauvegarde trouvée');
+                    throw new Error('Aucune fonction de sauvegarde disponible');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Erreur lors de la sauvegarde du projet:', error);
+            if (window.showNotification) {
+                showNotification('Erreur lors de la sauvegarde du projet. Veuillez réessayer.', 'error');
+            } else {
+                alert('Erreur lors de la sauvegarde du projet: ' + error.message);
             }
         }
     }
