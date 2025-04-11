@@ -157,57 +157,114 @@ function initSimpleBudgetCalc() {
     });
 }
 
-// Fonction simple pour mettre à jour les totaux sans perturber l'édition
+// Fonction pour mettre à jour les totaux selon la logique en cascade
 function updateTotals() {
-    console.log("Mise à jour des totaux...");
+    console.log("Mise à jour des totaux selon la logique en cascade...");
     
     try {
         // Ne pas mettre à jour les champs en cours d'édition
         const activeElement = document.activeElement;
+        const currencySymbol = getCurrencyFromPage() || '€';
         
-        // 1. Calculer les totaux des sous-catégories
+        // 1. Calculer les totaux des sous-catégories (seulement s'il y a des lignes)
         document.querySelectorAll('.subcategory').forEach(subcategory => {
-            // Ignorer si la sous-catégorie est en cours d'édition
-            if (subcategory.contains(activeElement)) {
-                return;
-            }
-            
-            let total = 0;
-            subcategory.querySelectorAll('.expense-line-amount').forEach(el => {
-                const val = parseAmount(el.textContent || el.value || '0');
-                total += val;
-            });
-            
+            const lines = subcategory.querySelectorAll('.expense-line');
             const amountEl = subcategory.querySelector('.subcategory-amount');
-            if (amountEl && amountEl !== activeElement) {
-                // Préserver le symbole de devise actuel
-                const currSymbol = getCurrencySymbol(amountEl.textContent) || '€';
-                amountEl.textContent = `${currSymbol} ${total.toFixed(2).replace('.', ',')}`;
-            }
-        });
-        
-        // 2. Calculer les totaux des catégories
-        document.querySelectorAll('.expense-category').forEach(category => {
-            // Ignorer si la catégorie est en cours d'édition
-            if (category.contains(activeElement)) {
+            
+            // Ne rien faire si c'est en cours d'édition
+            if (amountEl === activeElement) {
                 return;
             }
             
-            let total = 0;
-            category.querySelectorAll('.subcategory-amount').forEach(el => {
-                const val = parseAmount(el.textContent || '0');
-                total += val;
-            });
-            
-            const amountEl = category.querySelector('.category-amount');
-            if (amountEl && amountEl !== activeElement) {
-                // Préserver le symbole de devise actuel
-                const currSymbol = getCurrencySymbol(amountEl.textContent) || '€';
-                amountEl.textContent = `${currSymbol} ${total.toFixed(2).replace('.', ',')}`;
+            // Si des lignes existent, calculer automatiquement le total
+            if (lines.length > 0) {
+                let total = 0;
+                lines.forEach(line => {
+                    const lineAmountEl = line.querySelector('.expense-line-amount');
+                    if (lineAmountEl) {
+                        const amount = parseAmount(lineAmountEl.textContent || lineAmountEl.value || '0');
+                        total += amount;
+                    }
+                });
+                
+                // Mise à jour du montant de la sous-catégorie (en lecture seule)
+                if (amountEl) {
+                    amountEl.textContent = formatMoney(total, currencySymbol);
+                    
+                    // Rendre en lecture seule si des lignes existent
+                    amountEl.setAttribute('data-has-lines', 'true');
+                    amountEl.style.backgroundColor = '#f5f5f5';
+                    amountEl.style.fontStyle = 'italic';
+                    
+                    // Ajouter un indicateur visuel
+                    if (!amountEl.getAttribute('title')) {
+                        amountEl.setAttribute('title', 'Calculé automatiquement à partir des lignes');
+                    }
+                }
+            } 
+            // Sinon, laisser l'utilisateur éditer librement
+            else if (amountEl) {
+                amountEl.removeAttribute('data-has-lines');
+                amountEl.style.backgroundColor = '';
+                amountEl.style.fontStyle = 'normal';
+                
+                // Laisser l'utilisateur modifier le montant
+                if (!amountEl.getAttribute('title') || amountEl.getAttribute('title').includes('automatiquement')) {
+                    amountEl.setAttribute('title', 'Montant modifiable');
+                }
             }
         });
         
-        // 3. Calculer le total général
+        // 2. Calculer les totaux des catégories (seulement s'il y a des sous-catégories)
+        document.querySelectorAll('.expense-category').forEach(category => {
+            const subcategories = category.querySelectorAll('.subcategory');
+            const amountEl = category.querySelector('.category-amount');
+            
+            // Ne rien faire si c'est en cours d'édition
+            if (amountEl === activeElement) {
+                return;
+            }
+            
+            // Si des sous-catégories existent, calculer automatiquement le total
+            if (subcategories.length > 0) {
+                let total = 0;
+                subcategories.forEach(subcategory => {
+                    const subcatAmountEl = subcategory.querySelector('.subcategory-amount');
+                    if (subcatAmountEl) {
+                        const amount = parseAmount(subcatAmountEl.textContent || '0');
+                        total += amount;
+                    }
+                });
+                
+                // Mise à jour du montant de la catégorie (en lecture seule)
+                if (amountEl) {
+                    amountEl.textContent = formatMoney(total, currencySymbol);
+                    
+                    // Rendre en lecture seule si des sous-catégories existent
+                    amountEl.setAttribute('data-has-subcategories', 'true');
+                    amountEl.style.backgroundColor = '#f5f5f5';
+                    amountEl.style.fontStyle = 'italic';
+                    
+                    // Ajouter un indicateur visuel
+                    if (!amountEl.getAttribute('title')) {
+                        amountEl.setAttribute('title', 'Calculé automatiquement à partir des sous-catégories');
+                    }
+                }
+            } 
+            // Sinon, laisser l'utilisateur éditer librement
+            else if (amountEl) {
+                amountEl.removeAttribute('data-has-subcategories');
+                amountEl.style.backgroundColor = '';
+                amountEl.style.fontStyle = 'normal';
+                
+                // Laisser l'utilisateur modifier le montant
+                if (!amountEl.getAttribute('title') || amountEl.getAttribute('title').includes('automatiquement')) {
+                    amountEl.setAttribute('title', 'Montant modifiable');
+                }
+            }
+        });
+        
+        // 3. Calculer le total général (toujours automatique)
         const totalBudgetDisplay = document.querySelector('.total-budget-amount');
         if (totalBudgetDisplay && totalBudgetDisplay !== activeElement) {
             let grandTotal = 0;
@@ -216,19 +273,74 @@ function updateTotals() {
                 grandTotal += val;
             });
             
-            // Préserver le symbole de devise
-            const currSymbol = getCurrencySymbol(totalBudgetDisplay.textContent) || '€';
-            totalBudgetDisplay.textContent = `${currSymbol} ${grandTotal.toFixed(2).replace('.', ',')}`;
+            // Mise à jour du total global
+            totalBudgetDisplay.textContent = formatMoney(grandTotal, currencySymbol);
             
             // Mettre à jour le champ input si présent et pas en focus
             const totalInput = document.getElementById('totalBudget');
             if (totalInput && totalInput !== activeElement) {
-                totalInput.value = `${currSymbol} ${grandTotal.toFixed(2).replace('.', ',')}`;
+                totalInput.value = formatMoney(grandTotal, currencySymbol);
             }
         }
     } catch (err) {
         console.error("Erreur lors de la mise à jour des totaux:", err);
     }
+}
+
+// Fonction pour obtenir le symbole de devise de n'importe quel élément de la page
+function getCurrencyFromPage() {
+    // Essayer avec le budget total
+    const totalBudget = document.getElementById('totalBudget');
+    if (totalBudget && totalBudget.value) {
+        const match = totalBudget.value.match(/^([^\d]+)/);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+    }
+    
+    // Essayer avec un montant de catégorie
+    const categoryAmount = document.querySelector('.category-amount');
+    if (categoryAmount) {
+        const match = categoryAmount.textContent.match(/^([^\d]+)/);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+    }
+    
+    // Essayer avec l'affichage du budget total
+    const totalDisplay = document.querySelector('.total-budget-amount');
+    if (totalDisplay) {
+        const match = totalDisplay.textContent.match(/^([^\d]+)/);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+    }
+    
+    // Valeur par défaut selon les préférences utilisateur
+    try {
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        if (preferences.currency) {
+            const symbols = {
+                'EUR': '€',
+                'USD': '$',
+                'GBP': '£',
+                'JPY': '¥',
+                'MAD': 'DH',
+                'AED': 'AED'
+            };
+            return symbols[preferences.currency] || preferences.currency;
+        }
+    } catch (e) {
+        console.error("Erreur lors de la récupération des préférences:", e);
+    }
+    
+    // Valeur par défaut
+    return '€';
+}
+
+// Formater un montant monétaire
+function formatMoney(amount, currencySymbol = '€') {
+    return `${currencySymbol} ${amount.toFixed(2).replace('.', ',')}`;
 }
 
 // Extraire le montant numérique d'une chaîne (ex: "€ 123,45" -> 123.45)
