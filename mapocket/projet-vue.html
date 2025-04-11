@@ -224,7 +224,12 @@
                     <span class="subcategory-emoji mr-2"></span>
                     <span class="subcategory-name"></span>
                 </h3>
-                <span class="text-sm text-gray-500 subcategory-amount"></span>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 subcategory-amount"></span>
+                    <button class="btn-add-expense-line text-blue-500 hover:text-blue-700" title="Ajouter une ligne de dépense">
+                        <i class="fas fa-plus-circle"></i>
+                    </button>
+                </div>
             </div>
             <ul class="expense-lines ml-8 text-sm list-disc text-gray-700 space-y-1">
                 <!-- Lignes de dépenses générées ici -->
@@ -234,9 +239,14 @@
 
     <!-- TEMPLATE POUR UNE LIGNE DE DÉPENSE -->
     <template id="expense-line-template">
-        <li class="expense-line flex justify-between">
+        <li class="expense-line flex justify-between items-center">
             <span class="expense-name"></span>
-            <span class="expense-amount ml-4 text-gray-600"></span>
+            <div class="flex items-center gap-2">
+                <span class="expense-amount text-gray-600"></span>
+                <button class="btn-delete-expense-line text-red-500 hover:text-red-700" title="Supprimer cette ligne">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
         </li>
     </template>
 
@@ -317,6 +327,30 @@
             </form>
         </div>
     </div>
+    
+    <!-- Modal pour ajouter une ligne de dépense -->
+    <div id="expenseLineModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="text-xl font-semibold mb-4">Ajouter une ligne de dépense</h2>
+            <form id="expense-line-form" class="space-y-4">
+                <input type="hidden" id="categoryIndex" value="">
+                <input type="hidden" id="subcategoryIndex" value="">
+                <div>
+                    <label for="expenseLineName" class="block text-sm font-medium text-gray-700 mb-1">Nom de la dépense</label>
+                    <input type="text" id="expenseLineName" required class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Traiteur principal">
+                </div>
+                <div>
+                    <label for="expenseLineAmount" class="block text-sm font-medium text-gray-700 mb-1">Montant</label>
+                    <input type="number" id="expenseLineAmount" step="0.01" min="0" required class="w-full p-2 border border-gray-300 rounded-md" placeholder="0.00">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" id="cancelExpenseLineBtn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="js/currencies.js"></script>
     <script src="js/notifications.js"></script>
@@ -325,6 +359,7 @@
     <script src="js/project-detail.js"></script>
     <script src="js/editable-project.js"></script>
     <script src="js/inline-edit-project.js"></script>
+    <script src="js/expense-line-manager.js"></script>
     
     <!-- CONTENEUR INTERFACE MODERNE -->
     <div id="modern-interface-container" class="hidden">
@@ -463,7 +498,12 @@
                         <span class="subcategory-emoji mr-2"></span>
                         <span class="subcategory-name"></span>
                     </h3>
-                    <span class="text-gray-500 subcategory-amount"></span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500 subcategory-amount"></span>
+                        <button class="modern-btn-add-expense-line text-blue-500 hover:text-blue-700" title="Ajouter une ligne de dépense">
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                    </div>
                 </div>
                 <ul class="expense-lines ml-5 mt-2 text-sm text-gray-700 list-disc space-y-1">
                     <!-- Lignes de dépenses générées ici -->
@@ -473,9 +513,14 @@
 
         <!-- TEMPLATE POUR UNE LIGNE DE DÉPENSE - MODERNE -->
         <template id="modern-expense-line-template">
-            <li class="expense-line flex justify-between">
+            <li class="expense-line flex justify-between items-center">
                 <span class="expense-name"></span>
-                <span class="expense-amount ml-4 text-gray-600"></span>
+                <div class="flex items-center gap-2">
+                    <span class="expense-amount text-gray-600"></span>
+                    <button class="modern-btn-delete-expense-line text-red-500 hover:text-red-700" title="Supprimer cette ligne">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
             </li>
         </template>
     </div>
