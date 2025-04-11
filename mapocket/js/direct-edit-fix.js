@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Attendons un peu pour permettre au reste de la page de se charger
         setTimeout(function() {
             // Charger les données du projet depuis le localStorage
-            const projects = JSON.parse(localStorage.getItem('mapocket_projects') || '[]');
+            // Les projets sont stockés dans la clé 'savedProjects', pas 'mapocket_projects'
+            const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
             const project = projects.find(p => p.id === projectId);
             
             if (project) {
@@ -408,8 +409,8 @@ function saveProject(project, projectId) {
     console.log('Sauvegarde du projet:', project);
     
     try {
-        // Récupérer tous les projets
-        const projects = JSON.parse(localStorage.getItem('mapocket_projects') || '[]');
+        // Récupérer tous les projets - clé correcte est 'savedProjects'
+        const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
         
         // Trouver l'index du projet à mettre à jour
         const index = projects.findIndex(p => p.id === projectId);
@@ -417,8 +418,8 @@ function saveProject(project, projectId) {
             // Mettre à jour le projet
             projects[index] = project;
             
-            // Sauvegarder tous les projets
-            localStorage.setItem('mapocket_projects', JSON.stringify(projects));
+            // Sauvegarder tous les projets avec la clé correcte
+            localStorage.setItem('savedProjects', JSON.stringify(projects));
             
             // Afficher une notification
             showSaveNotification();
