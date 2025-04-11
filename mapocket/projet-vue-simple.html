@@ -1297,6 +1297,22 @@
           window.location.href = 'projet-vue.html';
         }
       });
+      
+      // Bouton pour basculer vers l'interface moderne
+      document.getElementById('switchModernInterfaceBtn').addEventListener('click', function() {
+        if (currentProject) {
+          // Sauvegarder les changements avant de changer d'interface
+          if (isEditMode) {
+            // Si en mode édition, désactiver et sauvegarder avant de rediriger
+            disableEditMode();
+            saveProjectChanges();
+          }
+          
+          // Rediriger vers l'interface moderne
+          localStorage.setItem('useModernInterface', 'true');
+          window.location.href = 'projet-vue-modern.html';
+        }
+      });
     });
     
     // Fonction pour revenir au tableau de bord
