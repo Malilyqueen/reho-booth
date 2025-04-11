@@ -795,42 +795,235 @@ function makeElementsEditable() {
         });
     });
     
-    // Configurer les événements pour une ligne
-    function configureLineEvents(line) {
-        const nameInput = line.querySelector('.expense-line-name');
-        const amountInput = line.querySelector('.expense-line-amount');
-        const deleteBtn = line.querySelector('.btn-delete-expense-line');
-        
-        if (nameInput) {
-            nameInput.addEventListener('change', function() {
-                // Mettre à jour le nom dans le modèle
-                const categoryName = line.closest('.expense-category').querySelector('.category-name').textContent;
-                const subcategoryName = line.closest('.expense-subcategory').querySelector('.subcategory-name').textContent;
-                const oldLineName = line.dataset.oldName || '';
-                
-                // Stocker le nouveau nom pour les futures références
-                line.dataset.oldName = this.value;
-                
-                // Mettre à jour dans le modèle
-                const category = window.currentProject.categories.find(c => c.name === categoryName);
-                if (category) {
-                    const subcategory = category.subcategories.find(s => s.name === subcategoryName);
-                    if (subcategory) {
-                        const expenseLine = subcategory.lines.find(l => l.name === oldLineName);
-                        if (expenseLine) {
-                            expenseLine.name = this.value;
-                            saveProjectChanges(window.currentProject);
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Configurer le montant et le bouton de suppression similairement...
-    }
+
     
     console.log('Éléments rendus éditables');
     return true;
+}
+
+// Fonction pour configurer les événements d'une ligne de dépense
+function configureLineEvents(line) {
+    if (!line) {
+        console.error('Ligne invalide pour la configuration des événements');
+        return;
+    }
+    
+    console.log('Configuration des événements pour une ligne:', line);
+    
+    const nameInput = line.querySelector('.expense-line-name');
+    const amountInput = line.querySelector('.expense-line-amount');
+    const deleteBtn = line.querySelector('.btn-delete-expense-line');
+    
+    if (nameInput) {
+        // S'assurer que nous n'ajoutons pas de gestionnaires d'événements en double
+        const newNameInput = nameInput.cloneNode(true);
+        nameInput.parentNode.replaceChild(newNameInput, nameInput);
+        
+        newNameInput.addEventListener('change', function() {
+            console.log('Modification du nom de la ligne:', this.value);
+            // Trouver la référence dans le modèle de données
+            const categoryElement = line.closest('.expense-category');
+            const subcategoryElement = line.closest('.expense-subcategory');
+            
+            if (!categoryElement || !subcategoryElement) {
+                console.error('Impossible de trouver les éléments parents');
+                return;
+            }
+            
+            const categoryNameElement = categoryElement.querySelector('.category-name');
+            const subcategoryNameElement = subcategoryElement.querySelector('.subcategory-name');
+            
+            if (!categoryNameElement || !subcategoryNameElement) {
+                console.error('Éléments de nom de catégorie/sous-catégorie non trouvés');
+                return;
+            }
+            
+            const categoryName = categoryNameElement.value || categoryNameElement.textContent;
+            const subcategoryName = subcategoryNameElement.value || subcategoryNameElement.textContent;
+            const oldLineName = line.dataset.oldName || '';
+            
+            console.log('Catégorie:', categoryName, 'Sous-catégorie:', subcategoryName, 'Ancien nom:', oldLineName);
+            
+            // Stocker le nouveau nom pour les futures références
+            line.dataset.oldName = this.value;
+            
+            // Mise à jour du modèle
+            if (!window.currentProject) {
+                console.error('Projet actuel non disponible');
+                return;
+            }
+            
+            const category = window.currentProject.categories.find(c => 
+                c.name === categoryName || (typeof c.name === 'object' && c.name.value === categoryName));
+                
+            if (category) {
+                const subcategory = category.subcategories.find(s => 
+                    s.name === subcategoryName || (typeof s.name === 'object' && s.name.value === subcategoryName));
+                    
+                if (subcategory) {
+                    // Trouver la ligne par son ancien nom
+                    const lineIndex = subcategory.lines.findIndex(l => 
+                        l.name === oldLineName || (oldLineName === '' && l.name === this.value));
+                        
+                    if (lineIndex >= 0) {
+                        console.log('Ligne trouvée, mise à jour du nom:', this.value);
+                        subcategory.lines[lineIndex].name = this.value;
+                        
+                        // Sauvegarder les modifications
+                        collectAndSaveProjectData();
+                    } else {
+                        console.warn('Ligne non trouvée dans le modèle avec le nom:', oldLineName);
+                    }
+                } else {
+                    console.warn('Sous-catégorie non trouvée:', subcategoryName);
+                }
+            } else {
+                console.warn('Catégorie non trouvée:', categoryName);
+            }
+        });
+    }
+    
+    if (amountInput) {
+        // S'assurer que nous n'ajoutons pas de gestionnaires d'événements en double
+        const newAmountInput = amountInput.cloneNode(true);
+        amountInput.parentNode.replaceChild(newAmountInput, amountInput);
+        
+        // Valider l'entrée pour n'accepter que des nombres
+        newAmountInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d.,]/g, '');
+        });
+        
+        // Mise à jour lors de la perte de focus
+        newAmountInput.addEventListener('blur', function() {
+            console.log('Modification du montant de la ligne:', this.value);
+            
+            // Convertir le montant en nombre
+            const amount = parseFloat(this.value.replace(/,/g, '.')) || 0;
+            this.value = amount.toFixed(2);
+            
+            // Trouver la référence dans le modèle
+            const categoryElement = line.closest('.expense-category');
+            const subcategoryElement = line.closest('.expense-subcategory');
+            const lineNameElement = line.querySelector('.expense-line-name');
+            
+            if (!categoryElement || !subcategoryElement || !lineNameElement) {
+                console.error('Impossible de trouver les éléments de référence');
+                return;
+            }
+            
+            const categoryNameElement = categoryElement.querySelector('.category-name');
+            const subcategoryNameElement = subcategoryElement.querySelector('.subcategory-name');
+            
+            if (!categoryNameElement || !subcategoryNameElement) {
+                console.error('Éléments de nom de catégorie/sous-catégorie non trouvés');
+                return;
+            }
+            
+            const categoryName = categoryNameElement.value || categoryNameElement.textContent;
+            const subcategoryName = subcategoryNameElement.value || subcategoryNameElement.textContent;
+            const lineName = lineNameElement.value || lineNameElement.textContent;
+            
+            console.log('Catégorie:', categoryName, 'Sous-catégorie:', subcategoryName, 'Ligne:', lineName);
+            
+            // Mise à jour du modèle
+            if (!window.currentProject) {
+                console.error('Projet actuel non disponible');
+                return;
+            }
+            
+            const category = window.currentProject.categories.find(c => 
+                c.name === categoryName || (typeof c.name === 'object' && c.name.value === categoryName));
+                
+            if (category) {
+                const subcategory = category.subcategories.find(s => 
+                    s.name === subcategoryName || (typeof s.name === 'object' && s.name.value === subcategoryName));
+                    
+                if (subcategory) {
+                    const expenseLine = subcategory.lines.find(l => 
+                        l.name === lineName || (typeof l.name === 'object' && l.name.value === lineName));
+                        
+                    if (expenseLine) {
+                        console.log('Ligne trouvée, mise à jour du montant:', amount);
+                        expenseLine.amount = amount;
+                        
+                        // Recalculer les montants
+                        recalculateAmounts();
+                        
+                        // Sauvegarder les modifications
+                        collectAndSaveProjectData();
+                    } else {
+                        console.warn('Ligne non trouvée dans le modèle avec le nom:', lineName);
+                    }
+                }
+            }
+        });
+        
+        // Traiter la touche Entrée
+        newAmountInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                this.blur(); // Déclenche l'événement blur
+            }
+        });
+    }
+    
+    if (deleteBtn) {
+        // S'assurer que nous n'ajoutons pas de gestionnaires d'événements en double
+        const newDeleteBtn = deleteBtn.cloneNode(true);
+        deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+        
+        newDeleteBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vraiment supprimer cette ligne de dépense ?')) return;
+            
+            // Trouver les références dans le modèle
+            const categoryElement = line.closest('.expense-category');
+            const subcategoryElement = line.closest('.expense-subcategory');
+            const lineNameElement = line.querySelector('.expense-line-name');
+            
+            if (!categoryElement || !subcategoryElement || !lineNameElement) {
+                console.error('Impossible de trouver les éléments de référence');
+                return;
+            }
+            
+            const categoryNameElement = categoryElement.querySelector('.category-name');
+            const subcategoryNameElement = subcategoryElement.querySelector('.subcategory-name');
+            
+            if (!categoryNameElement || !subcategoryNameElement) {
+                console.error('Éléments de nom de catégorie/sous-catégorie non trouvés');
+                return;
+            }
+            
+            const categoryName = categoryNameElement.value || categoryNameElement.textContent;
+            const subcategoryName = subcategoryNameElement.value || subcategoryNameElement.textContent;
+            const lineName = lineNameElement.value || lineNameElement.textContent;
+            
+            // Supprimer du DOM
+            line.remove();
+            
+            // Supprimer du modèle
+            const category = window.currentProject.categories.find(c => 
+                c.name === categoryName || (typeof c.name === 'object' && c.name.value === categoryName));
+                
+            if (category) {
+                const subcategory = category.subcategories.find(s => 
+                    s.name === subcategoryName || (typeof s.name === 'object' && s.name.value === subcategoryName));
+                    
+                if (subcategory && subcategory.lines) {
+                    const lineIndex = subcategory.lines.findIndex(l => 
+                        l.name === lineName || (typeof l.name === 'object' && l.name.value === lineName));
+                        
+                    if (lineIndex >= 0) {
+                        subcategory.lines.splice(lineIndex, 1);
+                        
+                        // Recalculer les montants
+                        recalculateAmounts();
+                        
+                        // Sauvegarder les modifications
+                        collectAndSaveProjectData();
+                    }
+                }
+            }
+        });
+    }
 }
 
 // Fonction pour recalculer tous les montants
