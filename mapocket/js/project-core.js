@@ -1039,8 +1039,7 @@ const ProjectCore = (function() {
         if (submitButton) {
             submitButton.textContent = 'Créer le projet';
             submitButton.classList.remove('btn-success');
-            // S'assurer que le bouton est visible
-            submitButton.style.display = 'inline-block';
+            submitButton.classList.add('btn-action-primary');
         }
         
         // Intercepter la soumission du formulaire
@@ -1104,14 +1103,8 @@ const ProjectCore = (function() {
         if (submitButton) {
             submitButton.textContent = 'Enregistrer les modifications';
             submitButton.classList.add('btn-success');
-            // S'assurer que le bouton est visible avec un style plus accentué
-            submitButton.style.display = 'inline-block';
-            submitButton.style.backgroundColor = '#28a745';
-            submitButton.style.borderColor = '#28a745';
-            submitButton.style.color = 'white';
-            submitButton.style.fontWeight = 'bold';
-            submitButton.style.padding = '10px 20px';
-            submitButton.style.fontSize = '16px';
+            submitButton.classList.add('btn-action-primary');
+            submitButton.classList.add('btn-edit-action');
         }
         
         // Remplir le formulaire
