@@ -9,9 +9,70 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation du chargeur de budget...');
-
+    
+    // Préserver le budget total d'origine dès que possible
+    let originalTotalBudget = '';
+    
+    // Fonction pour sauvegarder le budget total d'origine
+    function preserveOriginalBudget() {
+        const totalBudgetInput = document.getElementById('totalBudget');
+        if (totalBudgetInput && totalBudgetInput.value && totalBudgetInput.value !== '0' && 
+            totalBudgetInput.value !== '€ 0,00' && totalBudgetInput.value !== '0,00') {
+            originalTotalBudget = totalBudgetInput.value;
+            console.log(`Budget total d'origine sauvegardé: ${originalTotalBudget}`);
+        } else {
+            // Si pas de budget dans l'input, chercher dans l'URL et localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
+            
+            if (projectId) {
+                try {
+                    // Essayer d'abord mapocket_projects, puis savedProjects comme fallback
+                    ['mapocket_projects', 'savedProjects'].forEach(storageKey => {
+                        if (originalTotalBudget) return; // Si déjà trouvé, ne pas continuer
+                        const allProjects = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                        const currentProject = allProjects.find(p => p.id === projectId);
+                        
+                        if (currentProject && currentProject.totalBudget) {
+                            originalTotalBudget = currentProject.totalBudget;
+                            console.log(`Budget récupéré depuis ${storageKey}: ${originalTotalBudget}`);
+                            
+                            // Appliquer immédiatement au champ si possible
+                            if (totalBudgetInput) {
+                                totalBudgetInput.value = originalTotalBudget;
+                                console.log(`Budget appliqué immédiatement: ${originalTotalBudget}`);
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du budget:', error);
+                }
+            }
+        }
+    }
+    
+    // Essayer de préserver le budget immédiatement
+    preserveOriginalBudget();
+    
+    // Surveiller les changements de date
+    const dateInputs = document.querySelectorAll('#projectDate, #projectEndDate');
+    dateInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            console.log(`Changement de date détecté, préservation du budget: ${originalTotalBudget}`);
+            const totalBudgetInput = document.getElementById('totalBudget');
+            if (totalBudgetInput && originalTotalBudget) {
+                totalBudgetInput.value = originalTotalBudget;
+            }
+        });
+    });
+    
     // Observer le DOM pour détecter quand le projet est chargé
     const observer = new MutationObserver(function(mutations) {
+        // Essayer de préserver le budget à chaque mutation importante
+        if (originalTotalBudget === '') {
+            preserveOriginalBudget();
+        }
+        
         mutations.forEach(function(mutation) {
             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
                 // Vérifier si les catégories ont été ajoutées
@@ -19,20 +80,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (categoriesContainer && categoriesContainer.children.length > 0) {
                     console.log('Projet détecté dans le DOM, préparation du recalcul...');
                     
+                    // Si nous n'avons toujours pas le budget original, essayer encore une fois
+                    if (originalTotalBudget === '') {
+                        preserveOriginalBudget();
+                    }
+                    
                     // Désactiver l'observateur pour éviter des appels multiples
                     observer.disconnect();
                     
-                    // Attendre que le DOM soit complètement stabilisé
+                    // Attendre que le DOM soit complètement stabilisé avant de recalculer
                     setTimeout(function() {
-                        recalculateAllBudgets();
-                    }, 200);
+                        // Vérification de sécurité: s'assurer que le DOM est prêt
+                        if (document.readyState === 'complete') {
+                            recalculateAllBudgets();
+                            
+                            // Étape supplémentaire cruciale: s'assurer que le budget total est correct après le recalcul
+                            setTimeout(function() {
+                                const totalBudgetInput = document.getElementById('totalBudget');
+                                if (totalBudgetInput && originalTotalBudget &&
+                                    (!totalBudgetInput.value || totalBudgetInput.value === '0' || 
+                                    totalBudgetInput.value === '€ 0,00' || totalBudgetInput.value === '0,00')) {
+                                    totalBudgetInput.value = originalTotalBudget;
+                                    console.log(`Budget restauré après recalcul: ${originalTotalBudget}`);
+                                }
+                            }, 300);
+                        } else {
+                            console.log('DOM pas encore prêt, report du recalcul...');
+                            // Réessayer quand le DOM sera complètement chargé
+                            window.addEventListener('load', function() {
+                                recalculateAllBudgets();
+                            });
+                        }
+                    }, 400);
                 }
             }
         });
     });
 
-    // Observer le corps du document pour détecter les changements
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Observer le corps du document pour détecter les changements, avec une surveillance approfondie
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
     /**
      * Fonction principale de recalcul de tous les budgets
@@ -103,38 +189,71 @@ document.addEventListener('DOMContentLoaded', function() {
             projectTotal += categoryTotal;
         });
 
-        // 4. Mettre à jour le budget total du projet
+        // 4. Gestion intelligente du budget total du projet - CRITIQUE
         const totalBudgetInput = document.getElementById('totalBudget');
         if (totalBudgetInput) {
             console.log(`Budget total du projet calculé: ${projectTotal}`);
+            console.log(`Budget total actuel: ${totalBudgetInput.value}`);
+            console.log(`Budget total d'origine: ${originalTotalBudget}`);
             
-            // Si le budget calculé est supérieur à 0, utiliser ce montant
-            if (projectTotal > 0) {
-                totalBudgetInput.value = formatCurrency(projectTotal);
-                console.log(`Budget total mis à jour: ${formatCurrency(projectTotal)}`);
-            } 
-            // Sinon, si un budget est déjà défini, le conserver
-            else if (totalBudgetInput.value && totalBudgetInput.value !== '0' && totalBudgetInput.value !== '€ 0,00') {
-                console.log(`Conservation du budget existant: ${totalBudgetInput.value}`);
+            // PRIORITÉ #1: Si nous avons un budget d'origine qui a été sauvegardé, l'utiliser TOUJOURS
+            if (originalTotalBudget && originalTotalBudget !== '0' && 
+                originalTotalBudget !== '€ 0,00' && originalTotalBudget !== '0,00') {
+                if (totalBudgetInput.value !== originalTotalBudget) {
+                    totalBudgetInput.value = originalTotalBudget;
+                    console.log(`RESTAURATION du budget total original: ${originalTotalBudget}`);
+                } else {
+                    console.log(`Le budget total est déjà défini correctement: ${originalTotalBudget}`);
+                }
             }
-            // En dernier recours, récupérer le budget depuis l'URL
+            // PRIORITÉ #2: Si nous n'avons pas de budget d'origine, mais que l'utilisateur a défini un budget manuellement
+            else if (totalBudgetInput.value && totalBudgetInput.value !== '0' && 
+                     totalBudgetInput.value !== '€ 0,00' && totalBudgetInput.value !== '0,00') {
+                console.log(`Conservation du budget défini manuellement: ${totalBudgetInput.value}`);
+                // Mémoriser ce budget comme le nouveau budget d'origine
+                originalTotalBudget = totalBudgetInput.value;
+                console.log(`Nouveau budget d'origine défini: ${originalTotalBudget}`);
+            }
+            // PRIORITÉ #3: Si nous n'avons pas de budget d'origine et que l'utilisateur n'a pas défini de budget,
+            // mais que nous avons calculé un total à partir des catégories (si > 0)
+            else if (projectTotal > 0) {
+                const formattedTotal = formatCurrency(projectTotal);
+                totalBudgetInput.value = formattedTotal;
+                console.log(`Budget total défini depuis les calculs: ${formattedTotal}`);
+                // Mémoriser ce budget comme le nouveau budget d'origine
+                originalTotalBudget = formattedTotal;
+                console.log(`Nouveau budget d'origine défini: ${originalTotalBudget}`);
+            }
+            // PRIORITÉ #4: En dernier recours, chercher dans localStorage
             else {
+                console.log('Tentative de récupération du budget depuis localStorage...');
                 const urlParams = new URLSearchParams(window.location.search);
                 const projectId = urlParams.get('id');
                 
                 if (projectId) {
-                    // Tenter de récupérer le projet depuis le stockage local
-                    try {
-                        const allProjects = JSON.parse(localStorage.getItem('mapocket_projects') || '[]');
-                        const currentProject = allProjects.find(p => p.id === projectId);
+                    // Chercher dans toutes les sources possibles
+                    ['mapocket_projects', 'savedProjects', 'mapocket_projects_backup'].forEach(storageKey => {
+                        if (originalTotalBudget) return; // Si déjà trouvé, ne pas continuer
                         
-                        if (currentProject && currentProject.totalBudget) {
-                            totalBudgetInput.value = currentProject.totalBudget;
-                            console.log(`Budget récupéré depuis localStorage: ${currentProject.totalBudget}`);
+                        try {
+                            const allProjects = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                            const currentProject = allProjects.find(p => p.id === projectId);
+                            
+                            if (currentProject && currentProject.totalBudget) {
+                                originalTotalBudget = currentProject.totalBudget;
+                                totalBudgetInput.value = originalTotalBudget;
+                                console.log(`Budget récupéré depuis ${storageKey}: ${originalTotalBudget}`);
+                            }
+                        } catch (error) {
+                            console.error(`Erreur lors de la récupération depuis ${storageKey}:`, error);
                         }
-                    } catch (error) {
-                        console.error('Erreur lors de la récupération du projet:', error);
-                    }
+                    });
+                }
+                
+                // Si après toutes ces tentatives, nous n'avons toujours pas de budget, utiliser 0
+                if (!originalTotalBudget) {
+                    console.log('Aucun budget trouvé, utilisation de 0 par défaut');
+                    totalBudgetInput.value = '0,00';
                 }
             }
         }
