@@ -1,0 +1,63 @@
+function formatAmount(amount) {
+  return `€ ${amount.toFixed(2).replace('.', ',')}`;
+}
+
+function recalculateProjectAmounts() {
+  let total = 0;
+
+  document.querySelectorAll('.expense-category').forEach(category => {
+    let catTotal = 0;
+
+    category.querySelectorAll('.subcategory').forEach(sub => {
+      let subTotal = 0;
+
+      sub.querySelectorAll('.line-amount').forEach(input => {
+        const value = parseFloat(input.value) || 0;
+        subTotal += value;
+      });
+
+      const subAmount = sub.querySelector('.subcategory-amount');
+      if (subAmount) subAmount.textContent = formatAmount(subTotal);
+
+      catTotal += subTotal;
+    });
+
+    const catAmount = category.querySelector('.category-amount');
+    if (catAmount) catAmount.textContent = formatAmount(catTotal);
+
+    total += catTotal;
+  });
+
+  document.getElementById('totalBudget').textContent = formatAmount(total);
+}
+
+function setupInteractions() {
+  document.querySelectorAll('.line-amount').forEach(input => {
+    input.addEventListener('input', recalculateProjectAmounts);
+  });
+
+  document.querySelectorAll('.add-line').forEach(button => {
+    button.addEventListener('click', () => {
+      const container = button.parentElement;
+      const line = document.createElement('div');
+      line.className = 'expense-line';
+      line.innerHTML = `
+        <input type="text" class="line-name" placeholder="Nom de la dépense" />
+        <input type="number" class="line-amount" value="0" />
+        <button class="delete-line">🗑️</button>
+      `;
+      container.insertBefore(line, button);
+      line.querySelector('.line-amount').addEventListener('input', recalculateProjectAmounts);
+      line.querySelector('.delete-line').addEventListener('click', () => {
+        line.remove();
+        recalculateProjectAmounts();
+      });
+    });
+  });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  setupInteractions();
+  recalculateProjectAmounts(); // initial
+});
