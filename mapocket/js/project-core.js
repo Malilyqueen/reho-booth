@@ -14,7 +14,7 @@
 // Namespace pour le module
 const ProjectCore = (function() {
     // Constantes
-    const STORAGE_KEY = 'savedProjects';
+    const STORAGE_KEY = 'mapocket_projects'; // Utiliser la même clé partout dans l'application
     const DEFAULT_PROJECT_STATUS = 'inProgress';
     
     /**
@@ -187,7 +187,7 @@ const ProjectCore = (function() {
             
             // Sauvegarder les projets avec un message indiquant que c'est une mise à jour
             console.log('Mise à jour du projet existant avec ID:', projectId);
-            localStorage.setItem('mapocket_projects', JSON.stringify(projects));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
             console.log('Projet sauvegardé avec succès. Total projets:', projects.length);
             
             // Retourner le projet mis à jour
