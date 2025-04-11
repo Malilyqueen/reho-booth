@@ -24,14 +24,43 @@ const ProjectCore = (function() {
     function initialize() {
         console.log('Initialisation du système de projets...');
         
-        // Vérifier si la structure de stockage existe
+        // === RÉCUPÉRATION DES DONNÉES DE L'ANCIENNE CLÉ ===
+        // Vérifier si nous devons migrer des données depuis l'ancienne clé
+        const OLD_STORAGE_KEY = 'savedProjects';
+        let oldProjects = [];
+        try {
+            const oldProjectsJson = localStorage.getItem(OLD_STORAGE_KEY);
+            if (oldProjectsJson) {
+                oldProjects = JSON.parse(oldProjectsJson);
+                console.log(`🔄 Anciens projets trouvés (${oldProjects.length}) sous la clé '${OLD_STORAGE_KEY}'`);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des anciens projets:', error);
+        }
+        
+        // Vérifier si la nouvelle structure de stockage existe
+        let needsMigration = false;
         if (!localStorage.getItem(STORAGE_KEY)) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
             console.log('Structure de stockage des projets créée');
+            needsMigration = oldProjects.length > 0;
+        }
+        
+        // Si on a des anciens projets à migrer et que la nouvelle clé est vide
+        if (needsMigration) {
+            console.log(`🔄 Migration de ${oldProjects.length} projets depuis '${OLD_STORAGE_KEY}' vers '${STORAGE_KEY}'`);
+            localStorage.setItem(STORAGE_KEY, localStorage.getItem(OLD_STORAGE_KEY));
+            
+            // On peut garder une copie de sauvegarde dans l'ancienne clé
+            // mais renommer pour éviter toute confusion
+            localStorage.setItem(OLD_STORAGE_KEY + '_backup', localStorage.getItem(OLD_STORAGE_KEY));
+            console.log(`✅ Migration terminée - Sauvegarde créée sous '${OLD_STORAGE_KEY}_backup'`);
         }
         
         // Vérifier l'intégrité des projets existants
         const projects = getAllProjects();
+        console.log(`📋 Projets chargés: ${projects.length}`);
+        
         let hasInvalidProjects = false;
         
         projects.forEach((project, index) => {
@@ -89,8 +118,47 @@ const ProjectCore = (function() {
     function getProjectById(projectId) {
         if (!projectId) return null;
         
+        // D'abord, essayons de trouver le projet dans la source principale
         const projects = getAllProjects();
-        return projects.find(project => project.id === projectId) || null;
+        const project = projects.find(project => project.id === projectId);
+        
+        if (project) {
+            return project;
+        }
+        
+        // Si le projet n'est pas trouvé, tentons de chercher dans d'autres sources possibles
+        const alternativeSources = [
+            'savedProjects',
+            'mapocket_projects_backup'
+        ];
+        
+        for (const source of alternativeSources) {
+            try {
+                const sourceData = localStorage.getItem(source);
+                if (sourceData) {
+                    const sourceProjects = JSON.parse(sourceData);
+                    const foundProject = sourceProjects.find(p => p.id === projectId);
+                    
+                    if (foundProject) {
+                        console.log(`🔎 Projet ${projectId} trouvé dans une source alternative: ${source}`);
+                        
+                        // Optionnel: sauvegarder ce projet dans la source principale pour les prochaines fois
+                        const mainProjects = getAllProjects();
+                        mainProjects.push(foundProject);
+                        saveAllProjects(mainProjects);
+                        console.log(`✅ Projet migré vers la source principale`);
+                        
+                        return foundProject;
+                    }
+                }
+            } catch (error) {
+                console.error(`Erreur lors de la recherche dans ${source}:`, error);
+            }
+        }
+        
+        // Projet introuvable
+        console.error(`❌ Projet non trouvé: ${projectId}`);
+        return null;
     }
     
     /**
