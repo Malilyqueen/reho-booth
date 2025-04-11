@@ -434,32 +434,369 @@ function initializeEditableCategories() {
     }
 }
 
-// Initialiser dès que le document est prêt
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initialisation de l\'édition directe...');
+// Fonction simplifiée pour rendre une catégorie existante éditable
+function makeElementsEditable() {
+    console.log('Rendant les éléments éditables...');
     
-    // Surveiller les changements de l'interface et s'adapter
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length > 0) {
-                // Si un conteneur de catégories est ajouté au DOM
-                const categoriesContainer = document.getElementById('categoriesContainer') || document.getElementById('categoryList');
-                if (categoriesContainer && categoriesContainer.children.length > 0) {
-                    // Initialiser les catégories éditables après un court délai
-                    setTimeout(initializeEditableCategories, 100);
-                    
-                    // Déconnecter l'observateur pour éviter des appels multiples
-                    observer.disconnect();
+    // S'assurer que nous avons un projet
+    if (!window.currentProject) {
+        console.warn('Aucun projet actif');
+        return false;
+    }
+    
+    // 1. Ajouter des styles CSS pour les champs éditables
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        .editable {
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            font-size: inherit;
+            font-family: inherit;
+            min-width: 80px;
+        }
+        .editable:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .expense-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .expense-line-name {
+            flex: 2;
+            margin-right: 10px;
+        }
+        .expense-line-amount {
+            flex: 1;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .btn-delete-expense-line {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 2px 5px;
+        }
+        .btn-add-expense-line {
+            background: none;
+            border: 1px solid #28a745;
+            color: #28a745;
+            cursor: pointer;
+            padding: 3px 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+    `;
+    document.head.appendChild(styleElement);
+    
+    // 2. Trouver toutes les lignes de dépenses et les rendre éditables
+    const expenseLines = document.querySelectorAll('.expense-line');
+    expenseLines.forEach(line => {
+        // Remplacer le nom de la ligne par un champ éditable
+        const nameSpan = line.querySelector('.expense-line-name');
+        if (nameSpan) {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'expense-line-name editable';
+            nameInput.value = nameSpan.textContent;
+            
+            // Ajouter l'événement de mise à jour
+            nameInput.addEventListener('change', function() {
+                // Trouver la référence dans le modèle de données et mettre à jour
+                const categoryName = line.closest('.expense-category').querySelector('.category-name').textContent;
+                const subcategoryName = line.closest('.expense-subcategory').querySelector('.subcategory-name').textContent;
+                const oldLineName = nameSpan.textContent;
+                
+                // Mettre à jour dans le modèle
+                const category = window.currentProject.categories.find(c => c.name === categoryName);
+                if (category) {
+                    const subcategory = category.subcategories.find(s => s.name === subcategoryName);
+                    if (subcategory) {
+                        const expenseLine = subcategory.lines.find(l => l.name === oldLineName);
+                        if (expenseLine) {
+                            expenseLine.name = this.value;
+                            
+                            // Sauvegarder les changements
+                            saveProjectChanges(window.currentProject);
+                        }
+                    }
+                }
+            });
+            
+            // Remplacer l'élément
+            nameSpan.parentNode.replaceChild(nameInput, nameSpan);
+        }
+        
+        // Remplacer le montant de la ligne par un champ éditable
+        const amountSpan = line.querySelector('.expense-line-amount');
+        if (amountSpan) {
+            const amountInput = document.createElement('input');
+            amountInput.type = 'text';
+            amountInput.className = 'expense-line-amount editable';
+            amountInput.value = amountSpan.textContent.replace(/[^\d.,]/g, '');
+            
+            // Ajouter l'événement de mise à jour
+            amountInput.addEventListener('blur', function() {
+                // Convertir en nombre
+                const amount = parseFloat(this.value.replace(/,/g, '.')) || 0;
+                this.value = amount.toFixed(2);
+                
+                // Trouver la référence dans le modèle de données et mettre à jour
+                const categoryName = line.closest('.expense-category').querySelector('.category-name').textContent;
+                const subcategoryName = line.closest('.expense-subcategory').querySelector('.subcategory-name').textContent;
+                const lineName = line.querySelector('.expense-line-name').value;
+                
+                // Mettre à jour dans le modèle
+                const category = window.currentProject.categories.find(c => c.name === categoryName);
+                if (category) {
+                    const subcategory = category.subcategories.find(s => s.name === subcategoryName);
+                    if (subcategory) {
+                        const expenseLine = subcategory.lines.find(l => l.name === lineName);
+                        if (expenseLine) {
+                            expenseLine.amount = amount;
+                            
+                            // Recalculer tous les montants
+                            recalculateAmounts();
+                            
+                            // Sauvegarder les changements
+                            saveProjectChanges(window.currentProject);
+                        }
+                    }
+                }
+            });
+            
+            // Validation pour n'accepter que des nombres
+            amountInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d.,]/g, '');
+            });
+            
+            // Récalculer à l'entrée
+            amountInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    this.blur();
+                }
+            });
+            
+            // Remplacer l'élément
+            amountSpan.parentNode.replaceChild(amountInput, amountSpan);
+        }
+    });
+    
+    // 3. Ajouter la possibilité d'ajouter de nouvelles lignes
+    const subcategories = document.querySelectorAll('.expense-subcategory');
+    subcategories.forEach(subcategory => {
+        const expenseLinesContainer = subcategory.querySelector('.expense-lines-container');
+        if (!expenseLinesContainer) return;
+        
+        // Bouton d'ajout de ligne
+        if (!subcategory.querySelector('.btn-add-expense-line')) {
+            const addLineBtn = document.createElement('button');
+            addLineBtn.className = 'btn-add-expense-line';
+            addLineBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter une ligne';
+            addLineBtn.addEventListener('click', function() {
+                // Trouver la référence dans le modèle
+                const categoryName = subcategory.closest('.expense-category').querySelector('.category-name').textContent;
+                const subcategoryName = subcategory.querySelector('.subcategory-name').textContent;
+                
+                // Demander le nom de la nouvelle ligne
+                const lineName = prompt('Nom de la nouvelle ligne de dépense:');
+                if (!lineName || lineName.trim() === '') return;
+                
+                // Créer une nouvelle ligne dans l'interface
+                const newLine = document.createElement('div');
+                newLine.className = 'expense-line';
+                
+                // Nom de la ligne
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'expense-line-name editable';
+                nameInput.value = lineName;
+                
+                // Montant de la ligne
+                const amountInput = document.createElement('input');
+                amountInput.type = 'text';
+                amountInput.className = 'expense-line-amount editable';
+                amountInput.value = '0.00';
+                
+                // Bouton de suppression
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-delete-expense-line';
+                deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                
+                // Assembler la ligne
+                newLine.appendChild(nameInput);
+                newLine.appendChild(amountInput);
+                newLine.appendChild(deleteBtn);
+                
+                // Ajouter au conteneur
+                expenseLinesContainer.appendChild(newLine);
+                
+                // Ajouter dans le modèle de données
+                const category = window.currentProject.categories.find(c => c.name === categoryName);
+                if (category) {
+                    const subcat = category.subcategories.find(s => s.name === subcategoryName);
+                    if (subcat) {
+                        if (!subcat.lines) subcat.lines = [];
+                        subcat.lines.push({ name: lineName, amount: 0 });
+                        
+                        // Recalculer les montants et sauvegarder
+                        recalculateAmounts();
+                        saveProjectChanges(window.currentProject);
+                    }
+                }
+                
+                // Configurer les événements de la nouvelle ligne
+                configureLineEvents(newLine);
+            });
+            
+            subcategory.appendChild(addLineBtn);
+        }
+    });
+    
+    // 4. Configurer la suppression de lignes existantes
+    const deleteButtons = document.querySelectorAll('.btn-delete-expense-line');
+    deleteButtons.forEach(btn => {
+        // S'assurer de ne pas dupliquer les événements
+        btn.replaceWith(btn.cloneNode(true));
+        const newBtn = btn.parentNode.querySelector('.btn-delete-expense-line');
+        
+        newBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vraiment supprimer cette ligne de dépense ?')) return;
+            
+            const line = this.closest('.expense-line');
+            const lineName = line.querySelector('.expense-line-name').value;
+            const categoryName = line.closest('.expense-category').querySelector('.category-name').textContent;
+            const subcategoryName = line.closest('.expense-subcategory').querySelector('.subcategory-name').textContent;
+            
+            // Supprimer du DOM
+            line.remove();
+            
+            // Supprimer du modèle
+            const category = window.currentProject.categories.find(c => c.name === categoryName);
+            if (category) {
+                const subcategory = category.subcategories.find(s => s.name === subcategoryName);
+                if (subcategory && subcategory.lines) {
+                    const lineIndex = subcategory.lines.findIndex(l => l.name === lineName);
+                    if (lineIndex >= 0) {
+                        subcategory.lines.splice(lineIndex, 1);
+                        
+                        // Recalculer les montants et sauvegarder
+                        recalculateAmounts();
+                        saveProjectChanges(window.currentProject);
+                    }
                 }
             }
         });
     });
     
-    // Observer le document entier pour détecter quand les catégories sont chargées
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Configurer les événements pour une ligne
+    function configureLineEvents(line) {
+        const nameInput = line.querySelector('.expense-line-name');
+        const amountInput = line.querySelector('.expense-line-amount');
+        const deleteBtn = line.querySelector('.btn-delete-expense-line');
+        
+        if (nameInput) {
+            nameInput.addEventListener('change', function() {
+                // Mettre à jour le nom dans le modèle
+                const categoryName = line.closest('.expense-category').querySelector('.category-name').textContent;
+                const subcategoryName = line.closest('.expense-subcategory').querySelector('.subcategory-name').textContent;
+                const oldLineName = line.dataset.oldName || '';
+                
+                // Stocker le nouveau nom pour les futures références
+                line.dataset.oldName = this.value;
+                
+                // Mettre à jour dans le modèle
+                const category = window.currentProject.categories.find(c => c.name === categoryName);
+                if (category) {
+                    const subcategory = category.subcategories.find(s => s.name === subcategoryName);
+                    if (subcategory) {
+                        const expenseLine = subcategory.lines.find(l => l.name === oldLineName);
+                        if (expenseLine) {
+                            expenseLine.name = this.value;
+                            saveProjectChanges(window.currentProject);
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Configurer le montant et le bouton de suppression similairement...
+    }
     
-    // Aussi essayer d'initialiser directement (au cas où les catégories sont déjà chargées)
-    setTimeout(initializeEditableCategories, 500);
+    console.log('Éléments rendus éditables');
+    return true;
+}
+
+// Fonction pour recalculer tous les montants
+function recalculateAmounts() {
+    // Si nous n'avons pas accès à la fonction existante, implémenter notre logique
+    if (typeof recalculateProjectAmounts === 'function') {
+        recalculateProjectAmounts();
+    } else {
+        console.log('Recalcul des montants...');
+        // Implémenter notre propre logique de recalcul
+        const project = window.currentProject;
+        if (!project || !project.categories) return;
+        
+        // Pour chaque catégorie
+        project.categories.forEach(category => {
+            let categoryTotal = 0;
+            
+            // Pour chaque sous-catégorie
+            if (category.subcategories) {
+                category.subcategories.forEach(subcategory => {
+                    let subcategoryTotal = 0;
+                    
+                    // Pour chaque ligne
+                    if (subcategory.lines) {
+                        subcategory.lines.forEach(line => {
+                            // S'assurer que le montant est un nombre
+                            const lineAmount = typeof line.amount === 'number' ? line.amount : 
+                                parseFloat(String(line.amount).replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+                            
+                            subcategoryTotal += lineAmount;
+                        });
+                    }
+                    
+                    // Mettre à jour le montant total de la sous-catégorie
+                    subcategory.amount = subcategoryTotal;
+                    categoryTotal += subcategoryTotal;
+                });
+            }
+            
+            // Mettre à jour le montant total de la catégorie
+            category.amount = categoryTotal;
+        });
+        
+        // Mettre à jour le budget total du projet
+        let totalBudget = 0;
+        project.categories.forEach(category => {
+            totalBudget += (typeof category.amount === 'number' ? category.amount : 
+                parseFloat(String(category.amount).replace(/[^\d.,]/g, '').replace(',', '.')) || 0);
+        });
+        
+        project.totalBudget = totalBudget;
+        
+        // Mettre à jour l'affichage des montants
+        updateProjectUI(project);
+    }
+}
+
+// Initialiser dès que le document est prêt
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initialisation de l\'édition directe...');
     
-    console.log('Édition directe initialisée');
+    // Attendre un peu que le projet soit chargé
+    setTimeout(function() {
+        if (!makeElementsEditable()) {
+            // Réessayer après un délai supplémentaire
+            setTimeout(makeElementsEditable, 1000);
+        }
+    }, 500);
 });
