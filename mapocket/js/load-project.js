@@ -1,20 +1,47 @@
+/**
+ * Charge un projet à partir de son ID et le rend dans l'interface
+ * @param {string} projectId - L'identifiant du projet à charger
+ */
 function loadAndRenderProject(projectId) {
-  const savedProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
-  const project = savedProjects.find(p => p.id === projectId);
+  console.log("📂 Chargement du projet:", projectId);
+  
+  // Essayer d'abord de trouver le projet dans 'savedProjects'
+  let savedProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+  let project = savedProjects.find(p => p.id === projectId);
+  
+  // Si pas trouvé, essayer dans 'mapocket_projects'
+  if (!project) {
+    const altProjects = JSON.parse(localStorage.getItem("mapocket_projects") || "[]");
+    project = altProjects.find(p => p.id === projectId);
+    
+    if (project) {
+      console.log("Projet trouvé dans une source alternative: mapocket_projects");
+    }
+  }
 
   if (!project) {
-    console.error("Aucun projet trouvé pour cet ID");
+    console.error("❌ Aucun projet trouvé pour cet ID:", projectId);
     return;
   }
 
-  console.log("Chargement du projet :", project.projectName);
+  console.log("✅ Projet trouvé:", project.projectName);
+  console.log("📊 Données du projet:", JSON.stringify(project).substring(0, 200) + "...");
+  
+  // Sauvegarder le projet global actuel pour référence ultérieure
+  window.currentEditedProject = project;
+  
+  // Rendre le projet dans l'interface
   renderProjectData(project);
 }
 
+/**
+ * Rend les données d'un projet dans l'interface
+ * @param {Object} project - Les données du projet à rendre
+ */
 function renderProjectData(project) {
   const container = document.getElementById("categoriesContainer");
   if (!container) {
-    console.error("Conteneur de catégories non trouvé");
+    console.error("❌ Conteneur de catégories non trouvé");
     return;
   }
 
@@ -22,83 +49,191 @@ function renderProjectData(project) {
   const totalBudgetElement = document.getElementById("totalBudget");
   if (totalBudgetElement) {
     totalBudgetElement.textContent = project.totalBudget;
+    console.log("💰 Budget total défini à:", project.totalBudget);
   }
 
+  // Vider le conteneur pour éviter les doublons
+  container.innerHTML = "";
+  
   // Injecter les catégories dans le DOM
   if (project.categories && project.categories.length > 0) {
     project.categories.forEach((category, index) => {
-      const categoryElements = container.querySelectorAll(".expense-category");
-      if (index >= categoryElements.length) {
-        console.warn(`Pas assez d'éléments de catégorie (${categoryElements.length}) pour le projet (${project.categories.length})`);
-        return;
-      }
+      // Créer un élément de catégorie
+      const categoryElement = document.createElement("div");
+      categoryElement.className = "expense-category";
+      categoryElement.innerHTML = `
+        <div class="category-header">
+          <div class="category-name" contenteditable="true">${category.name || ''}</div>
+          <div class="category-amount" contenteditable="true">${category.amount || '0'}</div>
+          <div class="category-actions">
+            <button class="btn-sm delete-category-btn">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="subcategories-container"></div>
+        <div class="category-footer">
+          <button class="btn-sm add-subcategory-btn">
+            <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+          </button>
+        </div>
+      `;
       
-      const categoryElement = categoryElements[index];
+      // Ajouter la catégorie au conteneur
+      container.appendChild(categoryElement);
       
-      // Remplir le nom de la catégorie
-      const nameElement = categoryElement.querySelector(".category-name");
-      if (nameElement) nameElement.textContent = category.name;
+      // Trouver le conteneur de sous-catégories
+      const subcategoriesContainer = categoryElement.querySelector(".subcategories-container");
       
-      // Remplir le montant de la catégorie
-      const amountElement = categoryElement.querySelector(".category-amount");
-      if (amountElement) amountElement.textContent = category.amount;
-      
-      // Remplir les sous-catégories
+      // Ajouter les sous-catégories
       if (category.subcategories && category.subcategories.length > 0) {
-        const subcategoriesContainer = categoryElement.querySelector(".subcategories-container");
-        if (!subcategoriesContainer) return;
-        
-        const subcategoryElements = subcategoriesContainer.querySelectorAll(".subcategory");
-        
-        category.subcategories.forEach((subcategory, subIndex) => {
-          if (subIndex >= subcategoryElements.length) return;
+        category.subcategories.forEach((subcategory) => {
+          // Créer un élément de sous-catégorie
+          const subcategoryElement = document.createElement("div");
+          subcategoryElement.className = "subcategory";
+          subcategoryElement.innerHTML = `
+            <div class="subcategory-header">
+              <div class="subcategory-name" contenteditable="true">${subcategory.name || ''}</div>
+              <div class="subcategory-amount" contenteditable="true">${subcategory.amount || '0'}</div>
+              <div class="subcategory-actions">
+                <button class="btn-sm delete-subcategory-btn">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="lines-container"></div>
+            <div class="subcategory-footer">
+              <button class="btn-sm add-line-btn">
+                <i class="fas fa-plus"></i> Ajouter une ligne
+              </button>
+            </div>
+          `;
           
-          const subcategoryElement = subcategoryElements[subIndex];
+          // Ajouter la sous-catégorie au conteneur
+          subcategoriesContainer.appendChild(subcategoryElement);
           
-          // Remplir le nom et montant de la sous-catégorie
-          const subNameElement = subcategoryElement.querySelector(".subcategory-name");
-          const subAmountElement = subcategoryElement.querySelector(".subcategory-amount");
-          
-          if (subNameElement) subNameElement.textContent = subcategory.name;
-          if (subAmountElement) subAmountElement.textContent = subcategory.amount;
-          
-          // Trouver ou créer le conteneur de lignes
+          // Trouver le conteneur de lignes
           const linesContainer = subcategoryElement.querySelector(".lines-container");
-          if (!linesContainer) return;
           
-          // Vider le conteneur de lignes existant pour éviter les doublons
-          linesContainer.innerHTML = "";
-          
-          // Remplir les lignes en utilisant la méthode d'ajout de lignes
+          // Ajouter les lignes avec une structure propre (inputs)
           if (subcategory.lines && subcategory.lines.length > 0) {
             subcategory.lines.forEach(line => {
               const numericAmount = extractNumberFromString(line.amount);
+              console.log(`💵 Ajout ligne: ${line.name} = ${numericAmount}`);
               addExpenseLine(linesContainer, line.name, numericAmount);
             });
           }
           
-          // Ajouter un bouton pour ajouter une nouvelle ligne
-          const addButton = document.createElement("button");
-          addButton.classList.add("add-line-btn");
-          addButton.textContent = "➕ Ajouter une dépense";
-          addButton.addEventListener("click", function() {
-            addExpenseLine(linesContainer);
-            recalculateAllAmounts();
-          });
-          
-          // Vérifier si le bouton existe déjà
-          if (!subcategoryElement.querySelector(".add-line-btn")) {
-            linesContainer.after(addButton);
+          // Ajouter les écouteurs d'événements à la sous-catégorie
+          const addLineBtn = subcategoryElement.querySelector(".add-line-btn");
+          if (addLineBtn) {
+            addLineBtn.addEventListener("click", function() {
+              addExpenseLine(linesContainer);
+              recalculateAllAmounts();
+            });
           }
         });
       }
     });
   }
   
+  // Initialiser tous les gestionnaires d'événements
+  initializeProjectEventListeners();
+  
   // Attendre que tout soit affiché avant de recalculer
   setTimeout(() => {
     recalculateAllAmounts();
   }, 0);
+}
+
+/**
+ * Initialise tous les écouteurs d'événements du projet
+ */
+function initializeProjectEventListeners() {
+  // Écouteurs pour les boutons de suppression de catégorie
+  document.querySelectorAll('.delete-category-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const category = this.closest('.expense-category');
+      if (category) {
+        category.remove();
+        recalculateAllAmounts();
+      }
+    });
+  });
+  
+  // Écouteurs pour les boutons de suppression de sous-catégorie
+  document.querySelectorAll('.delete-subcategory-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const subcategory = this.closest('.subcategory');
+      if (subcategory) {
+        subcategory.remove();
+        recalculateAllAmounts();
+      }
+    });
+  });
+  
+  // Écouteurs pour les montants modifiables
+  document.querySelectorAll('.category-amount, .subcategory-amount').forEach(el => {
+    el.addEventListener('input', () => setTimeout(recalculateAllAmounts, 0));
+    el.addEventListener('blur', () => setTimeout(recalculateAllAmounts, 0));
+  });
+  
+  // Écouteurs pour les boutons d'ajout de sous-catégorie
+  document.querySelectorAll('.add-subcategory-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const category = this.closest('.expense-category');
+      const container = category.querySelector('.subcategories-container');
+      if (container) {
+        // Créer une nouvelle sous-catégorie
+        const subcategory = document.createElement('div');
+        subcategory.className = 'subcategory';
+        subcategory.innerHTML = `
+          <div class="subcategory-header">
+            <div class="subcategory-name" contenteditable="true">Nouvelle sous-catégorie</div>
+            <div class="subcategory-amount" contenteditable="true">0</div>
+            <div class="subcategory-actions">
+              <button class="btn-sm delete-subcategory-btn">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="lines-container"></div>
+          <div class="subcategory-footer">
+            <button class="btn-sm add-line-btn">
+              <i class="fas fa-plus"></i> Ajouter une ligne
+            </button>
+          </div>
+        `;
+        container.appendChild(subcategory);
+        
+        // Ajouter les écouteurs d'événements
+        const deleteBtn = subcategory.querySelector('.delete-subcategory-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', function() {
+            subcategory.remove();
+            recalculateAllAmounts();
+          });
+        }
+        
+        const addLineBtn = subcategory.querySelector('.add-line-btn');
+        if (addLineBtn) {
+          const linesContainer = subcategory.querySelector('.lines-container');
+          addLineBtn.addEventListener('click', function() {
+            addExpenseLine(linesContainer);
+            recalculateAllAmounts();
+          });
+        }
+        
+        const amountEl = subcategory.querySelector('.subcategory-amount');
+        if (amountEl) {
+          amountEl.addEventListener('input', () => setTimeout(recalculateAllAmounts, 0));
+          amountEl.addEventListener('blur', () => setTimeout(recalculateAllAmounts, 0));
+        }
+        
+        recalculateAllAmounts();
+      }
+    });
+  });
 }
 
 function addExpenseLine(container, name = "", amount = 0) {
