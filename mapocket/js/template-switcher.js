@@ -268,7 +268,7 @@ function addNewCategory() {
     <div class="category" data-category-index="${categoryCount}">
         <div class="category-header">
             <div class="category-name-container">
-                <span class="category-emoji">📌</span>
+                <span class="category-emoji"></span>
                 <input type="text" class="category-name editable-field" value="Nouvelle catégorie" data-original="Nouvelle catégorie">
             </div>
             <div class="category-actions">
@@ -311,7 +311,7 @@ function addNewSubcategory(categoryIndex) {
     <div class="subcategory" data-category-index="${categoryIndex}" data-subcategory-index="${subcategoryCount}">
         <div class="subcategory-header">
             <div class="subcategory-name-container">
-                <span class="subcategory-emoji">📎</span>
+                <span class="subcategory-emoji"></span>
                 <input type="text" class="subcategory-name editable-field" value="Nouvelle sous-catégorie" data-original="Nouvelle sous-catégorie">
             </div>
             <div class="subcategory-actions">
