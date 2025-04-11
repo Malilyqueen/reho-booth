@@ -627,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mettre à jour le budget total du projet
         const totalBudgetEl = document.getElementById("totalBudget");
         if (totalBudgetEl) {
-            totalBudgetEl.value = projectTotal;
+            totalBudgetEl.value = projectTotal.toString();
         }
 
         console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
             projectName: document.getElementById('projectName')?.value || 'Projet sans nom',
             projectDate: document.getElementById('projectDate')?.value || new Date().toISOString().split('T')[0],
             projectEndDate: document.getElementById('projectEndDate')?.value || '',
-            totalBudget: extractNumericValue(document.getElementById('totalBudget')?.value || 0),
+            totalBudget: (document.getElementById('totalBudget')?.value || '0').toString(),
             template: document.getElementById('templateSelector')?.value || 'custom',
             linkToWallet: document.getElementById('linkToWallet')?.checked || false,
             linkToWishlist: document.getElementById('linkToWishlist')?.checked || false,
