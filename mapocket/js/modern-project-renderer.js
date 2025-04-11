@@ -6,18 +6,124 @@
 // Variables globales
 let currentProject = null;
 let isEditMode = false;
+let browserInfo = null;
+
+// Détecter le navigateur pour les corrections spécifiques
+function detectBrowser() {
+    try {
+        const userAgent = navigator.userAgent.toLowerCase();
+        let browser = {
+            isSafari: false,
+            isChrome: false,
+            isFirefox: false,
+            isEdge: false,
+            version: 0
+        };
+        
+        // Safari
+        if (userAgent.indexOf('safari') !== -1 && userAgent.indexOf('chrome') === -1) {
+            browser.isSafari = true;
+            const versionMatch = userAgent.match(/version\/(\d+(\.\d+)?)/);
+            browser.version = versionMatch ? parseFloat(versionMatch[1]) : 0;
+        }
+        // Chrome
+        else if (userAgent.indexOf('chrome') !== -1 && userAgent.indexOf('edge') === -1) {
+            browser.isChrome = true;
+            const versionMatch = userAgent.match(/chrome\/(\d+(\.\d+)?)/);
+            browser.version = versionMatch ? parseFloat(versionMatch[1]) : 0;
+        }
+        // Firefox
+        else if (userAgent.indexOf('firefox') !== -1) {
+            browser.isFirefox = true;
+            const versionMatch = userAgent.match(/firefox\/(\d+(\.\d+)?)/);
+            browser.version = versionMatch ? parseFloat(versionMatch[1]) : 0;
+        }
+        // Edge
+        else if (userAgent.indexOf('edge') !== -1 || userAgent.indexOf('edg') !== -1) {
+            browser.isEdge = true;
+            const versionMatch = userAgent.match(/edge\/(\d+(\.\d+)?)|edg\/(\d+(\.\d+)?)/);
+            browser.version = versionMatch ? parseFloat(versionMatch[1] || versionMatch[3]) : 0;
+        }
+        
+        console.log('Navigateur détecté:', browser);
+        return browser;
+    } catch (error) {
+        console.error('Erreur lors de la détection du navigateur:', error);
+        return {
+            isSafari: false,
+            isChrome: false,
+            isFirefox: false,
+            isEdge: false,
+            version: 0
+        };
+    }
+}
+
+// Fonction pour assurer la compatibilité cross-browser
+function debugCrossBrowser() {
+    try {
+        // Safari ne supporte pas bien certaines fonctionnalités
+        if (browserInfo.isSafari) {
+            console.log('Corrections spécifiques pour Safari appliquées');
+            
+            // Polyfill pour replaceAll si non supporté
+            if (!String.prototype.replaceAll) {
+                String.prototype.replaceAll = function(search, replacement) {
+                    return this.split(search).join(replacement);
+                };
+            }
+            
+            // Attendre un peu plus longtemps pour Safari
+            setTimeout(function() {
+                console.log('Délai supplémentaire pour Safari terminé');
+                initModernProjectView();
+            }, 300);
+            
+            return true; // Safari nécessite un traitement spécial
+        }
+        
+        // Corrections spécifiques pour d'autres navigateurs si nécessaire
+        return false; // Pas de traitement spécial nécessaire
+    } catch (error) {
+        console.error('Erreur lors des corrections cross-browser:', error);
+        return false;
+    }
+}
+
+// Fonction sécurisée pour parser le JSON
+function safeJSONParse(jsonString, defaultValue = null) {
+    try {
+        if (!jsonString) return defaultValue;
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error('Erreur lors du parsing JSON:', error, jsonString);
+        return defaultValue;
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Vérifie que nous sommes sur la page de visualisation de projet
-    if (!document.getElementById('categoryList')) return;
-    
-    // Initialisation
-    initModernProjectView();
-    
-    // Ajouter l'écouteur d'événement pour le bouton d'édition
-    const editButton = document.querySelector('.btn-edit-project');
-    if (editButton) {
-        editButton.addEventListener('click', toggleEditMode);
+    try {
+        // Vérifie que nous sommes sur la page de visualisation de projet
+        if (!document.getElementById('categoryList')) return;
+        
+        console.log('DOM chargé, initialisation de la vue moderne du projet...');
+        
+        // Détecter le navigateur
+        browserInfo = detectBrowser();
+        
+        // Appliquer des corrections spécifiques aux navigateurs si nécessaire
+        if (!debugCrossBrowser()) {
+            // Si aucune correction spécifique n'est nécessaire, initialiser directement
+            initModernProjectView();
+        }
+        
+        // Ajouter l'écouteur d'événement pour le bouton d'édition
+        const editButton = document.querySelector('.btn-edit-project');
+        if (editButton) {
+            editButton.addEventListener('click', toggleEditMode);
+        }
+    } catch (error) {
+        console.error('Erreur critique lors de l\'initialisation:', error);
     }
 });
 
@@ -25,29 +131,52 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialise la vue moderne du projet
  */
 function initModernProjectView() {
-    console.log('Initialisation de la vue moderne du projet...');
-    
-    // Récupérer l'ID du projet à visualiser
-    const projectId = localStorage.getItem('viewProjectId');
-    if (!projectId) {
-        console.error('Aucun ID de projet trouvé dans le localStorage');
-        return;
+    try {
+        console.log('Initialisation de la vue moderne du projet...');
+        
+        // Récupérer l'ID du projet à visualiser
+        const projectId = localStorage.getItem('viewProjectId');
+        if (!projectId) {
+            console.error('Aucun ID de projet trouvé dans le localStorage');
+            return;
+        }
+        
+        // Charger tous les projets
+        const projects = safeJSONParse(localStorage.getItem('savedProjects'), []);
+        
+        if (!projects || projects.length === 0) {
+            console.error('Aucun projet trouvé dans le localStorage');
+            document.getElementById('categoryList').innerHTML = '<p class="text-center py-8 text-gray-500">Aucun projet disponible. Veuillez créer un projet.</p>';
+            return;
+        }
+        
+        const project = projects.find(p => p.id === projectId);
+        
+        if (!project) {
+            console.error('Projet non trouvé:', projectId);
+            document.getElementById('categoryList').innerHTML = `<p class="text-center py-8 text-gray-500">Projet ID ${projectId} non trouvé.</p>`;
+            return;
+        }
+        
+        // Stocker le projet courant
+        currentProject = project;
+        
+        console.log('Projet chargé:', project.projectName);
+        
+        // Afficher les informations du projet
+        renderProjectInfo(project);
+        
+        // Rendre les catégories
+        if (project.categories && Array.isArray(project.categories)) {
+            renderCategories(project.categories);
+        } else {
+            console.error('Catégories invalides ou manquantes:', project.categories);
+            document.getElementById('categoryList').innerHTML = '<p class="text-center py-8 text-gray-500">Aucune catégorie définie pour ce projet.</p>';
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de la vue projet:', error);
+        document.getElementById('categoryList').innerHTML = `<p class="text-center py-8 text-gray-500">Erreur lors du chargement du projet. Veuillez réessayer.</p>`;
     }
-    
-    // Charger tous les projets
-    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
-    const project = projects.find(p => p.id === projectId);
-    
-    if (!project) {
-        console.error('Projet non trouvé:', projectId);
-        return;
-    }
-    
-    // Afficher les informations du projet
-    renderProjectInfo(project);
-    
-    // Rendre les catégories
-    renderCategories(project.categories);
 }
 
 /**
@@ -299,13 +428,16 @@ function getUserCurrencySymbol() {
     
     try {
         // Essayer de récupérer depuis les préférences utilisateur
-        const userPreferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
-        if (userPreferences.currency) {
+        const userPreferences = safeJSONParse(localStorage.getItem('userPreferences'), {});
+        if (userPreferences && userPreferences.currency) {
             // Si AVAILABLE_CURRENCIES est défini globalement (depuis currencies.js)
             if (typeof AVAILABLE_CURRENCIES !== 'undefined') {
-                const currency = AVAILABLE_CURRENCIES.find(c => c.code === userPreferences.currency);
-                if (currency) {
-                    symbol = currency.symbol;
+                // Trouver la devise correspondante
+                for (let i = 0; i < AVAILABLE_CURRENCIES.length; i++) {
+                    if (AVAILABLE_CURRENCIES[i].code === userPreferences.currency) {
+                        symbol = AVAILABLE_CURRENCIES[i].symbol;
+                        break;
+                    }
                 }
             }
         }
@@ -890,148 +1022,202 @@ function recalculateAllAmounts() {
  * Sauvegarde les modifications apportées au projet
  */
 function saveProjectChanges() {
-    // Récupérer l'ID du projet en cours d'édition
-    const projectId = localStorage.getItem('viewProjectId');
-    if (!projectId) {
-        console.error('Aucun ID de projet trouvé dans le localStorage');
-        return;
-    }
-    
-    // Charger tous les projets
-    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
-    const projectIndex = projects.findIndex(p => p.id === projectId);
-    
-    if (projectIndex === -1) {
-        console.error('Projet non trouvé:', projectId);
-        return;
-    }
-    
-    // Récupérer le projet existant
-    const project = projects[projectIndex];
-    
-    // Mettre à jour le nom du projet (si modifiable)
-    const projectTitleEl = document.getElementById('projectTitle');
-    if (projectTitleEl) {
-        project.projectName = projectTitleEl.textContent || project.projectName;
-    }
-    
-    // Collecter toutes les catégories avec leurs sous-catégories et lignes de dépenses
-    const newCategories = [];
-    
-    document.querySelectorAll('.category').forEach(categoryEl => {
-        const categoryId = categoryEl.dataset.id;
-        const categoryName = categoryEl.querySelector('.category-name');
-        const categoryNameText = categoryName.tagName === 'INPUT' ? categoryName.value : categoryName.textContent;
+    try {
+        // Récupérer l'ID du projet en cours d'édition
+        const projectId = localStorage.getItem('viewProjectId');
+        if (!projectId) {
+            console.error('Aucun ID de projet trouvé dans le localStorage');
+            showNotification('Erreur: Impossible de trouver le projet à sauvegarder', 'error');
+            return;
+        }
         
-        // Obtenir le montant depuis le texte affiché (il a déjà été recalculé)
-        const categoryAmountEl = categoryEl.querySelector('.category-amount');
-        const categoryAmountText = categoryAmountEl.textContent;
+        // Charger tous les projets
+        const projects = safeJSONParse(localStorage.getItem('savedProjects'), []);
         
-        // Créer la nouvelle catégorie
-        const newCategory = {
-            id: categoryId,
-            name: categoryNameText,
-            amount: categoryAmountText,
-            subcategories: []
-        };
+        if (!projects || !Array.isArray(projects)) {
+            console.error('Format de projets invalide dans localStorage');
+            showNotification('Erreur: Format de données invalide', 'error');
+            return;
+        }
         
-        // Collecter les sous-catégories
-        categoryEl.querySelectorAll('.subcategory').forEach(subcatEl => {
-            const subcatId = subcatEl.dataset.id;
-            const subcatName = subcatEl.querySelector('.subcategory-name');
-            const subcatNameText = subcatName.tagName === 'INPUT' ? subcatName.value : subcatName.textContent;
+        // Trouver l'index du projet actuel
+        let projectIndex = -1;
+        for (let i = 0; i < projects.length; i++) {
+            if (projects[i].id === projectId) {
+                projectIndex = i;
+                break;
+            }
+        }
+        
+        if (projectIndex === -1) {
+            console.error('Projet non trouvé:', projectId);
+            showNotification('Erreur: Projet non trouvé', 'error');
+            return;
+        }
+        
+        // Récupérer le projet existant
+        const project = projects[projectIndex];
+        
+        // Mettre à jour le nom du projet (si modifiable)
+        const projectTitleEl = document.getElementById('projectTitle');
+        if (projectTitleEl) {
+            project.projectName = projectTitleEl.textContent || project.projectName;
+        }
+        
+        // Collecter toutes les catégories avec leurs sous-catégories et lignes de dépenses
+        const newCategories = [];
+        
+        // Utiliser une méthode compatible avec tous les navigateurs
+        const categoryEls = document.querySelectorAll('.category');
+        for (let i = 0; i < categoryEls.length; i++) {
+            const categoryEl = categoryEls[i];
+            const categoryId = categoryEl.dataset.id;
+            const categoryName = categoryEl.querySelector('.category-name');
+            const categoryNameText = categoryName.tagName === 'INPUT' ? categoryName.value : categoryName.textContent;
             
-            // Obtenir le montant depuis le texte affiché
-            const subcatAmountEl = subcatEl.querySelector('.subcategory-amount');
-            const subcatAmountText = subcatAmountEl.textContent;
+            // Obtenir le montant depuis le texte affiché (il a déjà été recalculé)
+            const categoryAmountEl = categoryEl.querySelector('.category-amount');
+            const categoryAmountText = categoryAmountEl.textContent;
             
-            // Créer la nouvelle sous-catégorie
-            const newSubcategory = {
-                id: subcatId,
-                name: subcatNameText,
-                amount: subcatAmountText,
-                lines: []
+            // Créer la nouvelle catégorie
+            const newCategory = {
+                id: categoryId,
+                name: categoryNameText,
+                amount: categoryAmountText,
+                subcategories: []
             };
             
-            // Collecter les lignes de dépenses
-            subcatEl.querySelectorAll('.expense-line').forEach(lineEl => {
-                const lineId = lineEl.dataset.id;
-                const lineName = lineEl.querySelector('.expense-name');
-                const lineNameText = lineName.tagName === 'INPUT' ? lineName.value : lineName.textContent;
+            // Collecter les sous-catégories
+            const subcatEls = categoryEl.querySelectorAll('.subcategory');
+            for (let j = 0; j < subcatEls.length; j++) {
+                const subcatEl = subcatEls[j];
+                const subcatId = subcatEl.dataset.id;
+                const subcatName = subcatEl.querySelector('.subcategory-name');
+                const subcatNameText = subcatName.tagName === 'INPUT' ? subcatName.value : subcatName.textContent;
                 
-                // Obtenir le montant depuis l'input ou le texte affiché
-                const lineAmountEl = lineEl.querySelector('.expense-amount');
-                let lineAmountValue;
+                // Obtenir le montant depuis le texte affiché
+                const subcatAmountEl = subcatEl.querySelector('.subcategory-amount');
+                const subcatAmountText = subcatAmountEl.textContent;
                 
-                if (lineAmountEl.tagName === 'INPUT') {
-                    lineAmountValue = formatAmount(parseFloat(lineAmountEl.value) || 0);
-                } else {
-                    lineAmountValue = lineAmountEl.textContent;
+                // Créer la nouvelle sous-catégorie
+                const newSubcategory = {
+                    id: subcatId,
+                    name: subcatNameText,
+                    amount: subcatAmountText,
+                    lines: []
+                };
+                
+                // Collecter les lignes de dépenses
+                const lineEls = subcatEl.querySelectorAll('.expense-line');
+                for (let k = 0; k < lineEls.length; k++) {
+                    const lineEl = lineEls[k];
+                    const lineId = lineEl.dataset.id;
+                    const lineName = lineEl.querySelector('.expense-name');
+                    const lineNameText = lineName.tagName === 'INPUT' ? lineName.value : lineName.textContent;
+                    
+                    // Obtenir le montant depuis l'input ou le texte affiché
+                    const lineAmountEl = lineEl.querySelector('.expense-amount');
+                    let lineAmountValue;
+                    
+                    if (lineAmountEl.tagName === 'INPUT') {
+                        lineAmountValue = formatAmount(parseFloat(lineAmountEl.value) || 0);
+                    } else {
+                        lineAmountValue = lineAmountEl.textContent;
+                    }
+                    
+                    // Ajouter la ligne à la sous-catégorie
+                    newSubcategory.lines.push({
+                        id: lineId,
+                        name: lineNameText,
+                        amount: lineAmountValue
+                    });
                 }
                 
-                // Ajouter la ligne à la sous-catégorie
-                newSubcategory.lines.push({
-                    id: lineId,
-                    name: lineNameText,
-                    amount: lineAmountValue
-                });
-            });
+                // Ajouter la sous-catégorie à la catégorie
+                newCategory.subcategories.push(newSubcategory);
+            }
             
-            // Ajouter la sous-catégorie à la catégorie
-            newCategory.subcategories.push(newSubcategory);
-        });
+            // Ajouter la catégorie à la liste
+            newCategories.push(newCategory);
+        }
         
-        // Ajouter la catégorie à la liste
-        newCategories.push(newCategory);
-    });
-    
-    // Mettre à jour le projet avec les nouvelles catégories
-    project.categories = newCategories;
-    
-    // Mettre à jour le budget total du projet
-    const usedBudgetEl = document.getElementById('usedBudget');
-    if (usedBudgetEl) {
-        project.totalBudget = usedBudgetEl.textContent;
+        // Mettre à jour le projet avec les nouvelles catégories
+        project.categories = newCategories;
+        
+        // Mettre à jour le budget total du projet
+        const usedBudgetEl = document.getElementById('usedBudget');
+        if (usedBudgetEl) {
+            project.totalBudget = usedBudgetEl.textContent;
+        }
+        
+        // Sauvegarder le projet mis à jour
+        projects[projectIndex] = project;
+        localStorage.setItem('savedProjects', JSON.stringify(projects));
+        
+        // Sortir du mode édition
+        toggleEditMode();
+        
+        // Afficher une notification de succès
+        showNotification('Projet sauvegardé avec succès', 'success');
+        
+        console.log('Projet sauvegardé avec succès');
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde du projet:', error);
+        showNotification('Erreur lors de la sauvegarde: ' + error.message, 'error');
     }
-    
-    // Sauvegarder le projet mis à jour
-    projects[projectIndex] = project;
-    localStorage.setItem('savedProjects', JSON.stringify(projects));
-    
-    // Sortir du mode édition
-    toggleEditMode();
-    
-    // Afficher une notification de succès
-    showNotification('Projet sauvegardé avec succès');
-    
-    console.log('Projet sauvegardé:', project);
 }
 
 /**
  * Affiche une notification
+ * @param {string} message - Le message à afficher
+ * @param {string} type - Le type de notification ('success', 'error', 'warning', 'info')
  */
-function showNotification(message) {
-    // Vérifier si un élément de notification existe déjà
-    let notificationEl = document.getElementById('notification');
-    
-    // Si non, le créer
-    if (!notificationEl) {
-        notificationEl = document.createElement('div');
-        notificationEl.id = 'notification';
-        notificationEl.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-xl shadow-lg opacity-0 transition-opacity duration-300';
-        document.body.appendChild(notificationEl);
+function showNotification(message, type = 'success') {
+    try {
+        // Vérifier si un élément de notification existe déjà
+        let notificationEl = document.getElementById('notification');
+        
+        // Si non, le créer
+        if (!notificationEl) {
+            notificationEl = document.createElement('div');
+            notificationEl.id = 'notification';
+            notificationEl.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-xl shadow-lg opacity-0 transition-opacity duration-300 text-white';
+            document.body.appendChild(notificationEl);
+        }
+        
+        // Supprimer toutes les classes de couleur précédentes
+        notificationEl.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500');
+        
+        // Appliquer la classe de couleur selon le type
+        switch (type) {
+            case 'error':
+                notificationEl.classList.add('bg-red-500');
+                break;
+            case 'warning':
+                notificationEl.classList.add('bg-yellow-500');
+                break;
+            case 'info':
+                notificationEl.classList.add('bg-blue-500');
+                break;
+            case 'success':
+            default:
+                notificationEl.classList.add('bg-green-500');
+                break;
+        }
+        
+        // Mettre à jour le message et afficher la notification
+        notificationEl.textContent = message;
+        notificationEl.classList.remove('opacity-0');
+        notificationEl.classList.add('opacity-100');
+        
+        // Masquer la notification après quelques secondes
+        setTimeout(function() {
+            notificationEl.classList.remove('opacity-100');
+            notificationEl.classList.add('opacity-0');
+        }, 3000);
+    } catch (error) {
+        console.error('Erreur lors de l\'affichage de la notification:', error);
     }
-    
-    // Mettre à jour le message et afficher la notification
-    notificationEl.textContent = message;
-    notificationEl.classList.remove('opacity-0');
-    notificationEl.classList.add('opacity-100');
-    
-    // Masquer la notification après quelques secondes
-    setTimeout(() => {
-        notificationEl.classList.remove('opacity-100');
-        notificationEl.classList.add('opacity-0');
-    }, 3000);
 }
 
 /**
