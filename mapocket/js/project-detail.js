@@ -2015,3 +2015,104 @@ function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
+
+// Fonction pour recalculer tous les montants du projet en cascade
+function recalculateProjectAmounts() {
+    console.log('Recalcul des montants du projet...');
+    
+    // Récupérer le projet actuel
+    const project = window.currentProject;
+    if (!project) return;
+    
+    // Parcourir chaque catégorie
+    if (project.categories && Array.isArray(project.categories)) {
+        project.categories.forEach(category => {
+            // Réinitialiser le montant de la catégorie
+            let categoryTotal = 0;
+            
+            // Parcourir chaque sous-catégorie
+            if (category.subcategories && Array.isArray(category.subcategories)) {
+                category.subcategories.forEach(subcategory => {
+                    // Réinitialiser le montant de la sous-catégorie
+                    let subcategoryTotal = 0;
+                    
+                    // Parcourir chaque ligne
+                    if (subcategory.lines && Array.isArray(subcategory.lines)) {
+                        subcategory.lines.forEach(line => {
+                            // Convertir le montant de la ligne en nombre
+                            let lineAmount = 0;
+                            if (typeof line.amount === 'string') {
+                                // Extraire juste le nombre de la chaîne (ignorer la devise)
+                                const matches = line.amount.match(/[\d,.]+/);
+                                if (matches) {
+                                    lineAmount = parseFloat(matches[0].replace(/,/g, '.'));
+                                }
+                            } else if (typeof line.amount === 'number') {
+                                lineAmount = line.amount;
+                            }
+                            
+                            // Ajouter au total de la sous-catégorie
+                            subcategoryTotal += lineAmount || 0;
+                        });
+                    }
+                    
+                    // Mettre à jour le montant de la sous-catégorie (avec formatage)
+                    subcategory.amount = formatCurrency(subcategoryTotal);
+                    
+                    // Ajouter au total de la catégorie
+                    categoryTotal += subcategoryTotal;
+                });
+            }
+            
+            // Mettre à jour le montant de la catégorie (avec formatage)
+            category.amount = formatCurrency(categoryTotal);
+        });
+        
+        // Calculer le budget total du projet (somme des catégories)
+        let totalBudget = 0;
+        project.categories.forEach(category => {
+            if (typeof category.amount === 'string') {
+                const matches = category.amount.match(/[\d,.]+/);
+                if (matches) {
+                    totalBudget += parseFloat(matches[0].replace(/,/g, '.'));
+                }
+            } else if (typeof category.amount === 'number') {
+                totalBudget += category.amount;
+            }
+        });
+        
+        // Mettre à jour le budget total du projet (avec formatage)
+        project.totalBudget = formatCurrency(totalBudget);
+    }
+    
+    // Mettre à jour l'interface utilisateur
+    updateProjectUI(project);
+    
+    console.log('Recalcul terminé. Nouveau budget total:', project.totalBudget);
+}
+
+// Fonction pour collecter et sauvegarder les données du projet
+function collectAndSaveProjectData() {
+    console.log('Collecte et sauvegarde des données du projet...');
+    
+    // Récupérer le projet actuel
+    const project = window.currentProject;
+    if (!project) return;
+    
+    // Sauvegarder les modifications
+    saveProjectChanges(project);
+    
+    console.log('Projet sauvegardé avec succès');
+    
+    // Montrer une notification (optionnel)
+    showNotification('Modifications sauvegardées', 'success');
+}
+
+// Fonction pour mettre à jour les totaux des catégories
+function updateCategoryTotals() {
+    // Utiliser la nouvelle fonction de recalcul
+    recalculateProjectAmounts();
+    
+    // Sauvegarder les modifications
+    collectAndSaveProjectData();
+}
