@@ -1,8 +1,8 @@
 /* Base styles */
 :root {
     --bg-color: #eaf4fb;
-    --sidebar-bg: #e6f0f9;
-    --primary-color: #1d3557;
+    --sidebar-bg: #2f4058; /* Nouvelle couleur bleue demandée */
+    --primary-color: #2f4058; /* Nouvelle couleur bleue demandée */
     --secondary-color: #457b9d;
     --accent-color: #ffc300;
     --text-color: #1d3557;
@@ -84,7 +84,7 @@ body.dark-mode .logo h1 {
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    color: var(--primary-color);
+    color: var(--white); /* Texte blanc pour la barre latérale */
     text-decoration: none;
     transition: var(--transition);
     border-radius: 0 6px 6px 0;

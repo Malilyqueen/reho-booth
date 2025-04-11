@@ -10,15 +10,15 @@
 
 /* Variables globales - pour assurer la cohérence sur tous les navigateurs */
 :root {
-    --primary-color: #4F6DF5;
-    --primary-hover: #3a56dd;
+    --primary-color: #2f4058; /* Nouvelle couleur bleue demandée */
+    --primary-hover: #253445; /* Version plus foncée pour hover */
     --secondary-color: #6C757D;
     --success-color: #28a745;
     --danger-color: #dc3545;
     --warning-color: #ffc107;
     --info-color: #17a2b8;
     --light-color: #f8f9fa;
-    --dark-color: #343a40;
+    --dark-color: #2f4058; /* Même couleur pour la navbar */
     --gray-100: #f8f9fa;
     --gray-200: #e9ecef;
     --gray-300: #dee2e6;
@@ -369,6 +369,13 @@ h1, h2, h3, h4, h5, h6, .section-title, button, .btn, .option-label, .template-o
     font-family: var(--font-family);
 }
 
-.section-title::before, .template-option::before, .category-icon, .subcategory-icon {
+.section-title::before, .template-option::before,
+.category-emoji, .subcategory-emoji {
     display: none !important;
+}
+
+/* Mais afficher les icônes de catégorie dans la barre latérale et templates */
+.category-icon {
+    display: inline-block !important;
+    margin-right: 8px;
 }
