@@ -1,0 +1,68 @@
+On ne va plus corriger morceau par morceau.
+Je veux maintenant que tu prennes en compte l’ensemble du fonctionnement logique de l’app, et que tu reconstruises la base fonctionnelle commune autour de ces éléments :
+
+✅ 1. CRÉATION DE PROJET
+L’utilisateur peut créer un projet avec un nom, un budget initial, des catégories, sous-catégories et lignes
+
+Chaque montant est soit saisi (si pas de détail), soit calculé automatiquement (si sous-éléments présents)
+
+Le projet est sauvegardé dans localStorage sous une clé unique (ex: savedProjects)
+
+Le système doit vérifier que le projet n’écrase pas les autres
+
+✅ 2. MODIFICATION DE PROJET
+Lorsqu’un projet est modifié :
+
+Les données existantes doivent être chargées dans le formulaire
+
+Aucune remise à zéro ne doit se produire
+
+Toute modification ajoute ou met à jour les éléments existants
+
+Il doit y avoir un bouton "Enregistrer les modifications" qui met à jour le projet dans localStorage
+
+Aucune actualisation de la page ne doit être nécessaire
+
+✅ 3. STABILITÉ DES COMPORTEMENTS (Navigation & État)
+Lorsque je bascule d’une catégorie à une autre :
+
+Les champs doivent se mettre à jour automatiquement
+
+Je dois pouvoir modifier ou ajouter des éléments sans recharger manuellement
+
+Les champs doivent être clairs : s’ils sont calculés, ils sont non modifiables. S’ils sont vides, je peux les remplir.
+
+La logique du projet entier doit être persistante en mémoire + localStorage
+
+✅ 4. GESTION DU LOCALSTORAGE
+Toute lecture ou écriture doit se faire via une clé commune (savedProjects)
+
+Il ne doit jamais y avoir d’écrasement automatique sans vérification
+
+Les opérations doivent toujours vérifier si une valeur existe :
+
+js
+Copier
+Modifier
+if (!localStorage.getItem("savedProjects")) {
+    localStorage.setItem("savedProjects", JSON.stringify([]));
+}
+✅ 5. VÉRIFICATION DE BASE
+Implémente une fonction de contrôle appelée à chaque modification ou chargement :
+
+js
+Copier
+Modifier
+function validateProjectStructure(project) {
+  // Vérifie que les champs essentiels sont présents
+  // Empêche toute modification non prévue
+}
+🎯 Objectif final :
+
+Ne plus avoir besoin de recharger la page
+
+Ne plus perdre les données quand je modifie un projet
+
+Avoir une base solide pour la suite (résumé, facturation, impression…)
+
+Merci de restructurer l’app à partir de cette logique globale, pour qu’on reparte enfin sur une base stable.

@@ -1,0 +1,942 @@
+/**
+ * PROJECT CORE - Module central pour la gestion des projets
+ * 
+ * Ce module centralise toutes les opérations relatives aux projets :
+ * - Lecture/écriture dans le localStorage
+ * - Création de projets
+ * - Modification de projets
+ * - Vérification de l'intégrité des données
+ * 
+ * Il sert de point d'entrée unique pour toutes les opérations de données,
+ * garantissant ainsi cohérence et stabilité.
+ */
+
+// Namespace pour le module
+const ProjectCore = (function() {
+    // Constantes
+    const STORAGE_KEY = 'savedProjects';
+    const DEFAULT_PROJECT_STATUS = 'inProgress';
+    
+    /**
+     * Initialise le système de projets
+     * Vérifie et crée les structures de stockage nécessaires si elles n'existent pas
+     */
+    function initialize() {
+        console.log('Initialisation du système de projets...');
+        
+        // Vérifier si la structure de stockage existe
+        if (!localStorage.getItem(STORAGE_KEY)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+            console.log('Structure de stockage des projets créée');
+        }
+        
+        // Vérifier l'intégrité des projets existants
+        const projects = getAllProjects();
+        let hasInvalidProjects = false;
+        
+        projects.forEach((project, index) => {
+            if (!validateProjectStructure(project)) {
+                console.warn(`Projet ${index} (${project.projectName || 'Sans nom'}) invalide, structure corrigée`);
+                projects[index] = fixProjectStructure(project);
+                hasInvalidProjects = true;
+            }
+        });
+        
+        // Si des projets ont été corrigés, les sauvegarder
+        if (hasInvalidProjects) {
+            saveAllProjects(projects);
+            console.log('Projets corrigés et sauvegardés');
+        }
+        
+        console.log('Système de projets initialisé avec succès');
+        return true;
+    }
+    
+    /**
+     * Récupère tous les projets depuis le localStorage
+     * @returns {Array} Tableau de tous les projets
+     */
+    function getAllProjects() {
+        try {
+            const projectsJson = localStorage.getItem(STORAGE_KEY);
+            return projectsJson ? JSON.parse(projectsJson) : [];
+        } catch (error) {
+            console.error('Erreur lors de la récupération des projets:', error);
+            return [];
+        }
+    }
+    
+    /**
+     * Sauvegarde tous les projets dans le localStorage
+     * @param {Array} projects Tableau de tous les projets
+     * @returns {boolean} true si la sauvegarde a réussi, false sinon
+     */
+    function saveAllProjects(projects) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+            return true;
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde des projets:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Récupère un projet par son ID
+     * @param {string} projectId ID du projet à récupérer
+     * @returns {Object|null} Le projet ou null s'il n'existe pas
+     */
+    function getProjectById(projectId) {
+        if (!projectId) return null;
+        
+        const projects = getAllProjects();
+        return projects.find(project => project.id === projectId) || null;
+    }
+    
+    /**
+     * Crée un nouveau projet
+     * @param {Object} projectData Données du projet à créer
+     * @returns {Object} Le projet créé avec son ID généré
+     */
+    function createProject(projectData) {
+        // Vérifier les données du projet
+        if (!projectData || typeof projectData !== 'object') {
+            console.error('Données de projet invalides');
+            return null;
+        }
+        
+        // Générer un ID unique et ajouter la date de création
+        const newProject = {
+            ...projectData,
+            id: projectData.id || generateUniqueId(),
+            createdAt: projectData.createdAt || new Date().toISOString()
+        };
+        
+        // Valider et corriger la structure si nécessaire
+        if (!validateProjectStructure(newProject)) {
+            newProject = fixProjectStructure(newProject);
+        }
+        
+        // Récupérer les projets existants
+        const projects = getAllProjects();
+        
+        // Ajouter le nouveau projet
+        projects.push(newProject);
+        
+        // Sauvegarder tous les projets
+        if (saveAllProjects(projects)) {
+            console.log('Nouveau projet créé avec succès:', newProject.projectName);
+            return newProject;
+        } else {
+            console.error('Erreur lors de la création du projet');
+            return null;
+        }
+    }
+    
+    /**
+     * Met à jour un projet existant
+     * @param {string} projectId ID du projet à mettre à jour
+     * @param {Object} updatedData Nouvelles données du projet
+     * @returns {Object|null} Le projet mis à jour ou null en cas d'erreur
+     */
+    function updateProject(projectId, updatedData) {
+        if (!projectId || !updatedData) {
+            console.error('ID de projet ou données de mise à jour manquants');
+            return null;
+        }
+        
+        // Récupérer tous les projets
+        const projects = getAllProjects();
+        
+        // Trouver l'index du projet à mettre à jour
+        const projectIndex = projects.findIndex(project => project.id === projectId);
+        
+        if (projectIndex === -1) {
+            console.error('Projet non trouvé:', projectId);
+            return null;
+        }
+        
+        // Conserver l'ID et la date de création originaux
+        const originalId = projects[projectIndex].id;
+        const originalCreatedAt = projects[projectIndex].createdAt;
+        
+        // Mettre à jour le projet
+        const updatedProject = {
+            ...updatedData,
+            id: originalId,
+            createdAt: originalCreatedAt
+        };
+        
+        // Valider et corriger la structure si nécessaire
+        if (!validateProjectStructure(updatedProject)) {
+            updatedProject = fixProjectStructure(updatedProject);
+        }
+        
+        // Mettre à jour le projet dans le tableau
+        projects[projectIndex] = updatedProject;
+        
+        // Sauvegarder tous les projets
+        if (saveAllProjects(projects)) {
+            console.log('Projet mis à jour avec succès:', updatedProject.projectName);
+            return updatedProject;
+        } else {
+            console.error('Erreur lors de la mise à jour du projet');
+            return null;
+        }
+    }
+    
+    /**
+     * Supprime un projet
+     * @param {string} projectId ID du projet à supprimer
+     * @returns {boolean} true si la suppression a réussi, false sinon
+     */
+    function deleteProject(projectId) {
+        if (!projectId) {
+            console.error('ID de projet manquant');
+            return false;
+        }
+        
+        // Récupérer tous les projets
+        const projects = getAllProjects();
+        
+        // Filtrer pour exclure le projet à supprimer
+        const filteredProjects = projects.filter(project => project.id !== projectId);
+        
+        // Vérifier si un projet a été supprimé
+        if (filteredProjects.length === projects.length) {
+            console.warn('Aucun projet trouvé avec cet ID:', projectId);
+            return false;
+        }
+        
+        // Sauvegarder les projets filtrés
+        if (saveAllProjects(filteredProjects)) {
+            console.log('Projet supprimé avec succès:', projectId);
+            return true;
+        } else {
+            console.error('Erreur lors de la suppression du projet');
+            return false;
+        }
+    }
+    
+    /**
+     * Valide la structure d'un projet
+     * @param {Object} project Projet à valider
+     * @returns {boolean} true si le projet est valide, false sinon
+     */
+    function validateProjectStructure(project) {
+        if (!project || typeof project !== 'object') return false;
+        
+        // Vérifier les champs obligatoires
+        if (!project.id || !project.projectName) {
+            return false;
+        }
+        
+        // Vérifier les catégories
+        if (!Array.isArray(project.categories)) {
+            return false;
+        }
+        
+        // Vérifier chaque catégorie
+        for (const category of project.categories) {
+            if (typeof category !== 'object') return false;
+            
+            // Vérifier les sous-catégories
+            if (category.subcategories && !Array.isArray(category.subcategories)) {
+                return false;
+            }
+            
+            // Vérifier chaque sous-catégorie
+            if (category.subcategories) {
+                for (const subcategory of category.subcategories) {
+                    if (typeof subcategory !== 'object') return false;
+                    
+                    // Vérifier les lignes
+                    if (subcategory.lines && !Array.isArray(subcategory.lines)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Corrige la structure d'un projet invalide
+     * @param {Object} project Projet à corriger
+     * @returns {Object} Projet corrigé
+     */
+    function fixProjectStructure(project) {
+        // Créer une copie du projet
+        const fixedProject = { ...project };
+        
+        // Ajouter les champs obligatoires manquants
+        if (!fixedProject.id) fixedProject.id = generateUniqueId();
+        if (!fixedProject.projectName) fixedProject.projectName = 'Projet sans nom';
+        if (!fixedProject.projectDate) fixedProject.projectDate = '';
+        if (!fixedProject.totalBudget) fixedProject.totalBudget = '0';
+        if (!fixedProject.template) fixedProject.template = 'Autre';
+        if (!fixedProject.projectStatus) fixedProject.projectStatus = DEFAULT_PROJECT_STATUS;
+        if (typeof fixedProject.linkToWallet !== 'boolean') fixedProject.linkToWallet = false;
+        
+        // S'assurer que les catégories existent et sont un tableau
+        if (!fixedProject.categories || !Array.isArray(fixedProject.categories)) {
+            fixedProject.categories = [];
+        }
+        
+        // Vérifier chaque catégorie
+        fixedProject.categories = fixedProject.categories.map(category => {
+            // Créer une copie de la catégorie
+            const fixedCategory = { ...category };
+            
+            // Ajouter les champs manquants
+            if (!fixedCategory.name) fixedCategory.name = 'Catégorie sans nom';
+            if (!fixedCategory.amount) fixedCategory.amount = '0';
+            
+            // S'assurer que les sous-catégories existent et sont un tableau
+            if (!fixedCategory.subcategories || !Array.isArray(fixedCategory.subcategories)) {
+                fixedCategory.subcategories = [];
+            }
+            
+            // Vérifier chaque sous-catégorie
+            fixedCategory.subcategories = fixedCategory.subcategories.map(subcategory => {
+                // Créer une copie de la sous-catégorie
+                const fixedSubcategory = { ...subcategory };
+                
+                // Ajouter les champs manquants
+                if (!fixedSubcategory.name) fixedSubcategory.name = 'Sous-catégorie sans nom';
+                if (!fixedSubcategory.amount) fixedSubcategory.amount = '0';
+                
+                // S'assurer que les lignes existent et sont un tableau
+                if (!fixedSubcategory.lines || !Array.isArray(fixedSubcategory.lines)) {
+                    fixedSubcategory.lines = [];
+                }
+                
+                // Vérifier chaque ligne
+                fixedSubcategory.lines = fixedSubcategory.lines.map(line => {
+                    // Créer une copie de la ligne
+                    const fixedLine = { ...line };
+                    
+                    // Ajouter les champs manquants
+                    if (!fixedLine.name) fixedLine.name = 'Ligne sans nom';
+                    if (!fixedLine.amount) fixedLine.amount = '0';
+                    
+                    return fixedLine;
+                });
+                
+                return fixedSubcategory;
+            });
+            
+            return fixedCategory;
+        });
+        
+        return fixedProject;
+    }
+    
+    /**
+     * Génère un ID unique basé sur le timestamp
+     * @returns {string} ID unique
+     */
+    function generateUniqueId() {
+        return Date.now().toString();
+    }
+    
+    /**
+     * Collecte les données d'un formulaire de projet
+     * @param {HTMLFormElement} form Formulaire à collecter
+     * @returns {Object} Données du projet
+     */
+    function collectFormData(form) {
+        if (!form) {
+            console.error('Formulaire non trouvé');
+            return null;
+        }
+        
+        // Données de base
+        const formData = {
+            projectName: document.getElementById('projectName')?.value || '',
+            projectDate: document.getElementById('projectDate')?.value || '',
+            projectEndDate: document.getElementById('projectEndDate')?.value || '',
+            totalBudget: document.getElementById('totalBudget')?.value || '',
+            projectStatus: document.getElementById('projectStatus')?.value || DEFAULT_PROJECT_STATUS,
+            linkToWallet: document.getElementById('linkToWallet')?.checked || false,
+            categories: [] // Sera rempli par collectCategories()
+        };
+        
+        // Récupérer le template sélectionné
+        const selectedTemplate = document.querySelector('.template-option.selected');
+        if (selectedTemplate) {
+            formData.template = selectedTemplate.getAttribute('data-template') || 'Autre';
+        } else {
+            formData.template = 'Autre';
+        }
+        
+        // Collecter les catégories
+        formData.categories = collectCategories();
+        
+        // Vérifier si des données de liste de souhaits sont présentes
+        const createWishlist = document.getElementById('createWishlist')?.checked || false;
+        if (createWishlist) {
+            formData.createWishlist = true;
+            formData.wishlistData = {
+                recipientType: document.getElementById('wishlistRecipientType')?.value || 'myself'
+            };
+            
+            if (formData.wishlistData.recipientType === 'other') {
+                formData.wishlistData.recipientName = document.getElementById('wishlistRecipientName')?.value || '';
+            }
+        }
+        
+        return formData;
+    }
+    
+    /**
+     * Collecte les catégories du formulaire
+     * @returns {Array} Tableau des catégories
+     */
+    function collectCategories() {
+        const categories = [];
+        
+        // Récupérer toutes les catégories
+        const categoryElements = document.querySelectorAll('.expense-category');
+        
+        categoryElements.forEach(categoryElement => {
+            const categoryName = categoryElement.querySelector('.category-name')?.textContent.trim() || '';
+            const categoryAmount = categoryElement.querySelector('.category-amount')?.textContent.trim() || '';
+            
+            const subcategories = [];
+            
+            // Récupérer toutes les sous-catégories
+            const subcategoryElements = categoryElement.querySelectorAll('.subcategory');
+            
+            subcategoryElements.forEach(subcategoryElement => {
+                const subcategoryName = subcategoryElement.querySelector('.subcategory-name')?.textContent.trim() || '';
+                const subcategoryAmount = subcategoryElement.querySelector('.subcategory-amount')?.textContent.trim() || '';
+                
+                const lines = [];
+                
+                // Récupérer toutes les lignes
+                const lineElements = subcategoryElement.querySelectorAll('.expense-line');
+                
+                lineElements.forEach(lineElement => {
+                    const lineName = lineElement.querySelector('.line-name')?.textContent.trim() || '';
+                    const lineAmount = lineElement.querySelector('.line-amount')?.textContent.trim() || '';
+                    
+                    if (lineName || lineAmount) {
+                        lines.push({
+                            name: lineName,
+                            amount: lineAmount
+                        });
+                    }
+                });
+                
+                if (subcategoryName || subcategoryAmount || lines.length > 0) {
+                    subcategories.push({
+                        name: subcategoryName,
+                        amount: subcategoryAmount,
+                        lines: lines
+                    });
+                }
+            });
+            
+            if (categoryName || categoryAmount || subcategories.length > 0) {
+                categories.push({
+                    name: categoryName,
+                    amount: categoryAmount,
+                    subcategories: subcategories
+                });
+            }
+        });
+        
+        return categories;
+    }
+    
+    /**
+     * Remplit un formulaire avec les données d'un projet
+     * @param {Object} project Projet à utiliser pour remplir le formulaire
+     * @returns {boolean} true si le remplissage a réussi, false sinon
+     */
+    function fillFormWithProject(project) {
+        if (!project) {
+            console.error('Projet non trouvé');
+            return false;
+        }
+        
+        console.log('Remplissage du formulaire avec les données du projet:', project.projectName);
+        
+        // Champs de base
+        if (document.getElementById('projectName')) {
+            document.getElementById('projectName').value = project.projectName || '';
+        }
+        
+        if (document.getElementById('projectDate')) {
+            document.getElementById('projectDate').value = project.projectDate || '';
+        }
+        
+        if (document.getElementById('projectEndDate')) {
+            document.getElementById('projectEndDate').value = project.projectEndDate || '';
+        }
+        
+        if (document.getElementById('totalBudget')) {
+            document.getElementById('totalBudget').value = project.totalBudget || '';
+        }
+        
+        if (document.getElementById('projectStatus')) {
+            document.getElementById('projectStatus').value = project.projectStatus || DEFAULT_PROJECT_STATUS;
+        }
+        
+        // Lien vers portefeuille
+        if (document.getElementById('linkToWallet')) {
+            document.getElementById('linkToWallet').checked = project.linkToWallet || false;
+        }
+        
+        // Sélectionner le template
+        if (project.template) {
+            selectTemplate(project.template);
+        }
+        
+        // Remplir les catégories
+        if (project.categories && project.categories.length > 0) {
+            clearCategoriesContainer();
+            fillCategories(project.categories);
+        }
+        
+        // Remplir les données de liste de souhaits si présentes
+        if (project.createWishlist) {
+            fillWishlistData(project);
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Sélectionne un template dans le formulaire
+     * @param {string} templateName Nom du template à sélectionner
+     */
+    function selectTemplate(templateName) {
+        if (!templateName) return;
+        
+        console.log('Sélection du template:', templateName);
+        
+        const templateElements = document.querySelectorAll('.template-option');
+        templateElements.forEach(el => {
+            el.classList.remove('selected');
+            
+            if (el.getAttribute('data-template') === templateName) {
+                el.classList.add('selected');
+                
+                // Activer son accordéon parent si nécessaire
+                const accordionContent = el.closest('.accordion-content');
+                if (accordionContent) {
+                    // Fermer tous les autres accordéons d'abord
+                    document.querySelectorAll('.accordion-content').forEach(content => {
+                        content.style.display = 'none';
+                        const header = content.previousElementSibling;
+                        if (header) {
+                            header.classList.remove('active');
+                            const icon = header.querySelector('i');
+                            if (icon) icon.className = 'fas fa-chevron-down';
+                        }
+                    });
+                    
+                    // Ouvrir cet accordéon
+                    accordionContent.style.display = 'block';
+                    const header = accordionContent.previousElementSibling;
+                    if (header) {
+                        header.classList.add('active');
+                        const icon = header.querySelector('i');
+                        if (icon) icon.className = 'fas fa-chevron-up';
+                    }
+                }
+                
+                // Mettre à jour le titre du type de projet
+                const projectTypeElement = document.querySelector('.project-type');
+                if (projectTypeElement) {
+                    projectTypeElement.textContent = templateName;
+                }
+            }
+        });
+    }
+    
+    /**
+     * Efface le conteneur des catégories
+     */
+    function clearCategoriesContainer() {
+        const container = document.getElementById('categoriesContainer');
+        if (container) {
+            container.innerHTML = '';
+        }
+    }
+    
+    /**
+     * Remplit le formulaire avec les catégories d'un projet
+     * @param {Array} categories Catégories à ajouter
+     */
+    function fillCategories(categories) {
+        if (!categories || !Array.isArray(categories)) return;
+        
+        const container = document.getElementById('categoriesContainer');
+        if (!container) {
+            console.error('Conteneur de catégories non trouvé');
+            return;
+        }
+        
+        // Ajouter chaque catégorie
+        categories.forEach(category => {
+            // Créer l'élément de catégorie
+            const categoryElement = document.createElement('div');
+            categoryElement.className = 'expense-category';
+            categoryElement.innerHTML = `
+                <div class="category-header">
+                    <div class="category-name" contenteditable="true">${category.name || ''}</div>
+                    <div class="category-amount" contenteditable="true">${category.amount || '0'}</div>
+                    <div class="category-actions">
+                        <button class="btn-sm delete-category-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="subcategories-container"></div>
+                <div class="category-footer">
+                    <button class="btn-sm add-subcategory-btn">
+                        <i class="fas fa-plus"></i> Ajouter une sous-catégorie
+                    </button>
+                </div>
+            `;
+            
+            // Ajouter au conteneur
+            container.appendChild(categoryElement);
+            
+            // Récupérer le conteneur de sous-catégories
+            const subcategoriesContainer = categoryElement.querySelector('.subcategories-container');
+            
+            // Ajouter les sous-catégories
+            if (category.subcategories && category.subcategories.length > 0) {
+                category.subcategories.forEach(subcategory => {
+                    // Créer l'élément de sous-catégorie
+                    const subcategoryElement = document.createElement('div');
+                    subcategoryElement.className = 'subcategory';
+                    subcategoryElement.innerHTML = `
+                        <div class="subcategory-header">
+                            <div class="subcategory-name" contenteditable="true">${subcategory.name || ''}</div>
+                            <div class="subcategory-amount" contenteditable="true">${subcategory.amount || '0'}</div>
+                            <div class="subcategory-actions">
+                                <button class="btn-sm delete-subcategory-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="expense-lines"></div>
+                        <div class="subcategory-footer">
+                            <button class="btn-sm add-line-btn">
+                                <i class="fas fa-plus"></i> Ajouter une ligne
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Ajouter au conteneur
+                    subcategoriesContainer.appendChild(subcategoryElement);
+                    
+                    // Récupérer le conteneur de lignes
+                    const linesContainer = subcategoryElement.querySelector('.expense-lines');
+                    
+                    // Ajouter les lignes
+                    if (subcategory.lines && subcategory.lines.length > 0) {
+                        subcategory.lines.forEach(line => {
+                            // Créer l'élément de ligne
+                            const lineElement = document.createElement('div');
+                            lineElement.className = 'expense-line';
+                            lineElement.innerHTML = `
+                                <div class="line-name" contenteditable="true">${line.name || ''}</div>
+                                <div class="line-amount" contenteditable="true">${line.amount || '0'}</div>
+                                <div class="line-actions">
+                                    <button class="btn-sm delete-line-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            `;
+                            
+                            // Ajouter au conteneur
+                            linesContainer.appendChild(lineElement);
+                        });
+                    }
+                });
+            }
+        });
+        
+        // Réinitialiser les écouteurs d'événements
+        reinitializeEventListeners();
+    }
+    
+    /**
+     * Réinitialise les écouteurs d'événements pour les actions
+     */
+    function reinitializeEventListeners() {
+        // Liste des fonctions d'initialisation à appeler
+        const initializerFunctions = [
+            'attachCategoryEventListeners',
+            'attachBudgetAmountListeners',
+            'makeSubcategoriesEditableByDefault',
+            'fixAllEditableElements',
+            'initCategoryDeletionButtons',
+            'setupLineEventListeners'
+        ];
+        
+        // Appeler chaque fonction si elle existe
+        initializerFunctions.forEach(funcName => {
+            if (typeof window[funcName] === 'function') {
+                try {
+                    window[funcName]();
+                } catch (error) {
+                    console.warn(`Erreur lors de l'initialisation de ${funcName}:`, error);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Remplit les champs de liste de souhaits
+     * @param {Object} project Projet contenant les données de liste de souhaits
+     */
+    function fillWishlistData(project) {
+        if (!project.createWishlist) return;
+        
+        // Activer la case à cocher
+        const createWishlistCheckbox = document.getElementById('createWishlist');
+        if (createWishlistCheckbox) {
+            createWishlistCheckbox.checked = true;
+            
+            // Afficher les options
+            const wishlistOptions = document.getElementById('wishlistOptions');
+            if (wishlistOptions) {
+                wishlistOptions.style.display = 'block';
+                wishlistOptions.classList.remove('hidden');
+            }
+        }
+        
+        // Remplir les données
+        if (project.wishlistData) {
+            // Type de destinataire
+            const recipientType = document.getElementById('wishlistRecipientType');
+            if (recipientType) {
+                recipientType.value = project.wishlistData.recipientType || 'myself';
+                
+                // Afficher/masquer le champ de nom du destinataire
+                const isOtherRecipient = project.wishlistData.recipientType === 'other';
+                const recipientNameContainer = document.getElementById('recipientNameContainer');
+                if (recipientNameContainer) {
+                    recipientNameContainer.style.display = isOtherRecipient ? 'block' : 'none';
+                    recipientNameContainer.classList.toggle('hidden', !isOtherRecipient);
+                }
+                
+                // Nom du destinataire
+                if (isOtherRecipient) {
+                    const recipientName = document.getElementById('wishlistRecipientName');
+                    if (recipientName) {
+                        recipientName.value = project.wishlistData.recipientName || '';
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Configure le formulaire pour la création d'un nouveau projet
+     */
+    function setupNewProjectForm() {
+        console.log('Configuration du formulaire pour un nouveau projet');
+        
+        // Changer le titre de la page
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.innerHTML = 'NOUVEAU PROJET';
+            pageTitle.style.color = '';
+        }
+        
+        // Changer le bouton de soumission
+        const submitButton = document.querySelector('.project-form button[type="submit"]');
+        if (submitButton) {
+            submitButton.textContent = 'Créer le projet';
+            submitButton.classList.remove('btn-success');
+        }
+        
+        // Intercepter la soumission du formulaire
+        const form = document.querySelector('form.project-form');
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                // Collecter les données du formulaire
+                const formData = collectFormData();
+                
+                // Créer le projet
+                const newProject = createProject(formData);
+                
+                if (newProject) {
+                    // Afficher une notification
+                    showNotification('Projet créé avec succès');
+                    
+                    // Rediriger vers la page du projet
+                    setTimeout(function() {
+                        window.location.href = 'projet.html?id=' + newProject.id;
+                    }, 1500);
+                } else {
+                    alert('Erreur lors de la création du projet. Veuillez réessayer.');
+                }
+                
+                return false;
+            };
+        }
+    }
+    
+    /**
+     * Configure le formulaire pour l'édition d'un projet existant
+     * @param {string} projectId ID du projet à éditer
+     */
+    function setupEditProjectForm(projectId) {
+        console.log('Configuration du formulaire pour l\'édition du projet:', projectId);
+        
+        if (!projectId) {
+            console.error('ID de projet manquant');
+            return false;
+        }
+        
+        // Récupérer le projet
+        const project = getProjectById(projectId);
+        
+        if (!project) {
+            console.error('Projet non trouvé:', projectId);
+            return false;
+        }
+        
+        // Changer le titre de la page
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.innerHTML = '<i class="fas fa-edit"></i> MODIFIER PROJET';
+            pageTitle.style.color = '#007bff';
+        }
+        
+        // Changer le bouton de soumission
+        const submitButton = document.querySelector('.project-form button[type="submit"]');
+        if (submitButton) {
+            submitButton.textContent = 'Enregistrer les modifications';
+            submitButton.classList.add('btn-success');
+        }
+        
+        // Remplir le formulaire
+        fillFormWithProject(project);
+        
+        // Intercepter la soumission du formulaire
+        const form = document.querySelector('form.project-form');
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                
+                // Collecter les données du formulaire
+                const formData = collectFormData();
+                
+                // Mettre à jour le projet
+                const updatedProject = updateProject(projectId, formData);
+                
+                if (updatedProject) {
+                    // Afficher une notification
+                    showNotification('Projet mis à jour avec succès');
+                    
+                    // Rediriger vers la page du projet
+                    setTimeout(function() {
+                        window.location.href = 'projet.html?id=' + projectId;
+                    }, 1500);
+                } else {
+                    alert('Erreur lors de la mise à jour du projet. Veuillez réessayer.');
+                }
+                
+                return false;
+            };
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Affiche une notification
+     * @param {string} message Message à afficher
+     * @param {string} type Type de notification (success, error, info)
+     */
+    function showNotification(message, type = 'success') {
+        // Créer l'élément de notification
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // Styles CSS
+        const styles = {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            padding: '15px 20px',
+            borderRadius: '5px',
+            zIndex: '9999',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+        };
+        
+        // Ajouter des styles spécifiques au type
+        if (type === 'success') {
+            styles.backgroundColor = '#d4edda';
+            styles.color = '#155724';
+        } else if (type === 'error') {
+            styles.backgroundColor = '#f8d7da';
+            styles.color = '#721c24';
+        } else if (type === 'info') {
+            styles.backgroundColor = '#d1ecf1';
+            styles.color = '#0c5460';
+        }
+        
+        // Appliquer les styles
+        Object.assign(notification.style, styles);
+        
+        // Ajouter au corps du document
+        document.body.appendChild(notification);
+        
+        // Supprimer après quelques secondes
+        setTimeout(function() {
+            notification.remove();
+        }, 3000);
+    }
+    
+    // Exposer les méthodes publiques
+    return {
+        initialize,
+        getAllProjects,
+        getProjectById,
+        createProject,
+        updateProject,
+        deleteProject,
+        validateProjectStructure,
+        collectFormData,
+        fillFormWithProject,
+        setupNewProjectForm,
+        setupEditProjectForm,
+        showNotification
+    };
+})();
+
+// Auto-initialisation quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser le système de projets
+    ProjectCore.initialize();
+    
+    // Déterminer si nous sommes en mode édition ou création
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEditMode = urlParams.get('edit') === 'true';
+    const projectId = urlParams.get('id');
+    
+    if (isEditMode && projectId) {
+        // Mode édition
+        console.log('Mode édition détecté, ID:', projectId);
+        ProjectCore.setupEditProjectForm(projectId);
+    } else {
+        // Mode création
+        console.log('Mode création détecté');
+        ProjectCore.setupNewProjectForm();
+    }
+});
