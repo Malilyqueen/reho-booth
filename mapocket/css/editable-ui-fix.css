@@ -1,0 +1,125 @@
+/**
+ * Correctifs pour l'UI éditable
+ * 
+ * Ce fichier contient des correctifs CSS pour résoudre les problèmes de 
+ * troncature de texte et de mise en page des éléments éditables.
+ */
+
+/* Empêcher la troncature des textes dans les champs éditables */
+.category-name, .subcategory-name, .line-name,
+.category-amount, .subcategory-amount, .line-amount,
+[contenteditable="true"] {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-break: break-word !important;
+    min-height: 24px !important;
+}
+
+/* Assurer que les noms ont une largeur minimale adéquate */
+.category-name, .subcategory-name, .line-name {
+    min-width: 200px !important;
+    flex: 1 !important;
+}
+
+/* Assurer que les montants ont une largeur fixe */
+.category-amount, .subcategory-amount, .line-amount {
+    min-width: 120px !important;
+    width: 120px !important;
+    text-align: right !important;
+}
+
+/* Styles pour les conteneurs pour éviter les déformations */
+.category-header, .subcategory-header, .expense-line {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 40px !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Style pour les montants calculés */
+.calculated-amount {
+    background-color: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #e9ecef !important;
+    font-style: italic !important;
+}
+
+/* Améliorer les styles lors de l'édition */
+[contenteditable="true"]:focus {
+    outline: none !important;
+    background-color: #f0f9ff !important;
+    box-shadow: 0 0 0 2px #007bff !important;
+    border-radius: 4px !important;
+    padding: 4px 8px !important;
+}
+
+/* Style pour signaler que les champs sont modifiables */
+[contenteditable="true"]:hover {
+    background-color: #f8f9fa !important;
+    border-radius: 4px !important;
+    cursor: text !important;
+}
+
+/* Assurer que les conteneurs principaux ne tronquent pas le contenu */
+.expense-category, .subcategory, .subcategories-container, .expense-lines {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    padding: 10px !important;
+}
+
+/* Style pour le conteneur des actions */
+.category-actions, .subcategory-actions, .line-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    min-width: 40px !important;
+}
+
+/* Style pour les boutons d'action */
+.add-subcategory-btn, .add-line-btn, .delete-category-btn, .delete-subcategory-btn, .delete-line-btn {
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    margin-left: 5px !important;
+}
+
+/* Structurer le formulaire pour une meilleure lisibilité */
+.project-form {
+    max-width: 100% !important;
+    padding: 20px !important;
+}
+
+/* Assurer que les catégories ont un espacement adéquat */
+.expense-category {
+    margin-bottom: 20px !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    background-color: #f8f9fa !important;
+}
+
+/* Sous-catégories avec un style distinct */
+.subcategory {
+    margin: 10px 0 !important;
+    padding: 10px !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 6px !important;
+    background-color: #ffffff !important;
+}
+
+/* Lignes avec un style distinct */
+.expense-line {
+    padding: 8px !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 4px !important;
+    background-color: #ffffff !important;
+}
+
+/* Assurer que les boutons de footer sont toujours visibles */
+.category-footer, .subcategory-footer {
+    margin-top: 10px !important;
+    text-align: left !important;
+}

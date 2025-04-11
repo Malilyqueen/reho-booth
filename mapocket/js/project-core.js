@@ -692,6 +692,174 @@ const ProjectCore = (function() {
                 }
             }
         });
+        
+        // S'assurer que tous les éléments sont éditables
+        makeAllElementsEditable();
+        
+        // Attacher les écouteurs pour le calcul automatique
+        attachAutoCalculationListeners();
+        
+        // Déclencher un calcul initial
+        updateAllTotals();
+    }
+    
+    /**
+     * Rend tous les éléments éditables
+     */
+    function makeAllElementsEditable() {
+        // Rendre tous les noms de catégories et montants éditables
+        document.querySelectorAll('.category-name, .subcategory-name, .line-name, .category-amount, .subcategory-amount, .line-amount').forEach(element => {
+            element.setAttribute('contenteditable', 'true');
+            
+            // S'assurer que le contenu ne sera pas tronqué
+            element.style.overflow = 'visible';
+            element.style.whiteSpace = 'normal';
+            element.style.wordBreak = 'break-word';
+            element.style.minWidth = '100px';
+            
+            // Ajouter un style de focus pour montrer que l'élément est éditable
+            element.addEventListener('focus', function() {
+                this.style.background = '#f0f9ff';
+                this.style.boxShadow = '0 0 0 2px #007bff';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.style.background = '';
+                this.style.boxShadow = '';
+            });
+        });
+    }
+    
+    /**
+     * Attache des écouteurs pour le calcul automatique
+     */
+    function attachAutoCalculationListeners() {
+        // Écouteurs pour tous les montants
+        document.querySelectorAll('.line-amount, .subcategory-amount, .category-amount').forEach(element => {
+            // Supprimer les anciens écouteurs pour éviter les doublons
+            element.removeEventListener('input', updateAllTotals);
+            element.removeEventListener('blur', updateAllTotals);
+            
+            // Ajouter les écouteurs
+            element.addEventListener('input', updateAllTotals);
+            element.addEventListener('blur', updateAllTotals);
+        });
+    }
+    
+    /**
+     * Met à jour tous les totaux
+     */
+    function updateAllTotals() {
+        console.log('Mise à jour de tous les totaux...');
+        
+        // Mise à jour des montants des sous-catégories
+        document.querySelectorAll('.subcategory').forEach(subcategory => {
+            updateSubcategoryTotal(subcategory);
+        });
+        
+        // Mise à jour des montants des catégories
+        document.querySelectorAll('.expense-category').forEach(category => {
+            updateCategoryTotal(category);
+        });
+        
+        // Mise à jour du montant total du projet
+        updateProjectTotal();
+    }
+    
+    /**
+     * Met à jour le montant total d'une sous-catégorie
+     */
+    function updateSubcategoryTotal(subcategory) {
+        const lines = subcategory.querySelectorAll('.expense-line');
+        let total = 0;
+        
+        lines.forEach(line => {
+            const amountElement = line.querySelector('.line-amount');
+            if (amountElement) {
+                total += extractNumericValue(amountElement.textContent);
+            }
+        });
+        
+        // Mettre à jour le montant de la sous-catégorie
+        const subcategoryAmount = subcategory.querySelector('.subcategory-amount');
+        if (subcategoryAmount && lines.length > 0) {
+            subcategoryAmount.textContent = formatCurrency(total);
+            subcategoryAmount.classList.add('calculated-amount');
+        }
+    }
+    
+    /**
+     * Met à jour le montant total d'une catégorie
+     */
+    function updateCategoryTotal(category) {
+        const subcategories = category.querySelectorAll('.subcategory');
+        let total = 0;
+        
+        subcategories.forEach(subcategory => {
+            const amountElement = subcategory.querySelector('.subcategory-amount');
+            if (amountElement) {
+                total += extractNumericValue(amountElement.textContent);
+            }
+        });
+        
+        // Mettre à jour le montant de la catégorie
+        const categoryAmount = category.querySelector('.category-amount');
+        if (categoryAmount && subcategories.length > 0) {
+            categoryAmount.textContent = formatCurrency(total);
+            categoryAmount.classList.add('calculated-amount');
+        }
+    }
+    
+    /**
+     * Met à jour le montant total du projet
+     */
+    function updateProjectTotal() {
+        const categories = document.querySelectorAll('.expense-category');
+        let total = 0;
+        
+        categories.forEach(category => {
+            const amountElement = category.querySelector('.category-amount');
+            if (amountElement) {
+                total += extractNumericValue(amountElement.textContent);
+            }
+        });
+        
+        // Mettre à jour le montant total du projet
+        const totalBudgetInput = document.getElementById('totalBudget');
+        if (totalBudgetInput && total > 0) {
+            totalBudgetInput.value = formatCurrency(total);
+        }
+    }
+    
+    /**
+     * Extrait la valeur numérique d'une chaîne
+     */
+    function extractNumericValue(amountStr) {
+        if (!amountStr) return 0;
+        
+        // Nettoyer la chaîne
+        const cleaned = amountStr.replace(/[^\d.,]/g, '')  // Supprimer tout sauf les chiffres, les points et les virgules
+                                .replace(',', '.');         // Remplacer les virgules par des points
+        
+        // Convertir en nombre
+        const value = parseFloat(cleaned);
+        
+        // Retourner le nombre ou 0 si invalide
+        return isNaN(value) ? 0 : value;
+    }
+    
+    /**
+     * Formate un nombre en devise
+     */
+    function formatCurrency(amount) {
+        // Vérifier si des fonctions de formatage de devise sont disponibles
+        if (typeof getCurrencySymbol === 'function') {
+            const symbol = getCurrencySymbol();
+            return `${symbol} ${amount.toFixed(2).replace('.', ',')}`;
+        }
+        
+        // Par défaut, utiliser l'euro
+        return `€ ${amount.toFixed(2).replace('.', ',')}`;
     }
     
     /**
