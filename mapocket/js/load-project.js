@@ -62,39 +62,33 @@ function renderProjectData(project) {
           if (subNameElement) subNameElement.textContent = subcategory.name;
           if (subAmountElement) subAmountElement.textContent = subcategory.amount;
           
-          // Remplir les lignes
+          // Trouver ou créer le conteneur de lignes
+          const linesContainer = subcategoryElement.querySelector(".lines-container");
+          if (!linesContainer) return;
+          
+          // Vider le conteneur de lignes existant pour éviter les doublons
+          linesContainer.innerHTML = "";
+          
+          // Remplir les lignes en utilisant la méthode d'ajout de lignes
           if (subcategory.lines && subcategory.lines.length > 0) {
-            const linesContainer = subcategoryElement.querySelector(".lines-container");
-            if (!linesContainer) return;
-            
-            const lineElements = linesContainer.querySelectorAll(".expense-line");
-            
-            subcategory.lines.forEach((line, lineIndex) => {
-              if (lineIndex >= lineElements.length) return;
-              
-              const lineElement = lineElements[lineIndex];
-              
-              // Remplir le nom et montant de la ligne
-              const lineNameElement = lineElement.querySelector(".line-name");
-              const lineAmountElement = lineElement.querySelector(".line-amount");
-              
-              if (lineNameElement) lineNameElement.textContent = line.name;
-              
-              // Convertir les montants textuels en valeurs numériques pour les inputs
-              if (lineAmountElement) {
-                // Si c'est un champ input, définir sa valeur
-                if (lineAmountElement.tagName === 'INPUT') {
-                  // Extraire la valeur numérique du montant texte
-                  const numericValue = extractNumberFromString(line.amount);
-                  lineAmountElement.value = numericValue;
-                  console.log(`Ligne ${line.name}: défini valeur input à ${numericValue} (de ${line.amount})`);
-                } else {
-                  // Sinon, définir le textContent
-                  lineAmountElement.textContent = line.amount;
-                  console.log(`Ligne ${line.name}: défini texte à ${line.amount}`);
-                }
-              }
+            subcategory.lines.forEach(line => {
+              const numericAmount = extractNumberFromString(line.amount);
+              addExpenseLine(linesContainer, line.name, numericAmount);
             });
+          }
+          
+          // Ajouter un bouton pour ajouter une nouvelle ligne
+          const addButton = document.createElement("button");
+          addButton.classList.add("add-line-btn");
+          addButton.textContent = "➕ Ajouter une dépense";
+          addButton.addEventListener("click", function() {
+            addExpenseLine(linesContainer);
+            recalculateAllAmounts();
+          });
+          
+          // Vérifier si le bouton existe déjà
+          if (!subcategoryElement.querySelector(".add-line-btn")) {
+            linesContainer.after(addButton);
           }
         });
       }
@@ -105,6 +99,39 @@ function renderProjectData(project) {
   setTimeout(() => {
     recalculateAllAmounts();
   }, 0);
+}
+
+function addExpenseLine(container, name = "", amount = 0) {
+  console.log(`Ajout d'une ligne: "${name}" avec montant ${amount}`);
+  
+  const div = document.createElement("div");
+  div.classList.add("expense-line");
+
+  div.innerHTML = `
+    <input type="text" class="line-name" placeholder="Nom de la dépense" value="${name}">
+    <input type="number" class="line-amount" placeholder="Montant" value="${amount}">
+    <button class="delete-line">🗑️</button>
+  `;
+
+  // Ajouter au DOM
+  container.appendChild(div);
+
+  // Ajouter listeners
+  div.querySelector(".line-amount").addEventListener("input", () => {
+    recalculateAllAmounts();
+  });
+  
+  div.querySelector(".line-name").addEventListener("input", () => {
+    // Sauvegarder le changement de nom
+    console.log("Nom de ligne modifié");
+  });
+  
+  div.querySelector(".delete-line").addEventListener("click", () => {
+    div.remove();
+    recalculateAllAmounts();
+  });
+  
+  return div;
 }
 
 function recalculateAllAmounts() {
@@ -126,8 +153,18 @@ function recalculateAllAmounts() {
       // Parcourir toutes les lignes de dépenses pour cette sous-catégorie
       subcatEl.querySelectorAll(".expense-line").forEach(lineEl => {
         const lineAmount = lineEl.querySelector(".line-amount");
-        const lineName = lineEl.querySelector(".line-name")?.textContent || "Ligne";
+        const lineNameEl = lineEl.querySelector(".line-name");
+        let lineName = "Ligne";
         let amount = 0;
+        
+        // Récupérer le nom correct selon le type d'élément
+        if (lineNameEl) {
+          if (lineNameEl.tagName === 'INPUT') {
+            lineName = lineNameEl.value || "Ligne";
+          } else {
+            lineName = lineNameEl.textContent || "Ligne";
+          }
+        }
         
         // Extraction du montant selon le type d'élément
         if (lineAmount) {
