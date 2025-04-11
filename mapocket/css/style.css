@@ -64,12 +64,12 @@ body {
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--white); /* Texte blanc pour le logo */
 }
 
 /* Dark mode styles for logo - disabled as requested (always use light mode) */
 body.dark-mode .logo h1 {
-    color: var(--primary-color); /* Keep text dark even in dark mode */
+    color: var(--white); /* Texte blanc même en mode sombre */
 }
 
 .main-nav ul {
@@ -102,7 +102,7 @@ body.dark-mode .logo h1 {
 }
 
 .main-nav ul li:not(.active) a:hover {
-    background-color: rgba(29, 53, 87, 0.1);
+    background-color: rgba(255, 255, 255, 0.1); /* Effet de survol plus visible */
 }
 
 /* Content styles */
