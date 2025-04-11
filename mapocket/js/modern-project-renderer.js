@@ -3,12 +3,22 @@
  * Le rendu est basé sur le système de templates et utilise les classes Tailwind
  */
 
+// Variables globales
+let currentProject = null;
+let isEditMode = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Vérifie que nous sommes sur la page de visualisation de projet
     if (!document.getElementById('categoryList')) return;
     
     // Initialisation
     initModernProjectView();
+    
+    // Ajouter l'écouteur d'événement pour le bouton d'édition
+    const editButton = document.querySelector('.btn-edit-project');
+    if (editButton) {
+        editButton.addEventListener('click', toggleEditMode);
+    }
 });
 
 /**
@@ -371,4 +381,670 @@ function getSubcategoryEmoji(subcategoryName) {
     
     // Emoji par défaut
     return '📝';
+}
+
+/**
+ * Bascule entre le mode lecture et le mode édition
+ */
+function toggleEditMode() {
+    isEditMode = !isEditMode;
+    
+    // Récupérer le bouton d'édition
+    const editButton = document.querySelector('.btn-edit-project');
+    
+    // Modifier l'apparence du bouton et ajouter/supprimer le bouton de sauvegarde
+    if (isEditMode) {
+        // Changer l'apparence du bouton d'édition
+        editButton.innerHTML = '<i class="fas fa-times mr-2"></i>Annuler';
+        editButton.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        editButton.classList.add('bg-gray-500', 'hover:bg-gray-600');
+        
+        // Ajouter le bouton "Sauvegarder les modifications"
+        if (!document.getElementById('saveChangesBtn')) {
+            const saveBtn = document.createElement('button');
+            saveBtn.id = 'saveChangesBtn';
+            saveBtn.className = 'bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-colors ml-2';
+            saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Sauvegarder';
+            saveBtn.addEventListener('click', saveProjectChanges);
+            
+            // Insérer après le bouton d'édition
+            editButton.parentNode.insertBefore(saveBtn, editButton.nextSibling);
+        }
+        
+        // Activer le mode édition
+        activateEditMode();
+    } else {
+        // Restaurer l'apparence du bouton d'édition
+        editButton.innerHTML = '<i class="fas fa-edit mr-2"></i>Modifier';
+        editButton.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+        editButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+        
+        // Supprimer le bouton de sauvegarde
+        const saveBtn = document.getElementById('saveChangesBtn');
+        if (saveBtn) {
+            saveBtn.remove();
+        }
+        
+        // Désactiver le mode édition
+        deactivateEditMode();
+    }
+}
+
+/**
+ * Active le mode édition sur toutes les catégories, sous-catégories et lignes
+ */
+function activateEditMode() {
+    document.body.classList.add('edit-mode');
+    
+    // Ajouter les boutons "Ajouter une catégorie"
+    const categoryListContainer = document.getElementById('categoryList');
+    if (!document.getElementById('addCategoryBtn')) {
+        const addCatBtn = document.createElement('button');
+        addCatBtn.id = 'addCategoryBtn';
+        addCatBtn.className = 'bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-colors mt-4 w-full';
+        addCatBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>Ajouter une catégorie';
+        addCatBtn.addEventListener('click', addNewCategory);
+        categoryListContainer.parentNode.appendChild(addCatBtn);
+    }
+    
+    // Rendre éditables les noms et montants des catégories et sous-catégories
+    document.querySelectorAll('.category').forEach(categoryEl => {
+        // Ajouter le bouton "Ajouter une sous-catégorie" à la catégorie
+        if (!categoryEl.querySelector('.add-subcategory-btn')) {
+            const addSubcatBtn = document.createElement('button');
+            addSubcatBtn.className = 'add-subcategory-btn text-blue-500 hover:text-blue-700 text-sm ml-4 mt-2';
+            addSubcatBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>Ajouter une sous-catégorie';
+            addSubcatBtn.addEventListener('click', function() {
+                addNewSubcategory(categoryEl);
+            });
+            categoryEl.appendChild(addSubcatBtn);
+        }
+        
+        // Rendre le nom de catégorie éditable
+        const catName = categoryEl.querySelector('.category-name');
+        if (catName && catName.tagName !== 'INPUT') {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'category-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+            nameInput.value = catName.textContent.trim();
+            catName.parentNode.replaceChild(nameInput, catName);
+        }
+    });
+    
+    // Rendre éditables les noms et montants des sous-catégories
+    document.querySelectorAll('.subcategory').forEach(subcatEl => {
+        // Ajouter le bouton "Ajouter une dépense" à la sous-catégorie
+        if (!subcatEl.querySelector('.add-expense-btn')) {
+            const addExpenseBtn = document.createElement('button');
+            addExpenseBtn.className = 'add-expense-btn text-green-500 hover:text-green-700 text-sm ml-8 mt-1 mb-2';
+            addExpenseBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>Ajouter une dépense';
+            addExpenseBtn.addEventListener('click', function() {
+                addNewExpenseLine(subcatEl);
+            });
+            subcatEl.appendChild(addExpenseBtn);
+        }
+        
+        // Rendre le nom de sous-catégorie éditable
+        const subcatName = subcatEl.querySelector('.subcategory-name');
+        if (subcatName && subcatName.tagName !== 'INPUT') {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'subcategory-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+            nameInput.value = subcatName.textContent.trim();
+            subcatName.parentNode.replaceChild(nameInput, subcatName);
+        }
+    });
+    
+    // Rendre éditables les noms et montants des lignes de dépenses
+    document.querySelectorAll('.expense-line').forEach(lineEl => {
+        // Rendre le nom de ligne éditable
+        const lineName = lineEl.querySelector('.expense-name');
+        if (lineName && lineName.tagName !== 'INPUT') {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'expense-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+            nameInput.value = lineName.textContent.trim();
+            lineName.parentNode.replaceChild(nameInput, lineName);
+        }
+        
+        // Rendre le montant éditable
+        const lineAmount = lineEl.querySelector('.expense-amount');
+        if (lineAmount && lineAmount.tagName !== 'INPUT') {
+            const amount = parseFloat(lineAmount.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+            const amountInput = document.createElement('input');
+            amountInput.type = 'number';
+            amountInput.className = 'expense-amount bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+            amountInput.min = '0';
+            amountInput.step = '0.01';
+            amountInput.value = amount.toFixed(2);
+            amountInput.style.width = '80px';
+            lineAmount.parentNode.replaceChild(amountInput, lineAmount);
+            
+            // Recalculer les montants lors de la modification
+            amountInput.addEventListener('input', debounce(recalculateAllAmounts, 300));
+        }
+        
+        // Ajouter un bouton de suppression si non existant
+        if (!lineEl.querySelector('.delete-line-btn')) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-line-btn text-red-500 hover:text-red-700 ml-2';
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.addEventListener('click', function() {
+                if (confirm('Voulez-vous vraiment supprimer cette ligne?')) {
+                    lineEl.remove();
+                    recalculateAllAmounts();
+                }
+            });
+            lineEl.appendChild(deleteBtn);
+        }
+    });
+}
+
+/**
+ * Désactive le mode édition et rétablit les affichages en mode lecture
+ */
+function deactivateEditMode() {
+    document.body.classList.remove('edit-mode');
+    
+    // Supprimer le bouton "Ajouter une catégorie"
+    const addCatBtn = document.getElementById('addCategoryBtn');
+    if (addCatBtn) {
+        addCatBtn.remove();
+    }
+    
+    // Supprimer tous les boutons d'ajout et de suppression
+    document.querySelectorAll('.add-subcategory-btn, .add-expense-btn, .delete-line-btn').forEach(btn => {
+        btn.remove();
+    });
+    
+    // Convertir les inputs des catégories en texte
+    document.querySelectorAll('.category-name').forEach(input => {
+        if (input.tagName === 'INPUT') {
+            const span = document.createElement('span');
+            span.className = 'category-name';
+            span.textContent = input.value;
+            input.parentNode.replaceChild(span, input);
+        }
+    });
+    
+    // Convertir les inputs des sous-catégories en texte
+    document.querySelectorAll('.subcategory-name').forEach(input => {
+        if (input.tagName === 'INPUT') {
+            const span = document.createElement('span');
+            span.className = 'subcategory-name';
+            span.textContent = input.value;
+            input.parentNode.replaceChild(span, input);
+        }
+    });
+    
+    // Convertir les inputs des lignes en texte
+    document.querySelectorAll('.expense-name').forEach(input => {
+        if (input.tagName === 'INPUT') {
+            const span = document.createElement('span');
+            span.className = 'expense-name';
+            span.textContent = input.value;
+            input.parentNode.replaceChild(span, input);
+        }
+    });
+    
+    document.querySelectorAll('.expense-amount').forEach(input => {
+        if (input.tagName === 'INPUT') {
+            const span = document.createElement('span');
+            span.className = 'expense-amount ml-4 text-gray-600';
+            span.textContent = formatAmount(input.value);
+            input.parentNode.replaceChild(span, input);
+        }
+    });
+}
+
+/**
+ * Ajoute une nouvelle catégorie
+ */
+function addNewCategory() {
+    const catName = prompt('Nom de la nouvelle catégorie:');
+    if (!catName || catName.trim() === '') return;
+    
+    const categoryList = document.getElementById('categoryList');
+    const categoryTemplate = document.getElementById('category-template');
+    
+    // Cloner le template
+    const categoryNode = categoryTemplate.content.cloneNode(true);
+    const categoryDiv = categoryNode.querySelector('.category');
+    
+    // Générer un ID unique
+    const categoryId = generateUniqueId();
+    categoryDiv.dataset.id = categoryId;
+    
+    // Mettre à jour le nom de la catégorie
+    const categoryName = categoryNode.querySelector('.category-name');
+    const categoryAmount = categoryNode.querySelector('.category-amount');
+    const categoryEmoji = categoryNode.querySelector('.category-emoji');
+    
+    // Créer un input au lieu d'un span en mode édition
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'category-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+    nameInput.value = catName;
+    categoryName.parentNode.replaceChild(nameInput, categoryName);
+    
+    // Définir les autres attributs
+    categoryAmount.textContent = formatAmount(0);
+    categoryEmoji.textContent = getCategoryEmoji(catName);
+    
+    // Ajouter le bouton pour ajouter des sous-catégories
+    const addSubcatBtn = document.createElement('button');
+    addSubcatBtn.className = 'add-subcategory-btn text-blue-500 hover:text-blue-700 text-sm ml-4 mt-2';
+    addSubcatBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>Ajouter une sous-catégorie';
+    addSubcatBtn.addEventListener('click', function() {
+        addNewSubcategory(categoryDiv);
+    });
+    categoryDiv.appendChild(addSubcatBtn);
+    
+    // Ajouter la catégorie à la liste
+    categoryList.appendChild(categoryNode);
+    
+    // Créer la première sous-catégorie automatiquement
+    addNewSubcategory(categoryDiv, 'Nouvelle sous-catégorie');
+    
+    // Recalculer les montants
+    recalculateAllAmounts();
+    
+    return categoryDiv;
+}
+
+/**
+ * Ajoute une nouvelle sous-catégorie à une catégorie
+ */
+function addNewSubcategory(categoryEl, defaultName = null) {
+    const subcatName = defaultName || prompt('Nom de la nouvelle sous-catégorie:');
+    if (!subcatName || subcatName.trim() === '') return;
+    
+    const subcategoryTemplate = document.getElementById('subcategory-template');
+    
+    // Cloner le template
+    const subcategoryNode = subcategoryTemplate.content.cloneNode(true);
+    const subcategoryDiv = subcategoryNode.querySelector('.subcategory');
+    
+    // Générer un ID unique
+    const subcategoryId = generateUniqueId();
+    subcategoryDiv.dataset.id = subcategoryId;
+    
+    // Mettre à jour le nom de la sous-catégorie
+    const subcategoryName = subcategoryNode.querySelector('.subcategory-name');
+    const subcategoryAmount = subcategoryNode.querySelector('.subcategory-amount');
+    const subcategoryEmoji = subcategoryNode.querySelector('.subcategory-emoji');
+    
+    // Créer un input au lieu d'un span en mode édition
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'subcategory-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+    nameInput.value = subcatName;
+    subcategoryName.parentNode.replaceChild(nameInput, subcategoryName);
+    
+    // Définir les autres attributs
+    subcategoryAmount.textContent = formatAmount(0);
+    subcategoryEmoji.textContent = getSubcategoryEmoji(subcatName);
+    
+    // Ajouter le bouton pour ajouter des dépenses
+    const addExpenseBtn = document.createElement('button');
+    addExpenseBtn.className = 'add-expense-btn text-green-500 hover:text-green-700 text-sm ml-8 mt-1 mb-2';
+    addExpenseBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>Ajouter une dépense';
+    addExpenseBtn.addEventListener('click', function() {
+        addNewExpenseLine(subcategoryDiv);
+    });
+    subcategoryDiv.appendChild(addExpenseBtn);
+    
+    // Ajouter la sous-catégorie à la catégorie
+    const subcategoriesContainer = categoryEl.querySelector('.subcategories-container');
+    subcategoriesContainer.appendChild(subcategoryNode);
+    
+    // Vider le message "Aucune sous-catégorie" s'il existe
+    const emptyMessage = subcategoriesContainer.querySelector('p.text-gray-400');
+    if (emptyMessage) {
+        emptyMessage.remove();
+    }
+    
+    // Créer la première ligne de dépense automatiquement
+    addNewExpenseLine(subcategoryDiv, 'Nouvelle dépense', 0);
+    
+    // Recalculer les montants
+    recalculateAllAmounts();
+    
+    return subcategoryDiv;
+}
+
+/**
+ * Ajoute une nouvelle ligne de dépense à une sous-catégorie
+ */
+function addNewExpenseLine(subcategoryEl, defaultName = null, defaultAmount = null) {
+    const expenseLineTemplate = document.getElementById('expense-line-template');
+    
+    // Cloner le template
+    const lineNode = expenseLineTemplate.content.cloneNode(true);
+    const lineItem = lineNode.querySelector('.expense-line');
+    
+    // Générer un ID unique
+    const lineId = generateUniqueId();
+    lineItem.dataset.id = lineId;
+    
+    // Mettre à jour le nom et le montant de la ligne de dépense
+    const lineName = lineNode.querySelector('.expense-name');
+    const lineAmount = lineNode.querySelector('.expense-amount');
+    
+    // Créer un input au lieu d'un span en mode édition
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'expense-name bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+    nameInput.value = defaultName || 'Nouvelle dépense';
+    lineName.parentNode.replaceChild(nameInput, lineName);
+    
+    // Créer un input au lieu d'un span en mode édition pour le montant
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.className = 'expense-amount bg-gray-50 border-b border-blue-300 px-1 focus:outline-none focus:border-blue-500';
+    amountInput.min = '0';
+    amountInput.step = '0.01';
+    amountInput.value = (defaultAmount !== null) ? defaultAmount.toFixed(2) : '0.00';
+    amountInput.style.width = '80px';
+    lineAmount.parentNode.replaceChild(amountInput, lineAmount);
+    
+    // Recalculer les montants lors de la modification
+    amountInput.addEventListener('input', debounce(recalculateAllAmounts, 300));
+    
+    // Ajouter un bouton de suppression
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-line-btn text-red-500 hover:text-red-700 ml-2';
+    deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+    deleteBtn.addEventListener('click', function() {
+        if (confirm('Voulez-vous vraiment supprimer cette ligne?')) {
+            lineItem.remove();
+            recalculateAllAmounts();
+        }
+    });
+    lineItem.appendChild(deleteBtn);
+    
+    // Ajouter la ligne de dépense à la sous-catégorie
+    const expenseLines = subcategoryEl.querySelector('.expense-lines');
+    
+    // Vider le message "Aucune dépense" s'il existe
+    if (expenseLines.querySelector('li.text-gray-400')) {
+        expenseLines.innerHTML = '';
+    }
+    
+    expenseLines.appendChild(lineNode);
+    
+    // Recalculer les montants
+    recalculateAllAmounts();
+    
+    // Donner le focus au champ de nom
+    nameInput.focus();
+    
+    return lineItem;
+}
+
+/**
+ * Recalcule tous les montants (ligne -> sous-catégorie -> catégorie -> total)
+ * Cette fonction est appelée après chaque modification
+ */
+function recalculateAllAmounts() {
+    console.log("🔄 Recalcul en cascade lancé");
+    
+    let projectTotal = 0;
+    
+    // Pour chaque catégorie
+    document.querySelectorAll('.category').forEach(categoryEl => {
+        let categoryTotal = 0;
+        
+        // Pour chaque sous-catégorie dans cette catégorie
+        categoryEl.querySelectorAll('.subcategory').forEach(subEl => {
+            let subTotal = 0;
+            
+            // Pour chaque ligne de dépense dans cette sous-catégorie
+            subEl.querySelectorAll('.expense-line').forEach(lineEl => {
+                // Récupérer le montant (peut être un input ou un span selon le mode)
+                const amountEl = lineEl.querySelector('.expense-amount');
+                let amount = 0;
+                
+                if (amountEl) {
+                    if (amountEl.tagName === 'INPUT') {
+                        // Mode édition - lire la valeur du champ input
+                        amount = parseFloat(amountEl.value) || 0;
+                    } else {
+                        // Mode lecture - extraire la valeur numérique du texte
+                        amount = parseFloat(amountEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+                    }
+                    subTotal += amount;
+                }
+            });
+            
+            // Mettre à jour le montant de la sous-catégorie
+            const subAmountEl = subEl.querySelector('.subcategory-amount');
+            if (subAmountEl) {
+                subAmountEl.textContent = formatAmount(subTotal);
+            }
+            
+            categoryTotal += subTotal;
+        });
+        
+        // Mettre à jour le montant de la catégorie
+        const catAmountEl = categoryEl.querySelector('.category-amount');
+        if (catAmountEl) {
+            catAmountEl.textContent = formatAmount(categoryTotal);
+        }
+        
+        projectTotal += categoryTotal;
+    });
+    
+    // Mettre à jour le budget total du projet
+    const usedBudgetEl = document.getElementById('usedBudget');
+    if (usedBudgetEl) {
+        usedBudgetEl.textContent = formatAmount(projectTotal);
+    }
+    
+    // Mettre à jour l'écart budgétaire
+    const initialBudgetEl = document.getElementById('initialBudget');
+    const budgetGapEl = document.getElementById('budgetGap');
+    
+    if (initialBudgetEl && budgetGapEl) {
+        const initialBudget = parseFloat(initialBudgetEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+        const budgetGap = initialBudget - projectTotal;
+        
+        budgetGapEl.textContent = formatAmount(Math.abs(budgetGap));
+        
+        // Appliquer la couleur selon que l'écart est positif ou négatif
+        if (budgetGap >= 0) {
+            budgetGapEl.classList.add('text-green-600');
+            budgetGapEl.classList.remove('text-red-600');
+        } else {
+            budgetGapEl.classList.add('text-red-600');
+            budgetGapEl.classList.remove('text-green-600');
+        }
+    }
+    
+    // Mettre à jour la barre de progression
+    const initialBudget = parseFloat(document.getElementById('initialBudget').textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+    const percentage = initialBudget > 0 ? Math.min(Math.round((projectTotal / initialBudget) * 100), 100) : 0;
+    
+    document.getElementById('budgetPercentage').textContent = percentage + '%';
+    document.getElementById('progressBar').style.width = percentage + '%';
+    
+    // Changer la couleur de la barre selon le pourcentage
+    const progressBar = document.getElementById('progressBar');
+    if (percentage > 90) {
+        progressBar.classList.remove('bg-green-500', 'bg-yellow-500');
+        progressBar.classList.add('bg-red-500'); // Rouge si > 90%
+    } else if (percentage > 75) {
+        progressBar.classList.remove('bg-green-500', 'bg-red-500');
+        progressBar.classList.add('bg-yellow-500'); // Jaune si > 75%
+    } else {
+        progressBar.classList.remove('bg-yellow-500', 'bg-red-500');
+        progressBar.classList.add('bg-green-500'); // Vert sinon
+    }
+    
+    console.log(`✅ Recalcul terminé : total = ${projectTotal}`);
+    
+    return projectTotal;
+}
+
+/**
+ * Sauvegarde les modifications apportées au projet
+ */
+function saveProjectChanges() {
+    // Récupérer l'ID du projet en cours d'édition
+    const projectId = localStorage.getItem('viewProjectId');
+    if (!projectId) {
+        console.error('Aucun ID de projet trouvé dans le localStorage');
+        return;
+    }
+    
+    // Charger tous les projets
+    const projects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+    const projectIndex = projects.findIndex(p => p.id === projectId);
+    
+    if (projectIndex === -1) {
+        console.error('Projet non trouvé:', projectId);
+        return;
+    }
+    
+    // Récupérer le projet existant
+    const project = projects[projectIndex];
+    
+    // Mettre à jour le nom du projet (si modifiable)
+    const projectTitleEl = document.getElementById('projectTitle');
+    if (projectTitleEl) {
+        project.projectName = projectTitleEl.textContent || project.projectName;
+    }
+    
+    // Collecter toutes les catégories avec leurs sous-catégories et lignes de dépenses
+    const newCategories = [];
+    
+    document.querySelectorAll('.category').forEach(categoryEl => {
+        const categoryId = categoryEl.dataset.id;
+        const categoryName = categoryEl.querySelector('.category-name');
+        const categoryNameText = categoryName.tagName === 'INPUT' ? categoryName.value : categoryName.textContent;
+        
+        // Obtenir le montant depuis le texte affiché (il a déjà été recalculé)
+        const categoryAmountEl = categoryEl.querySelector('.category-amount');
+        const categoryAmountText = categoryAmountEl.textContent;
+        
+        // Créer la nouvelle catégorie
+        const newCategory = {
+            id: categoryId,
+            name: categoryNameText,
+            amount: categoryAmountText,
+            subcategories: []
+        };
+        
+        // Collecter les sous-catégories
+        categoryEl.querySelectorAll('.subcategory').forEach(subcatEl => {
+            const subcatId = subcatEl.dataset.id;
+            const subcatName = subcatEl.querySelector('.subcategory-name');
+            const subcatNameText = subcatName.tagName === 'INPUT' ? subcatName.value : subcatName.textContent;
+            
+            // Obtenir le montant depuis le texte affiché
+            const subcatAmountEl = subcatEl.querySelector('.subcategory-amount');
+            const subcatAmountText = subcatAmountEl.textContent;
+            
+            // Créer la nouvelle sous-catégorie
+            const newSubcategory = {
+                id: subcatId,
+                name: subcatNameText,
+                amount: subcatAmountText,
+                lines: []
+            };
+            
+            // Collecter les lignes de dépenses
+            subcatEl.querySelectorAll('.expense-line').forEach(lineEl => {
+                const lineId = lineEl.dataset.id;
+                const lineName = lineEl.querySelector('.expense-name');
+                const lineNameText = lineName.tagName === 'INPUT' ? lineName.value : lineName.textContent;
+                
+                // Obtenir le montant depuis l'input ou le texte affiché
+                const lineAmountEl = lineEl.querySelector('.expense-amount');
+                let lineAmountValue;
+                
+                if (lineAmountEl.tagName === 'INPUT') {
+                    lineAmountValue = formatAmount(parseFloat(lineAmountEl.value) || 0);
+                } else {
+                    lineAmountValue = lineAmountEl.textContent;
+                }
+                
+                // Ajouter la ligne à la sous-catégorie
+                newSubcategory.lines.push({
+                    id: lineId,
+                    name: lineNameText,
+                    amount: lineAmountValue
+                });
+            });
+            
+            // Ajouter la sous-catégorie à la catégorie
+            newCategory.subcategories.push(newSubcategory);
+        });
+        
+        // Ajouter la catégorie à la liste
+        newCategories.push(newCategory);
+    });
+    
+    // Mettre à jour le projet avec les nouvelles catégories
+    project.categories = newCategories;
+    
+    // Mettre à jour le budget total du projet
+    const usedBudgetEl = document.getElementById('usedBudget');
+    if (usedBudgetEl) {
+        project.totalBudget = usedBudgetEl.textContent;
+    }
+    
+    // Sauvegarder le projet mis à jour
+    projects[projectIndex] = project;
+    localStorage.setItem('savedProjects', JSON.stringify(projects));
+    
+    // Sortir du mode édition
+    toggleEditMode();
+    
+    // Afficher une notification de succès
+    showNotification('Projet sauvegardé avec succès');
+    
+    console.log('Projet sauvegardé:', project);
+}
+
+/**
+ * Affiche une notification
+ */
+function showNotification(message) {
+    // Vérifier si un élément de notification existe déjà
+    let notificationEl = document.getElementById('notification');
+    
+    // Si non, le créer
+    if (!notificationEl) {
+        notificationEl = document.createElement('div');
+        notificationEl.id = 'notification';
+        notificationEl.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-xl shadow-lg opacity-0 transition-opacity duration-300';
+        document.body.appendChild(notificationEl);
+    }
+    
+    // Mettre à jour le message et afficher la notification
+    notificationEl.textContent = message;
+    notificationEl.classList.remove('opacity-0');
+    notificationEl.classList.add('opacity-100');
+    
+    // Masquer la notification après quelques secondes
+    setTimeout(() => {
+        notificationEl.classList.remove('opacity-100');
+        notificationEl.classList.add('opacity-0');
+    }, 3000);
+}
+
+/**
+ * Fonction debounce pour limiter la fréquence d'appel d'une fonction
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func.apply(context, args);
+        }, wait);
+    };
 }
