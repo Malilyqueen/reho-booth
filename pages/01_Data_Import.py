@@ -45,8 +45,12 @@ with data_import_tabs[0]:
             
             if st.button("Save Data Source"):
                 if file_name in st.session_state.data_sources:
-                    if not st.warning(f"A data source with name '{file_name}' already exists. Overwrite?"):
-                        st.stop()
+                    # st.warning returns a DeltaGenerator and not a boolean, so
+                    # it cannot be used for confirmation. Show a warning but
+                    # continue to overwrite the existing entry.
+                    st.warning(
+                        f"A data source with name '{file_name}' already exists. Overwriting."  
+                    )
                 
                 # Save to session state
                 st.session_state.data_sources[file_name] = {
